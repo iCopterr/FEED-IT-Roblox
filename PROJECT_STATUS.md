@@ -18,7 +18,7 @@ Build a playable prototype that validates:
 
 **Hatch → Place → Earn → Farm → Feed → Grow → Risk → Explode / Survive**
 
-The immediate priority is establishing the Git/Rojo project foundation.
+The immediate priority is establishing the versioned, server-authoritative data foundation.
 
 ## 2. Overall Progress
 
@@ -28,6 +28,7 @@ The immediate priority is establishing the Git/Rojo project foundation.
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | 🟨 In Progress | Client/server/shared roots exist; gameplay modules not started. |
+| Player Data Schema | ✅ Complete / Verified | Version 1 defaults, validation, cloning, and migration boundary implemented. |
 | DataService | ⬜ Not Started | |
 | Plot System | ⬜ Not Started | |
 | Egg System | ⬜ Not Started | |
@@ -56,12 +57,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Phase 0 Data Foundation
+**Current Feature:** Versioned Player-Data Schema
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete / Verified
 
-**Objective:** Establish versioned default player data, configuration boundaries,
-service initialization, and logging conventions before implementing persistence.
+**Objective:** Define a safe v1 player-data contract with centralized defaults,
+immutable pet identity, placement consistency, validation, and explicit migrations.
 
 ## 4. Completed
 
@@ -78,22 +79,31 @@ service initialization, and logging conventions before implementing persistence.
 - Connected Roblox Studio MCP on port 58741 and identified the published place.
 - Verified Rojo synchronized the client, server, and shared filesystem roots.
 - Verified both bootstrap scripts execute in a one-player Studio test.
+- Added centralized v1 player and pet data versions/defaults in `GameConfig`.
+- Added a server-only `PlayerDataSchema` with typed player/pet contracts.
+- Added strict validation for identity, placement slots, serializable settings,
+  currencies, farm state, traits, statistics, and collection shapes.
+- Added isolated default construction, deep cloning, and an explicit migration pipeline.
+- Rejects unversioned, corrupt, or future-version data rather than silently rewriting it.
 
 ## 5. In Progress
 
-- Phase 0 data schema and service initialization have not started.
+- Phase 0 service initialization and logging conventions remain.
+- `DataService`, DataStore persistence, session locking, and migrations beyond v1 are not implemented.
 
 ## 6. Next Tasks
 
-1. Define a versioned default player-data schema.
-2. Establish the smallest useful configuration and server-service bootstrap.
-3. Add Studio-safe logging and developer-environment checks.
-4. Implement minimum persistent player data with session safety.
-5. Implement the unique Pet identity/data model.
+1. Establish the smallest useful server-service bootstrap and logging convention.
+2. Implement `DataService` around `PlayerDataSchema` with Studio-safe test data.
+3. Add DataStore retries, autosave, shutdown saves, and session safety.
+4. Verify Money/Food/default data survive rejoin without duplication or loss.
+5. Implement server-authoritative Pet creation and unique `PetId` generation.
 
 ## 7. Files Modified This Session
 
 ```text
+src/server/Data/PlayerDataSchema.luau
+src/shared/Config/GameConfig.luau
 PROJECT_STATUS.md
 ```
 
@@ -138,6 +148,15 @@ EffectsController
 Create modules only when they gain a real responsibility. Do not generate empty
 architecture merely to fill these lists.
 
+Data architecture decisions:
+
+- `PlayerDataSchema` is server-only; clients do not own or validate authoritative data.
+- `Inventory` is a dictionary keyed by immutable `PetId`, never by array position.
+- `PlacedPetIds` is a set, cross-validated with each pet's `Placed` and `PlotSlot` fields.
+- Plot slots must be unique and within `MaxPetSlots`.
+- Loaded current-version data is validated and cloned before use.
+- New schema versions require an explicit migration function; future versions fail closed.
+
 ## 11. Rojo / Studio State
 
 **Rojo:** Rokit 1.2.0 and pinned Rojo 7.7.0 installed; build and serve verified.
@@ -162,9 +181,23 @@ Ownership boundary:
 
 ## 12. Data / Persistence State
 
-**DataVersion:** Not established
+**DataVersion:** Player v1; Pet v1
 
 **Persistence:** Not implemented
+
+Current v1 player fields:
+
+```text
+DataVersion, Money, Food, FarmLevel, FarmPower, MaxPetSlots,
+Inventory, PlacedPetIds, PetIndex, Statistics, Settings
+```
+
+Each v1 pet preserves:
+
+```text
+DataVersion, PetId, SpeciesId, EggId, Rarity, Variant, Traits,
+FeedLevel, BaseIncome, Locked, Placed, PlotSlot, CreatedAt
+```
 
 ## 13. Current Feed Implementation
 
@@ -194,19 +227,25 @@ Food validation → Food deduction → Protection → Explosion roll
 - PASS — Studio contains Rojo-managed `Server`, `Client`, and `Shared` roots with matching source.
 - PASS — One-player test printed server and client prototype startup messages.
 - PASS — Playtest stopped and Studio returned to Edit mode.
+- PASS — Studio syntax analysis reported no errors in `GameConfig` or `PlayerDataSchema`.
+- PASS — Fresh defaults use independent nested tables.
+- PASS — A valid PetId-keyed placed pet passes schema validation.
+- PASS — Migration returns an isolated copy, including copied pet and trait tables.
+- PASS — Placement inconsistency and unsupported future data versions are rejected.
+- PASS — Rojo build succeeds with the v1 schema (14,584-byte test place).
 - PASS — Commit `282e2d9` pushed to `origin/main` and upstream tracking configured.
 - PASS — Fresh clone at `a656390` built successfully with Rojo (1,907-byte test place).
 
 ## 15. Last Known Working State
 
-No playable prototype state has been established. Git, Rojo, MCP, and the
-client/server/shared bootstrap are verified and ready for Phase 0 implementation.
+No playable prototype state has been established. Git, Rojo, MCP, the bootstrap,
+and player-data schema v1 are verified. The project is ready for `DataService`.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `038b158`
+**Commit:** `82525a0`
 
-**Message:** `docs: record MCP plugin repair`
+**Message:** `feat: add versioned player data schema`
 
 ## 17. Important Decisions
 
@@ -226,15 +265,16 @@ client/server/shared bootstrap are verified and ready for Phase 0 implementation
 
 Verified MCP and Rojo live synchronization against the published Studio place.
 Confirmed the synchronized server and client bootstrap scripts run successfully.
+Implemented and behaviorally verified the versioned player-data schema v1.
 
 ### What Is Currently Incomplete
 
-Phase 0 data schema, service initialization, and logging conventions.
+Server-service initialization, logging conventions, and persistent `DataService`.
 
 ### Next Agent Should
 
 1. Read `AGENTS.md`, this file, and relevant GDD sections.
 2. Run `git status` and `git diff`.
-3. Begin the versioned player-data schema and server bootstrap.
+3. Build `DataService` on the existing schema; do not recreate or loosen it.
 4. Keep gameplay server-authoritative and balance values configurable.
 5. Continue editing Rojo-managed scripts only through the filesystem.
