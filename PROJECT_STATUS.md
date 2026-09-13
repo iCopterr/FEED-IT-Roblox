@@ -25,7 +25,7 @@ The immediate priority is establishing the Git/Rojo project foundation.
 | System | Status | Notes |
 | --- | --- | --- |
 | Project Setup | ✅ Complete / Verified | Filesystem layout, toolchain, build, and server launch verified. |
-| Git Setup | 🟦 Implemented / Needs Testing | Local `main` repository and GitHub `origin` configured; initial push pending. |
+| Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | 🟦 Implemented / Needs Testing | Rojo 7.7.0 and Studio plugin installed; interactive Studio connection pending. |
 | Base Architecture | 🟨 In Progress | Client/server/shared roots exist; gameplay modules not started. |
 | DataService | ⬜ Not Started | |
@@ -56,12 +56,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Initial Project Setup
+**Current Feature:** Rojo Studio Connection Verification
 
 **Status:** 🟨 In Progress
 
-**Objective:** Prepare Git, Rojo, the source layout, and the handoff workflow for
-sequential use by three Codex accounts on one PC.
+**Objective:** Connect the installed Rojo Studio plugin to `localhost:34872`
+and confirm live filesystem-to-Studio synchronization.
 
 ## 4. Completed
 
@@ -74,11 +74,11 @@ sequential use by three Codex accounts on one PC.
 - Installed Rokit 1.2.0 and the project-pinned Rojo 7.7.0.
 - Installed the Rojo 7 Studio plugin for the current Windows user.
 - Built `build/FeedYourPet.rbxlx` and launched the server on port 34872.
+- Committed the foundation as `282e2d9` and pushed `main` to GitHub.
 
 ## 5. In Progress
 
 - Verify the Rojo plugin connection inside Roblox Studio.
-- Create and push the initial Git commit.
 
 ## 6. Next Tasks
 
@@ -104,7 +104,8 @@ PROJECT_STATUS.md
 
 ## 8. Current Uncommitted Work
 
-Initial Git/Rojo project setup is uncommitted until the setup is validated.
+None. The working tree was clean after commit `282e2d9`; this status update is
+the only follow-up change before its documentation commit.
 
 ## 9. Known Issues / Blockers
 
@@ -186,7 +187,8 @@ Food validation → Food deduction → Protection → Explosion roll
 - PASS — `rojo serve` listened on `localhost:34872`.
 - PASS — Matching Rojo Studio plugin file installed for the Windows user.
 - PENDING — Rojo Studio plugin live synchronization.
-- PENDING — Initial GitHub push and fresh-clone verification.
+- PASS — Commit `282e2d9` pushed to `origin/main` and upstream tracking configured.
+- PENDING — Fresh-clone verification.
 
 ## 15. Last Known Working State
 
@@ -195,7 +197,9 @@ foundation and Rojo CLI are working; Studio live synchronization remains to be t
 
 ## 16. Last Working Git Commit
 
-**Commit:** None recorded yet.
+**Commit:** `282e2d9`
+
+**Message:** `chore: initialize Git and Rojo project`
 
 ## 17. Important Decisions
 
@@ -217,7 +221,8 @@ Created the initial Git/Rojo repository foundation and documented the workflow.
 
 ### What Is Currently Incomplete
 
-Studio plugin sync verification, the initial commit, and the first GitHub push.
+Studio plugin sync verification, Studio place location documentation, and a
+fresh-clone verification.
 
 ### Next Agent Should
 
