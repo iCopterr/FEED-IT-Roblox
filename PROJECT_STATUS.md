@@ -110,6 +110,8 @@ None.
 
 - Roblox Studio synchronization requires Studio to be installed/opened and the
   Rojo plugin connection to be tested interactively.
+- Studio MCP inspection currently times out because its Studio plugin is not
+  running/activated; open Studio before the next inspection session.
 - The Studio-owned place location has not yet been recorded.
 
 Neither issue blocks filesystem-based architecture work after the Rojo build is validated.
@@ -185,6 +187,8 @@ Food validation → Food deduction → Protection → Explosion roll
 - PASS — `rojo build` generated `build/FeedYourPet.rbxlx` (2,054 bytes).
 - PASS — `rojo serve` listened on `localhost:34872`.
 - PASS — Matching Rojo Studio plugin file installed for the Windows user.
+- INFO — Studio MCP `get_place_info` timed out because the Studio-side plugin
+  was not running/activated.
 - PENDING — Rojo Studio plugin live synchronization.
 - PASS — Commit `282e2d9` pushed to `origin/main` and upstream tracking configured.
 - PASS — Fresh clone at `a656390` built successfully with Rojo (1,907-byte test place).
