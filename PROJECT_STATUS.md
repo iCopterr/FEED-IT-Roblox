@@ -18,7 +18,8 @@ Build a playable prototype that validates:
 
 **Hatch → Place → Earn → Farm → Feed → Grow → Risk → Explode / Survive**
 
-The immediate priority is establishing the versioned, server-authoritative data foundation.
+The versioned, server-authoritative data foundation is implemented. The immediate
+priority is verifying live DataStore rejoin behavior, then building pet identity.
 
 ## 2. Overall Progress
 
@@ -27,9 +28,9 @@ The immediate priority is establishing the versioned, server-authoritative data 
 | Project Setup | ✅ Complete / Verified | Filesystem layout, toolchain, build, and server launch verified. |
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
-| Base Architecture | 🟨 In Progress | Client/server/shared roots exist; gameplay modules not started. |
+| Base Architecture | 🟨 In Progress | Client/server/shared roots and the first server service exist. |
 | Player Data Schema | ✅ Complete / Verified | Version 1 defaults, validation, cloning, and migration boundary implemented. |
-| DataService | ⬜ Not Started | |
+| DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ⬜ Not Started | |
 | Egg System | ⬜ Not Started | |
 | Pet Identity | ⬜ Not Started | |
@@ -49,7 +50,7 @@ The immediate priority is establishing the versioned, server-authoritative data 
 | Explosion Presentation | ⬜ Not Started | |
 | Protection | ⬜ Not Started | |
 | Revive | ⬜ Not Started | |
-| Save / Load | ⬜ Not Started | |
+| Save / Load | 🟦 Implemented / Needs Testing | Memory-mode flow verified; production backend remains untested. |
 | Debug Tools | ⬜ Not Started | |
 | Core Loop Playtest | ⬜ Not Started | |
 
@@ -57,12 +58,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Versioned Player-Data Schema
+**Current Feature:** Session-Safe DataService
 
-**Status:** ✅ Complete / Verified
+**Status:** 🟦 Implemented / Needs Testing
 
-**Objective:** Define a safe v1 player-data contract with centralized defaults,
-immutable pet identity, placement consistency, validation, and explicit migrations.
+**Objective:** Load and save the v1 schema through atomic updates with retry,
+autosave, shutdown saving, isolated Studio data, and single-session ownership.
 
 ## 4. Completed
 
@@ -85,25 +86,41 @@ immutable pet identity, placement consistency, validation, and explicit migratio
   currencies, farm state, traits, statistics, and collection shapes.
 - Added isolated default construction, deep cloning, and an explicit migration pipeline.
 - Rejects unversioned, corrupt, or future-version data rather than silently rewriting it.
+- Added centralized production/Studio store names, retry policy, autosave interval,
+  session lease timeout, acquisition policy, and shutdown timeout in `DataConfig`.
+- Added a DataStore adapter with bounded exponential retry and jitter.
+- Studio defaults to process-local memory data; optional Studio persistence uses a
+  separate test DataStore and cannot write to the production store name.
+- Added `DataService` with atomic `UpdateAsync` load/migrate/session acquisition.
+- Added unique per-load lease tokens, heartbeat refresh, stale-lock takeover, and
+  fail-closed handling for active foreign sessions or malformed/future records.
+- Added validated snapshots, serialized per-player save operations, 60-second
+  autosave, final PlayerRemoving save/release, and concurrent shutdown saving.
+- Added an idempotent last-session marker so a retried release can recognize a
+  prior successful write even when the first response was ambiguous.
+- The server now starts `DataService` from the Rojo-managed bootstrap.
 
 ## 5. In Progress
 
-- Phase 0 service initialization and logging conventions remain.
-- `DataService`, DataStore persistence, session locking, and migrations beyond v1 are not implemented.
+- Production DataStore persistence and cross-server session behavior still need
+  an end-to-end test in a published test server or Studio with API access enabled.
+- Data schema migrations beyond v1 will be added only when the schema version changes.
 
 ## 6. Next Tasks
 
-1. Establish the smallest useful server-service bootstrap and logging convention.
-2. Implement `DataService` around `PlayerDataSchema` with Studio-safe test data.
-3. Add DataStore retries, autosave, shutdown saves, and session safety.
-4. Verify Money/Food/default data survive rejoin without duplication or loss.
-5. Implement server-authoritative Pet creation and unique `PetId` generation.
+1. Enable API access only in a dedicated Studio/test experience and set
+   `UseDataStoreInStudio = true`, or use a published private test server.
+2. Verify Money/Food/default data survive rejoin without duplication or loss.
+3. Verify simultaneous joins reject an active lease and stale leases recover.
+4. Implement server-authoritative Pet creation and unique `PetId` generation.
 
 ## 7. Files Modified This Session
 
 ```text
-src/server/Data/PlayerDataSchema.luau
-src/shared/Config/GameConfig.luau
+src/server/Data/DataStoreAdapter.luau
+src/server/Services/DataService.luau
+src/server/init.server.luau
+src/shared/Config/DataConfig.luau
 PROJECT_STATUS.md
 ```
 
@@ -156,6 +173,15 @@ Data architecture decisions:
 - Plot slots must be unique and within `MaxPetSlots`.
 - Loaded current-version data is validated and cloned before use.
 - New schema versions require an explicit migration function; future versions fail closed.
+- One stored record owns both player data and its optional session lease so load,
+  migration, lock acquisition, saves, and releases remain atomic under `UpdateAsync`.
+- A lease is owned by both a server ID and a unique per-load session ID. Saves
+  fail closed and disconnect the player if this server no longer owns that lease.
+- Autosaves refresh the lease heartbeat every 60 seconds; a foreign lease becomes
+  reclaimable after 180 seconds without a heartbeat.
+- `LastSessionId` makes release idempotent after an unknown DataStore write result.
+- Save operations for one player are serialized to prevent autosave, leave, and
+  shutdown handlers from racing each other.
 
 ## 11. Rojo / Studio State
 
@@ -183,7 +209,19 @@ Ownership boundary:
 
 **DataVersion:** Player v1; Pet v1
 
-**Persistence:** Not implemented
+**Persistence:** Implemented; Studio memory flow verified, live backend test pending
+
+Stored records use wrapper version 1:
+
+```text
+RecordVersion, Data, Session, LastSessionId, LastSavedAt
+```
+
+The optional session lease stores:
+
+```text
+ServerId, SessionId, PlaceId, AcquiredAt, HeartbeatAt
+```
 
 Current v1 player fields:
 
@@ -235,17 +273,25 @@ Food validation → Food deduction → Protection → Explosion roll
 - PASS — Rojo build succeeds with the v1 schema (14,584-byte test place).
 - PASS — Commit `282e2d9` pushed to `origin/main` and upstream tracking configured.
 - PASS — Fresh clone at `a656390` built successfully with Rojo (1,907-byte test place).
+- PASS — Rojo synchronized `DataConfig`, `DataStoreAdapter`, and `DataService` into Studio.
+- PASS — Studio syntax analysis reported no errors in the bootstrap or new modules.
+- PASS — Studio memory adapter preserves copy isolation across writes.
+- PASS — Studio memory adapter update and cancelled-update behavior passed.
+- PASS — One-player Studio run started DataService in isolated memory mode and loaded v1 defaults.
+- PASS — Final Rojo build succeeds with DataService and `git diff --check` is clean.
+- NOT RUN — Production DataStore rejoin and cross-server lease contention tests.
 
 ## 15. Last Known Working State
 
 No playable prototype state has been established. Git, Rojo, MCP, the bootstrap,
-and player-data schema v1 are verified. The project is ready for `DataService`.
+schema v1, and Studio DataService flow are working. Live DataStore behavior still
+needs a dedicated backend test before persistence is marked fully verified.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `82525a0`
+**Commit:** `bcd0e02`
 
-**Message:** `feat: add versioned player data schema`
+**Message:** `feat: implement session-safe player persistence`
 
 ## 17. Important Decisions
 
@@ -263,18 +309,19 @@ and player-data schema v1 are verified. The project is ready for `DataService`.
 
 ### What Was Done
 
-Verified MCP and Rojo live synchronization against the published Studio place.
-Confirmed the synchronized server and client bootstrap scripts run successfully.
-Implemented and behaviorally verified the versioned player-data schema v1.
+Implemented the DataStore adapter, DataService, server bootstrap, isolated Studio
+test mode, retries, atomic session leases, autosave, leave saving, and shutdown saving.
+Verified schema/module syntax, memory adapter semantics, Rojo build, and a one-player load.
 
 ### What Is Currently Incomplete
 
-Server-service initialization, logging conventions, and persistent `DataService`.
+Live DataStore rejoin testing, cross-server lease contention testing, and pet creation.
 
 ### Next Agent Should
 
 1. Read `AGENTS.md`, this file, and relevant GDD sections.
 2. Run `git status` and `git diff`.
-3. Build `DataService` on the existing schema; do not recreate or loosen it.
-4. Keep gameplay server-authoritative and balance values configurable.
-5. Continue editing Rojo-managed scripts only through the filesystem.
+3. Do not point Studio at production data. Use the isolated Studio store only in a
+   dedicated test experience when API access is enabled.
+4. Test live save/rejoin and active/stale lease behavior before marking persistence verified.
+5. Then implement server-authoritative Pet creation with immutable `PetId` values.
