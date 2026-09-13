@@ -26,7 +26,7 @@ The immediate priority is establishing the Git/Rojo project foundation.
 | --- | --- | --- |
 | Project Setup | ✅ Complete / Verified | Filesystem layout, toolchain, build, and server launch verified. |
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
-| Rojo Setup | 🟦 Implemented / Needs Testing | Rojo 7.7.0 and Studio plugin installed; interactive Studio connection pending. |
+| Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | 🟨 In Progress | Client/server/shared roots exist; gameplay modules not started. |
 | DataService | ⬜ Not Started | |
 | Plot System | ⬜ Not Started | |
@@ -56,12 +56,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Rojo Studio Connection Verification
+**Current Feature:** Phase 0 Data Foundation
 
-**Status:** 🟨 In Progress
+**Status:** ⬜ Not Started
 
-**Objective:** Connect the installed Rojo Studio plugin to `localhost:34872`
-and confirm live filesystem-to-Studio synchronization.
+**Objective:** Establish versioned default player data, configuration boundaries,
+service initialization, and logging conventions before implementing persistence.
 
 ## 4. Completed
 
@@ -75,30 +75,25 @@ and confirm live filesystem-to-Studio synchronization.
 - Installed the Rojo 7 Studio plugin for the current Windows user.
 - Built `build/FeedYourPet.rbxlx` and launched the server on port 34872.
 - Committed the foundation as `282e2d9` and pushed `main` to GitHub.
+- Connected Roblox Studio MCP on port 58741 and identified the published place.
+- Verified Rojo synchronized the client, server, and shared filesystem roots.
+- Verified both bootstrap scripts execute in a one-player Studio test.
 
 ## 5. In Progress
 
-- Verify the Rojo plugin connection inside Roblox Studio.
+- Phase 0 data schema and service initialization have not started.
 
 ## 6. Next Tasks
 
-1. Verify Rojo → Roblox Studio synchronization.
-2. Save or publish the Studio-owned prototype place and document its location.
-3. Establish the smallest useful configuration and service/controller modules.
-4. Begin the minimum persistent player-data architecture.
-5. Begin the unique Pet identity/data model.
+1. Define a versioned default player-data schema.
+2. Establish the smallest useful configuration and server-service bootstrap.
+3. Add Studio-safe logging and developer-environment checks.
+4. Implement minimum persistent player data with session safety.
+5. Implement the unique Pet identity/data model.
 
 ## 7. Files Modified This Session
 
 ```text
-.gitattributes
-.gitignore
-README.md
-default.project.json
-rokit.toml
-src/client/init.client.luau
-src/server/init.server.luau
-src/shared/ProjectInfo.luau
 PROJECT_STATUS.md
 ```
 
@@ -108,15 +103,10 @@ None.
 
 ## 9. Known Issues / Blockers
 
-- Roblox Studio synchronization requires Studio to be installed/opened and the
-  Rojo plugin connection to be tested interactively.
-- Codex's Roblox MCP process had auto-selected port 58742 while Studio expected
-  58741. The global MCP entry is now explicitly pinned to 58741, but the current
-  server is now healthy on 58741. The matching v2.6.0 GitHub release plugin was
-  installed; Roblox Studio must be saved and restarted to load it.
-- The Studio-owned place location has not yet been recorded.
+- Studio Output contains unrelated RigEdit Plus outdated/plugin-icon warnings.
+- Studio also reported a Game Settings SecurityPage JSON secrets parse warning.
 
-Neither issue blocks filesystem-based architecture work after the Rojo build is validated.
+These warnings do not block Rojo, MCP, or prototype development.
 
 ## 10. Architecture Notes
 
@@ -154,12 +144,14 @@ architecture merely to fill these lists.
 
 **Studio Plugin:** Installed at `%LOCALAPPDATA%/Roblox/Plugins/RojoManagedPlugin.rbxm`.
 
-**Studio Connection:** Interactive connection not yet verified.
+**Studio Place:** `FeedYourPet`, place ID `127663486570625`, game ID `10766377691`.
+
+**Studio Connection:** Rojo live sync verified on `localhost:34872`.
 
 **MCP Connection:** Global `robloxstudio` MCP entry uses
 `npx -y robloxstudio-mcp@latest` with `ROBLOX_STUDIO_PORT=58741`. A new Codex
-task successfully reached the bridge, which reports server version 2.6.0. Studio
-plugin reconnection is pending a safe Studio restart.
+task successfully reached the bridge, which reports server version 2.6.0. The
+Studio Edit peer is connected and tool calls are verified.
 
 Ownership boundary:
 
@@ -198,21 +190,23 @@ Food validation → Food deduction → Protection → Explosion roll
   Studio's expected port 58741.
 - PASS — MCP health endpoint reports a live v2.6.0 server on port 58741.
 - PASS — Installed the official v2.6.0 release plugin asset for Studio.
-- PENDING — Save/restart Studio, activate its MCP plugin, and verify a tool call.
-- PENDING — Rojo Studio plugin live synchronization.
+- PASS — MCP discovered one active Studio Edit instance and read place metadata.
+- PASS — Studio contains Rojo-managed `Server`, `Client`, and `Shared` roots with matching source.
+- PASS — One-player test printed server and client prototype startup messages.
+- PASS — Playtest stopped and Studio returned to Edit mode.
 - PASS — Commit `282e2d9` pushed to `origin/main` and upstream tracking configured.
 - PASS — Fresh clone at `a656390` built successfully with Rojo (1,907-byte test place).
 
 ## 15. Last Known Working State
 
-No playable prototype state has been established. The filesystem project
-foundation and Rojo CLI are working; Studio live synchronization remains to be tested.
+No playable prototype state has been established. Git, Rojo, MCP, and the
+client/server/shared bootstrap are verified and ready for Phase 0 implementation.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `282e2d9`
+**Commit:** `038b158`
 
-**Message:** `chore: initialize Git and Rojo project`
+**Message:** `docs: record MCP plugin repair`
 
 ## 17. Important Decisions
 
@@ -230,18 +224,17 @@ foundation and Rojo CLI are working; Studio live synchronization remains to be t
 
 ### What Was Done
 
-Created the initial Git/Rojo repository foundation and documented the workflow.
+Verified MCP and Rojo live synchronization against the published Studio place.
+Confirmed the synchronized server and client bootstrap scripts run successfully.
 
 ### What Is Currently Incomplete
 
-Studio restart and MCP plugin reconnection, Rojo plugin sync verification, and
-Studio place location documentation.
+Phase 0 data schema, service initialization, and logging conventions.
 
 ### Next Agent Should
 
 1. Read `AGENTS.md`, this file, and relevant GDD sections.
 2. Run `git status` and `git diff`.
-3. Finish the verification items above rather than recreating the setup.
-4. Record the Studio place location after it is created or identified.
-5. Save and restart Roblox Studio, activate the MCP plugin, then call
-   `get_connected_instances` or `get_place_info`; the bridge is on port 58741.
+3. Begin the versioned player-data schema and server bootstrap.
+4. Keep gameplay server-authoritative and balance values configurable.
+5. Continue editing Rojo-managed scripts only through the filesystem.
