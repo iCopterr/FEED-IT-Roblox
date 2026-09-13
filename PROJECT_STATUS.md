@@ -110,8 +110,10 @@ None.
 
 - Roblox Studio synchronization requires Studio to be installed/opened and the
   Rojo plugin connection to be tested interactively.
-- Studio MCP inspection currently times out because its Studio plugin is not
-  running/activated; open Studio before the next inspection session.
+- Codex's Roblox MCP process had auto-selected port 58742 while Studio expected
+  58741. The global MCP entry is now explicitly pinned to 58741, but the current
+  task's transport closed when the stale process was stopped. Start a new Codex
+  task or restart Codex Desktop to relaunch it with the corrected configuration.
 - The Studio-owned place location has not yet been recorded.
 
 Neither issue blocks filesystem-based architecture work after the Rojo build is validated.
@@ -154,7 +156,9 @@ architecture merely to fill these lists.
 
 **Studio Connection:** Interactive connection not yet verified.
 
-**MCP Connection:** Not documented.
+**MCP Connection:** Global `robloxstudio` MCP entry uses
+`npx -y robloxstudio-mcp@latest` with `ROBLOX_STUDIO_PORT=58741`. A new Codex
+task/app restart is required before verifying the Studio connection.
 
 Ownership boundary:
 
@@ -189,6 +193,9 @@ Food validation → Food deduction → Protection → Explosion roll
 - PASS — Matching Rojo Studio plugin file installed for the Windows user.
 - INFO — Studio MCP `get_place_info` timed out because the Studio-side plugin
   was not running/activated.
+- PASS — Diagnosed stale MCP listener on port 58742 and pinned the launcher to
+  Studio's expected port 58741.
+- PENDING — Reconnect from a newly started Codex task after MCP transport restart.
 - PENDING — Rojo Studio plugin live synchronization.
 - PASS — Commit `282e2d9` pushed to `origin/main` and upstream tracking configured.
 - PASS — Fresh clone at `a656390` built successfully with Rojo (1,907-byte test place).
@@ -224,7 +231,8 @@ Created the initial Git/Rojo repository foundation and documented the workflow.
 
 ### What Is Currently Incomplete
 
-Studio plugin sync verification and Studio place location documentation.
+MCP reconnection from a new Codex task, Rojo plugin sync verification, and
+Studio place location documentation.
 
 ### Next Agent Should
 
@@ -232,3 +240,5 @@ Studio plugin sync verification and Studio place location documentation.
 2. Run `git status` and `git diff`.
 3. Finish the verification items above rather than recreating the setup.
 4. Record the Studio place location after it is created or identified.
+5. Call the Roblox Studio MCP `get_connected_instances` or `get_place_info`
+   immediately after restart; the bridge is configured for port 58741.
