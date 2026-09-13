@@ -1,0 +1,11 @@
+# Rojo-generated artifacts
+/build/
+/sourcemap.json
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Local editor state
+.idea/
+*.swp

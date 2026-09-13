@@ -1,0 +1,14 @@
+* text=auto
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+*.luau text eol=lf
+*.lua text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+
+*.rbxl binary
+*.rbxm binary
+*.rbxlx text eol=lf
+*.rbxmx text eol=lf
