@@ -4,7 +4,7 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-14
+**Last Updated:** 2026-09-15
 
 > This file is the current-state handoff between Codex sessions. Update it
 > before ending a meaningful development session. Do not mark a feature
@@ -18,8 +18,9 @@ Build a playable prototype that validates:
 
 **Hatch → Place → Earn → Farm → Feed → Grow → Risk → Explode / Survive**
 
-The versioned, server-authoritative data foundation is implemented. The immediate
-priority is verifying live DataStore rejoin behavior, then building pet identity.
+The versioned data foundation and server-side pet foundation are implemented.
+The immediate priority is runtime-testing PetService mutations, then building
+pet placement and Pen ownership.
 
 ## 2. Overall Progress
 
@@ -28,13 +29,13 @@ priority is verifying live DataStore rejoin behavior, then building pet identity
 | Project Setup | ✅ Complete / Verified | Filesystem layout, toolchain, build, and server launch verified. |
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
-| Base Architecture | 🟨 In Progress | Client/server/shared roots and the first server service exist. |
+| Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
 | Player Data Schema | ✅ Complete / Verified | Version 1 defaults, validation, cloning, and migration boundary implemented. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ⬜ Not Started | |
 | Egg System | ⬜ Not Started | |
-| Pet Identity | ⬜ Not Started | |
-| Inventory | ⬜ Not Started | |
+| Pet Identity | 🟦 Implemented / Needs Testing | GUID identity and six prototype species implemented; mutation smoke test pending. |
+| Inventory | 🟨 In Progress | Server-side create/read/lock/remove operations exist; client UI and placement are pending. |
 | Pet Placement | ⬜ Not Started | |
 | Pet Wandering | ⬜ Not Started | |
 | Money Generation | ⬜ Not Started | |
@@ -58,12 +59,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Session-Safe DataService
+**Current Feature:** Pet Foundation
 
 **Status:** 🟦 Implemented / Needs Testing
 
-**Objective:** Load and save the v1 schema through atomic updates with retry,
-autosave, shutdown saving, isolated Studio data, and single-session ownership.
+**Objective:** Create server-authoritative pets with immutable unique identity,
+validated inventory mutations, six prototype species, and locked base-income values.
 
 ## 4. Completed
 
@@ -99,28 +100,42 @@ autosave, shutdown saving, isolated Studio data, and single-session ownership.
 - Added an idempotent last-session marker so a retried release can recognize a
   prior successful write even when the first response was ambiguous.
 - The server now starts `DataService` from the Rojo-managed bootstrap.
+- Added `PetConfig` with exactly one prototype species for each rarity and the
+  GDD-locked base-income anchors: 10, 150, 500, 3,000, 10,000, and 45,000.
+- Added `PetService` with server-generated GUID `PetId` values and authoritative
+  species, Egg, rarity, Variant, traits, Feed Level, income, lock, placement, and timestamps.
+- Added defensive GUID collision checks and full `PlayerDataSchema` validation
+  with rollback after every pet mutation.
+- Added snapshot-returning pet/inventory reads so callers cannot mutate identity
+  through returned values.
+- Added lock changes and conservative permanent removal: locked or placed pets
+  cannot be removed, and Explosion is explicitly reserved for pending recovery.
+- Added server-only PetAdded, PetRemoved, and PetChanged events.
+- The server bootstrap now starts `PetService` after `DataService`.
 
 ## 5. In Progress
 
 - Production DataStore persistence and cross-server session behavior still need
   an end-to-end test in a published test server or Studio with API access enabled.
 - Data schema migrations beyond v1 will be added only when the schema version changes.
+- PetService configuration and bootstrap were verified in Studio, but the full
+  create/lock/remove mutation smoke test remains pending because Roblox MCP was
+  unavailable after Studio restarted and Computer Use was stopped by user request.
 
 ## 6. Next Tasks
 
-1. Enable API access only in a dedicated Studio/test experience and set
-   `UseDataStoreInStudio = true`, or use a published private test server.
-2. Verify Money/Food/default data survive rejoin without duplication or loss.
-3. Verify simultaneous joins reject an active lease and stale leases recover.
-4. Implement server-authoritative Pet creation and unique `PetId` generation.
+1. Run the prepared PetService behavior checks through Roblox MCP: create two
+   pets, confirm unique IDs and snapshot isolation, lock/unlock, remove, and validate data.
+2. Implement `PlotService` and server-authoritative pet placement/pickup with five slots.
+3. Add simple prototype pet spawning/wandering in the Studio-owned Pen.
+4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
 
 ## 7. Files Modified This Session
 
 ```text
-src/server/Data/DataStoreAdapter.luau
-src/server/Services/DataService.luau
+src/server/Services/PetService.luau
 src/server/init.server.luau
-src/shared/Config/DataConfig.luau
+src/shared/Config/PetConfig.luau
 PROJECT_STATUS.md
 ```
 
@@ -182,6 +197,19 @@ Data architecture decisions:
 - `LastSessionId` makes release idempotent after an unknown DataStore write result.
 - Save operations for one player are serialized to prevent autosave, leave, and
   shutdown handlers from racing each other.
+
+Pet architecture decisions:
+
+- `PetService` exists only under `ServerScriptService`; clients cannot create,
+  delete, lock, or choose authoritative pet results.
+- `PetConfig` defines six placeholder prototype species and may be replaced with
+  final species later without changing persistent pet identity rules.
+- `CreatePet` derives all authoritative fields from configuration; callers provide
+  only a known server-side `SpeciesId`.
+- `GetPet` and `GetInventory` return deep pet snapshots, including cloned Traits.
+- `PetIndex` records discovery and remains true after a pet leaves the inventory.
+- Ordinary removal rejects locked and placed pets. Explosion must not call this
+  path; it will use the future pending-recovery/Revive transaction.
 
 ## 11. Rojo / Studio State
 
@@ -280,18 +308,24 @@ Food validation → Food deduction → Protection → Explosion roll
 - PASS — One-player Studio run started DataService in isolated memory mode and loaded v1 defaults.
 - PASS — Final Rojo build succeeds with DataService and `git diff --check` is clean.
 - NOT RUN — Production DataStore rejoin and cross-server lease contention tests.
+- PASS — `PetConfig` contains exactly six species, one per rarity, with locked base incomes.
+- PASS — All six configured prototype pet shapes pass `PlayerDataSchema.ValidatePet`.
+- PASS — Rojo synchronized `PetConfig` and `PetService`; Studio syntax analysis found no errors.
+- PASS — One-player Studio startup loaded data and started PetService with six species.
+- PASS — Final PetService Rojo build succeeds and `git diff --check` is clean.
+- NOT RUN — End-to-end CreatePet/GetPet/SetLocked/RemovePet runtime smoke test.
 
 ## 15. Last Known Working State
 
-No playable prototype state has been established. Git, Rojo, MCP, the bootstrap,
-schema v1, and Studio DataService flow are working. Live DataStore behavior still
-needs a dedicated backend test before persistence is marked fully verified.
+No playable prototype state has been established. Git, Rojo, the bootstrap,
+schema v1, DataService, and the server-side pet foundation are implemented.
+Interactive pet mutation and live DataStore tests remain before full verification.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `bcd0e02`
+**Commit:** `5ca59a0`
 
-**Message:** `feat: implement session-safe player persistence`
+**Message:** `feat: add server-authoritative pet foundation`
 
 ## 17. Important Decisions
 
@@ -309,19 +343,19 @@ needs a dedicated backend test before persistence is marked fully verified.
 
 ### What Was Done
 
-Implemented the DataStore adapter, DataService, server bootstrap, isolated Studio
-test mode, retries, atomic session leases, autosave, leave saving, and shutdown saving.
-Verified schema/module syntax, memory adapter semantics, Rojo build, and a one-player load.
+Implemented `PetConfig` and `PetService` with six prototype species, locked base
+incomes, GUID identity, validated create/read/lock/remove operations, snapshots,
+rollback safety, and server-only events. Added PetService to server startup.
 
 ### What Is Currently Incomplete
 
-Live DataStore rejoin testing, cross-server lease contention testing, and pet creation.
+Interactive PetService mutation testing, pet placement/Pen ownership, simple
+wandering, and live DataStore/cross-server lease testing.
 
 ### Next Agent Should
 
 1. Read `AGENTS.md`, this file, and relevant GDD sections.
 2. Run `git status` and `git diff`.
-3. Do not point Studio at production data. Use the isolated Studio store only in a
-   dedicated test experience when API access is enabled.
-4. Test live save/rejoin and active/stale lease behavior before marking persistence verified.
-5. Then implement server-authoritative Pet creation with immutable `PetId` values.
+3. Run PetService mutation checks through Roblox MCP; do not use Computer Use.
+4. Continue with PlotService and placement/pickup while preserving inventory and slot consistency.
+5. Do not point Studio at production data; use the isolated Studio store for backend tests.
