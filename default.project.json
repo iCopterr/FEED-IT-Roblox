@@ -3,6 +3,11 @@
   "servePort": 34872,
   "tree": {
     "$className": "DataModel",
+    "StarterGui": {
+      "FeedYourPetUI": {
+        "$path": "src/ui/FeedYourPetUI.rbxmx"
+      }
+    },
     "ReplicatedStorage": {
       "Shared": {
         "$path": "src/shared"

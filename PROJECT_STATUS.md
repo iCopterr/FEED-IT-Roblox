@@ -35,7 +35,8 @@ pet placement and Pen ownership.
 | Plot System | ⬜ Not Started | |
 | Egg System | ⬜ Not Started | |
 | Pet Identity | 🟦 Implemented / Needs Testing | GUID identity and six prototype species implemented; mutation smoke test pending. |
-| Inventory | 🟨 In Progress | Server-side create/read/lock/remove operations exist; client UI and placement are pending. |
+| Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
+| HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
 | Pet Placement | ⬜ Not Started | |
 | Pet Wandering | ⬜ Not Started | |
 | Money Generation | ⬜ Not Started | |
@@ -59,12 +60,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Pet Foundation
+**Current Feature:** StarterGui Stud HUD and Inventory UI
 
 **Status:** 🟦 Implemented / Needs Testing
 
-**Objective:** Create server-authoritative pets with immutable unique identity,
-validated inventory mutations, six prototype species, and locked base-income values.
+**Objective:** Expose the existing pet foundation through a Stud-themed currency
+HUD and inventory with inspection, selection, and authoritative locking.
 
 ## 4. Completed
 
@@ -133,18 +134,47 @@ validated inventory mutations, six prototype species, and locked base-income val
 ## 7. Files Modified This Session
 
 ```text
-src/server/Services/PetService.luau
+src/ui/FeedYourPetUI.rbxmx
+default.project.json
+src/client/Controllers/HUDController.luau
+src/client/UI/Stud.luau
+src/client/init.client.luau
+src/server/Services/UIService.luau
 src/server/init.server.luau
-src/shared/Config/PetConfig.luau
+src/shared/Config/UIConfig.luau
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
 
-None.
+UI changes are being committed as one logical unit. Concurrent verification
+work (including PetVerification.server.luau) is separate and is not staged by
+the UI session.
 
 ## 9. Known Issues / Blockers
 
+- Latest port retry (2026-09-15): user redirected to localhost:58742.
+  Direct MCP at /mcp reaches the correct place's Edit peer and accepts
+  start_playtest(play, numPlayers=1), but no server peer registers.
+  A read-only execute_luau(target=server) timed out; repeated instance
+  discovery still shows only Edit. Stop was requested afterward.
+  Pet mutation tests remain NOT RUN. Next: start a Studio server test and
+  connect its server-side MCP plugin to port 58742. No Computer Use used.
+- Follow-up after reconnect (2026-09-15): port 58741 is connected to one Edit
+  peer. This task's built-in MCP tool reaches an empty bridge; five listeners
+  exist on ports 58741-58745. Direct MCP JSON-RPC at localhost:58741/mcp works.
+  The connected place is 127663486570625 and Studio memory mode is enabled.
+  `start_playtest` reports "A test is already running", but no server/client
+  peer is available. `stop_playtest` and RunService:Stop() did not clear that
+  condition. Manual Studio test stop/plugin reconnect is needed before retry.
+  Creation/ID/lock/removal checks remain NOT RUN; no gameplay source changed.
+- Latest verification attempt (2026-09-15): MCP tools are available, but
+  `get_connected_instances` returned zero instances and `execute_luau` timed
+  out waiting for the Studio plugin. Studio is running. Reconnect its MCP
+  plugin before retrying creation, unique ID, lock/unlock, and removal tests.
+  No pet mutations ran; no Computer Use was used. This attempt changed only
+  PROJECT_STATUS.md. Untracked UI files appeared during the session and were
+  left untouched.
 - Studio Output contains unrelated RigEdit Plus outdated/plugin-icon warnings.
 - Studio also reported a Game Settings SecurityPage JSON secrets parse warning.
 
@@ -224,14 +254,18 @@ Pet architecture decisions:
 **MCP Connection:** Global `robloxstudio` MCP entry uses
 `npx -y robloxstudio-mcp@latest` with `ROBLOX_STUDIO_PORT=58741`. A new Codex
 task successfully reached the bridge, which reports server version 2.6.0. The
-Studio Edit peer is connected and tool calls are verified.
+Studio Edit peer was previously verified. The latest attempt reports zero
+connected instances; runtime verification is currently blocked (see section 9).
 
 Ownership boundary:
 
 - `src/` contains filesystem/Rojo-managed code.
 - The Roblox place contains Studio-managed world Instances.
-- `default.project.json` intentionally maps only code roots, preventing two
-  sources of truth for the prototype world.
+- `default.project.json` maps code roots plus the StarterGui UI model.
+  The prototype world remains Studio-owned.
+- `StarterGui.FeedYourPetUI` was authored using MCP and exported to
+  `src/ui/FeedYourPetUI.rbxmx` for Rojo/Git persistence. Re-export Studio UI
+  edits to this model before a filesystem resync; Rojo sync is not a reverse export.
 
 ## 12. Data / Persistence State
 
@@ -340,6 +374,56 @@ Interactive pet mutation and live DataStore tests remain before full verificatio
   at a time.
 
 ## 18. Session Handoff
+
+### StarterGui Revision — 2026-09-15
+
+- User requested real StarterGui Instances instead of runtime UI construction.
+  Created `StarterGui.FeedYourPetUI` via MCP: 69 descendants, HUD, inventory,
+  four Stud ImageButtons including a hidden editable PetCardTemplate.
+- Exported the hierarchy to `src/ui/FeedYourPetUI.rbxmx` and mapped it through
+  Rojo on port 34872. A clean Rojo build now includes the ScreenGui.
+- HUDController binds the existing PlayerGui clone and clones only the saved
+  pet-card template for owned pets. No runtime ScreenGui/layout constructor
+  remains. Stud module now handles selection tint only.
+- Verified: Rojo build, diff whitespace, synchronized controller compilation,
+  one StarterGui root, all four button textures/tiles/strokes, hidden template.
+  Existing live-play and screenshot limitations remain; no new runtime claim.
+- Selected the ScreenGui in Studio Explorer. Inventory is hidden by default;
+  enable its Visible property to inspect the panel while editing.
+- UI revision and prior UI implementation are committed together with message
+  `feat: add StarterGui stud HUD and inventory`. Concurrent verification source
+  is excluded. Next: live snapshot/selection/lock and viewport tests.
+
+### UI Session — 2026-09-15 (latest implementation)
+
+- Completed: Money/Food HUD; inventory toggle/close; owned-pet cards; rarity,
+  Variant, Feed Level, base income, placement and lock details; selection;
+  Pen occupancy; loading/empty/error states; responsive uniform scaling.
+- Added reusable Stud components and centralized UIConfig with user texture
+  `rbxassetid://6927295847`, 100px tiles, 15px corners, 5px border/text strokes,
+  FredokaOne, bevel text strokes, and vertical gradients. Textured surfaces
+  use whole 100px tile dimensions before uniform viewport scaling.
+- UIService exposes caller-only snapshots and validated/throttled lock requests.
+  It does not accept currency values or expose pet creation/deletion. HUD polls
+  every two seconds; no save/schema changes. Base income is explicitly labelled
+  because Feed income and Money generation are not implemented yet.
+- Files modified: client/server bootstraps; added client/Controllers/HUDController,
+  client/UI/Stud, server/Services/UIService, shared/Config/UIConfig (all `.luau`),
+  and this handoff. UI work is uncommitted; prior concurrent handoff notes preserved.
+- Tests PASS: Rojo build; git diff --check; synchronized Studio Luau compilation;
+  actual HUD constructor and ImageButton token assertions through MCP in Edit mode.
+- Tests NOT RUN: live snapshots, owned-pet selection, lock requests, respawn,
+  touch/gamepad interaction and visual screenshot review. MCP start acknowledged
+  but connected peer stayed in Edit mode; screenshot capture timed out.
+  The temporary CoreGui preview was removed after constructor verification.
+- Connection: direct MCP JSON-RPC at http://localhost:58741/mcp works; built-in
+  tool bridge times out. No Computer Use used. Runtime remains blocked by the
+  Studio test-state issue described above, not by source compilation.
+- Next: restore a real Play session; verify fresh balances, empty inventory,
+  create test pets server-side, select/lock/unlock, reject foreign/invalid IDs
+  and request spam, verify respawn and narrow viewport layout. Then continue
+  PlotService/placement. Feed UI waits for authoritative pedestal/Feed state.
+- Last working commit remains `5ca59a0`; no commit created in this UI session.
 
 ### What Was Done
 

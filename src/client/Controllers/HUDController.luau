@@ -1,0 +1,139 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local Config = require(ReplicatedStorage.Shared.Config.UIConfig)
+local PetConfig = require(ReplicatedStorage.Shared.Config.PetConfig)
+local Stud = require(script.Parent.Parent.UI.Stud)
+local Text, Palette = Config.Text, Config.Palette
+local HUDController = {}
+
+local function numberText(value)
+	local digits = string.format("%.0f", value)
+	local grouped = digits:reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+	return grouped
+end
+
+function HUDController.Start()
+	-- Roblox clones the Studio-owned StarterGui tree into PlayerGui.
+	local gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("FeedYourPetUI")
+	local hud = gui:WaitForChild("HUD")
+	local hudScale = hud:WaitForChild("UIScale")
+	local moneyLabel = hud:WaitForChild("Money"):WaitForChild("Value")
+	local foodLabel = hud:WaitForChild("Food"):WaitForChild("Value")
+	local open = hud:WaitForChild("OpenInventory")
+	local modal = gui:WaitForChild("Inventory")
+	local modalScale = modal:WaitForChild("UIScale")
+	local layout = modal:WaitForChild("Panel"):WaitForChild("Layout")
+	local title = layout:WaitForChild("Title")
+	local close = layout:WaitForChild("Close")
+	local list = layout:WaitForChild("Pets")
+	local cardTemplate = list:WaitForChild("PetCardTemplate")
+	local empty = layout:WaitForChild("EmptyState")
+	local detail = layout:WaitForChild("PetDetails")
+	local lock = layout:WaitForChild("LockPet")
+	local slots = layout:WaitForChild("PenSlots")
+	local status = layout:WaitForChild("Status")
+	modal.Visible = false
+	cardTemplate.Visible = false
+	local snapshot, selectedId, remote
+	local busy = false
+	local signature = ""
+	local cards = {}
+	local function updateSelection()
+		local pet = snapshot and snapshot.Inventory[selectedId]
+		lock.Visible = pet ~= nil
+		if pet then
+			local definition = PetConfig.Species[pet.SpeciesId]
+			detail.Text = string.format(Text.Details, definition and definition.DisplayName or pet.SpeciesId,
+				pet.Rarity, pet.Variant, pet.FeedLevel, numberText(pet.BaseIncome), if pet.Placed then Text.Placed else Text.Stored)
+			lock.ButtonText.Text = if pet.Locked then Text.Unlock else Text.Lock
+		else
+			detail.Text = Text.Select
+		end
+		for id, card in cards do
+			Stud.Tint(card, if id == selectedId then Palette.Selected else Palette.Card)
+		end
+	end
+	local function render(state)
+		snapshot = state
+		moneyLabel.Text = string.format(Text.Money, numberText(state.Money))
+		foodLabel.Text = string.format(Text.Food, numberText(state.Food))
+		slots.Text = string.format(Text.Slots, state.PlacedCount, state.MaxPetSlots)
+		local pets, parts = {}, {}
+		for _, pet in state.Inventory do table.insert(pets, pet) end
+		table.sort(pets, function(a, b)
+			if a.CreatedAt == b.CreatedAt then return a.PetId < b.PetId end
+			return a.CreatedAt > b.CreatedAt
+		end)
+		for _, pet in pets do
+			table.insert(parts, pet.PetId .. ":" .. tostring(pet.Locked) .. ":" .. pet.FeedLevel)
+		end
+		local nextSignature = table.concat(parts, "|")
+		if nextSignature ~= signature then
+			signature = nextSignature
+			for _, card in cards do card:Destroy() end
+			table.clear(cards)
+			for index, pet in pets do
+				local definition = PetConfig.Species[pet.SpeciesId]
+				local card = cardTemplate:Clone()
+				card.Name = pet.PetId
+				card.Visible = true
+				card.ButtonText.Text = string.format(Text.Card,
+					definition and definition.DisplayName or pet.SpeciesId, pet.Rarity, pet.FeedLevel,
+					if pet.Locked then Text.Locked else Text.Unlocked)
+				card.Parent = list
+				card.LayoutOrder = index
+				cards[pet.PetId] = card
+				card.Activated:Connect(function() selectedId = pet.PetId; updateSelection() end)
+			end
+		end
+		title.Text = string.format(Text.Title, #pets)
+		empty.Text = Text.Empty
+		empty.Visible = #pets == 0
+		updateSelection()
+	end
+	open.Activated:Connect(function() modal.Visible = not modal.Visible end)
+	close.Activated:Connect(function() modal.Visible = false end)
+	UserInputService.InputBegan:Connect(function(input, processed)
+		if not processed and input.KeyCode == Enum.KeyCode.Escape then modal.Visible = false end
+	end)
+	lock.Activated:Connect(function()
+		local pet = snapshot and snapshot.Inventory[selectedId]
+		if busy or not remote or not pet then return end
+		busy = true
+		status.Text = Text.Saving
+		local ok, result = pcall(function() return remote:InvokeServer("SetLocked", pet.PetId, not pet.Locked) end)
+		status.Text = if ok and result.Ok then "" else Text.LockError
+		-- Do not change local pet data before an authoritative snapshot arrives.
+		task.wait(Config.RequestCooldown)
+		busy = false
+	end)
+	local function resize()
+		local size = gui.AbsoluteSize
+		hudScale.Scale = math.min(1, (size.X - 20) / 1000)
+		modalScale.Scale = math.min(1, (size.X - 20) / 1000, (size.Y - 130 * hudScale.Scale) / 800)
+	end
+	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
+	resize()
+	task.spawn(function()
+		remote = ReplicatedStorage:WaitForChild("PrototypeUI"):WaitForChild("Request")
+		while gui.Parent do
+			if not busy then
+				busy = true
+				local ok, state = pcall(function() return remote:InvokeServer("Snapshot") end)
+				if ok and state.Ok then
+					render(state)
+					status.Text = ""
+				else
+					status.Text = if ok and state.Code == "Loading" then Text.Loading else Text.Retry
+				end
+				task.wait(Config.RequestCooldown)
+				busy = false
+			end
+			task.wait(Config.SnapshotInterval)
+		end
+	end)
+	return gui
+end
+
+return HUDController
