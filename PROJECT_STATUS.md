@@ -19,8 +19,8 @@ Build a playable prototype that validates:
 **Hatch → Place → Earn → Farm → Feed → Grow → Risk → Explode / Survive**
 
 The versioned data foundation and server-side pet foundation are implemented.
-The immediate priority is runtime-testing PetService mutations, then building
-pet placement and Pen ownership.
+PetService mutations now pass a real Studio server integration test. The next
+priority is pet placement and Pen ownership.
 
 ## 2. Overall Progress
 
@@ -34,7 +34,7 @@ pet placement and Pen ownership.
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ⬜ Not Started | |
 | Egg System | ⬜ Not Started | |
-| Pet Identity | 🟦 Implemented / Needs Testing | GUID identity and six prototype species implemented; mutation smoke test pending. |
+| Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
 | HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
 | Pet Placement | ⬜ Not Started | |
@@ -119,14 +119,12 @@ HUD and inventory with inspection, selection, and authoritative locking.
 - Production DataStore persistence and cross-server session behavior still need
   an end-to-end test in a published test server or Studio with API access enabled.
 - Data schema migrations beyond v1 will be added only when the schema version changes.
-- PetService configuration and bootstrap were verified in Studio, but the full
-  create/lock/remove mutation smoke test remains pending because Roblox MCP was
-  unavailable after Studio restarted and Computer Use was stopped by user request.
+- PetService creation, unique IDs, snapshot isolation, lock/unlock and removal
+  passed 15 real Studio server integration checks through MCP.
 
 ## 6. Next Tasks
 
-1. Run the prepared PetService behavior checks through Roblox MCP: create two
-   pets, confirm unique IDs and snapshot isolation, lock/unlock, remove, and validate data.
+1. PetService mutation checks passed; verify HUD integration separately.
 2. Implement `PlotService` and server-authoritative pet placement/pickup with five slots.
 3. Add simple prototype pet spawning/wandering in the Studio-owned Pen.
 4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
@@ -152,6 +150,11 @@ work (including PetVerification.server.luau) is separate and is not staged by
 the UI session.
 
 ## 9. Known Issues / Blockers
+
+**Pet verification blocker resolved:** direct MCP on port 58742 can launch
+StudioTestService:ExecutePlayModeAsync("PetVerification") from Edit. The opt-in
+server test returns results through EndTest; no server MCP peer is needed.
+Connection failures below are historical; UI runtime tests remain separate.
 
 - Latest port retry (2026-09-15): user redirected to localhost:58742.
   Direct MCP at /mcp reaches the correct place's Edit peer and accepts
@@ -347,13 +350,17 @@ Food validation → Food deduction → Protection → Explosion roll
 - PASS — Rojo synchronized `PetConfig` and `PetService`; Studio syntax analysis found no errors.
 - PASS — One-player Studio startup loaded data and started PetService with six species.
 - PASS — Final PetService Rojo build succeeds and `git diff --check` is clean.
-- NOT RUN — End-to-end CreatePet/GetPet/SetLocked/RemovePet runtime smoke test.
+- PASS — All 15 PetVerification server checks: same-species unique GUIDs,
+  creation defaults, create/read/inventory snapshot isolation, lock, repeated
+  lock, locked removal rejection, unlock, successful removal, duplicate removal
+  rejection, other-pet preservation, unknown species rejection, invalid lock
+  type rejection, and final player schema validation. Memory mode asserted.
 
 ## 15. Last Known Working State
 
 No playable prototype state has been established. Git, Rojo, the bootstrap,
 schema v1, DataService, and the server-side pet foundation are implemented.
-Interactive pet mutation and live DataStore tests remain before full verification.
+Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
@@ -374,6 +381,19 @@ Interactive pet mutation and live DataStore tests remain before full verificatio
   at a time.
 
 ## 18. Session Handoff
+
+### Pet Verification — 2026-09-15
+
+- Added src/server/PetVerification.server.luau, gated by IsStudio and explicit
+  StudioTestService test arguments. No service implementation changes.
+- All 15 checks passed on an actual Studio server using memory data. Both
+  generated pets were removed by the test; the test ended automatically.
+- From direct MCP execute_luau at localhost:58742/mcp, task.spawn a pcall of
+  StudioTestService:ExecutePlayModeAsync("PetVerification") and retain the
+  returned result in an Edit-side attribute for polling. This avoids MCP's
+  timeout and the missing server-peer problem. Result was passed=true.
+- Existing concurrent UI changes preserved; no Computer Use used.
+- Next: PlotService/placement. UI runtime and real DataStore tests are pending.
 
 ### StarterGui Revision — 2026-09-15
 
