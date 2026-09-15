@@ -32,7 +32,7 @@ tests. The next priority is pet placement and pickup in the existing Pens.
 | Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
 | Player Data Schema | ✅ Complete / Verified | Version 1 defaults, validation, cloning, and migration boundary implemented. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
-| Plot System | ✅ Complete / Verified | 60 static Workspace plots; fenced Pens, personal spawn/respawn, five slots, ownership and freed-plot reuse verified. |
+| Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ⬜ Not Started | |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
@@ -69,8 +69,8 @@ personal spawn and five server-validated slot references. Pet placement is next.
 
 ## 4. Completed
 
-- Added 60 static, editable plots under Workspace.PlayerPlots, matching the
-  current 60-player place limit within a compact grid on the existing baseplate.
+- Revised Workspace.PlayerPlots to six static, editable plots per user request:
+  three per side, facing a 40-stud empty center lane. Conveyor is not implemented.
 - Each plot has anchored ground, a fenced Pen with entrance, five slot markers,
   personal Spawn and owner sign. No runtime model generator or cloning remains.
 - Added PlotService ownership assignment, respawn routing, release/reuse, and
@@ -158,6 +158,10 @@ Prior UI and pet verification work are already committed.
 
 ## 9. Known Issues / Blockers
 
+- Six-player revision: Players.MaxPlayers is read-only through MCP and still
+  reports 60. Set Maximum Players to 6 in Creator Dashboard for place
+  127663486570625. PlotConfig.PlayerCapacity is six; excess arrivals are rejected
+  when no plot is free, but that guard does not configure Roblox matchmaking.
 - Latest plot session: all 18 multiplayer assertions pass. Rojo's listener was
   restarted on port 34872, but the Studio plugin did not reconnect automatically.
   Current changed scripts were synchronized from their filesystem contents via
@@ -414,6 +418,22 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Six-player Layout Revision — 2026-09-15 (latest)
+
+- PASS: all 19 multiplayer assertions, including the revised six-plot layout,
+  three plots per side, respawn, release and reuse. Rojo build/diff checks pass.
+- Rojo live sync is connected again on port 34872; prior disconnected notes
+  below are historical. Studio returned to Edit mode after the test.
+- User clarified six players per server, three plots on each side and a future
+  conveyor in the middle. Removed 54 extra plots (recoverable in commit 697648a),
+  repositioned/rotated six existing Models, and updated the static model asset.
+- Ground centers: X=-40/+40, Z=-48/0/48. The empty middle lane is 40 studs wide.
+  Five pet slots per Pen remain unchanged. No conveyor logic/model was added.
+- PlotConfig.PlayerCapacity=6; startup validates six plots independently of the
+  platform setting and warns if Maximum Players is not 6. Physical slots bound
+  assignment to six players. Dashboard player limit remains an external step.
+- Updated docs/plots.md and PlotVerification for the six-plot layout.
 
 ### Plot Session — 2026-09-15 (latest)
 

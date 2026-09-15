@@ -1,7 +1,8 @@
 # Prototype plots
 
-`Workspace.PlayerPlots` contains 60 prebuilt plot Models, matching the current
-place's 60-player limit. Each has a Spawn, an OwnerSign, and a fenced Pen with
+`Workspace.PlayerPlots` contains six prebuilt plot Models: three on each side,
+facing an empty 40-stud center lane reserved for a future conveyor. No conveyor
+is implemented. Each has a Spawn, an OwnerSign, and a fenced Pen with
 five numbered slot markers. PlotService never generates or clones geometry.
 
 The static Workspace hierarchy is exported in `src/world/PlayerPlots.rbxmx`
@@ -12,7 +13,10 @@ The rest of Workspace remains outside Rojo's ownership.
 PlotService assigns one free plot per Player, directs initial spawns and
 respawns to it, and releases ownership on PlayerRemoving. Freed plots are
 reused. Assignment is session-only; it does not modify saved inventory or
-placed-pet records. Geometry must provide at least the server's player limit.
+placed-pet records. PlotConfig.PlayerCapacity is six. Set the place's Maximum
+Players to 6 in Creator Dashboard as well: MCP cannot write Players.MaxPlayers.
+Until that external setting changes, Roblox may admit extra players, who are
+rejected when no plot is free. The script limit is not a matchmaking setting.
 
 Server callers can use GetPlot(player), GetSlotCapacity(player), and
 GetSlotCFrame(player, index). Slot access requires loaded player data and is

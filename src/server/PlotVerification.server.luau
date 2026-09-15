@@ -27,7 +27,13 @@ local ok, failure = xpcall(function()
 	local a, b = plots.GetPlot(first), plots.GetPlot(second)
 	check(a ~= b, "Distinct plots for two players")
 	check(a:GetAttribute("OwnerUserId") == first.UserId and b:GetAttribute("OwnerUserId") == second.UserId, "Server ownership matches players")
-	check(#workspace.PlayerPlots:GetChildren() >= players.MaxPlayers, "Enough static plots for full server")
+	check(#workspace.PlayerPlots:GetChildren() == 6, "Exactly six static plots")
+	local left, right = 0, 0
+	for _, model in workspace.PlayerPlots:GetChildren() do
+		if model.Ground.Position.X < 0 then left += 1 else right += 1 end
+		assert(math.abs(model.Ground.Position.X) == 40, "Center lane must remain clear")
+	end
+	check(left == 3 and right == 3, "Three plots per side with empty center lane")
 	check(first.RespawnLocation == a.Spawn and second.RespawnLocation == b.Spawn, "Personal respawn locations")
 	check(#a.Pen.Slots:GetChildren() == 5 and #b.Pen.Slots:GetChildren() == 5, "Exactly five slots per Pen")
 	check(plots.GetSlotCapacity(first) == 5 and plots.GetSlotCapacity(second) == 5, "Five active slots after data load")

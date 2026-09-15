@@ -75,7 +75,10 @@ function PlotService.Start()
 		end
 		assert(model:FindFirstChild("OwnerSign") and model.OwnerSign:FindFirstChild("SignGui") and model.OwnerSign.SignGui:FindFirstChild("OwnerText"), "Plot owner sign missing")
 	end
-	assert(#models >= Players.MaxPlayers, "Add enough Workspace plots for the server player limit")
+	assert(#models == Config.PlayerCapacity, "Workspace must contain exactly six player plots")
+	if Players.MaxPlayers ~= Config.PlayerCapacity then
+		warn("Set this place's Maximum Players to 6 in Creator Dashboard; plot capacity is six.")
+	end
 	for index, model in models do
 		model:SetAttribute("PlotId", index)
 		model:SetAttribute("OwnerUserId", 0)
