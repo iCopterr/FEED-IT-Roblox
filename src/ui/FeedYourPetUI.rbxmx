@@ -894,7 +894,7 @@
 <float name="BorderSizePixel">0</float>
 <float name="ZIndex">1</float>
 <bool name="Visible">false</bool>
-<float name="LayoutOrder">0</float>
+<float name="LayoutOrder">1</float>
 <bool name="ClipsDescendants">false</bool>
 <bool name="Active">true</bool>
 <bool name="Selectable">true</bool>

@@ -444,6 +444,11 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   handler, malformed/foreign requests, snapshot isolation and throttling.
 - Rojo build, synchronized Luau compilation and git diff --check pass.
   Studio returned to Edit after both multiplayer tests.
+- Final editor check found an extra placement-button preview from asset export.
+  Removed both preview copies, restored one from the authored lock-button style,
+  and verified exactly one PlacePet and one LockPet. Static asset also has one
+  each. Rojo did not recreate an editor-deleted button automatically; recheck
+  this UI subtree after a future full reconnect. No pet/plot data was removed.
 - Actual button input and published DataStore reconnect remain unverified.
   Studio uses memory mode; no live data writes or Computer Use performed.
 - MCP direct /mcp at localhost:58741 and Rojo localhost:34872 are connected.
