@@ -31,6 +31,7 @@ function HUDController.Start()
 	local empty = layout:WaitForChild("EmptyState")
 	local detail = layout:WaitForChild("PetDetails")
 	local lock = layout:WaitForChild("LockPet")
+	local place = layout:WaitForChild("PlacePet")
 	local slots = layout:WaitForChild("PenSlots")
 	local status = layout:WaitForChild("Status")
 	modal.Visible = false
@@ -42,7 +43,9 @@ function HUDController.Start()
 	local function updateSelection()
 		local pet = snapshot and snapshot.Inventory[selectedId]
 		lock.Visible = pet ~= nil
+		place.Visible = pet ~= nil
 		if pet then
+			place.ButtonText.Text = if pet.Placed then Text.Pickup else Text.Place
 			local definition = PetConfig.Species[pet.SpeciesId]
 			detail.Text = string.format(Text.Details, definition and definition.DisplayName or pet.SpeciesId,
 				pet.Rarity, pet.Variant, pet.FeedLevel, numberText(pet.BaseIncome), if pet.Placed then Text.Placed else Text.Stored)
@@ -106,6 +109,23 @@ function HUDController.Start()
 		status.Text = if ok and result.Ok then "" else Text.LockError
 		-- Do not change local pet data before an authoritative snapshot arrives.
 		task.wait(Config.RequestCooldown)
+		busy = false
+	end)
+	place.Activated:Connect(function()
+		local pet = snapshot and snapshot.Inventory[selectedId]
+		if busy or not remote or not pet then return end
+		busy = true
+		status.Text = Text.Saving
+		local ok, result = pcall(function()
+			return remote:InvokeServer(if pet.Placed then "PickupPet" else "PlacePet", pet.PetId)
+		end)
+		status.Text = if ok and result.Ok then "" elseif ok and result.Code == "PenFull" then Text.PenFull else Text.PlacementError
+		task.wait(Config.RequestCooldown)
+		if ok and result.Ok then
+			local refreshed, state = pcall(function() return remote:InvokeServer("Snapshot") end)
+			if refreshed and state.Ok then render(state) end
+			task.wait(Config.RequestCooldown)
+		end
 		busy = false
 	end)
 	local function resize()

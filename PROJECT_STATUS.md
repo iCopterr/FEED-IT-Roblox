@@ -20,7 +20,8 @@ Build a playable prototype that validates:
 
 The versioned data foundation and server-side pet foundation are implemented.
 PetService mutations and plot ownership pass real Studio server integration
-tests. The next priority is pet placement and pickup in the existing Pens.
+tests. Pet placement/pickup is implemented; the next gameplay step is simple
+pet wandering, followed by server-authoritative income.
 
 ## 2. Overall Progress
 
@@ -37,7 +38,7 @@ tests. The next priority is pet placement and pickup in the existing Pens.
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
 | HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
-| Pet Placement | ⬜ Not Started | |
+| Pet Placement | ✅ Server / Visuals Verified | First-free placement, five-slot cap, inventory pickup, editable templates; multiplayer checks pass. Live DataStore rejoin and button-input checks remain separate. |
 | Pet Wandering | ⬜ Not Started | |
 | Money Generation | ⬜ Not Started | |
 | Farm | ⬜ Not Started | |
@@ -60,14 +61,20 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Player plots and five-slot Pens
+**Current Feature:** Pet placement and pickup
 
-**Status:** ✅ Complete / Verified for plot ownership and slot capacity
+**Status:** Implemented; server/visual multiplayer checks pass
 
-**Objective:** Assign one prebuilt Workspace plot per player, with a fenced Pen,
-personal spawn and five server-validated slot references. Pet placement is next.
+**Objective:** Place owned pets in five plot slots and pick them up without
+changing identity or losing inventory data.
 
 ## 4. Completed
+
+- Added PlacementService, atomic validated placement/pickup, template preflight,
+  idempotence, saved-state visual reconciliation and leave cleanup.
+- Added inventory Place Pet/Pick Up controls and throttled caller-only requests.
+- Authored six editable pet templates directly in Workspace through MCP and
+  exported the static asset for Rojo/Git. No runtime geometry generator added.
 
 - Revised Workspace.PlayerPlots to six static, editable plots per user request:
   three per side, facing a 40-stud empty center lane. Conveyor is not implemented.
@@ -133,28 +140,32 @@ personal spawn and five server-validated slot references. Pet placement is next.
 
 ## 6. Next Tasks
 
-1. PetService mutation checks passed; verify HUD integration separately.
-2. Implement server-authoritative pet placement/pickup using the existing PlotService slots.
-3. Add simple prototype pet spawning/wandering in the Studio-owned Pen.
+1. Verify actual inventory button input across desktop/touch/gamepad.
+2. Add simple prototype pet wandering within the owner's Pen.
+3. Implement centralized server-authoritative pet income.
 4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
 
 ## 7. Files Modified This Session
 
 ```text
 default.project.json
-docs/plots.md
-src/server/Services/PlotService.luau
-src/server/PlotVerification.server.luau
+docs/placement.md
+src/server/Services/PlacementService.luau
+src/server/Services/UIService.luau
+src/server/PlacementVerification.server.luau
 src/server/init.server.luau
-src/shared/Config/PlotConfig.luau
-src/world/PlayerPlots.rbxmx
+src/client/Controllers/HUDController.luau
+src/shared/Config/PlacementConfig.luau
+src/shared/Config/UIConfig.luau
+src/world/PetTemplates.rbxmx
+src/ui/FeedYourPetUI.rbxmx
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
 
-Plot implementation and static asset are being committed as one logical unit.
-Prior UI and pet verification work are already committed.
+Placement implementation, static templates/UI, tests and handoff are being
+committed as one logical unit. Prior plot work is committed as 5564bc3.
 
 ## 9. Known Issues / Blockers
 
@@ -212,8 +223,10 @@ Plot architecture:
   geometry. A free plot is assigned to each Player instance and released on leave.
 - Ownership attributes are display metadata; the private server map is authoritative.
 - Plot number is session-only. Release never modifies Inventory/PlacedPetIds.
-- Five physical slots are capped against loaded MaxPetSlots. No placement Remote
-  exists yet; clients cannot choose plot ownership or expand capacity.
+- Five physical slots are capped against loaded MaxPetSlots. Placement requests
+  cannot choose plot ownership, slots, or expand capacity.
+- PlacementService preserves inventory identity and reconciles presentation from
+  saved placement. Pickup means return to inventory, not the future Carry system.
 
 Planned server services:
 
@@ -401,9 +414,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `c1342c1` (preceding the current plot implementation commit)
+**Commit:** `5564bc3` (preceding the current placement implementation commit)
 
-**Message:** `test: verify pet mutations in Studio server`
+**Message:** `fix: arrange six player plots around reserved conveyor lane`
 
 ## 17. Important Decisions
 
@@ -418,6 +431,28 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Placement / Pickup — 2026-09-15 (latest)
+
+- Implemented server-authoritative placement and inventory pickup. Locked pets
+  may move; repeated requests do not duplicate pets. Exactly five active slots.
+- Six static templates in Workspace.PetTemplates; clones live in Pen.ActivePets.
+  Save/autosave uses existing schema v1 fields. Leave clears visuals, not data.
+- First multiplayer run: all 23 checks passed, including template failure,
+  missing-model rebuild, memory save/migration and departing/replacement players.
+  Final expanded run: all 28 assertions PASS, including the exact UI request
+  handler, malformed/foreign requests, snapshot isolation and throttling.
+- Rojo build, synchronized Luau compilation and git diff --check pass.
+  Studio returned to Edit after both multiplayer tests.
+- Actual button input and published DataStore reconnect remain unverified.
+  Studio uses memory mode; no live data writes or Computer Use performed.
+- MCP direct /mcp at localhost:58741 and Rojo localhost:34872 are connected.
+  Older connection blockers below are historical. Maximum Players still needs
+  the separate Dashboard setting to 6; code has only six assignable plots.
+- Next: wandering, then income. Do not implement the reserved-center conveyor.
+- Files: PlacementService, PlacementConfig, PlacementVerification, UIService,
+  HUDController, UIConfig, server bootstrap, static PetTemplates/FeedYourPetUI,
+  default.project.json, docs/placement.md and this handoff.
 
 ### Six-player Layout Revision — 2026-09-15 (latest)
 
