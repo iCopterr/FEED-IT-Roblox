@@ -26,6 +26,8 @@ local UIConfig = {
 		Saving = "Saving…", Retry = "Unable to refresh. Retrying…",
 		LockError = "Could not change lock. Please try again.",
 		Place = "PLACE PET", Pickup = "PICK UP",
+		Equip = "EQUIP PET", Unequip = "UNEQUIP",
+		PickupTooFar = "Walk closer to your placed pet to pick it up.",
 		PenFull = "Your Pen is full. Pick up a pet first.",
 		PlacementError = "Could not move pet. Please try again.",
 		Slots = "PEN  %d / %d", Card = "%s\n%s • Feed %d\n%s",

@@ -74,8 +74,8 @@ local ok, failure = xpcall(function()
 		end
 		error("Request remained throttled")
 	end
-	check(request("PickupPet", ids[1]).Ok and request("PlacePet", ids[1]).Ok, "Remote handler accepts owned pickup and placement")
-	check(not request("PlacePet", foreign).Ok and not request("PickupPet", {}).Ok, "Remote handler rejects foreign and malformed input")
+	check(not request("PickupPet", ids[1]).Ok and not request("PlacePet", ids[1]).Ok, "Legacy placement remotes disabled; carry prompt required")
+	check(not request("EquipPet", foreign).Ok and not request("EquipPet", {}).Ok, "Remote handler rejects foreign and malformed input")
 	local snapshot = request("Snapshot")
 	check(snapshot.Ok and snapshot.PlacedCount == 5 and snapshot.Inventory[ids[1]].Placed, "UI snapshot reflects authoritative placement")
 	check(ui.HandleRequest(a, "PickupPet", ids[1]).Code == "Cooldown", "Remote spam is throttled")

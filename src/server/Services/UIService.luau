@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(script.Parent.DataService)
 local PetService = require(script.Parent.PetService)
-local PlacementService = require(script.Parent.PlacementService)
+local CarryService = require(script.Parent.CarryService)
 local Config = require(ReplicatedStorage.Shared.Config.UIConfig)
 local UIService = {}
 local lastRequest = {}
@@ -25,9 +25,11 @@ function UIService.HandleRequest(player, action, petId, locked)
 		local ok = PetService.SetLocked(player, petId, locked)
 		return { Ok = ok, Code = if ok then "Updated" else "Rejected" }
 	elseif action ~= "Snapshot" then
-		if action == "PlacePet" or action == "PickupPet" then
-			local ok, code = (if action == "PlacePet" then PlacementService.PlacePet else PlacementService.PickupPet)(player, petId)
+		if action == "EquipPet" then
+			local ok, code = CarryService.Equip(player, petId)
 			return { Ok = ok, Code = code }
+		elseif action == "UnequipPet" then
+			return { Ok = CarryService.Unequip(player) }
 		end
 		return { Ok = false, Code = "InvalidRequest" }
 	end
@@ -39,6 +41,7 @@ function UIService.HandleRequest(player, action, petId, locked)
 		Ok = true, Money = data.Money, Food = data.Food,
 		MaxPetSlots = data.MaxPetSlots, PlacedCount = placedCount,
 		Inventory = PetService.GetInventory(player),
+		CarriedPetId = CarryService.GetPetId(player),
 	}
 end
 

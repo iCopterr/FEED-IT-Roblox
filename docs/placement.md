@@ -1,9 +1,24 @@
 # Pet placement and pickup
 
-Select an owned pet in MY PETS, then choose PLACE PET or PICK UP. Placement
-chooses the first free slot on the caller's plot, up to five pets. Pickup returns
-the same pet to inventory; it is not physical carrying. Locked pets support both
-actions. There is no hatch flow or automatic pet grant yet.
+Select an owned pet in MY PETS, then choose EQUIP PET. The pet appears attached
+to the character's right hand. Walk into your Pen and hold E for one second to
+place it in the first free slot, up to five pets. Select a placed pet and use
+PICK UP while within ten studs to hold it again. UNEQUIP returns it to inventory.
+Locked pets support these actions. The developer's empty Studio memory profile
+receives one test pet; there is no production starter reward or hatch flow yet.
+
+CarryService keeps transient carry state separate from persisted placement.
+It prepares the hand model before removing a placed pet, checks server distance,
+ownership, life/character state and elapsed hold time, and uses PlacementService
+for the final transaction. Walking away cancels a hold. Full Pens keep the pet
+held; death/respawn/leave clear only the held visual. No schema change is needed.
+The UI's old direct PlacePet/PickupPet requests are no longer accepted.
+CarryController hides other players' Pen prompts; this is presentation only.
+The server independently validates even forged prompt events.
+
+CarryVerification runs with StudioTestService:ExecuteMultiplayerTestAsync(2,
+"CarryVerification") using memory data. It exercises server carry/hold logic;
+actual keyboard/touch/gamepad input and hand pose still need visual playtesting.
 
 PlacementService owns placement mutations. Inventory records, PlacedPetIds,
 Placed and PlotSlot change together without yielding, with schema validation

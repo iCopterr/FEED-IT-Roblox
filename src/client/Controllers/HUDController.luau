@@ -45,7 +45,7 @@ function HUDController.Start()
 		lock.Visible = pet ~= nil
 		place.Visible = pet ~= nil
 		if pet then
-			place.ButtonText.Text = if pet.Placed then Text.Pickup else Text.Place
+			place.ButtonText.Text = if snapshot.CarriedPetId == pet.PetId then Text.Unequip elseif pet.Placed then Text.Pickup else Text.Equip
 			local definition = PetConfig.Species[pet.SpeciesId]
 			detail.Text = string.format(Text.Details, definition and definition.DisplayName or pet.SpeciesId,
 				pet.Rarity, pet.Variant, pet.FeedLevel, numberText(pet.BaseIncome), if pet.Placed then Text.Placed else Text.Stored)
@@ -117,9 +117,10 @@ function HUDController.Start()
 		busy = true
 		status.Text = Text.Saving
 		local ok, result = pcall(function()
-			return remote:InvokeServer(if pet.Placed then "PickupPet" else "PlacePet", pet.PetId)
+			return remote:InvokeServer(if snapshot.CarriedPetId == pet.PetId then "UnequipPet" else "EquipPet", pet.PetId)
 		end)
-		status.Text = if ok and result.Ok then "" elseif ok and result.Code == "PenFull" then Text.PenFull else Text.PlacementError
+		status.Text = if ok and result.Ok then "" elseif ok and result.Code == "TooFar" then Text.PickupTooFar else Text.PlacementError
+		if ok and result.Ok and snapshot.CarriedPetId ~= pet.PetId then modal.Visible = false end
 		task.wait(Config.RequestCooldown)
 		if ok and result.Ok then
 			local refreshed, state = pcall(function() return remote:InvokeServer("Snapshot") end)

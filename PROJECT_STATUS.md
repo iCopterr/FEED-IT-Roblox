@@ -43,7 +43,7 @@ pet wandering, followed by server-authoritative income.
 | Money Generation | ⬜ Not Started | |
 | Farm | ⬜ Not Started | |
 | Food | ⬜ Not Started | |
-| Carry System | ⬜ Not Started | |
+| Carry System | ✅ Server Verified | Equip/unequip, hand-welded template, nearby pickup, hold-E Pen placement; 19 multiplayer checks pass. Physical input/pose review pending. |
 | Feeding Pedestal | ⬜ Not Started | |
 | Feed UI | ⬜ Not Started | |
 | Feed Transaction | ⬜ Not Started | |
@@ -61,12 +61,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Pet placement and pickup
+**Current Feature:** Equip, carry and hold-E Pen placement
 
 **Status:** Implemented; server/visual multiplayer checks pass
 
-**Objective:** Place owned pets in five plot slots and pick them up without
-changing identity or losing inventory data.
+**Objective:** Equip an owned pet, visibly hold it, then hold E at the owner's
+Pen to place it safely in one of five slots.
 
 ## 4. Completed
 
@@ -148,24 +148,25 @@ changing identity or losing inventory data.
 ## 7. Files Modified This Session
 
 ```text
-default.project.json
 docs/placement.md
-src/server/Services/PlacementService.luau
+src/server/Services/CarryService.luau
 src/server/Services/UIService.luau
+src/server/CarryVerification.server.luau
 src/server/PlacementVerification.server.luau
 src/server/init.server.luau
+src/client/init.client.luau
+src/client/Controllers/CarryController.luau
 src/client/Controllers/HUDController.luau
-src/shared/Config/PlacementConfig.luau
+src/shared/Config/CarryConfig.luau
 src/shared/Config/UIConfig.luau
-src/world/PetTemplates.rbxmx
 src/ui/FeedYourPetUI.rbxmx
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
 
-Placement implementation, static templates/UI, tests and handoff are being
-committed as one logical unit. Prior plot work is committed as 5564bc3.
+Carry implementation, inventory changes, tests and handoff are being committed
+as one logical unit. Previous developer test-pet grant is committed as a46d870.
 
 ## 9. Known Issues / Blockers
 
@@ -226,7 +227,8 @@ Plot architecture:
 - Five physical slots are capped against loaded MaxPetSlots. Placement requests
   cannot choose plot ownership, slots, or expand capacity.
 - PlacementService preserves inventory identity and reconciles presentation from
-  saved placement. Pickup means return to inventory, not the future Carry system.
+  saved placement. CarryService now handles visible pickup/equip; unequip returns
+  the pet to inventory. Carry state is transient, not a new persisted pet record.
 
 Planned server services:
 
@@ -414,9 +416,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `5564bc3` (preceding the current placement implementation commit)
+**Commit:** `a46d870` (preceding the current carry implementation commit)
 
-**Message:** `fix: arrange six player plots around reserved conveyor lane`
+**Message:** `feat: seed developer Studio inventory with a test pet`
 
 ## 17. Important Decisions
 
@@ -431,6 +433,33 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Equip / Hold E — 2026-09-15 (latest)
+
+- Implemented MY PETS -> EQUIP PET -> walk into own Pen -> hold E for one second.
+  Placed pets can be picked into the hand within ten studs; UNEQUIP stores them.
+- CarryService welds a scaled clone of the authored template to RightHand (R15)
+  or Right Arm (R6). Massless/noncolliding parts preserve the character assembly.
+  No world geometry generator, pedestal, feeding, or conveyor was added.
+- Server independently validates pet/plot ownership, live character, proximity,
+  elapsed hold, cancellation and capacity. Client filters prompt visibility only.
+  Old direct PlacePet/PickupPet UI requests are rejected; no hold bypass remains.
+- Full Pen keeps the pet held. Switching/unequipping, death, respawn, removal and
+  leave clean presentation without deleting inventory. Preparing the held model
+  happens before removing persisted placement; existing schema v1 remains valid.
+- PASS: all 19 CarryVerification multiplayer assertions. Initial run stopped at
+  a deferred respawn cleanup assertion; cleanup now checks character identity and
+  the test waits for the new character and cleanup before asserting. Rerun passes.
+- PASS: all 28 updated PlacementVerification regression assertions; Rojo build,
+  git diff --check and synchronized Studio script compilation. One Equip button
+  confirmed in StarterGui. Tests ended automatically and preserved editor assets.
+- Actual keyboard/touch/gamepad activation and visual hand pose are not verified;
+  tests call the same server hold methods and inspect the configured E prompt.
+- Files changed: CarryService, CarryController, CarryConfig, CarryVerification;
+  both bootstraps, UIService, HUDController, UIConfig, FeedYourPetUI.rbxmx,
+  PlacementVerification, docs/placement.md, PROJECT_STATUS.md.
+- Next: manual interaction/pose review, simple wandering, then income. Previous
+  live DataStore and Dashboard six-player setting limitations still apply.
 
 ### Developer Test Pet — 2026-09-15 (latest)
 

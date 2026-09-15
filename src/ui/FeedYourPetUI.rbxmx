@@ -951,7 +951,7 @@
 <token name="AutomaticSize">0</token>
 <string name="Name">ButtonText</string>
 <bool name="Archivable">true</bool>
-<string name="Text">PLACE PET</string>
+<string name="Text">EQUIP PET</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
