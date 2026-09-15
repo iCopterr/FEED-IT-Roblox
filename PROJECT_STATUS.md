@@ -19,8 +19,8 @@ Build a playable prototype that validates:
 **Hatch → Place → Earn → Farm → Feed → Grow → Risk → Explode / Survive**
 
 The versioned data foundation and server-side pet foundation are implemented.
-PetService mutations now pass a real Studio server integration test. The next
-priority is pet placement and Pen ownership.
+PetService mutations and plot ownership pass real Studio server integration
+tests. The next priority is pet placement and pickup in the existing Pens.
 
 ## 2. Overall Progress
 
@@ -32,7 +32,7 @@ priority is pet placement and Pen ownership.
 | Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
 | Player Data Schema | ✅ Complete / Verified | Version 1 defaults, validation, cloning, and migration boundary implemented. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
-| Plot System | ⬜ Not Started | |
+| Plot System | ✅ Complete / Verified | 60 static Workspace plots; fenced Pens, personal spawn/respawn, five slots, ownership and freed-plot reuse verified. |
 | Egg System | ⬜ Not Started | |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
@@ -60,15 +60,24 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** StarterGui Stud HUD and Inventory UI
+**Current Feature:** Player plots and five-slot Pens
 
-**Status:** 🟦 Implemented / Needs Testing
+**Status:** ✅ Complete / Verified for plot ownership and slot capacity
 
-**Objective:** Expose the existing pet foundation through a Stud-themed currency
-HUD and inventory with inspection, selection, and authoritative locking.
+**Objective:** Assign one prebuilt Workspace plot per player, with a fenced Pen,
+personal spawn and five server-validated slot references. Pet placement is next.
 
 ## 4. Completed
 
+- Added 60 static, editable plots under Workspace.PlayerPlots, matching the
+  current 60-player place limit within a compact grid on the existing baseplate.
+- Each plot has anchored ground, a fenced Pen with entrance, five slot markers,
+  personal Spawn and owner sign. No runtime model generator or cloning remains.
+- Added PlotService ownership assignment, respawn routing, release/reuse, and
+  slot access capped by both the physical five-slot limit and loaded player data.
+- Exported the real Studio hierarchy to src/world/PlayerPlots.rbxmx and mapped
+  only Workspace.PlayerPlots through Rojo; unrelated world Instances preserved.
+- Added opt-in multiplayer PlotVerification and passed all 18 assertions.
 - Initialized a local Git repository using the `main` branch.
 - Configured `origin` as `https://github.com/iCopterr/FEED-IT-Roblox.git`.
 - Added a pinned Rojo toolchain definition and Rojo project file.
@@ -125,31 +134,37 @@ HUD and inventory with inspection, selection, and authoritative locking.
 ## 6. Next Tasks
 
 1. PetService mutation checks passed; verify HUD integration separately.
-2. Implement `PlotService` and server-authoritative pet placement/pickup with five slots.
+2. Implement server-authoritative pet placement/pickup using the existing PlotService slots.
 3. Add simple prototype pet spawning/wandering in the Studio-owned Pen.
 4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
 
 ## 7. Files Modified This Session
 
 ```text
-src/ui/FeedYourPetUI.rbxmx
 default.project.json
-src/client/Controllers/HUDController.luau
-src/client/UI/Stud.luau
-src/client/init.client.luau
-src/server/Services/UIService.luau
+docs/plots.md
+src/server/Services/PlotService.luau
+src/server/PlotVerification.server.luau
 src/server/init.server.luau
-src/shared/Config/UIConfig.luau
+src/shared/Config/PlotConfig.luau
+src/world/PlayerPlots.rbxmx
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
 
-UI changes are being committed as one logical unit. Concurrent verification
-work (including PetVerification.server.luau) is separate and is not staged by
-the UI session.
+Plot implementation and static asset are being committed as one logical unit.
+Prior UI and pet verification work are already committed.
 
 ## 9. Known Issues / Blockers
+
+- Latest plot session: all 18 multiplayer assertions pass. Rojo's listener was
+  restarted on port 34872, but the Studio plugin did not reconnect automatically.
+  Current changed scripts were synchronized from their filesystem contents via
+  MCP for testing; reconnect Rojo before relying on future live sync. An initial
+  run used stale code and was discarded. Filesystem/build remain authoritative.
+- Static model edits in Studio must be exported back to PlayerPlots.rbxmx.
+  Rojo does not reverse-export editor changes. See docs/plots.md.
 
 **Pet verification blocker resolved:** direct MCP on port 58742 can launch
 StudioTestService:ExecutePlayModeAsync("PetVerification") from Edit. The opt-in
@@ -184,6 +199,17 @@ Connection failures below are historical; UI runtime tests remain separate.
 These warnings do not block Rojo, MCP, or prototype development.
 
 ## 10. Architecture Notes
+
+Plot architecture:
+
+- User preference: build models directly as editable Workspace Instances;
+  do not add runtime scripts that generate fences or other world geometry.
+- PlotService binds the static PlayerPlots folder. It does not create or clone
+  geometry. A free plot is assigned to each Player instance and released on leave.
+- Ownership attributes are display metadata; the private server map is authoritative.
+- Plot number is session-only. Release never modifies Inventory/PlacedPetIds.
+- Five physical slots are capped against loaded MaxPetSlots. No placement Remote
+  exists yet; clients cannot choose plot ownership or expand capacity.
 
 Planned server services:
 
@@ -264,8 +290,8 @@ Ownership boundary:
 
 - `src/` contains filesystem/Rojo-managed code.
 - The Roblox place contains Studio-managed world Instances.
-- `default.project.json` maps code roots plus the StarterGui UI model.
-  The prototype world remains Studio-owned.
+- `default.project.json` maps code roots, the StarterGui UI model and the static
+  Workspace.PlayerPlots model asset. Other world Instances remain Studio-owned.
 - `StarterGui.FeedYourPetUI` was authored using MCP and exported to
   `src/ui/FeedYourPetUI.rbxmx` for Rojo/Git persistence. Re-export Studio UI
   edits to this model before a filesystem resync; Rojo sync is not a reverse export.
@@ -316,6 +342,13 @@ Food validation → Food deduction → Protection → Explosion roll
 
 ## 14. Tests Performed
 
+- PASS — 18 real multiplayer PlotVerification assertions: distinct ownership,
+  owner metadata, full-server plot capacity, personal respawn references, five
+  physical/active slots, all five slot CFrames, invalid-index rejection, anchored
+  and fenced geometry, initial spawn, respawn ownership, departing-player release,
+  freed-plot reuse, and new-owner metadata. Test ended automatically.
+- PASS — 60 Studio models validated as identical translated layouts before
+  export; all 60 have unique grid positions. Rojo static-asset build and diff check pass.
 - PASS — Confirmed the GitHub remote exists and was empty before local initialization.
 - PASS — `rojo build` generated `build/FeedYourPet.rbxlx` (2,054 bytes).
 - PASS — `rojo serve` listened on `localhost:34872`.
@@ -364,9 +397,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `5ca59a0`
+**Commit:** `c1342c1` (preceding the current plot implementation commit)
 
-**Message:** `feat: add server-authoritative pet foundation`
+**Message:** `test: verify pet mutations in Studio server`
 
 ## 17. Important Decisions
 
@@ -381,6 +414,21 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Plot Session — 2026-09-15 (latest)
+
+- Completed static Workspace plots/Pens and PlotService. All 18 multiplayer
+  checks passed, including respawn, leave and replacement-player reuse.
+- Removed the initial uncommitted PlotTemplate generator after the user's
+  instruction to put real models in Workspace. Geometry was built through MCP
+  editor operations, then exported as a static .rbxmx asset for Git/Rojo.
+- Main Studio is back in Edit mode, with Plot01 selected and the camera framed
+  toward it. The disposable failed test processes were stopped; editor preserved.
+- Rojo server is running on localhost:34872; its Studio connection needs restoring
+  before future live edits. Exact current filesystem scripts were copied via MCP
+  for this verification after stale-source detection. No Computer Use used.
+- Next: placement/pickup preserving PetId, PlacedPetIds and PlotSlot; then wandering.
+- UI runtime and live DataStore/cross-server verification remain pending separately.
 
 ### Pet Verification — 2026-09-15
 

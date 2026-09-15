@@ -3,6 +3,11 @@
   "servePort": 34872,
   "tree": {
     "$className": "DataModel",
+    "Workspace": {
+      "PlayerPlots": {
+        "$path": "src/world/PlayerPlots.rbxmx"
+      }
+    },
     "StarterGui": {
       "FeedYourPetUI": {
         "$path": "src/ui/FeedYourPetUI.rbxmx"
