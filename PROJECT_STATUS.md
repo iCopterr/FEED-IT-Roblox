@@ -432,6 +432,24 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 18. Session Handoff
 
+### Developer Test Pet — 2026-09-15 (latest)
+
+- User requested a pet in their inventory. Added StudioStarterPet.server.luau:
+  grants one test_common through PetService after data loads, only for observed
+  developer account iCopter0 (5250447342), only in Studio memory mode, and only
+  when inventory is empty. No production reward or public grant Remote exists.
+- Memory data resets between Play sessions, so this supplies a pet for manual
+  placement/pickup testing on each fresh session. Nonempty inventories are kept.
+- Other automated test tags skip the grant. StudioStarterPetVerification opts
+  into a solo verification and returns count/species/unplaced validation.
+- Files changed: src/server/StudioStarterPet.server.luau and this handoff.
+  Source synchronized and compiled; Rojo build and diff checks pass.
+- Solo runtime verification did not return an EndTest result; stop requested.
+  Do not claim an actual grant was observed. The developer must start a fresh
+  ordinary Play session to receive the configured pet; existing PetService
+  creation is already covered by earlier integration tests.
+- Next gameplay work remains wandering/income; no conveyor implemented.
+
 ### Placement / Pickup — 2026-09-15 (latest)
 
 - Implemented server-authoritative placement and inventory pickup. Locked pets
