@@ -114,6 +114,7 @@ function HUDController.Start()
 	place.Activated:Connect(function()
 		local pet = snapshot and snapshot.Inventory[selectedId]
 		if busy or not remote or not pet then return end
+		if pet.Placed then status.Text = "Walk to your pet and hold E to pick it up."; return end
 		busy = true
 		status.Text = Text.Saving
 		local ok, result = pcall(function()

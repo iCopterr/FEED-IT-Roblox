@@ -5,7 +5,9 @@ local DataService = require(script.Parent.DataService)
 local PetService = require(script.Parent.PetService)
 local PlacementService = require(script.Parent.PlacementService)
 local PlacementConfig = require(game.ReplicatedStorage.Shared.Config.PlacementConfig)
+local PlotService = require(script.Parent.PlotService)
 local carried, connections = {}, {}
+local pickupHolds = {}
 local CarryService = {}
 
 local function living(player)
@@ -17,6 +19,7 @@ local function living(player)
 end
 
 function CarryService.Unequip(player)
+	pickupHolds[player] = nil
 	local state = carried[player]
 	carried[player] = nil
 	if state then state.Model:Destroy() end
@@ -91,7 +94,55 @@ function CarryService.PlaceAt(player, id, position)
 	return ok, reason
 end
 
+local function pickupTarget(player, prompt)
+	if typeof(prompt) ~= "Instance" or not prompt:IsA("ProximityPrompt") or prompt.Name ~= Config.PickupPromptName or not prompt.Enabled then return nil end
+	local plot = PlotService.GetPlot(player)
+	local model = prompt:FindFirstAncestorOfClass("Model")
+	if not plot or not model or model.Parent ~= plot.Pen:FindFirstChild("ActivePets") then return nil end
+	local data = DataService.GetData(player)
+	local pet = data and data.Inventory[model.Name]
+	local character, root = living(player)
+	if not character or not pet or not pet.Placed then return nil end
+	local cf = PlacementService.GetPetCFrame(player, pet)
+	if not cf or (root.Position - cf.Position).Magnitude > Config.PickupDistance then return nil end
+	return pet.PetId, character
+end
+
+function CarryService.BeginPickup(player, prompt)
+	local id, character = pickupTarget(player, prompt)
+	if not id then pickupHolds[player] = nil; return false end
+	pickupHolds[player] = {Id = id, Character = character, Prompt = prompt, Started = os.clock()}
+	return true
+end
+
+function CarryService.CancelPickup(player)
+	pickupHolds[player] = nil
+end
+
+function CarryService.FinishPickup(player, prompt)
+	local hold = pickupHolds[player]
+	pickupHolds[player] = nil
+	local id, character = pickupTarget(player, prompt)
+	if not hold or hold.Prompt ~= prompt or id ~= hold.Id or character ~= hold.Character then return false, "InvalidHold" end
+	local elapsed = os.clock() - hold.Started
+	if elapsed < Config.PickupHoldSeconds - .1 or elapsed > Config.PickupHoldSeconds + 3 then return false, "InvalidHold" end
+	return CarryService.Equip(player, id)
+end
+
 function CarryService.Start()
+	local prompts = game:GetService("ProximityPromptService")
+	prompts.PromptButtonHoldBegan:Connect(function(prompt, player)
+		if prompt.Name == Config.PickupPromptName then CarryService.BeginPickup(player, prompt) end
+	end)
+	prompts.PromptButtonHoldEnded:Connect(function(prompt, player)
+		local hold = pickupHolds[player]
+		if hold and hold.Prompt == prompt then
+			task.delay(.15, function() if pickupHolds[player] == hold then CarryService.CancelPickup(player) end end)
+		end
+	end)
+	prompts.PromptTriggered:Connect(function(prompt, player)
+		if prompt.Name == Config.PickupPromptName then CarryService.FinishPickup(player, prompt) end
+	end)
 	local function bind(player)
 		connections[player] = player.CharacterRemoving:Connect(function(character)
 			-- Deferred removal of an old character must not clear a newer equip.
@@ -108,6 +159,10 @@ function CarryService.Start()
 		if CarryService.GetPetId(player) == pet.PetId then CarryService.Unequip(player) end
 	end)
 	RunService.Heartbeat:Connect(function()
+		for player, hold in pickupHolds do
+			local id, character = pickupTarget(player, hold.Prompt)
+			if id ~= hold.Id or character ~= hold.Character or os.clock() - hold.Started > Config.PickupHoldSeconds + 3 then pickupHolds[player] = nil end
+		end
 		for player, state in carried do
 			local character = living(player)
 			local data = DataService.GetData(player)

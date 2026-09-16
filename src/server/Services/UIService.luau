@@ -29,6 +29,9 @@ function UIService.HandleRequest(player, action, petId, locked)
 			local ok, code = CarryService.PlaceAt(player, petId, locked)
 			return { Ok = ok, Code = code }
 		elseif action == "EquipPet" then
+			if type(petId) == "string" and data.Inventory[petId] and data.Inventory[petId].Placed then
+				return { Ok = false, Code = "HoldToPickup" }
+			end
 			local ok, code = CarryService.Equip(player, petId)
 			return { Ok = ok, Code = code }
 		elseif action == "UnequipPet" then

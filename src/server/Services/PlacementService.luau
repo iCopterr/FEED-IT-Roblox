@@ -91,6 +91,16 @@ local function install(player: Player, plot: Model, pet: PetData, model: Model)
 	local state = visualState(player, plot)
 	local previous = state.Pets[pet.PetId]
 	model:SetAttribute("PlotSlot", pet.PlotSlot)
+	local carryConfig = require(game.ReplicatedStorage.Shared.Config.CarryConfig)
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.Name = carryConfig.PickupPromptName
+	prompt.ActionText, prompt.ObjectText = "Pick up", "Your pet"
+	prompt.KeyboardKeyCode = Enum.KeyCode.E
+	prompt.GamepadKeyCode = Enum.KeyCode.ButtonX
+	prompt.HoldDuration = carryConfig.PickupHoldSeconds
+	prompt.MaxActivationDistance = carryConfig.PickupDistance
+	prompt.RequiresLineOfSight = false
+	prompt.Parent = model:FindFirstChildWhichIsA("BasePart", true)
 	model.Parent = state.Folder
 	state.Pets[pet.PetId] = model
 	if previous then previous:Destroy() end

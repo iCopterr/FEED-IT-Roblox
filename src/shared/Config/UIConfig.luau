@@ -25,7 +25,7 @@ local UIConfig = {
 		Stored = "In inventory", Placed = "In your Pen", Lock = "LOCK PET", Unlock = "UNLOCK PET",
 		Saving = "Saving…", Retry = "Unable to refresh. Retrying…",
 		LockError = "Could not change lock. Please try again.",
-		Place = "PLACE PET", Pickup = "PICK UP",
+		Place = "PLACE PET", Pickup = "HOLD E NEAR PET",
 		Equip = "EQUIP PET", Unequip = "UNEQUIP",
 		PickupTooFar = "Walk closer to your placed pet to pick it up.",
 		PenFull = "Your Pen is full. Pick up a pet first.",

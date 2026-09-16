@@ -61,12 +61,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Free-position click placement and click pickup
+**Current Feature:** Free-position click placement and hold-E pickup
 
 **Status:** Implemented / Needs Studio runtime testing; Rojo build passes
 
 **Objective:** Equip a pet and click/tap a spot within the owner's fenced Pen to
-place it exactly there. Click a nearby placed pet to pick it up. Five active pets.
+place it exactly there. Hold E near a placed pet to pick it up. Five active pets.
 
 ## 4. Completed
 
@@ -433,6 +433,22 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Hold-E Pickup — 2026-09-16 (latest)
+
+- User requested holding E for pickup. Click/tap placement stays unchanged.
+- PlacementService attaches a one-second pickup ProximityPrompt to placed pets.
+  CarryService validates prompt/model ownership, actual placed state, character,
+  distance and elapsed hold time. Leaving range/death/cancel invalidates the hold.
+- Removed click pickup. UIService rejects EquipPet for placed pets, and the
+  inventory button tells players to approach and hold E. Stored-pet equip stays.
+- Updated CarryVerification for missing/short/cancelled/foreign pickup holds and
+  successful held-E pickup. Live verification remains pending MCP reconnection.
+- PASS: Rojo build and git diff --check. MCP connection check returned zero peers.
+- Files: CarryConfig, CarryService, PlacementService, UIService, CarryController,
+  HUDController, UIConfig, CarryVerification, docs/placement.md, PROJECT_STATUS.md.
+- No save-schema or geometry changes in this revision. Prior free-position v2
+  migration and input tests are still pending; do not treat older passes as current.
 
 ### Free-position Placement — 2026-09-16 (latest)
 

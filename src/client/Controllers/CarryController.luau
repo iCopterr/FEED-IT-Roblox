@@ -26,11 +26,8 @@ function CarryController.Start()
 			end
 		end
 		if not plot then return end
-		local model = hit.Instance:FindFirstAncestorOfClass("Model")
 		local action, id, position
-		if model and model.Parent == plot.Pen:FindFirstChild("ActivePets") and model:GetAttribute("OwnerUserId") == player.UserId then
-			action, id = "EquipPet", model:GetAttribute("PetId")
-		elseif hit.Instance == plot.Pen.Floor and player:GetAttribute("CarriedPetId") then
+		if hit.Instance == plot.Pen.Floor and player:GetAttribute("CarriedPetId") then
 			action, id, position = "PlaceHeldPet", player:GetAttribute("CarriedPetId"), hit.Position
 		else return end
 		busy = true
@@ -54,6 +51,19 @@ function CarryController.Start()
 	end)
 	Input.TouchTapInWorld:Connect(function(position, processed)
 		if not processed then click(position) end
+	end)
+	task.spawn(function()
+		local plots = workspace:WaitForChild("PlayerPlots")
+		while true do
+			local gui = player.PlayerGui:FindFirstChild("FeedYourPetUI")
+			for _, prompt in plots:GetDescendants() do
+				if prompt:IsA("ProximityPrompt") and prompt.Name == "PickupPet" then
+					local model = prompt:FindFirstAncestorOfClass("Model")
+					prompt.Enabled = model:GetAttribute("OwnerUserId") == player.UserId and not (gui and gui.Inventory.Visible)
+				end
+			end
+			task.wait(.2)
+		end
 	end)
 end
 

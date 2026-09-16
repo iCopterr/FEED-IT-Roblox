@@ -2,8 +2,10 @@
 
 Select an owned pet in MY PETS, then choose EQUIP PET. The pet appears attached
 to the character's right hand. Click/tap your Pen floor to place it at that
-horizontal position, up to five pets. Click a placed pet within ten studs to
-pick it into your hand, or select it in MY PETS and use PICK UP. UNEQUIP stores it.
+horizontal position, up to five pets. Hold E for one second near a placed pet
+(within ten studs) to pick it into your hand. UNEQUIP stores it. Clicking a pet
+or the inventory button cannot bypass the pickup hold. Touch/gamepad use the
+same ProximityPrompt hold interaction.
 Locked pets support these actions. The developer's empty Studio memory profile
 receives one test pet; there is no production starter reward or hatch flow yet.
 
