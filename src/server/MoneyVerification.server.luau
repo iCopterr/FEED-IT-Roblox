@@ -32,10 +32,10 @@ local ok, failure = xpcall(function()
 	assert(placement.PlacePet(a,common.PetId))
 	check(money.GetRate(a)==10, "Placed level-zero Common earns 10 per second")
 	local before = profile.Money
-	check(money.Tick(a)==2.5 and profile.Money==before+2.5, "Quarter-second tick credits exact income")
+	check(money.Tick(a)==10 and profile.Money==before+10, "One-second tick credits exact income")
 	before=profile.Money
 	for _ = 1,4 do money.Tick(a) end
-	check(profile.Money==before+10, "Four faster ticks preserve money per second")
+	check(profile.Money==before+40, "Four one-second ticks credit four seconds of income")
 	assert(pets.SetLocked(a,common.PetId,true))
 	check(money.GetRate(a)==10, "Locked placed pets still earn")
 	assert(placement.PlacePet(a,rare.PetId))

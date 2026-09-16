@@ -434,6 +434,19 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 18. Session Handoff
 
+### One-second Money HUD — 2026-09-16 (latest)
+
+- User requested HUD updates every second. HUDController buffers the newest
+  timestamped balance/rate and redraws once per MoneyDisplayInterval=1 second.
+  Both payout pushes and snapshot fallback use that same display buffer.
+- User then clarified actual payouts should also be every second. TickSeconds,
+  PopupInterval and MoneyDisplayInterval are now all 1. Common pays +10 per tick.
+  Total earnings per second are unchanged. Older .25s timing notes are historical.
+- Files: HUDController, UIConfig, MoneyConfig, IncomeEffectsController,
+  MoneyVerification, docs/income.md and this handoff.
+- PASS: all 16 updated MoneyVerification multiplayer checks, synchronized HUD
+  compilation, Rojo build and diff checks. Test ended automatically.
+
 ### One-second Pet Popups — 2026-09-16 (latest)
 
 - User clarified pet floating amounts should show every second, not every .25s.

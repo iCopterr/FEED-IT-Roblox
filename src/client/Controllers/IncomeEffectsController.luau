@@ -10,7 +10,7 @@ function IncomeEffectsController.Start()
 	local template = ReplicatedStorage:WaitForChild("PetIncomePopup")
 	local pending, elapsed = {}, 0
 	ReplicatedStorage:WaitForChild("PetIncome").OnClientEvent:Connect(function(payout)
-		-- Combine four quarter-second payouts into one truthful per-pet popup.
+		-- Group paid amounts using the configured popup cadence.
 		for _, entry in payout.Pets do
 			pending[entry.PetId] = (pending[entry.PetId] or 0) + entry.Amount
 		end

@@ -21,13 +21,23 @@ function HUDController.Start()
 	local hudScale = hud:WaitForChild("UIScale")
 	local moneyLabel = hud:WaitForChild("Money"):WaitForChild("Value")
 	local lastMoneyAt = -math.huge
+	local pendingMoney
 	local function updateMoney(state)
 		local timestamp = state.MoneyAt or 0
 		if timestamp < lastMoneyAt then return end
 		lastMoneyAt = timestamp
-		moneyLabel.Text = string.format(Text.Money, numberText(state.Money), numberText(state.IncomePerSecond or 0))
+		pendingMoney = state
 	end
 	ReplicatedStorage:WaitForChild("PetIncome").OnClientEvent:Connect(updateMoney)
+	task.spawn(function()
+		while gui.Parent do
+			task.wait(Config.MoneyDisplayInterval)
+			if pendingMoney then
+				moneyLabel.Text = string.format(Text.Money, numberText(pendingMoney.Money), numberText(pendingMoney.IncomePerSecond or 0))
+				pendingMoney = nil
+			end
+		end
+	end)
 	local foodLabel = hud:WaitForChild("Food"):WaitForChild("Value")
 	local open = hud:WaitForChild("OpenInventory")
 	local modal = gui:WaitForChild("Inventory")
