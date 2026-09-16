@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(script.Parent.DataService)
 local PetService = require(script.Parent.PetService)
 local CarryService = require(script.Parent.CarryService)
+local MoneyService = require(script.Parent.MoneyService)
 local Config = require(ReplicatedStorage.Shared.Config.UIConfig)
 local UIService = {}
 local lastRequest = {}
@@ -48,6 +49,7 @@ function UIService.HandleRequest(player, action, petId, locked)
 		MaxPetSlots = data.MaxPetSlots, PlacedCount = placedCount,
 		Inventory = PetService.GetInventory(player),
 		CarriedPetId = CarryService.GetPetId(player),
+		IncomePerSecond = MoneyService.GetRate(player),
 	}
 end
 

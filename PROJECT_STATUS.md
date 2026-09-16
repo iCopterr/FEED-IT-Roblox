@@ -40,7 +40,7 @@ pet wandering, followed by server-authoritative income.
 | HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
 | Pet Placement | 🟦 Free Position Implemented | Click/tap inside own Pen, exact local coordinates, five-pet cap and click pickup; build passes, Studio test pending. |
 | Pet Wandering | ⬜ Not Started | |
-| Money Generation | ⬜ Not Started | |
+| Money Generation | ✅ Server Verified | Placed pets pay BaseIncome x FeedMultiplier each second; 15 Studio checks pass. HUD rate included; published persistence remains separate. |
 | Farm | ⬜ Not Started | |
 | Food | ⬜ Not Started | |
 | Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
@@ -61,12 +61,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Free-position click placement and hold-E pickup
+**Current Feature:** Automatic placed-pet income
 
-**Status:** Implemented / Needs Studio runtime testing; Rojo build passes
+**Status:** Implemented; all 15 MoneyVerification multiplayer checks pass
 
-**Objective:** Equip a pet and click/tap a spot within the owner's fenced Pen to
-place it exactly there. Hold E near a placed pet to pick it up. Five active pets.
+**Objective:** Placed pets automatically earn server-authoritative Money. Held
+and stored pets earn nothing; pickup stops income and existing saves retain it.
 
 ## 4. Completed
 
@@ -433,6 +433,25 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Placed Pet Income — 2026-09-16 (latest)
+
+- Added MoneyService: one fixed server tick per second, summing placed pets'
+  BaseIncome x FeedMultiplier. Requires loaded valid data and an owned plot.
+  Locked placed pets earn; held/stored pets do not. No amount-granting Remote.
+- Added FeedConfig's exact GDD level 0-40 multiplier table and MoneyConfig timing.
+  Above-40 levels contribute zero (not balanced). No Variant/Trait/global bonuses,
+  offline income, catch-up ticks, Feed transactions, or currency purchases added.
+- UI snapshots include IncomePerSecond; Money HUD shows balance and +rate/s.
+  Existing DataService saves the Money field; player/pet schema remains v2.
+- PASS: all 15 multiplayer MoneyVerification checks, including automatic ticking,
+  exact/summed rates, Feed curve, ownership, pickup stop and memory save. Test
+  ended automatically. Rojo build, synchronized server compilation and diff pass.
+- Files: MoneyService, MoneyVerification, FeedConfig, MoneyConfig, server bootstrap,
+  UIService, HUDController, UIConfig, docs/income.md and this handoff.
+- Next: simple pet wandering, then Farm/Food. Published DataStore rejoin and actual
+  HUD visual/input review remain separate. Do not claim pending click/hold-E
+  input tests passed merely because the server income integration passed.
 
 ### Larger Player Zones — 2026-09-16 (latest)
 

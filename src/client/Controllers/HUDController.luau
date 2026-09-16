@@ -59,7 +59,7 @@ function HUDController.Start()
 	end
 	local function render(state)
 		snapshot = state
-		moneyLabel.Text = string.format(Text.Money, numberText(state.Money))
+		moneyLabel.Text = string.format(Text.Money, numberText(state.Money), numberText(state.IncomePerSecond or 0))
 		foodLabel.Text = string.format(Text.Food, numberText(state.Food))
 		slots.Text = string.format(Text.Slots, state.PlacedCount, state.MaxPetSlots)
 		local pets, parts = {}, {}

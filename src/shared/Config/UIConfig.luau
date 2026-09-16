@@ -17,7 +17,7 @@ local UIConfig = {
 		TextStroke = Color3.fromRGB(48, 15, 60),
 	},
 	Text = {
-		Money = "MONEY\n%s", Food = "FOOD\n%s", Open = "MY PETS",
+		Money = "MONEY\n%s  (+%s/s)", Food = "FOOD\n%s", Open = "MY PETS",
 		Title = "MY PETS  •  %d", Close = "CLOSE", Loading = "Loading your pets…",
 		Empty = "Your pet collection starts here.\nNo pets yet.",
 		Select = "Select a pet to inspect it.",
