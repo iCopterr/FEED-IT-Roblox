@@ -434,6 +434,17 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 18. Session Handoff
 
+### One-second Pet Popups — 2026-09-16 (latest)
+
+- User clarified pet floating amounts should show every second, not every .25s.
+  IncomeEffectsController now batches four payout messages and sums per PetId
+  before displaying. Common level 0 displays +10 per four payouts.
+- MoneyService and fast HUD updates remain unchanged at .25s; economy unchanged.
+- Files: MoneyConfig, IncomeEffectsController, docs/income.md and this handoff.
+  PopupInterval=1 is separate from PopupSeconds=.65 (animation duration).
+- PASS: Rojo build, git diff --check, synchronized controller compilation. No
+  new Play session was launched for this presentation-only interval change.
+
 ### Fast Payouts / Floating Money — 2026-09-16 (latest)
 
 - Income tick reduced from 1s to 0.25s; per-tick amounts scale accordingly so

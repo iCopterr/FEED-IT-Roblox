@@ -24,9 +24,11 @@ Server timestamps prevent an older snapshot overwriting a newer pushed balance.
 
 Each payout includes a batch of PetId/Amount entries sent only to the owner.
 IncomeEffectsController clones the editable ReplicatedStorage.PetIncomePopup
-BillboardGui template above each earning pet, then floats/fades it over 0.65s.
+BillboardGui template above each earning pet once per second, combining four
+quarter-second payout amounts, then floats/fades it over 0.65s. HUD updates
+remain at 0.25s; a continuously placed Common shows +10 per popup, not +2.5.
 The template is authored in Studio and stored in src/ui/PetIncomePopup.rbxmx.
-Fractional amounts are shown (Common level 0 = +2.5 each tick); earning rates are
+Fractional amounts are retained when needed; earning rates are
 unchanged. Popups are presentation only and never award money. Missing/unloaded
 visuals skip the popup without affecting the already-authorized payout.
 
