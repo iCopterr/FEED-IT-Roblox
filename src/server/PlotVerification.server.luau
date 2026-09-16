@@ -31,7 +31,8 @@ local ok, failure = xpcall(function()
 	local left, right = 0, 0
 	for _, model in workspace.PlayerPlots:GetChildren() do
 		if model.Ground.Position.X < 0 then left += 1 else right += 1 end
-		assert(math.abs(model.Ground.Position.X) == 40, "Center lane must remain clear")
+		assert(math.abs(model.Ground.Position.X) == 50 and model.Ground.Size == Vector3.new(60,1,60), "Larger plots must preserve center lane")
+		assert(model.Pen.Floor.Size.X == 45 and model.Pen.Floor.Size.Z == 33, "Expanded Pen dimensions")
 	end
 	check(left == 3 and right == 3, "Three plots per side with empty center lane")
 	check(first.RespawnLocation == a.Spawn and second.RespawnLocation == b.Spawn, "Personal respawn locations")

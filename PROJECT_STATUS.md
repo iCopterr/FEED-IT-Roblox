@@ -434,6 +434,25 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 18. Session Handoff
 
+### Larger Player Zones — 2026-09-16 (latest)
+
+- Expanded all six actual Workspace plot Models through MCP editor property
+  changes: Ground 40x40 -> 60x60; Pen floor 30x22 -> 45x33. Horizontal area is
+  2.25x larger. Fence lengths/positions expanded; fence heights remain unchanged.
+- Still three plots per side. Centers X=-50/+50, Z=-72/0/72 preserve the 40-stud
+  center lane and leave 12-stud row gaps. Spawn/sign positions moved with plots,
+  without enlarging their sizes. Five active pets and hold-E pickup unchanged.
+- Exported all 84 existing BasePart sizes/CFrames back to PlayerPlots.rbxmx.
+  Other properties, hidden markers, editable geometry and unrelated world kept.
+  Pen-local saved positions remain valid inside the larger bounds.
+- PASS: Studio read-only geometry assertions for all six plots, clear center
+  lane, row spacing, Pen dimensions, fences, five hidden slots, anchored parts
+  and spawn containment. Rojo build/diff checks pass. No Play server launched.
+- Updated PlotVerification dimensions for the next multiplayer run. This turn
+  does not claim previously pending free-position/pickup runtime tests passed.
+- Direct MCP localhost:58741 is connected again (built-in bridge still empty).
+- Files: PlayerPlots.rbxmx, PlotVerification.server.luau, docs/plots.md, this handoff.
+
 ### Hold-E Pickup — 2026-09-16 (latest)
 
 - User requested holding E for pickup. Click/tap placement stays unchanged.

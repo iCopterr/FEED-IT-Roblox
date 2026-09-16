@@ -3,7 +3,10 @@
 `Workspace.PlayerPlots` contains six prebuilt plot Models: three on each side,
 facing an empty 40-stud center lane reserved for a future conveyor. No conveyor
 is implemented. Each has a Spawn, an OwnerSign, and a fenced Pen with
-five numbered slot markers. PlotService never generates or clones geometry.
+five hidden legacy slot references. Plots are 60x60 studs, with 45x33-stud Pens.
+Centers are X=-50/+50, Z=-72/0/72, leaving 12 studs between adjacent plots and
+the same 40-stud middle lane. Spawn/sign sizes and fence heights are unchanged.
+PlotService never generates or clones geometry.
 
 The static Workspace hierarchy is exported in `src/world/PlayerPlots.rbxmx`
 and mapped by Rojo. Edit the actual Models in Studio; export edits back to that
