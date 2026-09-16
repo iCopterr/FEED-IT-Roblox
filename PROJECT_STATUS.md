@@ -61,9 +61,9 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Automatic placed-pet income
+**Current Feature:** Fast income updates and per-pet money popups
 
-**Status:** Implemented; all 15 MoneyVerification multiplayer checks pass
+**Status:** Implemented; all 16 MoneyVerification multiplayer checks pass
 
 **Objective:** Placed pets automatically earn server-authoritative Money. Held
 and stored pets earn nothing; pickup stops income and existing saves retain it.
@@ -433,6 +433,25 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Fast Payouts / Floating Money — 2026-09-16 (latest)
+
+- Income tick reduced from 1s to 0.25s; per-tick amounts scale accordingly so
+  per-second earnings are unchanged (Common level 0: +2.5 four times/second).
+- MoneyService sends owner-only PetIncome batches containing authoritative balance,
+  rate, timestamp and PetId/Amount entries. HUD updates on each payout; existing
+  snapshots remain fallback. Timestamp ordering prevents stale balance regressions.
+- Added IncomeEffectsController: clones authored BillboardGui above each earning
+  pet, rises/fades for 0.65s, then Debris cleans it up. Fractional amounts displayed.
+  Effects never award currency. Stored/held pets have no payouts or popups.
+- Created editable ReplicatedStorage.PetIncomePopup through MCP, persisted in
+  src/ui/PetIncomePopup.rbxmx and mapped by Rojo. One template verified in Studio.
+- PASS: all 16 updated MoneyVerification multiplayer assertions; server/client
+  synchronized syntax checks; Rojo build; git diff --check. Test ended automatically.
+  Actual popup animation/overlap and viewport appearance have NOT been visually reviewed.
+- Files: MoneyConfig, MoneyService, UIService, HUDController, IncomeEffectsController,
+  client bootstrap, MoneyVerification, PetIncomePopup.rbxmx, default.project.json,
+  docs/income.md and this handoff. No schema/economy-rate change.
 
 ### Placed Pet Income — 2026-09-16 (latest)
 

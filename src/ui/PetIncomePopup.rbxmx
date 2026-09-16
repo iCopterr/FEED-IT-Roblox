@@ -1,0 +1,22 @@
+<roblox version="4">
+<Item class="BillboardGui"><Properties>
+<string name="Name">PetIncomePopup</string>
+<UDim2 name="Size"><XS>0</XS><XO>160</XO><YS>0</YS><YO>60</YO></UDim2>
+<Vector3 name="StudsOffset"><X>0</X><Y>3</Y><Z>0</Z></Vector3>
+<bool name="AlwaysOnTop">true</bool>
+<float name="MaxDistance">100</float>
+<float name="LightInfluence">0</float>
+</Properties>
+<Item class="TextLabel"><Properties>
+<string name="Name">Amount</string>
+<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
+<float name="BackgroundTransparency">1</float>
+<token name="Font">26</token>
+<float name="TextSize">28</float>
+<Color3 name="TextColor3"><R>1</R><G>0.8823529411764706</G><B>0.23529411764705882</B></Color3>
+<Color3 name="TextStrokeColor3"><R>0.17647058823529413</R><G>0.11764705882352941</G><B>0.0196078431372549</B></Color3>
+<float name="TextStrokeTransparency">0.2</float>
+<string name="Text">+2.5</string>
+</Properties></Item>
+</Item>
+</roblox>

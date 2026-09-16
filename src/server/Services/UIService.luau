@@ -50,6 +50,7 @@ function UIService.HandleRequest(player, action, petId, locked)
 		Inventory = PetService.GetInventory(player),
 		CarriedPetId = CarryService.GetPetId(player),
 		IncomePerSecond = MoneyService.GetRate(player),
+		MoneyAt = os.clock(),
 	}
 end
 

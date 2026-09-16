@@ -8,9 +8,10 @@ local Text, Palette = Config.Text, Config.Palette
 local HUDController = {}
 
 local function numberText(value)
-	local digits = string.format("%.0f", value)
+	local formatted = string.format("%.2f", value):gsub("0+$", ""):gsub("%.$", "")
+	local digits, decimals = formatted:match("^(%d+)(.*)$")
 	local grouped = digits:reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
-	return grouped
+	return grouped .. decimals
 end
 
 function HUDController.Start()
@@ -19,6 +20,14 @@ function HUDController.Start()
 	local hud = gui:WaitForChild("HUD")
 	local hudScale = hud:WaitForChild("UIScale")
 	local moneyLabel = hud:WaitForChild("Money"):WaitForChild("Value")
+	local lastMoneyAt = -math.huge
+	local function updateMoney(state)
+		local timestamp = state.MoneyAt or 0
+		if timestamp < lastMoneyAt then return end
+		lastMoneyAt = timestamp
+		moneyLabel.Text = string.format(Text.Money, numberText(state.Money), numberText(state.IncomePerSecond or 0))
+	end
+	ReplicatedStorage:WaitForChild("PetIncome").OnClientEvent:Connect(updateMoney)
 	local foodLabel = hud:WaitForChild("Food"):WaitForChild("Value")
 	local open = hud:WaitForChild("OpenInventory")
 	local modal = gui:WaitForChild("Inventory")
@@ -59,7 +68,7 @@ function HUDController.Start()
 	end
 	local function render(state)
 		snapshot = state
-		moneyLabel.Text = string.format(Text.Money, numberText(state.Money), numberText(state.IncomePerSecond or 0))
+		updateMoney(state)
 		foodLabel.Text = string.format(Text.Food, numberText(state.Food))
 		slots.Text = string.format(Text.Slots, state.PlacedCount, state.MaxPetSlots)
 		local pets, parts = {}, {}

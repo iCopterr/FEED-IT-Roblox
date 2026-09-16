@@ -17,6 +17,9 @@
       }
     },
     "ReplicatedStorage": {
+      "PetIncomePopup": {
+        "$path": "src/ui/PetIncomePopup.rbxmx"
+      },
       "Shared": {
         "$path": "src/shared"
       }
