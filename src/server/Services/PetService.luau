@@ -37,6 +37,7 @@ local function clonePet(pet: PetData): PetData
 		Locked = pet.Locked,
 		Placed = pet.Placed,
 		PlotSlot = pet.PlotSlot,
+		PenPosition = if pet.PenPosition then table.clone(pet.PenPosition) else nil,
 		CreatedAt = pet.CreatedAt,
 	}
 end

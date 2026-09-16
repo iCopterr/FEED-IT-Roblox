@@ -25,7 +25,10 @@ function UIService.HandleRequest(player, action, petId, locked)
 		local ok = PetService.SetLocked(player, petId, locked)
 		return { Ok = ok, Code = if ok then "Updated" else "Rejected" }
 	elseif action ~= "Snapshot" then
-		if action == "EquipPet" then
+		if action == "PlaceHeldPet" then
+			local ok, code = CarryService.PlaceAt(player, petId, locked)
+			return { Ok = ok, Code = code }
+		elseif action == "EquipPet" then
 			local ok, code = CarryService.Equip(player, petId)
 			return { Ok = ok, Code = code }
 		elseif action == "UnequipPet" then

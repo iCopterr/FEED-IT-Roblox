@@ -1,24 +1,31 @@
 # Pet placement and pickup
 
 Select an owned pet in MY PETS, then choose EQUIP PET. The pet appears attached
-to the character's right hand. Walk into your Pen and hold E for one second to
-place it in the first free slot, up to five pets. Select a placed pet and use
-PICK UP while within ten studs to hold it again. UNEQUIP returns it to inventory.
+to the character's right hand. Click/tap your Pen floor to place it at that
+horizontal position, up to five pets. Click a placed pet within ten studs to
+pick it into your hand, or select it in MY PETS and use PICK UP. UNEQUIP stores it.
 Locked pets support these actions. The developer's empty Studio memory profile
 receives one test pet; there is no production starter reward or hatch flow yet.
 
 CarryService keeps transient carry state separate from persisted placement.
 It prepares the hand model before removing a placed pet, checks server distance,
-ownership, life/character state and elapsed hold time, and uses PlacementService
-for the final transaction. Walking away cancels a hold. Full Pens keep the pet
-held; death/respawn/leave clear only the held visual. No schema change is needed.
+ownership, life/character state and requested floor coordinates, and uses
+PlacementService for the final transaction. Full Pens keep the pet held;
+death/respawn/leave clear only the held visual.
 The UI's old direct PlacePet/PickupPet requests are no longer accepted.
-CarryController hides other players' Pen prompts; this is presentation only.
-The server independently validates even forged prompt events.
+The hold-E prompt is removed. CarryController raycasts clicks/taps, ignores UI
+input and the character, and only requests placement on the owned Pen floor.
+Server checks reject foreign/outside/air/nonfinite coordinates and requests over
+50 studs away. A 1.75-stud inset keeps the current 3-stud placeholder pets inside
+the fence. Rejected positions are never silently snapped to a different spot.
+Mouse and touch are supported; gamepad cursor placement is not implemented.
+Input uses ViewportPointToRay to avoid GUI-inset offsets (see the
+[Roblox camera reference](https://create.roblox.com/docs/reference/engine/classes/Camera#ViewportPointToRay)).
 
 CarryVerification runs with StudioTestService:ExecuteMultiplayerTestAsync(2,
-"CarryVerification") using memory data. It exercises server carry/hold logic;
-actual keyboard/touch/gamepad input and hand pose still need visual playtesting.
+"CarryVerification") using memory data. It now exercises click positioning,
+pickup, boundary checks, v1 migration, memory saving and coordinate isolation.
+This updated suite has not run while Studio MCP is disconnected.
 
 PlacementService owns placement mutations. Inventory records, PlacedPetIds,
 Placed and PlotSlot change together without yielding, with schema validation
@@ -35,7 +42,12 @@ wandering pets. Template gallery is outside the plot area at Z=-110.
 
 Reconciliation rebuilds visuals from loaded placement data and repairs missing
 models. Departure destroys presentation only. The existing DataService saves
-placement with the whole player profile; no schema version change is needed.
+placement with the whole player profile. Player/pet schema v2 adds optional
+PenPosition {X,Z} in Pen-floor local space, cloned in snapshots and migration.
+V1 records migrate without changing PetIds. Missing PenPosition uses the old
+slot location for backwards compatibility; slots now count capacity rather than
+restrict player placement. Slot markers remain invisible/non-queryable in the
+static asset. Existing DataStore names/record wrapper are intentionally unchanged.
 
 ## Verification
 

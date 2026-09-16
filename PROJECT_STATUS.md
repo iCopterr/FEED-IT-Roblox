@@ -4,7 +4,7 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-15
+**Last Updated:** 2026-09-16
 
 > This file is the current-state handoff between Codex sessions. Update it
 > before ending a meaningful development session. Do not mark a feature
@@ -31,19 +31,19 @@ pet wandering, followed by server-authoritative income.
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
-| Player Data Schema | ✅ Complete / Verified | Version 1 defaults, validation, cloning, and migration boundary implemented. |
+| Player Data Schema | 🟦 v2 Implemented | Pen-local positions and v1 migration added; updated runtime verification pending. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ⬜ Not Started | |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
 | HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
-| Pet Placement | ✅ Server / Visuals Verified | First-free placement, five-slot cap, inventory pickup, editable templates; multiplayer checks pass. Live DataStore rejoin and button-input checks remain separate. |
+| Pet Placement | 🟦 Free Position Implemented | Click/tap inside own Pen, exact local coordinates, five-pet cap and click pickup; build passes, Studio test pending. |
 | Pet Wandering | ⬜ Not Started | |
 | Money Generation | ⬜ Not Started | |
 | Farm | ⬜ Not Started | |
 | Food | ⬜ Not Started | |
-| Carry System | ✅ Server Verified | Equip/unequip, hand-welded template, nearby pickup, hold-E Pen placement; 19 multiplayer checks pass. Physical input/pose review pending. |
+| Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
 | Feeding Pedestal | ⬜ Not Started | |
 | Feed UI | ⬜ Not Started | |
 | Feed Transaction | ⬜ Not Started | |
@@ -61,12 +61,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Equip, carry and hold-E Pen placement
+**Current Feature:** Free-position click placement and click pickup
 
-**Status:** Implemented; server/visual multiplayer checks pass
+**Status:** Implemented / Needs Studio runtime testing; Rojo build passes
 
-**Objective:** Equip an owned pet, visibly hold it, then hold E at the owner's
-Pen to place it safely in one of five slots.
+**Objective:** Equip a pet and click/tap a spot within the owner's fenced Pen to
+place it exactly there. Click a nearby placed pet to pick it up. Five active pets.
 
 ## 4. Completed
 
@@ -165,8 +165,8 @@ PROJECT_STATUS.md
 
 ## 8. Current Uncommitted Work
 
-Carry implementation, inventory changes, tests and handoff are being committed
-as one logical unit. Previous developer test-pet grant is committed as a46d870.
+Free-position placement, schema migration, static marker visibility, tests and
+handoff are being committed together. Previous carry implementation is 5ecc36d.
 
 ## 9. Known Issues / Blockers
 
@@ -317,7 +317,7 @@ Ownership boundary:
 
 ## 12. Data / Persistence State
 
-**DataVersion:** Player v1; Pet v1
+**DataVersion:** Player v2; Pet v2 (v1 migration implemented)
 
 **Persistence:** Implemented; Studio memory flow verified, live backend test pending
 
@@ -433,6 +433,37 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Free-position Placement — 2026-09-16 (latest)
+
+- User changed placement from fixed locations/hold E to clicking anywhere inside
+  the fenced Pen. Hold prompts removed; equip remains in inventory. Clicking a
+  placed owned pet requests nearby pickup into the hand. Mouse and touch supported.
+- PlaceHeldPet request includes expected PetId and Vector3. Server checks actual
+  held ID, ownership, live character, finite floor coordinates, Pen bounds and
+  distance. UI request throttling remains. Five active pets maximum; rejecting
+  placement leaves the pet held. No client-selected plot or inventory mutation.
+- Player/pet schema v2 adds optional PenPosition {X,Z}, relative to the Pen floor.
+  Snapshots and migration clone it. V1 upgrades preserve IDs and old slot positions;
+  unchanged store names retain existing records. PlotSlot now tracks capacity and
+  legacy fallback, not where users must place pets. Pickup clears PenPosition.
+- Hidden all 30 static slot markers (Transparency=1, CanQuery/CanCollide/CanTouch=false).
+  References retained for old saves and PlotService validation. No plots, fences,
+  or pets deleted; markers are recoverable from Git. No geometry generated.
+- 1.75-stud fence inset accommodates current 3-stud placeholder pets. Horizontal
+  coordinates are not snapped/clamped; invalid near-fence positions are rejected.
+- Updated CarryVerification for free placement, malformed/foreign/outside/air
+  positions, exact visual/saved coordinates, pickup, capacity and v1 migration.
+  These updated runtime tests have NOT run. Earlier hold-E test passes are historical.
+- PASS: Rojo build and git diff --check. MCP ports 58741-58745 all report zero
+  connected peers; Studio process 17852 is running. Live sync, compilation and
+  actual mouse/touch tests remain unverified until the MCP plugin reconnects.
+- Files: CarryController, CarryService, UIService, PlacementService, PetService,
+  PlayerDataSchema, GameConfig, CarryConfig, PlacementConfig, CarryVerification,
+  PlayerPlots.rbxmx, docs/placement.md and this handoff.
+- Next: reconnect Studio MCP/Rojo; run CarryVerification and PlacementVerification,
+  verify cursor alignment and pickup on both rotated plot rows. No gamepad cursor
+  placement implemented. Prior production persistence/Dashboard-limit tasks remain.
 
 ### Equip / Hold E — 2026-09-15 (latest)
 

@@ -17,6 +17,7 @@ export type PetData = {
 	Locked: boolean,
 	Placed: boolean,
 	PlotSlot: number?,
+	PenPosition: {X: number, Z: number}?,
 	CreatedAt: number,
 }
 
@@ -45,6 +46,21 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+-- Keep legacy slot locations until the player moves that pet. Never mutate the
+-- stored input during migration; validation below rejects malformed records.
+migrations[1] = function(source)
+	if type(source.Inventory) ~= "table" then return nil, "Invalid legacy inventory" end
+	local result = table.clone(source)
+	result.Inventory = {}
+	for id, pet in source.Inventory do
+		if type(pet) ~= "table" or pet.DataVersion ~= 1 then return nil, "Invalid legacy pet version" end
+		local copy = table.clone(pet)
+		copy.DataVersion = 2
+		result.Inventory[id] = copy
+	end
+	return result, nil
+end
 
 local function isFiniteNumber(value: unknown): boolean
 	return type(value) == "number"
@@ -156,6 +172,13 @@ local function validatePetData(value: unknown, path: string): (boolean, string?)
 	if not isNonNegativeInteger(pet.CreatedAt) then
 		return false, `{path}.CreatedAt must be a non-negative integer timestamp`
 	end
+	if pet.PenPosition ~= nil then
+		if not pet.Placed or type(pet.PenPosition) ~= "table" then return false, `{path}.PenPosition requires a placed pet` end
+		if not isFiniteNumber(pet.PenPosition.X) or not isFiniteNumber(pet.PenPosition.Z) then return false, `{path}.PenPosition must be finite` end
+		for key in pet.PenPosition do
+			if key ~= "X" and key ~= "Z" then return false, `{path}.PenPosition has an unknown field` end
+		end
+	end
 
 	return true, nil
 end
@@ -233,6 +256,7 @@ local function clonePetData(pet: PetData): PetData
 		Locked = pet.Locked,
 		Placed = pet.Placed,
 		PlotSlot = pet.PlotSlot,
+		PenPosition = if pet.PenPosition then table.clone(pet.PenPosition) else nil,
 		CreatedAt = pet.CreatedAt,
 	}
 end

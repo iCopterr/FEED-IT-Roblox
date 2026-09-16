@@ -12,6 +12,29 @@ local changed = Instance.new("BindableEvent")
 local started = false
 local PlacementService = {Changed = changed.Event}
 
+function PlacementService.ResolvePosition(player: Player, position: Vector3): CFrame?
+	if typeof(position) ~= "Vector3" then return nil end
+	for _, n in {position.X, position.Y, position.Z} do
+		if n ~= n or math.abs(n) == math.huge then return nil end
+	end
+	local plot = PlotService.GetPlot(player)
+	if not plot then return nil end
+	local floor = plot.Pen.Floor
+	local point = floor.CFrame:PointToObjectSpace(position)
+	if math.abs(point.X) > floor.Size.X / 2 - Config.FenceInset or math.abs(point.Z) > floor.Size.Z / 2 - Config.FenceInset
+		or math.abs(point.Y - floor.Size.Y / 2) > Config.SurfaceTolerance then return nil end
+	return floor.CFrame * CFrame.new(point.X, floor.Size.Y / 2, point.Z)
+end
+
+function PlacementService.GetPetCFrame(player: Player, pet: PetData): CFrame?
+	local plot = PlotService.GetPlot(player)
+	if pet.PenPosition and plot then
+		local floor = plot.Pen.Floor
+		return PlacementService.ResolvePosition(player, floor.CFrame:PointToWorldSpace(Vector3.new(pet.PenPosition.X, floor.Size.Y / 2, pet.PenPosition.Z)))
+	end
+	return if pet.PlotSlot then PlotService.GetSlotCFrame(player, pet.PlotSlot) else nil
+end
+
 local function clear(player: Player)
 	local state = states[player]
 	if state then
@@ -91,7 +114,7 @@ function PlacementService.Reconcile(player: Player): (boolean, string?)
 	for id in data.PlacedPetIds do
 		local pet = data.Inventory[id]
 		if not state.Pets[id] then
-			local slot = pet.PlotSlot and PlotService.GetSlotCFrame(player, pet.PlotSlot)
+			local slot = PlacementService.GetPetCFrame(player, pet)
 			if not slot then return false, "InvalidSlot" end
 			local model, reason = prepareVisual(player, pet, slot)
 			if not model then return false, reason end
@@ -113,7 +136,7 @@ local function context(player: Player, petId: string): (Schema.PlayerData?, Mode
 	return data, plot, pet, nil
 end
 
-function PlacementService.PlacePet(player: Player, petId: string): (boolean, string?)
+function PlacementService.PlacePet(player: Player, petId: string, position: Vector3?): (boolean, string?)
 	local data, plot, pet, reason = context(player, petId)
 	if not data or not plot or not pet then return false, reason end
 	if pet.Placed then return PlacementService.Reconcile(player) end
@@ -127,17 +150,22 @@ function PlacementService.PlacePet(player: Player, petId: string): (boolean, str
 		if not occupied[candidate] then index = candidate; break end
 	end
 	if not index then return false, "PenFull" end
-	local slot = PlotService.GetSlotCFrame(player, index)
+	local slot = if position ~= nil then PlacementService.ResolvePosition(player, position) else PlotService.GetSlotCFrame(player, index)
 	if not slot then return false, "InvalidSlot" end
 	-- Prepare the actual template before committing any player-data changes.
 	local model, visualError = prepareVisual(player, pet, slot)
 	if not model then return false, visualError end
 	pet.Placed, pet.PlotSlot = true, index
+	if position ~= nil then
+		local point = plot.Pen.Floor.CFrame:PointToObjectSpace(slot.Position)
+		pet.PenPosition = {X = point.X, Z = point.Z}
+	end
 	data.PlacedPetIds[petId] = true
 	local valid = Schema.Validate(data)
 	local installed = valid and pcall(install, player, plot, pet, model)
 	if not installed then
 		pet.Placed, pet.PlotSlot = false, nil
+		pet.PenPosition = nil
 		data.PlacedPetIds[petId] = nil
 		model:Destroy()
 		return false, "PlacementFailed"
@@ -151,10 +179,13 @@ function PlacementService.PickupPet(player: Player, petId: string): (boolean, st
 	if not data or not pet then return false, reason end
 	if not pet.Placed then return true, nil end
 	local previousSlot = pet.PlotSlot
+	local previousPosition = pet.PenPosition
 	pet.Placed, pet.PlotSlot = false, nil
+	pet.PenPosition = nil
 	data.PlacedPetIds[petId] = nil
 	if not Schema.Validate(data) then
 		pet.Placed, pet.PlotSlot = true, previousSlot
+		pet.PenPosition = previousPosition
 		data.PlacedPetIds[petId] = true
 		return false, "PlacementFailed"
 	end

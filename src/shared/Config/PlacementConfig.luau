@@ -5,4 +5,7 @@ return table.freeze({
 	ReconcileSeconds = 1,
 	HeightOffset = 0.05,
 	MaxPetIdLength = 64,
+	FenceInset = 1.75,
+	SurfaceTolerance = 0.5,
+	ClickDistance = 50,
 })
