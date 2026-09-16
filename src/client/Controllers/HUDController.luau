@@ -4,6 +4,7 @@ local UserInputService = game:GetService("UserInputService")
 local Config = require(ReplicatedStorage.Shared.Config.UIConfig)
 local PetConfig = require(ReplicatedStorage.Shared.Config.PetConfig)
 local Stud = require(script.Parent.Parent.UI.Stud)
+local GuiBootstrap = require(script.Parent.Parent.UI.GuiBootstrap)
 local Text, Palette = Config.Text, Config.Palette
 local HUDController = {}
 
@@ -15,29 +16,25 @@ local function numberText(value)
 end
 
 function HUDController.Start()
-	-- Roblox clones the Studio-owned StarterGui tree into PlayerGui.
-	local gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("FeedYourPetUI")
+	local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui", 10)
+	assert(playerGui, "PlayerGui did not become available")
+	local gui = playerGui:WaitForChild("FeedYourPetUI", 3)
+	if not gui then
+		local template = game:GetService("StarterGui"):WaitForChild("FeedYourPetUI", 3)
+		gui = GuiBootstrap.Ensure(playerGui, template)
+	end
 	local hud = gui:WaitForChild("HUD")
 	local hudScale = hud:WaitForChild("UIScale")
 	local moneyLabel = hud:WaitForChild("Money"):WaitForChild("Value")
 	local lastMoneyAt = -math.huge
-	local pendingMoney
 	local function updateMoney(state)
 		local timestamp = state.MoneyAt or 0
 		if timestamp < lastMoneyAt then return end
 		lastMoneyAt = timestamp
-		pendingMoney = state
+		-- Payouts already arrive once per second; another timer adds visible lag.
+		moneyLabel.Text = string.format(Text.Money, numberText(state.Money), numberText(state.IncomePerSecond or 0))
 	end
 	ReplicatedStorage:WaitForChild("PetIncome").OnClientEvent:Connect(updateMoney)
-	task.spawn(function()
-		while gui.Parent do
-			task.wait(Config.MoneyDisplayInterval)
-			if pendingMoney then
-				moneyLabel.Text = string.format(Text.Money, numberText(pendingMoney.Money), numberText(pendingMoney.IncomePerSecond or 0))
-				pendingMoney = nil
-			end
-		end
-	end)
 	local foodLabel = hud:WaitForChild("Food"):WaitForChild("Value")
 	local open = hud:WaitForChild("OpenInventory")
 	local modal = gui:WaitForChild("Inventory")

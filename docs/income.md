@@ -19,9 +19,12 @@ This does not implement feeding or any new pet levels itself.
 The existing Money field and DataService autosave/leave/shutdown flow persist
 earned income; no schema changes are needed. HUD snapshots include the current
 IncomePerSecond and show it next to the balance. PetIncome pushes each authoritative
-payout balance every second; the HUD buffers the latest value and redraws
-once per second. Polling remains a fallback.
+payout balance every second; the HUD displays it immediately without a second
+timer. Polling remains a fallback.
 Server timestamps prevent an older snapshot overwriting a newer pushed balance.
+HUD startup uses bounded waits and can clone the authored StarterGui template
+if Roblox's PlayerGui copy is missing. Controllers start independently, so a
+HUD asset failure does not block carry controls or income popups.
 
 Each payout includes a batch of PetId/Amount entries sent only to the owner.
 IncomeEffectsController clones the editable ReplicatedStorage.PetIncomePopup

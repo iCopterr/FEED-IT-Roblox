@@ -6,7 +6,6 @@ local UIConfig = {
 	StrokePixels = 5,
 	Font = Enum.Font.FredokaOne,
 	SnapshotInterval = 2,
-	MoneyDisplayInterval = 1,
 	RequestCooldown = 0.25,
 	Palette = {
 		Money = Color3.fromRGB(255, 195, 55),

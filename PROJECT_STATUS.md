@@ -61,9 +61,9 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Fast income updates and per-pet money popups
+**Current Feature:** Immediate payout HUD updates and missing-UI startup recovery
 
-**Status:** Implemented; all 16 MoneyVerification multiplayer checks pass
+**Status:** Fix implemented; six targeted Studio Edit checks and Rojo build pass. Fresh Play-session visual verification pending. Previous 16 MoneyVerification multiplayer checks remain the server baseline.
 
 **Objective:** Placed pets automatically earn server-authoritative Money. Held
 and stored pets earn nothing; pickup stops income and existing saves retain it.
@@ -132,6 +132,9 @@ and stored pets earn nothing; pickup stops income and existing saves retain it.
 
 ## 5. In Progress
 
+- Fresh Play-session verification of HUD startup and visible one-second payout
+  updates after the latest UI recovery fix; no server economy changes this session.
+
 - Production DataStore persistence and cross-server session behavior still need
   an end-to-end test in a published test server or Studio with API access enabled.
 - Data schema migrations beyond v1 will be added only when the schema version changes.
@@ -140,6 +143,8 @@ and stored pets earn nothing; pickup stops income and existing saves retain it.
 
 ## 6. Next Tasks
 
+0. Restart Play and verify the HUD appears without the FeedYourPetUI infinite-yield
+   warning, balances change on each payout, and carry/popups start independently.
 1. Verify actual inventory button input across desktop/touch/gamepad.
 2. Add simple prototype pet wandering within the owner's Pen.
 3. Implement centralized server-authoritative pet income.
@@ -165,8 +170,31 @@ PROJECT_STATUS.md
 
 ## 8. Current Uncommitted Work
 
-Free-position placement, schema migration, static marker visibility, tests and
-handoff are being committed together. Previous carry implementation is 5ecc36d.
+HUD delay/startup fix and handoff are being committed together. Baseline commit:
+c857667 (one-second payouts). See latest handoff below for this session's files.
+
+### Latest Session Handoff — HUD delay/startup fix — 2026-09-16
+
+- Removed the second HUD timer. Each authoritative one-second PetIncome event
+  updates the label immediately; MoneyAt still rejects older snapshot results.
+- Replaced the unbounded FeedYourPetUI root wait with bounded waits and recovery
+  by cloning the existing authored StarterGui asset. Missing templates fail with
+  an explicit Rojo diagnostic; no runtime layout or world generator was added.
+- Client controllers start independently under xpcall, so a stalled/failed HUD
+  cannot prevent CarryController or IncomeEffectsController from starting.
+- Files: src/client/Controllers/HUDController.luau, src/client/init.client.luau,
+  src/client/UI/GuiBootstrap.luau, src/shared/Config/UIConfig.luau,
+  docs/income.md, PROJECT_STATUS.md.
+- Verification: direct MCP localhost:58741 confirmed Edit mode and the authored
+  StarterGui template. Rojo synced the new helper. All client descendant scripts
+  compiled; six Edit checks passed: missing-GUI clone, existing-GUI reuse,
+  explicit missing-template failure, immediate payout label, stale snapshot
+  rejection, and immediate next payout. Temporary test fixture was destroyed.
+  Rojo build build/HUDFix.rbxlx and git diff --check passed.
+- Limit: these are targeted Edit tests, not an end-to-end client Play test.
+  The original reason Roblox's PlayerGui copy was missing is not established.
+  If the authored StarterGui asset is absent too, recovery reports an error;
+  restore the Rojo asset before retrying. No Computer Use or live data writes.
 
 ## 9. Known Issues / Blockers
 
