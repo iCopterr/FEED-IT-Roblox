@@ -36,6 +36,14 @@ function HUDController.Start()
 	end
 	ReplicatedStorage:WaitForChild("PetIncome").OnClientEvent:Connect(updateMoney)
 	local foodLabel = hud:WaitForChild("Food"):WaitForChild("Value")
+	local lastFoodAt = -math.huge
+	local function updateFood(state)
+		local timestamp = state.FoodAt or 0
+		if timestamp < lastFoodAt then return end
+		lastFoodAt = timestamp
+		foodLabel.Text = string.format(Text.Food, numberText(state.Food))
+	end
+	game.ReplicatedStorage:WaitForChild("Farm").OnClientEvent:Connect(updateFood)
 	local open = hud:WaitForChild("OpenInventory")
 	local modal = gui:WaitForChild("Inventory")
 	local modalScale = modal:WaitForChild("UIScale")
@@ -76,7 +84,7 @@ function HUDController.Start()
 	local function render(state)
 		snapshot = state
 		updateMoney(state)
-		foodLabel.Text = string.format(Text.Food, numberText(state.Food))
+		updateFood(state)
 		slots.Text = string.format(Text.Slots, state.PlacedCount, state.MaxPetSlots)
 		local pets, parts = {}, {}
 		for _, pet in state.Inventory do table.insert(pets, pet) end

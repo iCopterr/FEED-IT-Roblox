@@ -32,6 +32,7 @@ function CarryService.GetPetId(player)
 end
 
 function CarryService.Equip(player, id)
+	if player:GetAttribute("IsFarming") then return false, "Farming" end
 	if type(id) ~= "string" or #id == 0 or #id > 64 then return false, "InvalidRequest" end
 	local data = DataService.GetData(player)
 	local pet = data and data.Inventory[id]

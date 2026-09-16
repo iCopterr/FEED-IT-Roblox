@@ -41,8 +41,8 @@ pet wandering, followed by server-authoritative income.
 | Pet Placement | 🟦 Free Position Implemented | Click/tap inside own Pen, exact local coordinates, five-pet cap and click pickup; build passes, Studio test pending. |
 | Pet Wandering | ⬜ Not Started | |
 | Money Generation | ✅ Server Verified | Placed pets pay BaseIncome x FeedMultiplier each second; 15 Studio checks pass. HUD rate included; published persistence remains separate. |
-| Farm | ⬜ Not Started | |
-| Food | ⬜ Not Started | |
+| Farm | ✅ Server Verified | Six authored stations; owner proximity entry and input exit. 27 multiplayer checks pass; manual feel/animation pending. |
+| Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
 | Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
 | Feeding Pedestal | ⬜ Not Started | |
 | Feed UI | ⬜ Not Started | |
@@ -61,14 +61,17 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Immediate payout HUD updates and missing-UI startup recovery
+**Current Feature:** Active Food farming with automatic proximity entry and input exit
 
-**Status:** Fix implemented; six targeted Studio Edit checks and Rojo build pass. Fresh Play-session visual verification pending. Previous 16 MoneyVerification multiplayer checks remain the server baseline.
+**Status:** Implemented; 27 multiplayer server checks and 11 isolated client-handler checks pass. Rojo build/source compilation pass. Manual input/visual verification remains separate.
 
-**Objective:** Placed pets automatically earn server-authoritative Money. Held
-and stored pets earn nothing; pickup stops income and existing saves retain it.
+**Objective:** Approaching your own farm enters a stationary farming state;
+produce Food only while inside, and exit on WASD/jump. Animation is deferred.
 
 ## 4. Completed
+
+- Active Food farm: six authored stations, owner-only server proximity sessions,
+  elapsed-time Food payouts, exit/rearm safety, cleanup, Food HUD push and save.
 
 - Added PlacementService, atomic validated placement/pickup, template preflight,
   idempotence, saved-state visual reconciliation and leave cleanup.
@@ -132,6 +135,8 @@ and stored pets earn nothing; pickup stops income and existing saves retain it.
 
 ## 5. In Progress
 
+- Manual farm entry/exit and Food HUD feel validation. Running animation asset
+  and farm upgrade purchasing/UI remain unimplemented; not part of this request.
 - Fresh Play-session verification of HUD startup and visible one-second payout
   updates after the latest UI recovery fix; no server economy changes this session.
 
@@ -147,31 +152,67 @@ and stored pets earn nothing; pickup stops income and existing saves retain it.
    warning, balances change on each payout, and carry/popups start independently.
 1. Verify actual inventory button input across desktop/touch/gamepad.
 2. Add simple prototype pet wandering within the owner's Pen.
-3. Implement centralized server-authoritative pet income.
+3. After validating active farming, implement the prototype Feeding Pedestal/Feed transaction.
 4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
 
 ## 7. Files Modified This Session
 
 ```text
-docs/placement.md
+docs/farm.md
+src/world/PlayerPlots.rbxmx
+src/shared/Config/FarmConfig.luau
+src/server/Services/FarmService.luau
 src/server/Services/CarryService.luau
 src/server/Services/UIService.luau
-src/server/CarryVerification.server.luau
-src/server/PlacementVerification.server.luau
+src/server/FarmVerification.server.luau
 src/server/init.server.luau
 src/client/init.client.luau
-src/client/Controllers/CarryController.luau
+src/client/Controllers/FarmController.luau
 src/client/Controllers/HUDController.luau
-src/shared/Config/CarryConfig.luau
-src/shared/Config/UIConfig.luau
-src/ui/FeedYourPetUI.rbxmx
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
 
-HUD delay/startup fix and handoff are being committed together. Baseline commit:
-c857667 (one-second payouts). See latest handoff below for this session's files.
+Active farm implementation, assets, tests and handoff. Baseline: 8775767.
+
+### Latest Session Handoff — Active Farm — 2026-09-16
+
+- User explicitly confirmed Food should be generated only while inside the farm.
+  This supersedes passive generation in GDD 19 for this prototype interaction.
+- Added FarmService, FarmController and FarmConfig. Server scans own-plot
+  proximity, anchors/repositions at WorkPoint, pays every elapsed second, and
+  restores controls at ExitPoint on exit. Rearm distance prevents recapture.
+  Death/removal/displacement/lost profile or station cancels the session.
+- Food uses existing persisted Food/FarmLevel/FarmPower fields. Level-one rate
+  is 2/sec, higher configured rates follow GDD candidate curve. No new schema,
+  offline accrual, upgrades/purchases, animation asset or conveyor implemented.
+- Client can only request its own exit, never income or entry. WASD/Jump exits;
+  touch/gamepad movement exits after releasing approach input. Animation ID
+  remains empty, with lifecycle hook ready for a later published animation.
+- Held pets safely return to inventory on entry; farming blocks equip. HUD
+  receives immediate Food pushes with stale-snapshot timestamp protection.
+- Created six real editable Workspace farm models via MCP, then exported their
+  properties into PlayerPlots.rbxmx. Geometry stays out of the Pen and middle lane.
+- Studio/Rojo created duplicate copies of new objects/scripts. Removed 12 extra
+  farm models and one extra copy of each new script/config; filesystem assets
+  retain all authored content. Two initial tests were invalidated by duplicate
+  FarmVerification scripts competing for the same test players. Clean rerun
+  passed all 27 assertions. Final inspection confirmed exactly six farm models.
+- Files: src/world/PlayerPlots.rbxmx; src/shared/Config/FarmConfig.luau;
+  src/server/Services/FarmService.luau, CarryService.luau, UIService.luau;
+  src/server/FarmVerification.server.luau; src/server/init.server.luau;
+  src/client/Controllers/FarmController.luau, HUDController.luau;
+  src/client/init.client.luau; docs/farm.md; PROJECT_STATUS.md.
+- Verification: 27 real two-player Studio memory checks passed (ownership,
+  active-only earning, exact payouts, duplicate/spam protection, held pet safety,
+  remote exit, control restoration, rearm, displacement, death, memory save and
+  schema). Eleven isolated tests of actual FarmController source with mocked
+  input signals passed (all WASD/Space/Jump bindings, throttling, chat exclusion,
+  held approach input and renewed movement). These are not physical-input tests.
+  All synced source compiled; final Rojo build and git diff --check passed.
+- Next: manual client entry/exit/HUD feel validation, then Feed pedestal/transaction.
+  No Computer Use, no live DataStore writes. Direct MCP: localhost:58741/mcp.
 
 ### Latest Session Handoff — HUD delay/startup fix — 2026-09-16
 
