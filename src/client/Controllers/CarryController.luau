@@ -29,6 +29,8 @@ function CarryController.Start()
 		local action, id, position
 		if hit.Instance == plot.Pen.Floor and player:GetAttribute("CarriedPetId") then
 			action, id, position = "PlaceHeldPet", player:GetAttribute("CarriedPetId"), hit.Position
+		elseif plot:FindFirstChild("FeedPlate") and hit.Instance:IsDescendantOf(plot.FeedPlate) and player:GetAttribute("CarriedPetId") then
+			action, id = "PlaceOnPlate", player:GetAttribute("CarriedPetId")
 		else return end
 		busy = true
 		local ok, response = pcall(function() return remote:InvokeServer(action, id, position) end)
@@ -39,7 +41,7 @@ function CarryController.Start()
 		end
 		if (not ok or not response.Ok) and gui then
 			gui.Inventory.Visible = true
-			gui.Inventory.Panel.Layout.Status.Text = if ok and response.Code == "PenFull" then "Your Pen is full (5 pets)." else "Cannot place or pick up here. Stay near your own Pen and away from its fence."
+			gui.Inventory.Panel.Layout.Status.Text = if ok and response.Code == "PenFull" then "Your Pen is full (5 pets)." elseif ok and response.Code == "PlateOccupied" then "Your feed plate already has a pet. Hold E near it to pick it up." else "Move closer to your own Pen or feed plate and try again."
 		end
 		task.wait(.3)
 		busy = false

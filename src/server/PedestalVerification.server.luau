@@ -1,0 +1,80 @@
+if not game:GetService("RunService"):IsStudio() then return end
+local testing = game:GetService("StudioTestService")
+if testing:GetTestArgs() ~= "PedestalVerification" then return end
+local checks = {}
+local ok, failure = xpcall(function()
+	local players = game:GetService("Players")
+	local data = require(script.Parent.Services.DataService)
+	local plots = require(script.Parent.Services.PlotService)
+	local pets = require(script.Parent.Services.PetService)
+	local carry = require(script.Parent.Services.CarryService)
+	local plate = require(script.Parent.Services.PedestalService)
+	local money = require(script.Parent.Services.MoneyService)
+	local ui = require(script.Parent.Services.UIService)
+	local adapter = require(script.Parent.Data.DataStoreAdapter)
+	assert(adapter.IsMemory(), "Memory profiles only")
+	local function waitFor(predicate, seconds)
+		local deadline = os.clock()+(seconds or 120)
+		repeat if predicate() then return end; task.wait(.1) until os.clock()>deadline
+		error("Test timed out")
+	end
+	local function check(v,name) assert(v,name);table.insert(checks,name) end
+	waitFor(function() return #players:GetPlayers()==2 end)
+	local a,b=table.unpack(players:GetPlayers())
+	waitFor(function() return data.IsLoaded(a) and data.IsLoaded(b) and plots.GetPlot(a) and plots.GetPlot(b)
+		and a.Character and a.Character:FindFirstChild("RightHand") and game.ReplicatedStorage:FindFirstChild("PrototypeUI") end)
+	local root=a.Character.HumanoidRootPart
+	root:SetNetworkOwner(nil)
+	local dish=plots.GetPlot(a).FeedPlate.Dish
+	local profile=data.GetData(a)
+	local one=assert(pets.CreatePet(a,"test_common"))
+	local two=assert(pets.CreatePet(a,"test_rare"))
+	local foreign=assert(pets.CreatePet(b,"test_common"))
+	local beforeFood,beforeMoney=profile.Food,profile.Money
+	check(not carry.PlaceOnPlate(a,one.PetId),"Must carry pet before plating")
+	assert(carry.Equip(a,one.PetId))
+	check(not carry.PlaceOnPlate(a,foreign.PetId),"Foreign or stale pet ID rejected")
+	root.CFrame=CFrame.new(plots.GetPlot(b).FeedPlate.Dish.Position+Vector3.new(0,3,5))
+	check(not carry.PlaceOnPlate(a,one.PetId),"Cannot use another player's plate")
+	check(carry.GetPetId(a)==one.PetId,"Rejected placement preserves held pet")
+	root.CFrame=CFrame.new(dish.Position+Vector3.new(0,3,6))
+	local template=workspace.PetTemplates.test_common
+	template.Archivable=false
+	local denied=not carry.PlaceOnPlate(a,one.PetId)
+	template.Archivable=true
+	check(denied and carry.GetPetId(a)==one.PetId,"Template failure preserves held pet")
+	check(carry.PlaceOnPlate(a,one.PetId),"Held pet placed on own plate")
+	check(plate.GetPetId(a)==one.PetId and not carry.GetPetId(a),"Pet transfers from hand to plate")
+	check(profile.Inventory[one.PetId] and not profile.Inventory[one.PetId].Placed and not profile.PlacedPetIds[one.PetId],"Same inventory identity; no Pen slot consumed")
+	check(money.GetRate(a)==0,"Plate pet does not earn Pen income")
+	check(profile.Food==beforeFood and profile.Money==beforeMoney,"Plate consumes no Food or Money")
+	check(not carry.PlaceOnPlate(a,one.PetId),"Duplicate request cannot duplicate pet")
+	local result=ui.HandleRequest(a,"EquipPet",one.PetId)
+	for _=1,10 do
+		if result.Code~="Cooldown" then break end
+		task.wait(.3); result=ui.HandleRequest(a,"EquipPet",one.PetId)
+	end
+	check(not result.Ok and result.Code=="HoldToPickup","Inventory cannot bypass hold pickup")
+	assert(carry.Equip(a,two.PetId))
+	check(not carry.PlaceOnPlate(a,two.PetId) and carry.GetPetId(a)==two.PetId,"Occupied plate preserves second held pet")
+	local model=plots.GetPlot(a).FeedPlate.PlatePet
+	local prompt=model:FindFirstChildWhichIsA("ProximityPrompt",true)
+	check(prompt and prompt.HoldDuration==1,"Plate pet has one-second E prompt")
+	check(not carry.BeginPickup(b,prompt),"Other player cannot pick up plate pet")
+	assert(carry.BeginPickup(a,prompt))
+	check(not carry.FinishPickup(a,prompt),"Instant pickup rejected")
+	assert(carry.BeginPickup(a,prompt));task.wait(1.05)
+	check(carry.FinishPickup(a,prompt),"Completed hold picks pet up")
+	check(not plate.GetPetId(a) and carry.GetPetId(a)==one.PetId and model.Parent==nil,"Plate clears without duplicate visual")
+	check(profile.Inventory[two.PetId]~=nil,"Previous held pet remains in inventory")
+	assert(carry.PlaceOnPlate(a,one.PetId))
+	assert(data.Save(a))
+	local read,record=adapter.UpdateAsync("Player_"..a.UserId,function() return nil end)
+	check(read and record.Data.Inventory[one.PetId] and not record.Data.Inventory[one.PetId].Placed,"Save retains staged pet as stored inventory")
+	a:LoadCharacterAsync()
+	waitFor(function() return not plate.GetPetId(a) end, 5)
+	check(not plate.GetPetId(a) and not plots.GetPlot(a).FeedPlate:FindFirstChild("PlatePet"),"Respawn clears staging safely")
+	check(profile.Inventory[one.PetId]~=nil,"Respawn preserves pet identity")
+	check(require(script.Parent.Data.PlayerDataSchema).Validate(profile),"Final schema valid")
+end,debug.traceback)
+testing:EndTest({passed=ok,checks=checks,failure=if ok then nil else tostring(failure)})

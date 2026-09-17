@@ -5,6 +5,7 @@ local DataService = require(script.Parent.DataService)
 local PetService = require(script.Parent.PetService)
 local CarryService = require(script.Parent.CarryService)
 local MoneyService = require(script.Parent.MoneyService)
+local PedestalService = require(script.Parent.PedestalService)
 local Config = require(ReplicatedStorage.Shared.Config.UIConfig)
 local UIService = {}
 local lastRequest = {}
@@ -30,10 +31,13 @@ function UIService.HandleRequest(player, action, petId, locked)
 			local ok, code = CarryService.PlaceAt(player, petId, locked)
 			return { Ok = ok, Code = code }
 		elseif action == "EquipPet" then
-			if type(petId) == "string" and data.Inventory[petId] and data.Inventory[petId].Placed then
+			if type(petId) == "string" and data.Inventory[petId] and (data.Inventory[petId].Placed or PedestalService.GetPetId(player) == petId) then
 				return { Ok = false, Code = "HoldToPickup" }
 			end
 			local ok, code = CarryService.Equip(player, petId)
+			return { Ok = ok, Code = code }
+		elseif action == "PlaceOnPlate" then
+			local ok, code = CarryService.PlaceOnPlate(player, petId)
 			return { Ok = ok, Code = code }
 		elseif action == "UnequipPet" then
 			return { Ok = CarryService.Unequip(player) }
@@ -49,6 +53,7 @@ function UIService.HandleRequest(player, action, petId, locked)
 		MaxPetSlots = data.MaxPetSlots, PlacedCount = placedCount,
 		Inventory = PetService.GetInventory(player),
 		CarriedPetId = CarryService.GetPetId(player),
+		FeedPlatePetId = PedestalService.GetPetId(player),
 		IncomePerSecond = MoneyService.GetRate(player),
 		MoneyAt = os.clock(),
 		FoodAt = os.clock(),

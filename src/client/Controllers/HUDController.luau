@@ -69,10 +69,10 @@ function HUDController.Start()
 		lock.Visible = pet ~= nil
 		place.Visible = pet ~= nil
 		if pet then
-			place.ButtonText.Text = if snapshot.CarriedPetId == pet.PetId then Text.Unequip elseif pet.Placed then Text.Pickup else Text.Equip
+			place.ButtonText.Text = if snapshot.CarriedPetId == pet.PetId then Text.Unequip elseif pet.Placed or snapshot.FeedPlatePetId == pet.PetId then Text.Pickup else Text.Equip
 			local definition = PetConfig.Species[pet.SpeciesId]
 			detail.Text = string.format(Text.Details, definition and definition.DisplayName or pet.SpeciesId,
-				pet.Rarity, pet.Variant, pet.FeedLevel, numberText(pet.BaseIncome), if pet.Placed then Text.Placed else Text.Stored)
+				pet.Rarity, pet.Variant, pet.FeedLevel, numberText(pet.BaseIncome), if snapshot.FeedPlatePetId == pet.PetId then "On feed plate" elseif pet.Placed then Text.Placed else Text.Stored)
 			lock.ButtonText.Text = if pet.Locked then Text.Unlock else Text.Lock
 		else
 			detail.Text = Text.Select
@@ -138,7 +138,7 @@ function HUDController.Start()
 	place.Activated:Connect(function()
 		local pet = snapshot and snapshot.Inventory[selectedId]
 		if busy or not remote or not pet then return end
-		if pet.Placed then status.Text = "Walk to your pet and hold E to pick it up."; return end
+		if pet.Placed or snapshot.FeedPlatePetId == pet.PetId then status.Text = "Walk to your pet and hold E to pick it up."; return end
 		busy = true
 		status.Text = Text.Saving
 		local ok, result = pcall(function()

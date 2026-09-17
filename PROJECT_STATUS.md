@@ -4,7 +4,7 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-16
+**Last Updated:** 2026-09-17
 
 > This file is the current-state handoff between Codex sessions. Update it
 > before ending a meaningful development session. Do not mark a feature
@@ -44,7 +44,7 @@ pet wandering, followed by server-authoritative income.
 | Farm | ✅ Server Verified | Six authored stations; owner proximity entry and input exit. 27 multiplayer checks pass; manual feel/animation pending. |
 | Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
 | Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
-| Feeding Pedestal | ⬜ Not Started | |
+| Feeding Pedestal | ✅ Staging Server Verified | Six feed plates; carry/click placement and hold-E pickup. 23 multiplayer checks pass; Feed UI/RNG deferred. |
 | Feed UI | ⬜ Not Started | |
 | Feed Transaction | ⬜ Not Started | |
 | Explosion RNG | ⬜ Not Started | |
@@ -61,14 +61,18 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Active Food farming with automatic proximity entry and input exit
+**Current Feature:** Feed plates with single-pet staging and hold-E pickup
 
-**Status:** Implemented; 27 multiplayer server checks and 11 isolated client-handler checks pass. Rojo build/source compilation pass. Manual input/visual verification remains separate.
+**Status:** Plate placement/pickup implemented; all 23 PedestalVerification multiplayer checks pass. Build/source compilation and six geometry checks pass. Actual click/touch feel remains separate.
 
-**Objective:** Approaching your own farm enters a stationary farming state;
-produce Food only while inside, and exit on WASD/jump. Animation is deferred.
+**Objective:** Carry a pet to your plot's plate, click to stage it, and hold E
+to pick it back up. Preserve identity and inventory through respawn/save.
 
 ## 4. Completed
+
+- Six authored feed plates and PedestalService transient single-pet staging;
+  held-ID/ownership/distance validation, occupied rejection, timed pickup,
+  inventory status and lifecycle cleanup. Feed UI and transactions deferred.
 
 - Active Food farm: six authored stations, owner-only server proximity sessions,
   elapsed-time Food payouts, exit/rearm safety, cleanup, Food HUD push and save.
@@ -135,6 +139,7 @@ produce Food only while inside, and exit on WASD/jump. Animation is deferred.
 
 ## 5. In Progress
 
+- Manual plate click/touch/hold-E presentation review; server verification complete.
 - Manual farm entry/exit and Food HUD feel validation. Running animation asset
   and farm upgrade purchasing/UI remain unimplemented; not part of this request.
 - Fresh Play-session verification of HUD startup and visible one-second payout
@@ -158,23 +163,54 @@ produce Food only while inside, and exit on WASD/jump. Animation is deferred.
 ## 7. Files Modified This Session
 
 ```text
-docs/farm.md
+docs/feed-plate.md
 src/world/PlayerPlots.rbxmx
-src/shared/Config/FarmConfig.luau
-src/server/Services/FarmService.luau
+src/shared/Config/CarryConfig.luau
+src/server/Services/PedestalService.luau
 src/server/Services/CarryService.luau
 src/server/Services/UIService.luau
-src/server/FarmVerification.server.luau
-src/server/init.server.luau
-src/client/init.client.luau
-src/client/Controllers/FarmController.luau
+src/server/PedestalVerification.server.luau
+src/client/Controllers/CarryController.luau
 src/client/Controllers/HUDController.luau
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
 
-Active farm implementation, assets, tests and handoff. Baseline: 8775767.
+Feed-plate implementation, assets, tests and handoff. Baseline: ca11ac5.
+Implementation/testing finished on September 16; the local commit was blocked
+by an approval-review usage limit. September 17 continuation rechecked the
+unchanged worktree and is completing that local commit, without expanding scope.
+
+### Latest Session Handoff — Feed Plate — 2026-09-16
+
+- User requested a plate to put pets on. Added one editable FeedPlate per plot,
+  built as actual Studio parts through MCP and exported into PlayerPlots.rbxmx.
+  Central lane, Pens and farms unchanged. No runtime geometry generator.
+- Carry a pet, approach own plate (12-stud limit), click/tap to stage. One pet
+  maximum; occupied/invalid placement leaves the held pet unchanged. Hold E
+  one second to pick up using existing server-timed ownership/range validation.
+- PedestalService is a transient visual/state layer, not a second pet inventory.
+  Pets retain their original records, IDs, lock and FeedLevel. Staged pets are
+  stored for persistence, consume no active Pen slot and earn no Pen income.
+  Respawn/leaving clears visuals only; reconnect returns the pet to inventory.
+- UIService exposes FeedPlatePetId and rejects inventory equip bypassing hold-E.
+  No Food/Money consumption, Feed UI, RNG, Protection or Revive implemented.
+- Removed Studio/Rojo duplicate copies of the six authored plates plus the two
+  new scripts. Content is preserved in the repository. Check for duplicates
+  again when introducing new Rojo objects in this Studio session.
+- Verification: all 23 two-player opt-in memory PedestalVerification checks pass:
+  held-ID/ownership/distance validation, template-failure recovery, one-pet
+  occupancy, inventory bypass rejection, timed hold pickup, currency neutrality,
+  memory save, respawn cleanup and schema validity. First run exposed cleanup
+  timing during respawn; added character-specific state and reconciliation plus
+  an asynchronous test wait. Latest rerun passed. Six geometry checks confirm
+  unique anchored plates remain within plot bounds and outside the center lane.
+  Rojo build, source compilation and git diff --check pass. Actual physical
+  mouse/touch input and visual feel remain unverified. No Computer Use or
+  production data writes; main Studio returned to Edit after auto-ending tests.
+- Next: review actual click/hold behavior, then Feed UI
+  and safe server-authoritative Feed transaction.
 
 ### Latest Session Handoff — Active Farm — 2026-09-16
 

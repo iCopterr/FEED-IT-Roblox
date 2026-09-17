@@ -1,5 +1,6 @@
 return table.freeze({
 	PickupDistance = 10,
+	PlateDistance = 12,
 	PickupHoldSeconds = 1,
 	PickupPromptName = "PickupPet",
 	HeldScale = 0.65,

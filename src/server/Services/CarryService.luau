@@ -6,6 +6,7 @@ local PetService = require(script.Parent.PetService)
 local PlacementService = require(script.Parent.PlacementService)
 local PlacementConfig = require(game.ReplicatedStorage.Shared.Config.PlacementConfig)
 local PlotService = require(script.Parent.PlotService)
+local PedestalService = require(script.Parent.PedestalService)
 local carried, connections = {}, {}
 local pickupHolds = {}
 local CarryService = {}
@@ -76,6 +77,7 @@ function CarryService.Equip(player, id)
 	local ok, reason = PlacementService.PickupPet(player, id)
 	if not ok then model:Destroy(); return false, reason end
 	CarryService.Unequip(player)
+	if PedestalService.GetPetId(player) == id then PedestalService.Clear(player) end
 	carried[player] = {Id = id, Model = model, Character = character}
 	player:SetAttribute("CarriedPetId", id)
 	return true
@@ -95,8 +97,23 @@ function CarryService.PlaceAt(player, id, position)
 	return ok, reason
 end
 
+function CarryService.PlaceOnPlate(player, id)
+	local state = carried[player]
+	local character = living(player)
+	if not state or id ~= state.Id or character ~= state.Character or state.Model.Parent ~= character then return false, "NotCarrying" end
+	local ok, reason = PedestalService.Place(player, id)
+	if ok then CarryService.Unequip(player) end
+	return ok, reason
+end
+
 local function pickupTarget(player, prompt)
 	if typeof(prompt) ~= "Instance" or not prompt:IsA("ProximityPrompt") or prompt.Name ~= Config.PickupPromptName or not prompt.Enabled then return nil end
+	local plateId, position = PedestalService.GetPickupTarget(player, prompt)
+	if plateId then
+		local character, root = living(player)
+		if character and (root.Position - position).Magnitude <= Config.PickupDistance then return plateId, character end
+		return nil
+	end
 	local plot = PlotService.GetPlot(player)
 	local model = prompt:FindFirstAncestorOfClass("Model")
 	if not plot or not model or model.Parent ~= plot.Pen:FindFirstChild("ActivePets") then return nil end
@@ -146,6 +163,7 @@ function CarryService.Start()
 	end)
 	local function bind(player)
 		connections[player] = player.CharacterRemoving:Connect(function(character)
+			PedestalService.Clear(player, character)
 			-- Deferred removal of an old character must not clear a newer equip.
 			if carried[player] and carried[player].Character == character then CarryService.Unequip(player) end
 		end)
@@ -153,13 +171,16 @@ function CarryService.Start()
 	Players.PlayerAdded:Connect(bind)
 	for _, player in Players:GetPlayers() do bind(player) end
 	Players.PlayerRemoving:Connect(function(player)
+		PedestalService.Clear(player)
 		CarryService.Unequip(player)
 		if connections[player] then connections[player]:Disconnect(); connections[player] = nil end
 	end)
 	PetService.PetRemoved:Connect(function(player, pet)
+		if PedestalService.GetPetId(player) == pet.PetId then PedestalService.Clear(player) end
 		if CarryService.GetPetId(player) == pet.PetId then CarryService.Unequip(player) end
 	end)
 	RunService.Heartbeat:Connect(function()
+		for _, player in Players:GetPlayers() do PedestalService.Reconcile(player) end
 		for player, hold in pickupHolds do
 			local id, character = pickupTarget(player, hold.Prompt)
 			if id ~= hold.Id or character ~= hold.Character or os.clock() - hold.Started > Config.PickupHoldSeconds + 3 then pickupHolds[player] = nil end
