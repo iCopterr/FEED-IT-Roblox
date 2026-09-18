@@ -4,7 +4,7 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-17
+**Last Updated:** 2026-09-18
 
 > This file is the current-state handoff between Codex sessions. Update it
 > before ending a meaningful development session. Do not mark a feature
@@ -45,8 +45,8 @@ pet wandering, followed by server-authoritative income.
 | Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
 | Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
 | Feeding Pedestal | ✅ Staging Server Verified | Six feed plates; carry/click placement and hold-E pickup. 23 multiplayer checks pass; Feed UI/RNG deferred. |
-| Feed UI | ⬜ Not Started | |
-| Feed Transaction | ⬜ Not Started | |
+| Feed UI | 🟦 Consumption UI Implemented | Authored panel, automatic open/reopen, cost/Food and pet details. Nine isolated controller checks pass; visual Play review pending. |
+| Feed Transaction | 🟦 Consumption Only Verified | Fixed 1 Food deduction, ownership/proximity/cooldown/replay protection; 21 server checks pass. No progression or RNG. |
 | Explosion RNG | ⬜ Not Started | |
 | Critical Feed | ⬜ Not Started | |
 | Pet Growth | ⬜ Not Started | |
@@ -61,14 +61,18 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Feed plates with single-pet staging and hold-E pickup
+**Current Feature:** Feed UI with server-authoritative Food consumption only
 
-**Status:** Plate placement/pickup implemented; all 23 PedestalVerification multiplayer checks pass. Build/source compilation and six geometry checks pass. Actual click/touch feel remains separate.
+**Status:** Implemented; 21 FeedVerification multiplayer checks and nine isolated UI-controller checks pass. Build/source compilation pass. Actual physical input/visual review remains separate.
 
-**Objective:** Carry a pet to your plot's plate, click to stage it, and hold E
-to pick it back up. Preserve identity and inventory through respawn/save.
+**Objective:** Open a Feed panel for the staged pet and consume Food on Feed.
+No config module, Feed Level changes, growth, income change or RNG in this step.
 
 ## 4. Completed
+
+- Authored Feed panel and reopen button in StarterGui. FeedService consumes
+  exactly 1 Food per accepted request with server validation and replay guards.
+  Immediate Food HUD updates, insufficient-Food handling and safe UI lifecycle.
 
 - Six authored feed plates and PedestalService transient single-pet staging;
   held-ID/ownership/distance validation, occupied rejection, timed pickup,
@@ -139,6 +143,8 @@ to pick it back up. Preserve identity and inventory through respawn/save.
 
 ## 5. In Progress
 
+- Physical mouse/touch and visual review of Feed UI. No growth/RNG/Protection/
+  Revive implemented; user explicitly limited this step to Food consumption.
 - Manual plate click/touch/hold-E presentation review; server verification complete.
 - Manual farm entry/exit and Food HUD feel validation. Running animation asset
   and farm upgrade purchasing/UI remain unimplemented; not part of this request.
@@ -163,13 +169,14 @@ to pick it back up. Preserve identity and inventory through respawn/save.
 ## 7. Files Modified This Session
 
 ```text
-docs/feed-plate.md
-src/world/PlayerPlots.rbxmx
-src/shared/Config/CarryConfig.luau
+docs/feed-ui.md
+src/ui/FeedYourPetUI.rbxmx
+src/server/Services/FeedService.luau
 src/server/Services/PedestalService.luau
-src/server/Services/CarryService.luau
-src/server/Services/UIService.luau
-src/server/PedestalVerification.server.luau
+src/server/FeedVerification.server.luau
+src/server/init.server.luau
+src/client/init.client.luau
+src/client/Controllers/FeedController.luau
 src/client/Controllers/CarryController.luau
 src/client/Controllers/HUDController.luau
 PROJECT_STATUS.md
@@ -177,10 +184,41 @@ PROJECT_STATUS.md
 
 ## 8. Current Uncommitted Work
 
-Feed-plate implementation, assets, tests and handoff. Baseline: ca11ac5.
-Implementation/testing finished on September 16; the local commit was blocked
-by an approval-review usage limit. September 17 continuation rechecked the
-unchanged worktree and is completing that local commit, without expanding scope.
+Feed UI/consumption implementation, asset, tests and handoff. Baseline: 7189bda.
+September 18 continuation verified the saved implementation and reran the build
+and diff checks before completing the local commit. No scope/config changes.
+
+### Latest Session Handoff — Feed UI / Food Consumption — 2026-09-17
+
+- User requested Feed UI with feeding logic limited to consuming Food and no
+  config yet. Implemented that explicit scope, not full GDD Feed resolution.
+  Temporary cost is 1 Food per click (announced default; cost question unanswered).
+  No config files were created or changed. One server-local cost constant is
+  returned in snapshots; the client never chooses the charged amount.
+- Created actual editable FeedPanel/FeedOpen UI objects in StarterGui via MCP,
+  exported into existing FeedYourPetUI.rbxmx. Panel shows pet name, rarity,
+  current Feed Level, Food/cost, status, Feed and Close. Clear consumption-only
+  notice; no misleading success/growth/explosion display. Auto-opens on staging,
+  closes on pickup, and supports reopen without disturbing the pet.
+- Added FeedService and FeedController. Server checks loaded valid profile,
+  own staged pet, current live character, plate distance, affordability and
+  cooldown. Monotonic per-player request sequence rejects duplicate, stale and
+  future requests; deduction and sequence advance are non-yielding. State is
+  per-server session, cleaned on leave. Existing Food persistence reused.
+- FeedFoodChanged pushes authoritative balance/FoodAt directly into the HUD.
+  Feed/Inventory panels are mutually exclusive, world click/pickup is suppressed
+  while the Feed panel is visible. Close the UI to hold E for pickup.
+- Testing: all 21 real two-player Studio memory FeedVerification checks passed,
+  including exact deduction, insufficient Food, ownership/distance/death/pickup,
+  malformed input, replay/cooldown, unchanged pet stats and memory save. Nine
+  isolated FeedController tests used the real cloned UI with mocked signals/
+  transport: open/render/consume/disable/close/reopen/pickup all passed. These are
+  not actual mouse/touch or full rendered-UI tests. No production data writes.
+- Build build/FeedUI.rbxlx, source compilation and git diff --check passed.
+  Removed one extra FeedPanel and FeedOpen from Studio/Rojo synchronization;
+  authored content remains in the static asset. MCP reconnected at 58741.
+- Next: review real Play-session Feed UI, then request direction before adding
+  Feed progression, RNG or a balance config. No Computer Use used.
 
 ### Latest Session Handoff — Feed Plate — 2026-09-16
 

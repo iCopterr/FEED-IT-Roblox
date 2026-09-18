@@ -8,7 +8,7 @@ function CarryController.Start()
 	local busy = false
 	local function click(screenPosition)
 		local gui = player.PlayerGui:FindFirstChild("FeedYourPetUI")
-		if busy or (gui and gui.Inventory.Visible) then return end
+		if busy or (gui and (gui.Inventory.Visible or (gui:FindFirstChild("FeedPanel") and gui.FeedPanel.Visible))) then return end
 		local camera = workspace.CurrentCamera
 		if not camera then return end
 		-- Input coordinates include the top bar; avoid applying the GUI inset twice.
@@ -61,7 +61,7 @@ function CarryController.Start()
 			for _, prompt in plots:GetDescendants() do
 				if prompt:IsA("ProximityPrompt") and prompt.Name == "PickupPet" then
 					local model = prompt:FindFirstAncestorOfClass("Model")
-					prompt.Enabled = model:GetAttribute("OwnerUserId") == player.UserId and not (gui and gui.Inventory.Visible)
+					prompt.Enabled = model:GetAttribute("OwnerUserId") == player.UserId and not (gui and (gui.Inventory.Visible or (gui:FindFirstChild("FeedPanel") and gui.FeedPanel.Visible)))
 				end
 			end
 			task.wait(.2)

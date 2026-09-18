@@ -18,6 +18,22 @@ function PedestalService.GetPetId(player)
 	return states[player] and states[player].Id
 end
 
+function PedestalService.GetFeedPet(player)
+	PedestalService.Reconcile(player)
+	local state = states[player]
+	if not state then return nil, "NoPet" end
+	local character = player.Character
+	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	if state.Character ~= character or not humanoid or humanoid.Health <= 0 or not root
+		or player:GetAttribute("IsFarming") then return nil, "Unavailable" end
+	local dish = state.Plate:FindFirstChild("Dish")
+	if not dish or not dish:IsA("BasePart") then return nil, "Unavailable" end
+	if (root.Position-dish.Position).Magnitude > Config.PlateDistance then return nil, "TooFar" end
+	local data = DataService.GetData(player)
+	return data and data.Inventory[state.Id], nil
+end
+
 function PedestalService.GetPickupTarget(player, prompt)
 	local state = states[player]
 	local data = DataService.GetData(player)

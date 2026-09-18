@@ -44,6 +44,7 @@ function HUDController.Start()
 		foodLabel.Text = string.format(Text.Food, numberText(state.Food))
 	end
 	game.ReplicatedStorage:WaitForChild("Farm").OnClientEvent:Connect(updateFood)
+	game.ReplicatedStorage:WaitForChild("FeedFoodChanged").OnClientEvent:Connect(updateFood)
 	local open = hud:WaitForChild("OpenInventory")
 	local modal = gui:WaitForChild("Inventory")
 	local modalScale = modal:WaitForChild("UIScale")
@@ -119,7 +120,11 @@ function HUDController.Start()
 		empty.Visible = #pets == 0
 		updateSelection()
 	end
-	open.Activated:Connect(function() modal.Visible = not modal.Visible end)
+	open.Activated:Connect(function()
+		local feedPanel = gui:FindFirstChild("FeedPanel")
+		if feedPanel then feedPanel.Visible = false end
+		modal.Visible = not modal.Visible
+	end)
 	close.Activated:Connect(function() modal.Visible = false end)
 	UserInputService.InputBegan:Connect(function(input, processed)
 		if not processed and input.KeyCode == Enum.KeyCode.Escape then modal.Visible = false end
