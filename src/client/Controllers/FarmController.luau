@@ -1,6 +1,5 @@
 local Players = game:GetService("Players")
 local Input = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 local Config = require(game.ReplicatedStorage.Shared.Config.FarmConfig)
 local FarmController = {}
 
@@ -32,23 +31,8 @@ function FarmController.Start()
 	player.CharacterRemoving:Connect(function()
 		if track then track:Stop(); track:Destroy(); track = nil end
 	end)
-	Input.InputBegan:Connect(function(input)
-		if Input:GetFocusedTextBox() then return end
-		if input.KeyCode == Enum.KeyCode.W or input.KeyCode == Enum.KeyCode.A
-			or input.KeyCode == Enum.KeyCode.S or input.KeyCode == Enum.KeyCode.D
-			or input.KeyCode == Enum.KeyCode.Space then exit() end
-	end)
+	-- JumpRequest covers keyboard, touch and gamepad jump controls.
 	Input.JumpRequest:Connect(exit)
-	-- Touch/gamepad movement also exits, after releasing the approach input.
-	local armed = false
-	player:GetAttributeChangedSignal("IsFarming"):Connect(function() armed = false end)
-	RunService.Heartbeat:Connect(function()
-		if not player:GetAttribute("IsFarming") then return end
-		local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-		if not humanoid then return end
-		if humanoid.MoveDirection.Magnitude < .05 then armed = true
-		elseif armed then exit() end
-	end)
 	changed()
 end
 

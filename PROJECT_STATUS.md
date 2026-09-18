@@ -184,6 +184,18 @@ PROJECT_STATUS.md
 
 ## 8. Current Uncommitted Work
 
+### Latest Session — Jump-only farm exit — 2026-09-18
+
+- Removed WASD and MoveDirection exit handlers from FarmController. JumpRequest
+  is now the only voluntary exit input; chat exclusion and cooldown remain.
+  Server cleanup for death, respawn, leaving and invalid state is unchanged.
+- Updated all six static farm signs and docs/farm.md to say Jump to exit.
+- Files: FarmController.luau, PlayerPlots.rbxmx, docs/farm.md, PROJECT_STATUS.md.
+- Verification: Rojo build/diff checks pass; synced controller passed five
+  isolated Studio checks (WASD ignored, jump exits, throttling, chat exclusion,
+  no exit outside farming). Physical input review remains separate.
+- Next: verify jump-only controls in Play; no Food balance/config changes.
+
 ### Latest Session — Remove main-screen Feed button — 2026-09-18
 
 - Removed FeedOpen from the authored UI asset and its controller bindings.

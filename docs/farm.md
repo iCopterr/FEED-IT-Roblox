@@ -3,8 +3,8 @@
 Each plot contains an editable Farm station in Workspace, stored in
 PlayerPlots.rbxmx. No runtime geometry is generated. Walk within five studs of
 your own WorkPoint to enter automatically. The server moves and anchors the
-character at the work position. Press a fresh WASD key or Jump to exit; release
-then move again for touch/gamepad. Exit restores anchoring/rotation and moves
+character at the work position. Only Jump exits (Space, touch jump or gamepad
+jump); WASD/stick movement keeps farming. Exit restores anchoring/rotation and moves
 the player to ExitPoint. Move outside the rearm radius before entering again.
 
 Per the user's 2026-09-16 instruction, Food is produced **only while farming**,
