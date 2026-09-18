@@ -36,7 +36,9 @@ end
 function FarmService.GetRate(player)
 	local data = DataService.GetData(player)
 	if not data or not Schema.Validate(data) then return 0 end
-	local rate = (Config.FoodPerSecond[data.FarmLevel] or 0) * data.FarmPower
+	-- Retired higher-level saves use the new cap without erasing saved progress.
+	local level = math.min(data.FarmLevel, #Config.FoodPerSecond)
+	local rate = (Config.FoodPerSecond[level] or 0) * data.FarmPower
 	return if rate == rate and rate < math.huge then rate else 0
 end
 

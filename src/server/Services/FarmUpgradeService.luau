@@ -14,7 +14,7 @@ function FarmUpgradeService.GetState(player)
 	if not data or not Schema.Validate(data) then return {Ok=false,Code="Loading"} end
 	local cost = Config.UpgradeCost[data.FarmLevel+1]
 	local nextBase = Config.FoodPerSecond[data.FarmLevel+1]
-	return {Ok=true,Level=data.FarmLevel,Rate=FarmService.GetRate(player),
+	return {Ok=true,Level=math.min(data.FarmLevel,#Config.FoodPerSecond),Rate=FarmService.GetRate(player),
 		NextRate=nextBase and nextBase*data.FarmPower,Cost=cost,MaxLevel=data.FarmLevel>=#Config.FoodPerSecond,
 		CanAfford=cost~=nil and data.Money>=cost,Saving=saving[player]~=nil,
 		Money=data.Money,MoneyAt=os.clock(),IncomePerSecond=MoneyService.GetRate(player)}

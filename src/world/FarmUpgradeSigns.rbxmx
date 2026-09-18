@@ -124,7 +124,7 @@
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">false</bool>
-<string name="Text">LEVEL 1 / 15</string>
+<string name="Text">LEVEL 1 / 10</string>
 <Color3 name="TextColor3">
 <R>1</R>
 <G>1</G>
@@ -197,7 +197,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">true</bool>
-<string name="Text">BUY UPGRADE • 5K MONEY</string>
+<string name="Text">BUY UPGRADE • 20K MONEY</string>
 <Color3 name="TextColor3">
 <R>0.10980392247438431</R>
 <G>0.22745098173618317</G>
@@ -491,7 +491,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">false</bool>
-<string name="Text">LEVEL 1 / 15</string>
+<string name="Text">LEVEL 1 / 10</string>
 <Color3 name="TextColor3">
 <R>1</R>
 <G>1</G>
@@ -564,7 +564,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">true</bool>
-<string name="Text">BUY UPGRADE • 5K MONEY</string>
+<string name="Text">BUY UPGRADE • 20K MONEY</string>
 <Color3 name="TextColor3">
 <R>0.10980392247438431</R>
 <G>0.22745098173618317</G>
@@ -858,7 +858,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">false</bool>
-<string name="Text">LEVEL 1 / 15</string>
+<string name="Text">LEVEL 1 / 10</string>
 <Color3 name="TextColor3">
 <R>1</R>
 <G>1</G>
@@ -931,7 +931,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">true</bool>
-<string name="Text">BUY UPGRADE • 5K MONEY</string>
+<string name="Text">BUY UPGRADE • 20K MONEY</string>
 <Color3 name="TextColor3">
 <R>0.10980392247438431</R>
 <G>0.22745098173618317</G>
@@ -1225,7 +1225,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">false</bool>
-<string name="Text">LEVEL 1 / 15</string>
+<string name="Text">LEVEL 1 / 10</string>
 <Color3 name="TextColor3">
 <R>1</R>
 <G>1</G>
@@ -1298,7 +1298,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">true</bool>
-<string name="Text">BUY UPGRADE • 5K MONEY</string>
+<string name="Text">BUY UPGRADE • 20K MONEY</string>
 <Color3 name="TextColor3">
 <R>0.10980392247438431</R>
 <G>0.22745098173618317</G>
@@ -1592,7 +1592,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">false</bool>
-<string name="Text">LEVEL 1 / 15</string>
+<string name="Text">LEVEL 1 / 10</string>
 <Color3 name="TextColor3">
 <R>1</R>
 <G>1</G>
@@ -1665,7 +1665,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">true</bool>
-<string name="Text">BUY UPGRADE • 5K MONEY</string>
+<string name="Text">BUY UPGRADE • 20K MONEY</string>
 <Color3 name="TextColor3">
 <R>0.10980392247438431</R>
 <G>0.22745098173618317</G>
@@ -1959,7 +1959,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">false</bool>
-<string name="Text">LEVEL 1 / 15</string>
+<string name="Text">LEVEL 1 / 10</string>
 <Color3 name="TextColor3">
 <R>1</R>
 <G>1</G>
@@ -2032,7 +2032,7 @@ NEXT: 6 FOOD / SEC</string>
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">true</bool>
-<string name="Text">BUY UPGRADE • 5K MONEY</string>
+<string name="Text">BUY UPGRADE • 20K MONEY</string>
 <Color3 name="TextColor3">
 <R>0.10980392247438431</R>
 <G>0.22745098173618317</G>

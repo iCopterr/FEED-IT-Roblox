@@ -61,9 +61,9 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Money-purchased farm upgrades through in-world signs
+**Current Feature:** Ten-level farm cap with owner's custom upgrade prices
 
-**Status:** Implemented; 27 multiplayer upgrade checks and 22 isolated view/geometry checks pass. Build and synced compilation pass. Physical sign-button input and live DataStore tests remain.
+**Status:** Farm cap and signs updated to 10; custom Studio prices restored and verified in filesystem and synced Studio. Build passes. Cap behavior passed 30 multiplayer checks using earlier prices; restored-price integration rerun remains pending. Physical sign-button input/live DataStore tests remain.
 
 **Objective:** Spend pet income on permanent farm progression, using a buy button directly on an editable map sign.
 
@@ -193,6 +193,26 @@ PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session — Keep custom levels 1–10 — 2026-09-18
+
+- User requested removal of farm levels 11–15, preserving custom prices 1–10.
+- Important: Studio contained newer user edits absent from the filesystem.
+  An initial file-based patch temporarily overwrote those prices via Rojo.
+  Captured the pre-edit Studio source and restored all custom prices into the
+  authoritative file; verified exact parity in Studio afterward. Inspect both
+  sources BEFORE editing configuration in future; do not discard Studio edits.
+- Costs to reach levels 2–10: 20K, 500K, 5M, 120M, 2B, 500B, 15T, 200T, 1Qa.
+  Level 1 remains free; Food/sec for 1–10 stays 2,6,18,50,140,400,1200,3500,10000,30000.
+- Removed costs/rates 11–15; six sign previews now say 1/10 and first price 20K.
+  Existing saved levels above 10 are not erased; effective rate/display uses
+  level 10 and purchases are blocked. FarmPower remains applied.
+- Files: FarmConfig, FarmService, FarmUpgradeService, FarmUpgradeVerification,
+  FarmUpgradeSigns.rbxmx, docs/farm.md, PROJECT_STATUS.md.
+- Tests: build/diff PASS, exact restored-price and sign assertions PASS in MCP.
+  30 multiplayer cap/legacy-save checks passed BEFORE restoring custom prices;
+  tests now expect 20K/500K/1Qa but this latest price version has not been rerun.
+- Baseline: 053d2ac. Next: verify custom price pacing in Play; no Feed changes.
 
 ### Latest Session — In-world farm upgrade signs — 2026-09-18
 

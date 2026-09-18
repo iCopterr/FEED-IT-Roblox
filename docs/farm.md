@@ -12,9 +12,14 @@ overriding the GDD's passive-production direction. Level one produces
 2 Food/sec. Rates use GDD 19.1's candidate curve times persisted FarmPower.
 Farm upgrades are purchased with Money from an editable sign beside each farm.
 The sign shows current level, current/next Food/sec, and the Buy Upgrade price.
-The GDD 19.1 curve is centralized in FarmConfig.UpgradeCost, keyed by TARGET
-level: level 2 costs 5K Money and raises base production from 2 to 6 Food/sec;
-level 15 is the maximum. Prices/rates remain candidate balance for playtesting.
+The owner's Studio-edited prices are centralized in FarmConfig.UpgradeCost,
+keyed by TARGET level: level 2 costs 20K Money and raises base production from
+2 to 6 Food/sec; level 10 is the maximum (30K Food/sec, 1Qa Money to reach it).
+Costs for levels 2–10: 20K, 500K, 5M, 120M, 2B, 500B, 15T, 200T, 1Qa.
+Levels 1–10 retain their Food output; levels 11–15 were removed as requested.
+Older saves above level 10 retain their saved progress but display and produce
+at level 10, multiplied by FarmPower. No automatic downgrade/write migration.
+Prices/rates remain candidate balance for playtesting.
 
 FarmUpgradeSigns.rbxmx is mapped to Workspace.FarmUpgradeSigns. Its six model
 names match the six PlayerPlots names. Geometry is authored in Studio and never
