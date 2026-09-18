@@ -40,7 +40,7 @@ then implement Protection/Revive only when requested.
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
 | HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
 | Pet Placement | 🟦 Free Position Implemented | Click/tap inside own Pen, exact local coordinates, five-pet cap and click pickup; build passes, Studio test pending. |
-| Pet Wandering | ⬜ Not Started | |
+| Pet Wandering | ✅ Server Verified | 21 Studio checks pass: walk/pause, live pickup, grown-pet bounds on six plots, cleanup and saved anchors. Manual feel pending. |
 | Money Generation | ✅ Server Verified | Placed pets pay BaseIncome x FeedMultiplier each second; 15 Studio checks pass. HUD rate included; published persistence remains separate. |
 | Farm | ✅ Upgrades Server Verified | Ten levels with preserved custom prices; Money purchase and active-only output. Manual sign input/feel pending. |
 | Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
@@ -62,13 +62,17 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Direct-pet conveyor alpha in the reserved middle lane
+**Current Feature:** Simple pet wandering inside the owner's Pen
 
-**Status:** Implemented; 37 multiplayer server checks, five isolated client checks, lane geometry/asset checks and build/compilation pass. Physical input/visual feel and production persistence remain unverified.
+**Status:** Implemented and synced; build/compilation and 21 multiplayer memory checks pass. Physical movement/input feel remains unverified.
 
-**Objective:** Spawn random visible pets with rarity/prices, buy into inventory safely, and remove unsold offers at the end. No eggs in this alpha.
+**Objective:** Random nearby walk/pause cycles, fence containment, safe hold-E pickup, and unchanged saved identity/placement/income. No economy rebalance or Revive implementation.
 
 ## 4. Completed
+
+- Implemented server-owned pet wandering with configurable speed, pauses and
+  travel distance. Live model position drives pickup; pickup temporarily pauses
+  wandering. No world geometry, economy or save-schema changes.
 
 - Authored center conveyor, pet rarity/price labels and purchase feedback UI.
   Six weighted pet rarities, moving bounded offers, hold-E purchases, unique
@@ -153,6 +157,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 5. In Progress
 
+- Manual wandering movement/pickup feel review; server verification complete.
+
 - Physical mouse/touch and visual review of the new Feed effects/UI. Protection
   and Revive are not implemented; pending exploded pets cannot be used yet.
 - Manual plate click/touch/hold-E presentation review; server verification complete.
@@ -169,37 +175,54 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 6. Next Tasks
 
-Latest priority: fresh Play to review conveyor spawn pacing, movement/labels and
-buying, then farm/Feed pacing. Verify production onboarding and live DataStore
+Latest priority: fresh Play to review wandering movement/pickup and
+conveyor/Feed pacing. User explicitly deferred money balancing. Verify onboarding and live DataStore
 rejoin/outage/session transfer separately.
 The numbered list below retains older prototype follow-ups.
 
 0. Restart Play and verify the HUD appears without the FeedYourPetUI infinite-yield
    warning, balances change on each payout, and carry/popups start independently.
 1. Verify actual inventory button input across desktop/touch/gamepad.
-2. Add simple prototype pet wandering within the owner's Pen.
+2. Review simple prototype pet wandering within the owner's Pen.
 3. After validating active farming, implement the prototype Feeding Pedestal/Feed transaction.
 4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
 
 ## 7. Files Modified This Session
 
 ```text
-default.project.json
-src/world/PetConveyor.rbxmx
-src/ui/ConveyorPetLabel.rbxmx
-src/ui/ConveyorUI.rbxmx
-src/shared/Config/ConveyorConfig.luau
-src/server/Services/ConveyorService.luau
-src/server/ConveyorVerification.server.luau
-src/server/init.server.luau
-src/client/Controllers/ConveyorController.luau
-src/client/Controllers/HUDController.luau
-src/client/init.client.luau
-docs/conveyor.md
+src/shared/Config/WanderingConfig.luau
+src/server/Services/WanderingService.luau
+src/server/Services/PlacementService.luau
+src/server/Services/CarryService.luau
+src/server/WanderingVerification.server.luau
+docs/placement.md
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session — Pet wandering — 2026-09-19
+
+- Baseline 20daf78; clean tree before changes. Inspected Studio Placement/Carry
+  sources before editing. No Farm/Feed/Money/conveyor config changes.
+- Placement registers authored pet clones with WanderingService. Heartbeat
+  movement is server-owned, capped after stalls, local to each Pen and inset for
+  grown-pet rotation. Pauses 2–4s; speed 3 studs/sec; nearby targets 4–10 studs.
+- Initial click/saved anchor stays intact; near-fence pets walk inward before
+  turning. No pet collision avoidance/pathfinding/rig animation in this alpha.
+- CarryService uses live server position, not original anchor. Valid pickup
+  holds pause movement for their four-second timeout window, preventing runaway
+  prompts. Ownership/life/distance/hold-time validation remains enforced.
+- Destroying a visual clears wandering immediately; repair registers the new
+  clone. Held/feed-plate pets are never tracked. No saved wandering state.
+- Build, diff and synced compilation pass. All 21 WanderingVerification checks
+  passed in a disposable two-player Studio memory test; test auto-ended.
+  Covers movement, unchanged anchors/rates, reconciliation, foreign/short/full
+  pickup holds, pause, cleanup, repair, memory save and grown-pet bounds on all
+  six authored floors. First run used exact -12/0 coordinate expectations and
+  hit float conversion; corrected test to compare actual saved initial values.
+- No physical input/smoothness claim; no Computer Use or production writes.
+- Next: manual movement/pickup review. Production persistence remains separate.
 
 ### Latest Session — Pet conveyor alpha — 2026-09-19
 
@@ -767,9 +790,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `79e2e9c` (verified baseline before the conveyor alpha session)
+**Commit:** `20daf78` (verified baseline before the wandering session)
 
-**Message:** `fix: preserve custom farm prices and cap upgrades at level ten`
+**Message:** `feat: add alpha pet conveyor with rarity-priced purchases`
 
 ## 17. Important Decisions
 

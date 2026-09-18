@@ -39,8 +39,20 @@ Workspace.PetTemplates contains six editable, static placeholder models,
 authored through Studio MCP and exported to src/world/PetTemplates.rbxmx.
 Re-export editor changes before Rojo sync: sync is not reverse export.
 Placement clones these authored templates into the owner's Pen.ActivePets;
-no runtime geometry constructor is used. They are anchored placeholders, not
-wandering pets. Template gallery is outside the plot area at Z=-110.
+no runtime geometry constructor is used. Placed pets wander using server-owned
+anchored model movement. Template gallery is outside the plot area at Z=-110.
+
+WanderingService chooses nearby destinations, walks at 3 studs/sec and pauses
+2–4 seconds. WanderingConfig centralizes presentation values. Destinations use
+Pen-floor local coordinates and a rotation-safe inset based on the grown model
+size. Near-edge placements walk inward before turning. Pets can overlap; this
+prototype does not add pathfinding, pet collision avoidance or rig animations.
+The saved PenPosition remains the original click, not every wandering step.
+Reconciliation does not reset a healthy moving model; reload/visual repair starts
+at the saved anchor. Pickup checks the current server model position and pauses
+motion for the pickup hold window (up to four seconds, also after cancellation).
+Destroying/replacing a placed visual immediately clears its wandering state;
+held and feed-plate clones are never registered. Income and schema are unchanged.
 
 Reconciliation rebuilds visuals from loaded placement data and repairs missing
 models. Departure destroys presentation only. The existing DataService saves
@@ -52,6 +64,13 @@ restrict player placement. Slot markers remain invisible/non-queryable in the
 static asset. Existing DataStore names/record wrapper are intentionally unchanged.
 
 ## Verification
+
+WanderingVerification runs with ExecuteMultiplayerTestAsync(2,
+"WanderingVerification"). All 21 memory-only Studio checks pass, including
+movement, saved anchors, income, held pickup pause/ownership/timing, repair,
+cleanup and grown-pet containment across six rotated floors. The suite advances
+walk cycles directly and uses a real timed pickup hold. Physical movement
+smoothness/input still needs a normal Play-session review.
 
 The opt-in PlacementVerification.server.luau requires Studio memory mode and
 two disposable players. Run StudioTestService:ExecuteMultiplayerTestAsync(2,

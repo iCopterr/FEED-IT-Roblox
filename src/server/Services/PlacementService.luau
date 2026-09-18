@@ -4,6 +4,7 @@ local Config = require(game:GetService("ReplicatedStorage").Shared.Config.Placem
 local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
+local WanderingService = require(script.Parent.WanderingService)
 
 type PetData = Schema.PetData
 type VisualState = {Plot: Model, Folder: Folder, Pets: {[string]: Model}}
@@ -11,6 +12,21 @@ local states: {[Player]: VisualState} = {}
 local changed = Instance.new("BindableEvent")
 local started = false
 local PlacementService = {Changed = changed.Event}
+
+-- Interaction uses the server visual, not the saved initial placement anchor.
+function PlacementService.GetLivePetCFrame(player: Player, pet: PetData): CFrame?
+	local state = states[player]
+	local model = state and state.Pets[pet.PetId]
+	if pet.Placed and state and state.Plot == PlotService.GetPlot(player)
+		and model and model.Parent == state.Folder then return model:GetPivot() end
+	return nil
+end
+
+function PlacementService.PauseWandering(player: Player, petId: string, seconds: number)
+	local state = states[player]
+	local model = state and state.Pets[petId]
+	if model then WanderingService.Pause(model, seconds) end
+end
 
 function PlacementService.ResolvePosition(player: Player, position: Vector3): CFrame?
 	if typeof(position) ~= "Vector3" then return nil end
@@ -104,6 +120,7 @@ local function install(player: Player, plot: Model, pet: PetData, model: Model)
 	prompt.Parent = model:FindFirstChildWhichIsA("BasePart", true)
 	model.Parent = state.Folder
 	state.Pets[pet.PetId] = model
+	WanderingService.Track(model, plot.Pen.Floor)
 	if previous then previous:Destroy() end
 end
 
@@ -214,6 +231,7 @@ end
 function PlacementService.Start()
 	assert(not started, "PlacementService already started")
 	started = true
+	WanderingService.Start()
 	Players.PlayerRemoving:Connect(clear)
 	-- Handles asynchronous data loading and repairs a missing visual without
 	-- needing to reload the profile or duplicate a pet record.

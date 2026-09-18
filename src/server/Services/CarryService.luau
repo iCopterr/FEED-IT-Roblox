@@ -44,7 +44,7 @@ function CarryService.Equip(player, id)
 	if not hand or not hand:IsA("BasePart") then return false, "CharacterUnavailable" end
 	if carried[player] and carried[player].Id == id and carried[player].Model.Parent == character then return true end
 	if pet.Placed then
-		local slot = PlacementService.GetPetCFrame(player, pet)
+		local slot = PlacementService.GetLivePetCFrame(player, pet)
 		if not slot or (root.Position - slot.Position).Magnitude > Config.PickupDistance then return false, "TooFar" end
 	end
 	local templates = workspace:FindFirstChild("PetTemplates")
@@ -116,7 +116,7 @@ local function pickupTarget(player, prompt)
 	local pet = data and data.Inventory[model.Name]
 	local character, root = living(player)
 	if not character or not pet or not pet.Placed then return nil end
-	local cf = PlacementService.GetPetCFrame(player, pet)
+	local cf = PlacementService.GetLivePetCFrame(player, pet)
 	if not cf or (root.Position - cf.Position).Magnitude > Config.PickupDistance then return nil end
 	return pet.PetId, character
 end
@@ -125,6 +125,7 @@ function CarryService.BeginPickup(player, prompt)
 	local id, character = pickupTarget(player, prompt)
 	if not id then pickupHolds[player] = nil; return false end
 	pickupHolds[player] = {Id = id, Character = character, Prompt = prompt, Started = os.clock()}
+	PlacementService.PauseWandering(player, id, Config.PickupHoldSeconds + 3)
 	return true
 end
 
