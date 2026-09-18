@@ -184,6 +184,15 @@ PROJECT_STATUS.md
 
 ## 8. Current Uncommitted Work
 
+### Latest Session — Remove main-screen Feed button — 2026-09-18
+
+- Removed FeedOpen from the authored UI asset and its controller bindings.
+  Automatic opening when staging a pet and hold-E opening at the plate remain.
+  Feed and Pick Up Pet buttons inside the panel are unchanged.
+- Files: FeedYourPetUI.rbxmx, FeedController.luau, docs/feed-ui.md, PROJECT_STATUS.md.
+- Verification: Rojo build and diff checks; no server logic changes.
+- Next: check the main screen in a fresh Play session. Baseline: 77144f8.
+
 ### Latest Session Handoff — Plate UI Pickup — 2026-09-18
 
 - Replaced plate PickupPet prompt with OpenFeedUI (one-second hold E).

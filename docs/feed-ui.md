@@ -1,7 +1,7 @@
 # Feed UI — consumption-only prototype
 
 Placing a pet on your own feed plate opens the Feed panel. Close it with X or
-Escape; use the bottom-right Feed Pet button to reopen it. Picking up/removing
+Escape; hold E at the plate to reopen it. Picking up/removing
 the pet closes the panel. Inventory and Feed panels are mutually exclusive.
 The authored StarterGui layout is stored in FeedYourPetUI.rbxmx, not generated
 at runtime. Hold E near the plate pet to open the panel; this never picks it up.

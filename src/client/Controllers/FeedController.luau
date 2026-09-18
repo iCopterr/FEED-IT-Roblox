@@ -10,7 +10,6 @@ function FeedController.Start()
 	local gui = playerGui:WaitForChild("FeedYourPetUI",3)
 		or GuiBootstrap.Ensure(playerGui, game:GetService("StarterGui"):WaitForChild("FeedYourPetUI",3))
 	local panel = assert(gui:WaitForChild("FeedPanel",5), "FeedPanel asset missing; check Rojo")
-	local open = gui:WaitForChild("FeedOpen",5)
 	local remote = ReplicatedStorage:WaitForChild("PrototypeFeed")
 	local latest, busy
 	local observedId = nil
@@ -57,13 +56,11 @@ function FeedController.Start()
 	end
 	local function plateChanged()
 		local id = player:GetAttribute("FeedPlatePetId")
-		open.Visible = id ~= nil
 		if id ~= observedId then
 			observedId = id; latest = nil
 			if id then show() else panel.Visible = false end
 		end
 	end
-	open.Activated:Connect(show)
 	game:GetService("ProximityPromptService").PromptTriggered:Connect(function(prompt, triggeringPlayer)
 		if triggeringPlayer and triggeringPlayer ~= player then return end
 		if prompt.Name ~= "OpenFeedUI" then return end
