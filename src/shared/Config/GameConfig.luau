@@ -1,7 +1,7 @@
 --!strict
 
 local GameConfig = {
-	PlayerDataVersion = 2,
+	PlayerDataVersion = 3,
 	PetDataVersion = 2,
 
 	StartingMoney = 0,

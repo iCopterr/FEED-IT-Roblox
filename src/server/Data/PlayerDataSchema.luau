@@ -21,6 +21,7 @@ export type PetData = {
 	CreatedAt: number,
 }
 
+export type RecoveryData = {Pet: PetData, AttemptId: string, ExplodedAt: number, FoodSpent: number}
 export type PlayerData = {
 	DataVersion: number,
 	Money: number,
@@ -29,6 +30,7 @@ export type PlayerData = {
 	FarmPower: number,
 	MaxPetSlots: number,
 	Inventory: { [string]: PetData },
+	PendingRecovery: { [string]: RecoveryData },
 	PlacedPetIds: { [string]: boolean },
 	PetIndex: { [string]: boolean },
 	Statistics: { [string]: number },
@@ -46,6 +48,12 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+migrations[2] = function(source)
+	local result = table.clone(source)
+	result.PendingRecovery = {}
+	return result, nil
+end
 
 -- Keep legacy slot locations until the player moves that pet. Never mutate the
 -- stored input during migration; validation below rejects malformed records.
@@ -262,6 +270,11 @@ local function clonePetData(pet: PetData): PetData
 end
 
 local function clonePlayerData(data: PlayerData): PlayerData
+	local recovery: {[string]: RecoveryData} = {}
+	for id, record in data.PendingRecovery do
+		recovery[id] = {Pet=clonePetData(record.Pet), AttemptId=record.AttemptId,
+			ExplodedAt=record.ExplodedAt, FoodSpent=record.FoodSpent}
+	end
 	local inventory: { [string]: PetData } = {}
 	for petId, pet in data.Inventory do
 		inventory[petId] = clonePetData(pet)
@@ -275,6 +288,7 @@ local function clonePlayerData(data: PlayerData): PlayerData
 		FarmPower = data.FarmPower,
 		MaxPetSlots = data.MaxPetSlots,
 		Inventory = inventory,
+		PendingRecovery = recovery,
 		PlacedPetIds = table.clone(data.PlacedPetIds),
 		PetIndex = table.clone(data.PetIndex),
 		Statistics = table.clone(data.Statistics),
@@ -291,6 +305,7 @@ function PlayerDataSchema.CreateDefault(): PlayerData
 		FarmPower = GameConfig.StartingFarmPower,
 		MaxPetSlots = GameConfig.StartingMaxPetSlots,
 		Inventory = {},
+		PendingRecovery = {},
 		PlacedPetIds = {},
 		PetIndex = {},
 		Statistics = {},
@@ -353,6 +368,17 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 		end
 	end
 
+	if type(data.PendingRecovery) ~= "table" then return false, "PendingRecovery must be a map" end
+	for id, record in data.PendingRecovery do
+		if not isNonEmptyString(id) or type(record) ~= "table" then return false, "Invalid recovery record" end
+		local valid, reason = validatePetData(record.Pet, `PendingRecovery.{id}.Pet`)
+		if not valid then return false, reason end
+		if record.Pet.PetId ~= id or inventory[id] ~= nil or record.Pet.Placed then
+			return false, "Recovery pets must be unique, inactive and outside Inventory"
+		end
+		if not isNonEmptyString(record.AttemptId) or not isNonNegativeInteger(record.ExplodedAt)
+			or not isNonNegativeNumber(record.FoodSpent) then return false, "Invalid recovery metadata" end
+	end
 	local placedIdsAreValid, placedIdsError = validateBooleanMap(data.PlacedPetIds, "PlacedPetIds")
 	if not placedIdsAreValid then
 		return false, placedIdsError

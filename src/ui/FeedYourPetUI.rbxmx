@@ -10,6 +10,24 @@
 <token name="ScreenInsets">2</token>
 <bool name="ClipToDeviceSafeArea">true</bool>
 </Properties>
+<Item class="TextLabel"><Properties>
+<string name="Name">FeedBanner</string>
+<UDim2 name="Size"><XS>0.8</XS><XO>0</XO><YS>0</YS><YO>100</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0.2</YS><YO>0</YO></UDim2>
+<Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
+<Color3 name="BackgroundColor3"><R>0.2</R><G>0.12</G><B>0.32</B></Color3>
+<float name="BackgroundTransparency">0.1</float>
+<float name="BorderSizePixel">0</float>
+<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
+<string name="Text">FEED SUCCESS!</string>
+<bool name="TextScaled">true</bool><bool name="TextWrapped">true</bool>
+<token name="Font">24</token><float name="ZIndex">50</float><bool name="Visible">false</bool>
+</Properties>
+<Item class="UICorner"><Properties><UDim name="CornerRadius"><S>0</S><O>18</O></UDim></Properties></Item>
+<Item class="UIScale"><Properties><string name="Name">UIScale</string><float name="Scale">1</float></Properties></Item>
+<Item class="UITextSizeConstraint"><Properties><float name="MinTextSize">12</float><float name="MaxTextSize">28</float></Properties></Item>
+<Item class="UISizeConstraint"><Properties><Vector2 name="MaxSize"><X>720</X><Y>100</Y></Vector2></Properties></Item>
+</Item>
 <Item class="Frame"><Properties>
 <string name="Name">FeedPanel</string>
 <bool name="Archivable">true</bool>
@@ -149,8 +167,8 @@
 <float name="ZIndex">21</float>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
-<string name="Text">FOOD CONSUMPTION ONLY
-No growth, income change, or explosion yet.</string>
+<string name="Text">Feed to grow your pet and increase income.
+Check the explosion risk before every attempt.</string>
 <token name="Font">26</token>
 <float name="TextSize">17</float>
 <Color3 name="TextColor3"><R>0.8666666746139526</R><G>0.8235294222831726</G><B>0.95686274766922</B></Color3>

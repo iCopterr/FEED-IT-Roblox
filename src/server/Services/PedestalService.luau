@@ -3,6 +3,7 @@ local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
 local Config = require(game.ReplicatedStorage.Shared.Config.CarryConfig)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
+local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local PedestalService = {}
 local states = {}
 
@@ -47,6 +48,7 @@ end
 -- Called only after CarryService verifies this is the currently held pet.
 -- Staging is transient: the existing inventory record remains the only pet.
 function PedestalService.Place(player, id)
+	if require(script.Parent.FeedLocks).IsLocked(player) then return false, "Busy" end
 	local data = DataService.GetData(player)
 	local plot = PlotService.GetPlot(player)
 	local plate = plot and plot:FindFirstChild("FeedPlate")
@@ -67,6 +69,7 @@ function PedestalService.Place(player, id)
 		if item:IsA("LuaSourceContainer") then return false, "TemplateUnavailable" end
 	end
 	local model = template:Clone()
+	model:ScaleTo(FeedConfig.GetScale(pet.FeedLevel))
 	local prompt
 	local ok = pcall(function()
 		local body = assert(model:FindFirstChildWhichIsA("BasePart", true), "Pet has no body")
@@ -96,13 +99,42 @@ function PedestalService.Place(player, id)
 	return true
 end
 
+function PedestalService.BeginPresentation(player)
+	local state = assert(states[player], "No staged pet")
+	state.Animating = true
+	state.Transparencies = {}
+	for _, part in state.Model:GetDescendants() do
+		if part:IsA("BasePart") then state.Transparencies[part]=part.Transparency; part.Transparency=1 end
+	end
+	state.Prompt.Enabled = false
+	return state.Model:GetPivot()
+end
+
+function PedestalService.EndPresentation(player, id)
+	local state = states[player]
+	if not state or state.Id ~= id then return end
+	state.Animating = nil
+	local data = DataService.GetData(player)
+	local pet = data and data.Inventory[id]
+	if not pet then PedestalService.Clear(player); return end
+	state.Model:ScaleTo(FeedConfig.GetScale(pet.FeedLevel))
+	local bounds, size = state.Model:GetBoundingBox()
+	local dish = state.Plate.Dish
+	local target = CFrame.new(dish.Position + Vector3.new(0,dish.Size.X/2+size.Y/2+.05,0)) * state.Plate.Parent.Ground.CFrame.Rotation
+	state.Model:PivotTo(target * bounds:ToObjectSpace(state.Model:GetPivot()))
+	for part, transparency in state.Transparencies or {} do
+		if part.Parent then part.Transparency = transparency end
+	end
+	state.Prompt.Enabled = true
+end
+
 function PedestalService.Reconcile(player)
 	local state = states[player]
 	if not state then return end
 	local data = DataService.GetData(player)
 	local pet = data and data.Inventory[state.Id]
 	local plot = PlotService.GetPlot(player)
-	if player.Character ~= state.Character or not pet or pet.Placed or not plot or state.Plate.Parent ~= plot or state.Model.Parent ~= state.Plate then
+	if player.Character ~= state.Character or (not pet and not state.Animating) or (pet and pet.Placed) or not plot or state.Plate.Parent ~= plot or state.Model.Parent ~= state.Plate then
 		PedestalService.Clear(player)
 	end
 end

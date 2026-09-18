@@ -67,6 +67,7 @@ local function prepareVisual(player: Player, pet: PetData, slot: CFrame): (Model
 	end
 	if not hasPart then return nil, "TemplateUnavailable" end
 	local model = template:Clone()
+	model:ScaleTo(require(game.ReplicatedStorage.Shared.Config.FeedConfig).GetScale(pet.FeedLevel))
 	local ok = pcall(function()
 		model.Name = pet.PetId
 		model:SetAttribute("PetId", pet.PetId)
@@ -147,6 +148,7 @@ local function context(player: Player, petId: string): (Schema.PlayerData?, Mode
 end
 
 function PlacementService.PlacePet(player: Player, petId: string, position: Vector3?): (boolean, string?)
+	if require(script.Parent.FeedLocks).IsLocked(player, petId) then return false, "Busy" end
 	local data, plot, pet, reason = context(player, petId)
 	if not data or not plot or not pet then return false, reason end
 	if pet.Placed then return PlacementService.Reconcile(player) end
@@ -185,6 +187,7 @@ function PlacementService.PlacePet(player: Player, petId: string, position: Vect
 end
 
 function PlacementService.PickupPet(player: Player, petId: string): (boolean, string?)
+	if require(script.Parent.FeedLocks).IsLocked(player, petId) then return false, "Busy" end
 	local data, _, pet, reason = context(player, petId)
 	if not data or not pet then return false, reason end
 	if not pet.Placed then return true, nil end

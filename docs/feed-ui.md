@@ -1,29 +1,28 @@
-# Feed UI — consumption-only prototype
+# Feed UI and outcomes
 
-Placing a pet on your own feed plate opens the Feed panel. Close it with X or
-Escape; hold E at the plate to reopen it. Picking up/removing
-the pet closes the panel. Inventory and Feed panels are mutually exclusive.
-The authored StarterGui layout is stored in FeedYourPetUI.rbxmx, not generated
-at runtime. Hold E near the plate pet to open the panel; this never picks it up.
-Use the Pick Up Pet button inside the panel to equip it and close the UI. Pickup
-does not consume Food and is server-validated for ownership, current pet and
-distance. Pen pets still use hold E to pick up.
+Stage a carried pet by clicking your plate. The panel opens automatically;
+hold E at the plate to reopen it. Hold E never picks up a plate pet.
+Pick Up Pet remains inside the panel; Pen pets still use hold-E pickup.
+There is no main-screen Feed button.
 
-The Feed button consumes a temporary fixed **1 Food** on the server. No new
-config module or balance table was created, per user instruction. Cost comes
-from FeedService's snapshot, not a client value. No Feed Level, growth, income,
-RNG, explosion, Protection or Revive behavior is implemented in this step.
-The panel explicitly labels this as Food consumption only.
+The panel shows server Food cost, current level, target explosion probability
+and the separate 5% Miracle Save chance. Pressing Feed closes the panel;
+rejections show an explanation. At level 40 Feed is disabled, but pickup works.
 
-FeedService validates loaded data, pet identity/plate ownership, live character,
-distance, affordability and cooldown. Per-player monotonic request sequences
-reject duplicates, old replays and skipped sequences. Validation/deduction/
-sequence advance do not yield, preventing partial interleaved transactions.
-Existing Food persistence is reused; no schema change. FeedFoodChanged pushes
-the HUD immediately with the same server timestamp ordering as farm/snapshots.
+Accepted attempts lift the authored pet clone four studs, accelerate its spin,
+then land/grow on success, flash/return on Miracle Save, or burst/fade on
+explosion. A screen banner reports actual gained levels/income or recovery
+status. Explosions keep their pre-failure records for future Revive; Food stays
+spent. Effects cannot modify economy or pet ownership. Other clients receive
+visual results only, not private Food/recovery balances.
 
-Opt-in two-player Studio memory test:
+FeedPanel and FeedBanner are editable StarterGui assets in FeedYourPetUI.rbxmx.
+Runtime effects clone existing Workspace.PetTemplates; no world generator.
+Duplicate results are suppressed; ambiguous replies can recover the cached
+server outcome rather than submit a fresh roll.
+
+Verification (2026-09-18): 55 two-player Studio memory checks pass through
 StudioTestService:ExecuteMultiplayerTestAsync(2, "FeedVerification").
-All 21 server checks passed. Nine isolated controller tests using the real UI
-asset with mocked input/transport also passed. Physical mouse/touch and rendered
-layout still need a Play-session review.
+Six isolated effect/banner/cleanup/replay checks and five isolated controller
+checks pass using the real source/UI with mocked timing or input/transport.
+Manual visual/input feel and live DataStore rejoin/outage testing remain pending.

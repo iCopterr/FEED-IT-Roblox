@@ -1,26 +1,27 @@
 # Feed configuration
 
-FeedConfig extends the existing income multiplier module. No gameplay behavior
-is switched on by this change: FeedService still consumes 1 Food without RNG.
+FeedConfig is now consumed by FeedService, MoneyService and Feed presentation.
 
-- BaseFoodCost and ExplosionChance are indexed by **target level**, 1–40.
-- Multiplier remains indexed by resulting/current level, 0–40; unchanged.
-- GetFoodCost(targetLevel, rarity) applies the GDD rarity multiplier, preserving
-  fractional costs. Unknown levels/rarities return nil; never extrapolate.
-- CriticalResults uses 94% +1, 5% +2, 0.9% +3, 0.1% +5.
-- Explosion is rolled first. On explosion, roll 5% Miracle Save; it preserves
-  pre-attempt level and spent Food, and skips Critical. Without explosion,
-  roll Critical; skipped levels do not roll extra explosions.
+- BaseFoodCost and ExplosionChance use the target level (current + 1), 1–40.
+- Multiplier uses current/resulting level, 0–40. Fractional rarity Food costs are preserved.
+- Explosion rolls first. An explosion gets a separate 5% Miracle Save roll;
+  Miracle keeps the old level, spends Food, and skips Critical.
+- Otherwise Critical rolls 94% +1, 5% +2, 0.9% +3, 0.1% +5.
+  Skipped levels do not roll intermediate explosions.
+- Owner decision: all gains stop at 40. An Insane result at 38 grants only +2.
+  Level 40 cannot attempt another Feed; costs/odds are not extrapolated.
+- Presentation config controls rise, accelerating spin, landing, burst and banners.
+- GetScale is a conservative prototype curve: +6% original size per level,
+  capped at 3.4x to fit the current plate/Pen. It is presentation balance, not
+  a change to the GDD income multipliers. Carried models remain normalized.
 
-Level 40 is the end of configured balance, not a newly imposed gameplay cap.
-The future transaction must explicitly resolve critical overshoot past 40
-before enabling progression; this config does not invent a clamp or extra curve.
+Player schema v3 adds PendingRecovery[PetId] with Pet (full pre-failure record),
+AttemptId, ExplodedAt and FoodSpent. Recovery pets are outside Inventory and
+cannot earn, equip, place or be removed. No automatic expiry or deletion;
+Revive/Protection/purchases are not implemented.
 
-Presentation contains tunable defaults for closing UI on accepted Feed, rising
-four studs, accelerating spin from 45 to 1080 degrees/sec, success return/flash,
-explosion burst/fade and result banners. These are settings only: no effects,
-banner Instances or animation code are added yet. Miracle Save has separate copy
-so it cannot be mislabeled as a successful level gain or a permanently lost pet.
-
-Next: implement the safe server transaction/pending recovery, then make client
-effects show its authoritative outcome. Never delete a pet solely for an effect.
+Food and outcome mutate without yielding and save together through DataService.
+A retry returns the same cached attempt. Feed/pickup/removal are locked during
+presentation and until save confirmation. Failed/ambiguous saves retry without
+refunding, rerolling or restoring the pet. Leave/shutdown save the same profile.
+Production DataStore outages/session transfer still require live verification.

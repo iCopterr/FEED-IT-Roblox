@@ -61,7 +61,9 @@ function CarryController.Start()
 			for _, prompt in plots:GetDescendants() do
 				if prompt:IsA("ProximityPrompt") and (prompt.Name == "PickupPet" or prompt.Name == "OpenFeedUI") then
 					local model = prompt:FindFirstAncestorOfClass("Model")
-					prompt.Enabled = model:GetAttribute("OwnerUserId") == player.UserId and not (gui and (gui.Inventory.Visible or (gui:FindFirstChild("FeedPanel") and gui.FeedPanel.Visible)))
+					prompt.Enabled = model:GetAttribute("OwnerUserId") == player.UserId
+						and not (prompt.Name=="OpenFeedUI" and player:GetAttribute("FeedBusy"))
+						and not (gui and (gui.Inventory.Visible or (gui:FindFirstChild("FeedPanel") and gui.FeedPanel.Visible)))
 				end
 			end
 			task.wait(.2)

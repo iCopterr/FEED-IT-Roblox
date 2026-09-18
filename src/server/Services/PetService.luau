@@ -65,7 +65,7 @@ end
 local function generateUniquePetId(data: PlayerData): string?
 	for _ = 1, PetConfig.PetIdGenerationAttempts do
 		local petId = HttpService:GenerateGUID(false)
-		if data.Inventory[petId] == nil then
+		if data.Inventory[petId] == nil and data.PendingRecovery[petId] == nil then
 			return petId
 		end
 	end
@@ -225,6 +225,7 @@ function PetService.SetLocked(player: Player, petId: string, locked: boolean): (
 end
 
 function PetService.RemovePet(player: Player, petId: string): (PetData?, string?)
+	if require(script.Parent.FeedLocks).IsLocked(player, petId) then return nil, "Busy" end
 	-- This is permanent inventory removal for ordinary flows such as selling.
 	-- Explosion must use its future pending-recovery transaction instead.
 	if type(petId) ~= "string" or petId == "" then

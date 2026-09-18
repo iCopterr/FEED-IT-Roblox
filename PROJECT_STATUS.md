@@ -19,9 +19,9 @@ Build a playable prototype that validates:
 **Hatch → Place → Earn → Farm → Feed → Grow → Risk → Explode / Survive**
 
 The versioned data foundation and server-side pet foundation are implemented.
-PetService mutations and plot ownership pass real Studio server integration
-tests. Pet placement/pickup is implemented; the next gameplay step is simple
-pet wandering, followed by server-authoritative income.
+Pet creation, plots, placement, income, active farming and Feed outcomes have
+Studio server verification. Next: visually playtest Feed tension and effects;
+then implement Protection/Revive only when requested.
 
 ## 2. Overall Progress
 
@@ -31,7 +31,7 @@ pet wandering, followed by server-authoritative income.
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
-| Player Data Schema | 🟦 v2 Implemented | Pen-local positions and v1 migration added; updated runtime verification pending. |
+| Player Data Schema | ✅ v3 Studio Verified | Adds isolated PendingRecovery records; v2 migration, clone and reload checks pass. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ⬜ Not Started | |
@@ -45,12 +45,12 @@ pet wandering, followed by server-authoritative income.
 | Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
 | Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
 | Feeding Pedestal | ✅ Staging Server Verified | Six feed plates; carry/click placement and hold-E pickup. 23 multiplayer checks pass; Feed UI/RNG deferred. |
-| Feed UI | 🟦 Consumption UI Implemented | Authored panel, automatic open/reopen, cost/Food and pet details. Nine isolated controller checks pass; visual Play review pending. |
-| Feed Transaction | 🟦 Consumption Only Verified | Fixed 1 Food deduction, ownership/proximity/cooldown/replay protection; 21 server checks pass. No progression or RNG. |
-| Explosion RNG | ⬜ Not Started | |
-| Critical Feed | ⬜ Not Started | |
-| Pet Growth | ⬜ Not Started | |
-| Explosion Presentation | ⬜ Not Started | |
+| Feed UI | 🟦 Outcome UI Implemented | Risk/cost, max-level limit, pickup and outcome banners; five updated isolated controller checks pass. Visual review pending. |
+| Feed Transaction | ✅ Studio Verified | Configured Food cost, authoritative outcomes, replay and save locks; 55 multiplayer checks pass. |
+| Explosion RNG | ✅ Studio Verified | Explosion first, 5% Miracle Save, otherwise persisted quarantine. |
+| Critical Feed | ✅ Studio Verified | Configured odds; no skipped-level rolls; gains capped at 40. |
+| Pet Growth | 🟦 Implemented | Success scales plate/Pen models and income; manual visual review pending. |
+| Explosion Presentation | 🟦 Implemented | Float/spin, burst/fade and banners; six isolated effect checks pass. |
 | Protection | ⬜ Not Started | |
 | Revive | ⬜ Not Started | |
 | Save / Load | 🟦 Implemented / Needs Testing | Memory-mode flow verified; production backend remains untested. |
@@ -61,18 +61,19 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Feed balance and presentation configuration (config-first)
+**Current Feature:** Server-authoritative Feed outcomes and animation
 
-**Status:** Feed config extension implemented; build and Studio configuration checks pass. Full Feed outcomes and effects are not implemented yet.
+**Status:** Implemented; 55 multiplayer server checks, six isolated effect checks and five isolated controller checks pass. Manual visual/input review and live DataStore tests remain.
 
-**Objective:** Configure Feed balance and the requested presentation before
-implementing outcomes, UI closing and animated success/explosion sequences.
+**Objective:** Feed tension with safe server results, level-40 cap and recoverable explosions.
 
 ## 4. Completed
 
-- Authored Feed panel and reopen button in StarterGui. FeedService consumes
-  exactly 1 Food per accepted request with server validation and replay guards.
-  Immediate Food HUD updates, insufficient-Food handling and safe UI lifecycle.
+- Feed now uses configured costs and RNG, increases level/income, quarantines
+  exploded pets in schema v3, and queues atomic saves with retry locks.
+- Authored FeedPanel/FeedBanner, close-on-Feed, risk display, level-40 limit,
+  accelerating float/spin, success growth, Miracle flash and explosion burst.
+  Plate E opens UI; pickup is inside UI; no main-screen Feed shortcut.
 
 - Six authored feed plates and PedestalService transient single-pet staging;
   held-ID/ownership/distance validation, occupied rejection, timed pickup,
@@ -143,8 +144,8 @@ implementing outcomes, UI closing and animated success/explosion sequences.
 
 ## 5. In Progress
 
-- Physical mouse/touch and visual review of Feed UI. No growth/RNG/Protection/
-  Revive implemented; user explicitly limited this step to Food consumption.
+- Physical mouse/touch and visual review of the new Feed effects/UI. Protection
+  and Revive are not implemented; pending exploded pets cannot be used yet.
 - Manual plate click/touch/hold-E presentation review; server verification complete.
 - Manual farm entry/exit and Food HUD feel validation. Running animation asset
   and farm upgrade purchasing/UI remain unimplemented; not part of this request.
@@ -159,6 +160,10 @@ implementing outcomes, UI closing and animated success/explosion sequences.
 
 ## 6. Next Tasks
 
+Latest priority: playtest Feed presentation and cap behavior, verify live
+DataStore rejoin/outage/session transfer, then decide Protection/Revive scope.
+The numbered list below retains older prototype follow-ups.
+
 0. Restart Play and verify the HUD appears without the FeedYourPetUI infinite-yield
    warning, balances change on each payout, and carry/popups start independently.
 1. Verify actual inventory button input across desktop/touch/gamepad.
@@ -169,20 +174,57 @@ implementing outcomes, UI closing and animated success/explosion sequences.
 ## 7. Files Modified This Session
 
 ```text
+docs/feed-config.md
 docs/feed-ui.md
 src/ui/FeedYourPetUI.rbxmx
+src/shared/Config/FeedConfig.luau
+src/shared/Config/GameConfig.luau
+src/server/Data/PlayerDataSchema.luau
 src/server/Services/FeedService.luau
+src/server/Services/FeedResolver.luau
+src/server/Services/FeedLocks.luau
 src/server/Services/PedestalService.luau
+src/server/Services/CarryService.luau
+src/server/Services/PlacementService.luau
+src/server/Services/PetService.luau
 src/server/FeedVerification.server.luau
-src/server/init.server.luau
-src/client/init.client.luau
 src/client/Controllers/FeedController.luau
+src/client/Controllers/FeedEffects.luau
 src/client/Controllers/CarryController.luau
-src/client/Controllers/HUDController.luau
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session — Feed outcomes and animation — 2026-09-18
+
+- User approved retaining exploded pets safely but unusable until Revive exists,
+  and capping Critical gains at 40. No paid recovery, expiry or deletion added.
+- Implemented configured costs, explosion-before-Critical, 5% Miracle Save,
+  capped actual gains, income updates and plate/Pen scaling. Held size remains
+  normalized. Conservative configurable visual curve reaches 3.4x at level 40.
+- Schema v3 migrates v2 and deep-clones PendingRecovery records; pre-failure
+  pet identity/stats/lock and consumed Food metadata persist together.
+- FeedLocks prevents concurrent feed, pickup, placement and removal. Cached
+  retries never charge/reroll; save retries retain the resolved state and block
+  another feed until confirmation. Leave/shutdown reuse DataService saves.
+- Client closes panel, animates authored pet clones and shows editable banners.
+  Server sends visual-only broadcasts; private balance/recovery data stays local.
+- Tests: Rojo build, synchronized Luau compilation, no duplicate source objects;
+  55 real two-player Studio memory checks, six isolated effects checks, five
+  isolated controller checks PASS. Initial scale assertion needed tolerance
+  for Roblox float storage (1.05999994 vs 1.06); no growth bug was found.
+- MCP localhost:58741/mcp works; Rojo sync works. Tests auto-ended. No Computer
+  Use and no live DataStore writes. Manual appearance/latency/input review and
+  production rejoin/outage/session safety tests are NOT claimed complete.
+- Files: FeedService, FeedResolver, FeedLocks, PedestalService, CarryService,
+  PlacementService, PetService, PlayerDataSchema, FeedVerification, FeedConfig,
+  GameConfig, FeedController, FeedEffects, CarryController, FeedYourPetUI.rbxmx,
+  docs/feed-config.md, docs/feed-ui.md, PROJECT_STATUS.md.
+- Baseline: c458ca1. This session's logical commit is the Feed outcome feature.
+
+Historical session notes follow; their old incomplete statuses are superseded
+by the current feature and latest session above.
 
 ### Latest Session — Feed config first — 2026-09-18
 
@@ -377,6 +419,10 @@ and diff checks before completing the local commit. No scope/config changes.
 
 ## 9. Known Issues / Blockers
 
+- Current: visual Play review and real DataStore outage/rejoin tests remain.
+  Exploded pets stay in PendingRecovery indefinitely until Revive is built.
+  Earlier MCP/Rojo connection blockers below are historical, not current.
+
 - Six-player revision: Players.MaxPlayers is read-only through MCP and still
   reports 60. Set Maximum Players to 6 in Creator Dashboard for place
   127663486570625. PlotConfig.PlayerCapacity is six; excess arrivals are rejected
@@ -422,6 +468,12 @@ Connection failures below are historical; UI runtime tests remain separate.
 These warnings do not block Rojo, MCP, or prototype development.
 
 ## 10. Architecture Notes
+
+Feed: non-yielding Food/outcome mutation, DataService queued atomic save,
+per-player FeedLocks until presentation and confirmed save both finish.
+Exploded pets live only in PendingRecovery, never usable Inventory. Server
+outcomes drive client-only authored-template clones; UI/world assets remain
+filesystem/Rojo-owned. No client RNG or paid recovery path exists.
 
 Plot architecture:
 
@@ -623,9 +675,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `a46d870` (preceding the current carry implementation commit)
+**Commit:** `c458ca1` (verified baseline before this Feed outcome session)
 
-**Message:** `feat: seed developer Studio inventory with a test pet`
+**Message:** `feat: configure feed balance and outcome presentation`
 
 ## 17. Important Decisions
 

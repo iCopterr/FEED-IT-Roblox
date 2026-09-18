@@ -1,8 +1,12 @@
 -- GDD v0.5 sections 13, 14, 16 and 20. Chances are fractions, not percentages.
 -- Cost/risk keys are TARGET levels (current FeedLevel + 1), not current levels.
--- Candidate balance only; full Feed transactions are not enabled by this module.
+-- Candidate balance; Critical gains are capped at 40 per the owner's direction.
 local FeedConfig = {
 	MaxConfiguredLevel = 40,
+	CooldownSeconds = 0.5,
+	SaveRetrySeconds = 5,
+	GrowthPerLevel = 0.06,
+	MaxVisualScale = 3.4,
 	MiracleSaveChance = 0.05,
 	CriticalResults = table.freeze({
 		table.freeze({Id="Normal", Chance=0.94, LevelGain=1}),
@@ -54,6 +58,11 @@ function FeedConfig.GetFoodCost(targetLevel: number, rarity: string): number?
 	local base = FeedConfig.BaseFoodCost[targetLevel]
 	local multiplier = FeedConfig.RarityFoodMultiplier[rarity]
 	return if base and multiplier then base * multiplier else nil
+end
+
+-- Conservative prototype size curve, keeping the plate and five-pet Pen usable.
+function FeedConfig.GetScale(level: number): number
+	return math.min(FeedConfig.MaxVisualScale, 1 + math.max(0, level) * FeedConfig.GrowthPerLevel)
 end
 
 return table.freeze(FeedConfig)
