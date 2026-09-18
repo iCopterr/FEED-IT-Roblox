@@ -3,6 +3,7 @@ local TweenService = game:GetService("TweenService")
 local Config = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local P = Config.Presentation
 local FeedEffects = {}
+local numberText = require(game.ReplicatedStorage.Shared.NumberFormat).Compact
 local seen = {}
 local bannerToken = 0
 
@@ -33,7 +34,7 @@ local function banner(gui, result)
 	else
 		color = Color3.fromRGB(161,255,101)
 		text = if result.Critical == "Normal" then presentation.BannerText else string.upper(result.Critical) .. " FEED!"
-		text ..= string.format("\n+%d LEVEL • LEVEL %d • %g MONEY/SEC",result.Gain,result.FeedLevel,result.Income)
+		text ..= string.format("\n+%d LEVEL • LEVEL %d • %s MONEY/SEC",result.Gain,result.FeedLevel,numberText(result.Income))
 	end
 	label.Text, label.TextColor3, label.Visible = text, color, true
 	label.UIScale.Scale = .8

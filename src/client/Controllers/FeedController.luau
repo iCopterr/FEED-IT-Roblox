@@ -5,6 +5,7 @@ local GuiBootstrap = require(script.Parent.Parent.UI.GuiBootstrap)
 local Effects = require(script.Parent.FeedEffects)
 local Config = require(ReplicatedStorage.Shared.Config.FeedConfig)
 local FeedController = {}
+local numberText = require(ReplicatedStorage.Shared.NumberFormat).Compact
 
 function FeedController.Start()
 	local player = Players.LocalPlayer
@@ -35,8 +36,8 @@ function FeedController.Start()
 			panel.PetName.Text = state.PetName
 			panel.PetDetails.Text = string.format("%s  •  Feed Level %d", state.Rarity, state.FeedLevel)
 		end
-		if state.Food then panel.Food.Text = string.format("FOOD  %g   •   COST  %s", state.Food, if state.Cost then string.format("%g",state.Cost) else "—") end
-		panel.Feed.Text = if state.MaxLevel then "MAX LEVEL 40" else if state.Cost then string.format("FEED  •  %g FOOD", state.Cost) else "FEED"
+		if state.Food then panel.Food.Text = string.format("FOOD  %s   •   COST  %s", numberText(state.Food), if state.Cost then numberText(state.Cost) else "—") end
+		panel.Feed.Text = if state.MaxLevel then "MAX LEVEL 40" else if state.Cost then "FEED  •  "..numberText(state.Cost).." FOOD" else "FEED"
 		panel.Notice.Text = if state.MaxLevel then "LEVEL 40 REACHED\nYou can pick up your pet below."
 			else string.format("EXPLOSION RISK: %g%% • MIRACLE SAVE: %g%%\nFood is spent on every attempt. Critical gains stop at 40.",(state.Risk or 0)*100,Config.MiracleSaveChance*100)
 		local canFeed = state.Ok and state.Cost and not state.MaxLevel and not state.Busy

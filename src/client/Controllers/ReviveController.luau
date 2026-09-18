@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Config = require(ReplicatedStorage.Shared.Config.ReviveConfig)
 local Controller = {}
+local numberText = require(ReplicatedStorage.Shared.NumberFormat).Compact
 
 function Controller.Start()
 	local player = Players.LocalPlayer
@@ -26,8 +27,8 @@ function Controller.Start()
 		gui.Open.Text = string.format("BROKEN PETS (%d)", #records)
 		panel.Title.Text = string.format("BROKEN PETS  %d / %d", if record then index else 0, #records)
 		panel.PetName.Text = if record then record.PetName else "No broken pets"
-		panel.Details.Text = if record then string.format("%s • LEVEL %d • %g MONEY/SEC BEFORE BREAKING\n%g Food remains spent",
-			record.Rarity, record.FeedLevel, record.Income, record.FoodSpent) else "Recovered pets are in MY PETS. Equip and place them again."
+		panel.Details.Text = if record then string.format("%s • LEVEL %d • %s MONEY/SEC BEFORE BREAKING\n%s Food remains spent",
+			record.Rarity, record.FeedLevel, numberText(record.Income), numberText(record.FoodSpent)) else "Recovered pets are in MY PETS. Equip and place them again."
 		local enabled = record ~= nil and snapshot and snapshot.CanRevive and not snapshot.Busy and not busy
 		panel.Revive.Active = enabled == true
 		panel.Revive.AutoButtonColor = enabled == true

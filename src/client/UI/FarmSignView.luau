@@ -1,11 +1,6 @@
 local Config = require(game.ReplicatedStorage.Shared.Config.FarmConfig)
 local View = {}
-function View.Number(value)
-	for _,unit in {{1e15,"Qa"},{1e12,"T"},{1e9,"B"},{1e6,"M"},{1e3,"K"}} do
-		if value>=unit[1] then return string.format("%.3g%s",value/unit[1],unit[2]) end
-	end
-	return string.format("%g",value)
-end
+View.Number = require(game.ReplicatedStorage.Shared.NumberFormat).Compact
 function View.Render(gui, state, owner, near, busy, message)
 	gui.Level.Text=if state.Level then string.format("LEVEL %d / %d",state.Level,#Config.FoodPerSecond) else "AVAILABLE FARM"
 	gui.Rate.Text=if state.Rate then View.Number(state.Rate).." FOOD / SEC"

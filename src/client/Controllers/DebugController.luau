@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local Config = require(ReplicatedStorage.Shared.Config.DebugConfig)
 local PetConfig = require(ReplicatedStorage.Shared.Config.PetConfig)
 local Controller = {}
+local NumberFormat = require(ReplicatedStorage.Shared.NumberFormat)
 
 function Controller.Start()
 	local player=Players.LocalPlayer
@@ -24,7 +25,7 @@ function Controller.Start()
 	local speciesIndex,modeIndex,petIndex=1,1,1
 	local state,busy,selected=nil,false,nil
 	local messages={Disabled="Disabled: Studio memory data only.",Busy="Feed/Revive is animating or saving.",
-		PickupFirst="Pick up this pet before setting its level.",InvalidAmount="Enter a positive whole amount (max 1e15; balance cap 4e15).",
+		PickupFirst="Pick up this pet before setting its level.",InvalidAmount="Enter a positive whole amount (max 1000T; balance cap 4000T). K/M/B/T accepted.",
 		InvalidLevel="Pet levels: 0–40. Farm levels: 1–10. Whole numbers only.",NotOwned="Select a pet you own.",
 		Cooldown="Please wait a moment.",StaleRequest="State changed. Refreshing before another command.",
 		InventoryLimit="Debug spawn limit: 200 inventory pets.",Loading="Loading player data…"}
@@ -37,7 +38,7 @@ function Controller.Start()
 		selected=pet and pet.PetId
 		panel.Pet.Text=if pet then string.format("%d/%d • %s • Lv.%d • %s [%s]",petIndex,#pets,pet.Name,pet.FeedLevel,
 			if pet.Placed then "PLACED" else "STORED/HELD/PLATE",string.sub(pet.PetId,1,8)) else "No pets — spawn one above"
-		panel.Summary.Text=if state then string.format("Money %g • Food %g • Farm %d\nNext override: %s",state.Money,state.Food,state.FarmLevel,
+		panel.Summary.Text=if state then string.format("Money %s • Food %s • Farm %d\nNext override: %s",NumberFormat.Compact(state.Money),NumberFormat.Compact(state.Food),state.FarmLevel,
 			if state.Forced then state.Forced.Mode.." ["..string.sub(state.Forced.PetId,1,8).."]" else "None (normal odds)") else "Loading…"
 		for _,name in {"AddMoney","AddFood","Spawn","SetPetLevel","SetFarmLevel","Force"} do
 			panel[name].Active=state~=nil and not busy and not state.Busy
@@ -68,12 +69,12 @@ function Controller.Start()
 		state=nil
 		refresh()
 	end
-	panel.Amount.Text=tostring(Config.DefaultGrant)
+	panel.Amount.Text=NumberFormat.Compact(Config.DefaultGrant)
 	panel.Species.Activated:Connect(function() if not busy then speciesIndex=speciesIndex%#species+1; render() end end)
 	panel.Mode.Activated:Connect(function() if not busy then modeIndex=modeIndex%#Config.Modes+1; render() end end)
 	panel.Pet.Activated:Connect(function() if not busy and state and #state.Pets>0 then petIndex=petIndex%#state.Pets+1; render() end end)
-	panel.AddMoney.Activated:Connect(function() command("AddMoney",tonumber(panel.Amount.Text)) end)
-	panel.AddFood.Activated:Connect(function() command("AddFood",tonumber(panel.Amount.Text)) end)
+	panel.AddMoney.Activated:Connect(function() command("AddMoney",NumberFormat.Parse(panel.Amount.Text)) end)
+	panel.AddFood.Activated:Connect(function() command("AddFood",NumberFormat.Parse(panel.Amount.Text)) end)
 	panel.Spawn.Activated:Connect(function() command("SpawnPet",species[speciesIndex].Id) end)
 	panel.SetPetLevel.Activated:Connect(function() command("SetPetLevel",tonumber(panel.PetLevel.Text),selected) end)
 	panel.SetFarmLevel.Activated:Connect(function() command("SetFarmLevel",tonumber(panel.FarmLevel.Text)) end)

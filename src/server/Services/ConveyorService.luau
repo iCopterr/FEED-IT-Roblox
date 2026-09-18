@@ -8,6 +8,7 @@ local PlotService=require(script.Parent.PlotService)
 local MoneyService=require(script.Parent.MoneyService)
 local Schema=require(script.Parent.Parent.Data.PlayerDataSchema)
 local Service={}
+local numberText=require(game.ReplicatedStorage.Shared.NumberFormat).Compact
 local offers,lastRequest,lastPurchase,saving={},{},{},{}
 local rng=Random.new()
 local conveyor,visuals,changed
@@ -70,11 +71,11 @@ function Service.SpawnOffer(testRoll)
 		label.NameLabel.Text=PetConfig.Species[definition.SpeciesId].DisplayName
 		label.Rarity.Text=string.upper(definition.Rarity)
 		label.Rarity.TextColor3=definition.Color
-		label.Price.Text=string.format("%g MONEY",definition.Price)
+		label.Price.Text=numberText(definition.Price).." MONEY"
 		label.Adornee=body;label.Parent=body
 		local prompt=Instance.new("ProximityPrompt")
 		prompt.Name="BuyConveyorPet"
-		prompt.ActionText=string.format("Buy • %g Money",definition.Price)
+		prompt.ActionText="Buy • "..numberText(definition.Price).." Money"
 		prompt.ObjectText=definition.Rarity.." Pet"
 		prompt.KeyboardKeyCode=Enum.KeyCode.E;prompt.GamepadKeyCode=Enum.KeyCode.ButtonX
 		prompt.HoldDuration=Config.BuyHoldSeconds;prompt.MaxActivationDistance=Config.BuyDistance

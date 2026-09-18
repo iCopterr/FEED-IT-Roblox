@@ -239,7 +239,7 @@
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">true</bool>
-<string name="Text">1000000</string>
+<string name="Text">1M</string>
 <Color3 name="TextColor3">
 <R>1</R>
 <G>1</G>

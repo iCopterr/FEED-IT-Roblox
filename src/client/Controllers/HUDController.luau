@@ -8,12 +8,7 @@ local GuiBootstrap = require(script.Parent.Parent.UI.GuiBootstrap)
 local Text, Palette = Config.Text, Config.Palette
 local HUDController = {}
 
-local function numberText(value)
-	local formatted = string.format("%.2f", value):gsub("0+$", ""):gsub("%.$", "")
-	local digits, decimals = formatted:match("^(%d+)(.*)$")
-	local grouped = digits:reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
-	return grouped .. decimals
-end
+local numberText = require(ReplicatedStorage.Shared.NumberFormat).Compact
 
 function HUDController.Start()
 	local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui", 10)

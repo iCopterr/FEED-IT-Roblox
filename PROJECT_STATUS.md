@@ -39,6 +39,7 @@ Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
 | HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
+| Number Formatting | ✅ Studio Verified | Shared K/M/B/T amounts across UI/world labels; 44 formatter/parser/sign checks pass. |
 | Pet Placement | 🟦 Free Position Implemented | Click/tap inside own Pen, exact local coordinates, five-pet cap and click pickup; build passes, Studio test pending. |
 | Pet Wandering | ✅ Server Verified | 21 Studio checks pass: walk/pause, live pickup, grown-pet bounds on six plots, cleanup and saved anchors. Manual feel pending. |
 | Money Generation | ✅ Server Verified | Placed pets pay BaseIncome x FeedMultiplier each second; 15 Studio checks pass. HUD rate included; published persistence remains separate. |
@@ -62,13 +63,17 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Studio-only debug panel for memory playtests
+**Current Feature:** Shared K/M/B/T display formatting
 
-**Status:** Implemented and synced; 47 multiplayer memory checks, 12 isolated access checks and 10 isolated UI checks pass. Physical input/layout review remains unverified.
+**Status:** Implemented and synced; 44 Studio formatter/parser/farm-sign checks, source compilation and build pass. Full visual Play review remains pending.
 
-**Objective:** Test the full loop without grinding: grant currencies, spawn pets, set levels and force one Feed outcome. No production access, persistent Studio writes or economy rebalance.
+**Objective:** Compact all displayed economy amounts consistently without changing prices, balances, affordability or persistence. Levels/counts/percentages remain plain.
 
 ## 4. Completed
+
+- Shared K/M/B/T formatter across HUD/inventory income, popups, farm signs,
+  conveyor labels/prompts, Feed/Revive displays and debug amounts. Debug input
+  accepts K/M/B/T suffixes while retaining server numeric validation.
 
 - Authored Studio Debug panel, server-validated bounded currency/spawn/level
   commands, replay-safe sequences and one-use per-pet Feed outcome overrides.
@@ -165,6 +170,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 5. In Progress
 
+- Visual Play review of compact numeric text across UI and world labels.
+
 - Physical debug panel input/layout review and full-loop playtest using its
   grants, level editing and one-use forced outcomes.
 
@@ -202,25 +209,39 @@ The numbered list below retains older prototype follow-ups.
 ## 7. Files Modified This Session
 
 ```text
-default.project.json
-src/shared/Config/DebugConfig.luau
-src/server/Services/DebugService.luau
-src/server/Services/DebugFeedOverrides.luau
-src/server/Services/FeedService.luau
-src/server/DebugVerification.server.luau
-src/server/init.server.luau
+src/shared/NumberFormat.luau
+src/server/NumberFormatVerification.luau
+src/server/Services/ConveyorService.luau
+src/client/UI/FarmSignView.luau
+src/client/Controllers/HUDController.luau
+src/client/Controllers/IncomeEffectsController.luau
 src/client/Controllers/DebugController.luau
 src/client/Controllers/ReviveController.luau
 src/client/Controllers/FeedController.luau
-src/client/Controllers/CarryController.luau
-src/client/Controllers/ConveyorController.luau
-src/client/init.client.luau
+src/client/Controllers/FeedEffects.luau
 src/ui/DebugUI.rbxmx
-docs/debug-tools.md
+docs/number-format.md
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session — Compact K/M/B/T numbers — 2026-09-19
+
+- Baseline a2ffc35, clean tree before edits. Inspected existing formatter/call
+  sites and Studio FarmSignView. Shared NumberFormat uses up to two decimals,
+  strips trailing zeroes and promotes rounded boundaries. No Qa suffix:
+  1e15 renders 1000T. Levels/slot counts/percentages/IDs retain existing format.
+- Replaced duplicated HUD/popup/farm formatting and raw economy %g displays
+  in Feed, Revive, Debug and conveyor labels/prompts. Debug amount starts at 1M
+  and accepts K/M/B/T suffixes; server validation still receives real numbers.
+- No balance/config/schema/transaction changes. Only DebugUI default Text
+  changed in authored assets, synchronized through Rojo; geometry unchanged.
+- PASS: 44 read-only Studio NumberFormatVerification checks, synchronized
+  compilation, Rojo build and diff checks. No runtime economy test or visual
+  input/layout claim for this session. No Computer Use or production writes.
+- Next: fresh Play to inspect compact labels, then continue core-loop testing.
+  Details: docs/number-format.md. Prior debug/playtest notes remain historical.
 
 ### Latest Session — Studio debug panel — 2026-09-19
 
@@ -861,9 +882,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `bd7415c` (verified baseline before the debug-tools session)
+**Commit:** `a2ffc35` (verified baseline before compact-number formatting)
 
-**Message:** `feat: add broken pet recovery and Studio-only free revive`
+**Message:** `feat: add Studio memory debug panel and one-use Feed overrides`
 
 ## 17. Important Decisions
 

@@ -4,6 +4,7 @@ local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 local Config = require(ReplicatedStorage.Shared.Config.MoneyConfig)
 local IncomeEffectsController = {}
+local numberText = require(ReplicatedStorage.Shared.NumberFormat).Compact
 
 function IncomeEffectsController.Start()
 	local player = Players.LocalPlayer
@@ -34,7 +35,7 @@ function IncomeEffectsController.Start()
 			if part then
 				local popup = template:Clone()
 				popup.Adornee = part
-				popup.Amount.Text = "+" .. string.format("%.2f", amount):gsub("0+$", ""):gsub("%.$", "")
+				popup.Amount.Text = "+" .. numberText(amount)
 				popup.Parent = player.PlayerGui
 				local tween = TweenInfo.new(Config.PopupSeconds, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 				TweenService:Create(popup, tween, {StudsOffset = popup.StudsOffset + Vector3.new(0,Config.PopupRise,0)}):Play()
