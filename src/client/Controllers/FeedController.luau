@@ -61,6 +61,7 @@ function FeedController.Start()
 		end
 	end
 	local function show()
+		if player:GetAttribute("RevivePanelOpen") then return end
 		if player:GetAttribute("FeedBusy") then return end
 		panel.Visible = true
 		gui.Inventory.Visible = false

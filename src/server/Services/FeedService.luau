@@ -146,7 +146,8 @@ end
 -- No remote exposes this. Explicit Studio test + memory-only data are required.
 function FeedService.SetTestRandom(player, random)
 	assert(game:GetService("RunService"):IsStudio()
-		and game:GetService("StudioTestService"):GetTestArgs()=="FeedVerification"
+		and (game:GetService("StudioTestService"):GetTestArgs()=="FeedVerification"
+			or game:GetService("StudioTestService"):GetTestArgs()=="ReviveVerification")
 		and require(script.Parent.Parent.Data.DataStoreAdapter).IsMemory(), "Test-only RNG")
 	session(player).TestRandom = random
 end

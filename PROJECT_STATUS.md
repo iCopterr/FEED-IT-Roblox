@@ -21,7 +21,7 @@ Build a playable prototype that validates:
 The versioned data foundation and server-side pet foundation are implemented.
 Pet creation, plots, placement, income, active farming and Feed outcomes have
 Studio server verification. Next: visually playtest Feed tension and effects;
-then implement Protection/Revive only when requested.
+Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 
 ## 2. Overall Progress
 
@@ -53,7 +53,7 @@ then implement Protection/Revive only when requested.
 | Pet Growth | 🟦 Implemented | Success scales plate/Pen models and income; manual visual review pending. |
 | Explosion Presentation | 🟦 Implemented | Float/spin, burst/fade and banners; six isolated effect checks pass. |
 | Protection | ⬜ Not Started | |
-| Revive | ⬜ Not Started | |
+| Revive | ✅ Studio Free Verified | Broken-pet browser and original-state recovery; 22 multiplayer + 6 isolated safety + 8 isolated UI checks pass. Paid recovery not implemented. |
 | Save / Load | 🟦 Implemented / Needs Testing | Memory-mode flow verified; production backend remains untested. |
 | Debug Tools | ⬜ Not Started | |
 | Core Loop Playtest | ⬜ Not Started | |
@@ -62,13 +62,17 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Simple pet wandering inside the owner's Pen
+**Current Feature:** Broken pets and free Studio-only Revive
 
-**Status:** Implemented and synced; build/compilation and 21 multiplayer memory checks pass. Physical movement/input feel remains unverified.
+**Status:** Implemented and synced; 22 multiplayer memory checks, six isolated safety checks and eight isolated UI checks pass. Physical input/layout and production backend remain unverified.
 
-**Objective:** Random nearby walk/pause cycles, fence containment, safe hold-E pickup, and unchanged saved identity/placement/income. No economy rebalance or Revive implementation.
+**Objective:** Preserve broken pets and restore the same pre-explosion pet through free Studio testing. No level-one reset, Food refund, paid purchase, deletion or economy rebalance.
 
 ## 4. Completed
+
+- Broken Pets panel with previous level/income, record browsing, Keep Playing
+  and Studio-only free Revive. Original identity/stats restored to inventory;
+  exact explosion validation, replay protection and shared save locks/retries.
 
 - Implemented server-owned pet wandering with configurable speed, pauses and
   travel distance. Live model position drives pickup; pickup temporarily pauses
@@ -159,8 +163,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 - Manual wandering movement/pickup feel review; server verification complete.
 
-- Physical mouse/touch and visual review of the new Feed effects/UI. Protection
-  and Revive are not implemented; pending exploded pets cannot be used yet.
+- Physical mouse/touch and visual review of Feed effects/UI and Revive panel.
+  Protection and paid Revive are not implemented; free Revive is Studio-only.
 - Manual plate click/touch/hold-E presentation review; server verification complete.
 - Manual farm sign mouse/touch/gamepad input and visual review. Farm running
   animation asset remains unimplemented; upgrades/purchases are now implemented.
@@ -175,8 +179,9 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 6. Next Tasks
 
-Latest priority: fresh Play to review wandering movement/pickup and
-conveyor/Feed pacing. User explicitly deferred money balancing. Verify onboarding and live DataStore
+Latest priority: fresh Play to review explosion -> Broken Pets -> free Studio
+Revive -> inventory, then wandering/conveyor/Feed pacing. Money balancing is
+explicitly deferred. Verify onboarding and live DataStore
 rejoin/outage/session transfer separately.
 The numbered list below retains older prototype follow-ups.
 
@@ -190,16 +195,48 @@ The numbered list below retains older prototype follow-ups.
 ## 7. Files Modified This Session
 
 ```text
-src/shared/Config/WanderingConfig.luau
-src/server/Services/WanderingService.luau
-src/server/Services/PlacementService.luau
-src/server/Services/CarryService.luau
-src/server/WanderingVerification.server.luau
-docs/placement.md
+default.project.json
+src/shared/Config/ReviveConfig.luau
+src/server/Services/ReviveService.luau
+src/server/Services/FeedService.luau
+src/server/ReviveVerification.server.luau
+src/server/init.server.luau
+src/client/Controllers/ReviveController.luau
+src/client/Controllers/FeedController.luau
+src/client/Controllers/FeedEffects.luau
+src/client/Controllers/CarryController.luau
+src/client/Controllers/ConveyorController.luau
+src/client/init.client.luau
+src/ui/ReviveUI.rbxmx
+docs/revive.md
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session — Broken pets / free Studio Revive — 2026-09-19
+
+- Baseline 03d67d3, clean tree before implementation. User chose free Studio
+  recovery and a broken state, not deletion or automatic level-one reset.
+- Reuses schema-v3 PendingRecovery. Revive consumes exact PetId+AttemptId and
+  restores pre-failure pet to inventory without Food refund, reroll or placement.
+  Durable consumed-record guard prevents duplicate recovery; old attempts cannot
+  restore a newer explosion. Shared Feed lock lasts through confirmed save.
+- Unconditional server IsStudio gate; public Snapshot remains caller-only.
+  No paid products, receipts, expiry, permanent deletion or economy changes.
+- Authored actual StarterGui.ReviveUI via MCP, configured/exported to .rbxmx.
+  Controller browses records, auto-opens after Feed lock clears and reopens via
+  BROKEN PETS. KEEP PLAYING retains recovery. GUI fallback clones its own asset.
+  Main carry/Feed/conveyor interactions respect the recovery modal.
+- PASS: 22 two-player Studio memory checks covering actual explosions, exact
+  restoration, privacy, invalid/foreign/stale/replayed/concurrent requests and
+  memory reload. Six isolated service checks cover published denial and failed
+  save retry/lock; eight isolated UI checks cover open/close, Studio
+  eligibility, successful recovery and duplicate click suppression.
+- Build, synced compilation and diff pass. Tests auto-ended. Physical input,
+  responsive layout review and production outage/rejoin remain separate.
+- No Computer Use, production writes or Farm/Feed balance edits. Next: fresh
+  Play, explode a pet, recover it, then equip it from MY PETS. See docs/revive.md.
 
 ### Latest Session — Pet wandering — 2026-09-19
 
@@ -529,7 +566,8 @@ and diff checks before completing the local commit. No scope/config changes.
   existing developer Studio starter pet remains the test entry point.
 
 - Current: visual Play review and real DataStore outage/rejoin tests remain.
-  Exploded pets stay in PendingRecovery indefinitely until Revive is built.
+  Broken pets stay in PendingRecovery until explicitly revived; free recovery
+  is Studio-only. Published paid recovery/receipts remain unimplemented.
   Earlier MCP/Rojo connection blockers below are historical, not current.
 
 - Six-player revision: Players.MaxPlayers is read-only through MCP and still
@@ -790,9 +828,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `20daf78` (verified baseline before the wandering session)
+**Commit:** `03d67d3` (verified baseline before the Studio Revive session)
 
-**Message:** `feat: add alpha pet conveyor with rarity-priced purchases`
+**Message:** `feat: add server-owned pet wandering and live-position pickup`
 
 ## 17. Important Decisions
 

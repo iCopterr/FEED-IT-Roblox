@@ -18,6 +18,9 @@
       }
     },
     "StarterGui": {
+      "ReviveUI": {
+        "$path": "src/ui/ReviveUI.rbxmx"
+      },
       "ConveyorUI": {
         "$path": "src/ui/ConveyorUI.rbxmx"
       },
