@@ -61,9 +61,9 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Feed UI with server-authoritative Food consumption only
+**Current Feature:** Hold E opens plate Feed UI; UI button picks up pet
 
-**Status:** Implemented; 21 FeedVerification multiplayer checks and nine isolated UI-controller checks pass. Build/source compilation pass. Actual physical input/visual review remains separate.
+**Status:** Latest interaction revision implemented; 28 updated PedestalVerification server checks and three isolated UI checks pass. Rojo build/source compilation and diff checks pass. Physical input review remains separate.
 
 **Objective:** Open a Feed panel for the staged pet and consume Food on Feed.
 No config module, Feed Level changes, growth, income change or RNG in this step.
@@ -183,6 +183,32 @@ PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session Handoff — Plate UI Pickup — 2026-09-18
+
+- Replaced plate PickupPet prompt with OpenFeedUI (one-second hold E).
+  FeedController opens the existing panel for the owner's nearby staged pet.
+  Existing automatic open and reopen button remain. Pen hold-E pickup unchanged.
+- Added authored Pickup TextButton to FeedPanel in FeedYourPetUI.rbxmx, matching
+  its existing button style. Increased panel height/scaling to fit it. No new
+  runtime-generated UI, config or gameplay economy changes.
+- FeedService Pickup action validates profile, live character, plate ownership,
+  expected pet ID, range and cooldown, then calls existing safe CarryService
+  equip. Successful pickup closes the panel; it does not spend Food.
+- Updated plate signs, inventory guidance and docs. Updated PedestalVerification
+  to test prompt separation and foreign/stale/distant/duplicate UI pickups.
+- Files: CarryService, PedestalService, FeedService; CarryController,
+  FeedController, HUDController; PedestalVerification; FeedYourPetUI.rbxmx,
+  PlayerPlots.rbxmx; docs/feed-ui.md, docs/feed-plate.md; PROJECT_STATUS.md.
+- Verified: Rojo build build/FeedPickup.rbxlx, source compilation, UI XML button
+  uniqueness/bounds, and git diff --check pass. MCP 58741 reconnected during the
+  session; all 28 updated PedestalVerification multiplayer checks passed.
+  Three isolated tests using the real UI and mocked input/transport passed:
+  prompt opens without pickup, pickup available at zero Food, pickup closes UI.
+  Physical input/visual review remains pending. Baseline commit 30a72c4.
+  No Computer Use or production data writes.
+- Next: verify actual hold-E and pickup button feel in Play. FeedVerification
+  was not rerun this session; consumption behavior was unchanged.
 
 Feed UI/consumption implementation, asset, tests and handoff. Baseline: 7189bda.
 September 18 continuation verified the saved implementation and reran the build

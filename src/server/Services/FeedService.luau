@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local DataService = require(script.Parent.DataService)
 local PedestalService = require(script.Parent.PedestalService)
+local CarryService = require(script.Parent.CarryService)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
 local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
 local FeedService = {}
@@ -34,13 +35,23 @@ end
 
 function FeedService.HandleRequest(player, action, petId, sequence)
 	if player.Parent ~= Players then return {Ok=false, Code="Loading"} end
-	if action ~= "Snapshot" and action ~= "Feed" then return {Ok=false, Code="InvalidRequest"} end
+	if action ~= "Snapshot" and action ~= "Feed" and action ~= "Pickup" then return {Ok=false, Code="InvalidRequest"} end
 	local state = session(player)
 	local now = os.clock()
 	if action == "Snapshot" then
 		if now-state.LastSnapshot < .2 then return {Ok=false, Code="Cooldown"} end
 		state.LastSnapshot = now
 		return snapshot(player, state)
+	end
+	if action == "Pickup" then
+		if type(petId) ~= "string" or #petId==0 or #petId>64 then return {Ok=false, Code="InvalidRequest"} end
+		if now-(state.LastPickup or -math.huge) < .25 then return {Ok=false, Code="Cooldown"} end
+		state.LastPickup = now
+		local result = snapshot(player, state)
+		if not result.Ok then return result end
+		if result.PetId ~= petId then return {Ok=false, Code="PetChanged"} end
+		local ok, reason = CarryService.Equip(player, petId)
+		return {Ok=ok, Code=if ok then "PickedUp" else reason}
 	end
 	if type(petId) ~= "string" or #petId==0 or #petId>64 or type(sequence)~="number"
 		or sequence~=sequence or sequence%1~=0 or sequence<1 or sequence>9007199254740991 then

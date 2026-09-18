@@ -81,8 +81,8 @@ function PedestalService.Place(player, id)
 		local target = CFrame.new(dish.Position + Vector3.new(0, dish.Size.X/2 + size.Y/2 + .05, 0)) * plot.Ground.CFrame.Rotation
 		model:PivotTo(target * bounds:ToObjectSpace(model:GetPivot()))
 		prompt = Instance.new("ProximityPrompt")
-		prompt.Name = Config.PickupPromptName
-		prompt.ActionText, prompt.ObjectText = "Pick up", "Pet on feed plate"
+		prompt.Name = "OpenFeedUI"
+		prompt.ActionText, prompt.ObjectText = "Open Feed UI", "Pet on feed plate"
 		prompt.KeyboardKeyCode = Enum.KeyCode.E
 		prompt.GamepadKeyCode = Enum.KeyCode.ButtonX
 		prompt.HoldDuration, prompt.MaxActivationDistance = Config.PickupHoldSeconds, Config.PickupDistance

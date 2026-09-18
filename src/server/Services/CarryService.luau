@@ -108,12 +108,6 @@ end
 
 local function pickupTarget(player, prompt)
 	if typeof(prompt) ~= "Instance" or not prompt:IsA("ProximityPrompt") or prompt.Name ~= Config.PickupPromptName or not prompt.Enabled then return nil end
-	local plateId, position = PedestalService.GetPickupTarget(player, prompt)
-	if plateId then
-		local character, root = living(player)
-		if character and (root.Position - position).Magnitude <= Config.PickupDistance then return plateId, character end
-		return nil
-	end
 	local plot = PlotService.GetPlot(player)
 	local model = prompt:FindFirstAncestorOfClass("Model")
 	if not plot or not model or model.Parent ~= plot.Pen:FindFirstChild("ActivePets") then return nil end

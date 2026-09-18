@@ -32,6 +32,7 @@ function FeedController.Start()
 		panel.Feed.Active = canFeed == true
 		panel.Feed.AutoButtonColor = canFeed == true
 		panel.Feed.BackgroundColor3 = if canFeed then Color3.fromRGB(112,219,89) else Color3.fromRGB(114,111,127)
+		panel.Pickup.Active = state.PetId == player:GetAttribute("FeedPlatePetId") and state.PetId ~= nil and not busy
 	end
 	local function refresh()
 		if busy then return end
@@ -63,6 +64,27 @@ function FeedController.Start()
 		end
 	end
 	open.Activated:Connect(show)
+	game:GetService("ProximityPromptService").PromptTriggered:Connect(function(prompt, triggeringPlayer)
+		if triggeringPlayer and triggeringPlayer ~= player then return end
+		if prompt.Name ~= "OpenFeedUI" then return end
+		local model = prompt:FindFirstAncestorOfClass("Model")
+		local character = player.Character
+		local root = character and character:FindFirstChild("HumanoidRootPart")
+		local body = prompt.Parent
+		if model and model:GetAttribute("OwnerUserId") == player.UserId
+			and model:GetAttribute("PetId") == player:GetAttribute("FeedPlatePetId")
+			and root and body:IsA("BasePart") and (root.Position-body.Position).Magnitude <= prompt.MaxActivationDistance+1 then show() end
+	end)
+	panel.Pickup.Activated:Connect(function()
+		local id = player:GetAttribute("FeedPlatePetId")
+		if busy or not id then return end
+		busy = true; panel.Pickup.Active = false; panel.Feed.Active = false
+		panel.Status.Text = "Picking up…"
+		local ok, result = pcall(function() return remote:InvokeServer("Pickup",id) end)
+		busy = false
+		if ok and result.Ok then panel.Visible = false; latest = nil
+		else panel.Status.Text = if ok then messages[result.Code] or "Unable to pick up pet." else "Connection error. Try again." end
+	end)
 	panel.Close.Activated:Connect(function() panel.Visible = false end)
 	Input.InputBegan:Connect(function(key, processed)
 		if not processed and key.KeyCode == Enum.KeyCode.Escape then panel.Visible = false end
@@ -85,7 +107,7 @@ function FeedController.Start()
 		end
 	end)
 	local function resize()
-		panel.UIScale.Scale = math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/520,(gui.AbsoluteSize.Y-130)/440))
+		panel.UIScale.Scale = math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/520,(gui.AbsoluteSize.Y-130)/510))
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
 	player:GetAttributeChangedSignal("FeedPlatePetId"):Connect(plateChanged)
