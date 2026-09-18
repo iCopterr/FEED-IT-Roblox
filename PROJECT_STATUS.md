@@ -41,7 +41,7 @@ then implement Protection/Revive only when requested.
 | Pet Placement | 🟦 Free Position Implemented | Click/tap inside own Pen, exact local coordinates, five-pet cap and click pickup; build passes, Studio test pending. |
 | Pet Wandering | ⬜ Not Started | |
 | Money Generation | ✅ Server Verified | Placed pets pay BaseIncome x FeedMultiplier each second; 15 Studio checks pass. HUD rate included; published persistence remains separate. |
-| Farm | ✅ Server Verified | Six authored stations; owner proximity entry and input exit. 27 multiplayer checks pass; manual feel/animation pending. |
+| Farm | ✅ Upgrades Server Verified | Six authored upgrade signs; 15 GDD levels, Money purchase and active-only output. 27 new multiplayer checks pass; manual sign input/feel pending. |
 | Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
 | Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
 | Feeding Pedestal | ✅ Staging Server Verified | Six feed plates; carry/click placement and hold-E pickup. 23 multiplayer checks pass; Feed UI/RNG deferred. |
@@ -61,13 +61,17 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Server-authoritative Feed outcomes and animation
+**Current Feature:** Money-purchased farm upgrades through in-world signs
 
-**Status:** Implemented; 55 multiplayer server checks, six isolated effect checks and five isolated controller checks pass. Manual visual/input review and live DataStore tests remain.
+**Status:** Implemented; 27 multiplayer upgrade checks and 22 isolated view/geometry checks pass. Build and synced compilation pass. Physical sign-button input and live DataStore tests remain.
 
-**Objective:** Feed tension with safe server results, level-40 cap and recoverable explosions.
+**Objective:** Spend pet income on permanent farm progression, using a buy button directly on an editable map sign.
 
 ## 4. Completed
+
+- Six authored farm upgrade signs, displaying level, production and next-price
+  Buy Upgrade button. GDD 15-level prices added to FarmConfig; owner/range/life/
+  affordability/stale-click checks, atomic Money+FarmLevel save and HUD push.
 
 - Feed now uses configured costs and RNG, increases level/income, quarantines
   exploded pets in schema v3, and queues atomic saves with retry locks.
@@ -147,8 +151,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 - Physical mouse/touch and visual review of the new Feed effects/UI. Protection
   and Revive are not implemented; pending exploded pets cannot be used yet.
 - Manual plate click/touch/hold-E presentation review; server verification complete.
-- Manual farm entry/exit and Food HUD feel validation. Running animation asset
-  and farm upgrade purchasing/UI remain unimplemented; not part of this request.
+- Manual farm sign mouse/touch/gamepad input and visual review. Farm running
+  animation asset remains unimplemented; upgrades/purchases are now implemented.
 - Fresh Play-session verification of HUD startup and visible one-second payout
   updates after the latest UI recovery fix; no server economy changes this session.
 
@@ -160,8 +164,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 6. Next Tasks
 
-Latest priority: playtest Feed presentation and cap behavior, verify live
-DataStore rejoin/outage/session transfer, then decide Protection/Revive scope.
+Latest priority: playtest the sign buy button and farm progression, then tune
+farm/Feed pacing. Verify live DataStore rejoin/outage/session transfer separately.
 The numbered list below retains older prototype follow-ups.
 
 0. Restart Play and verify the HUD appears without the FeedYourPetUI infinite-yield
@@ -174,27 +178,49 @@ The numbered list below retains older prototype follow-ups.
 ## 7. Files Modified This Session
 
 ```text
-docs/feed-config.md
-docs/feed-ui.md
-src/ui/FeedYourPetUI.rbxmx
-src/shared/Config/FeedConfig.luau
-src/shared/Config/GameConfig.luau
-src/server/Data/PlayerDataSchema.luau
-src/server/Services/FeedService.luau
-src/server/Services/FeedResolver.luau
-src/server/Services/FeedLocks.luau
-src/server/Services/PedestalService.luau
-src/server/Services/CarryService.luau
-src/server/Services/PlacementService.luau
-src/server/Services/PetService.luau
-src/server/FeedVerification.server.luau
-src/client/Controllers/FeedController.luau
-src/client/Controllers/FeedEffects.luau
-src/client/Controllers/CarryController.luau
+default.project.json
+src/world/FarmUpgradeSigns.rbxmx
+src/shared/Config/FarmConfig.luau
+src/server/Services/FarmUpgradeService.luau
+src/server/FarmUpgradeVerification.server.luau
+src/server/init.server.luau
+src/client/Controllers/FarmUpgradeController.luau
+src/client/UI/FarmSignView.luau
+src/client/Controllers/HUDController.luau
+src/client/init.client.luau
+docs/farm.md
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session — In-world farm upgrade signs — 2026-09-18
+
+- Added six actual Studio sign models beside farms, exported as standalone
+  FarmUpgradeSigns.rbxmx and mapped by Rojo. No runtime geometry generator.
+- Each has authored SurfaceGui level/rate/next rate/price/button/status. Runtime
+  clones GUI only into PlayerGui with Board Adornee for Roblox input support.
+- New FarmUpgradeService validates owner via PlotService, alive character,
+  14-stud range, GDD price, affordability, cooldown and expected current level.
+  Non-yielding Money/FarmLevel mutation; DataService saves both together.
+  Save failure holds purchase lock and retries without rollback/double charge.
+- Reused persisted FarmLevel/FarmPower; schema unchanged. Upgrades work while
+  farming and affect next payout; no passive income, no exit-input change.
+  First upgrade costs 5K and raises Food/sec 2 -> 6. Maximum level 15.
+- Immediate Money HUD update; public signs refresh every .5 seconds and clear
+  on owner departure. No client-provided cost/reward. Stale clicks cannot buy
+  the next level. Saving/insufficient funds/foreign/distant/max states disable UI.
+- Tests PASS: 27 actual two-player Studio memory checks, 10 isolated sign-view
+  checks, 12 geometry/input-property checks, Rojo build and Luau compilation.
+  Tests auto-ended; no Computer Use or live DataStore writes.
+- NOT verified: physical mouse/touch/gamepad activation, visual camera feel,
+  live backend outage/rejoin. Existing double Money precision above 2^53 remains.
+- Feed reset-to-level-1 was discussed but NOT requested for implementation;
+  existing explosion quarantine and Feed odds remain unchanged.
+- Files: default.project.json; FarmConfig; FarmUpgradeService; FarmUpgradeController;
+  FarmSignView; FarmUpgradeVerification; HUDController; client/server bootstraps;
+  FarmUpgradeSigns.rbxmx; docs/farm.md; PROJECT_STATUS.md.
+- Baseline: 1d93a04. Next: fresh Play and click the nearby farm sign's Buy button.
 
 ### Latest Session — Feed outcomes and animation — 2026-09-18
 
@@ -469,6 +495,12 @@ These warnings do not block Rojo, MCP, or prototype development.
 
 ## 10. Architecture Notes
 
+Farm upgrades: static Workspace.FarmUpgradeSigns models bind by plot name.
+PlayerGui SurfaceGui clones adorn the authored boards. Public sign attributes
+are display-only; purchases validate private PlotService ownership and saved
+data. Expected current level supplies stale/replay protection, with a save lock
+until DataService confirms Money/FarmLevel persistence. No schema change.
+
 Feed: non-yielding Food/outcome mutation, DataService queued atomic save,
 per-player FeedLocks until presentation and confirmed save both finish.
 Exploded pets live only in PendingRecovery, never usable Inventory. Server
@@ -675,9 +707,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `c458ca1` (verified baseline before this Feed outcome session)
+**Commit:** `1d93a04` (verified baseline before this farm upgrade session)
 
-**Message:** `feat: configure feed balance and outcome presentation`
+**Message:** `feat: resolve feed outcomes with safe recovery and animations`
 
 ## 17. Important Decisions
 

@@ -4,6 +4,9 @@
   "tree": {
     "$className": "DataModel",
     "Workspace": {
+      "FarmUpgradeSigns": {
+        "$path": "src/world/FarmUpgradeSigns.rbxmx"
+      },
       "PetTemplates": {
         "$path": "src/world/PetTemplates.rbxmx"
       },
