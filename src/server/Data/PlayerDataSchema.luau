@@ -27,6 +27,7 @@ export type PlayerData = {
 	Money: number,
 	Food: number,
 	FarmLevel: number,
+	FeedPlateLevel: number,
 	FarmPower: number,
 	MaxPetSlots: number,
 	Inventory: { [string]: PetData },
@@ -48,6 +49,12 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+migrations[3] = function(source)
+	local result = table.clone(source)
+	result.FeedPlateLevel = GameConfig.StartingFeedPlateLevel
+	return result, nil
+end
 
 migrations[2] = function(source)
 	local result = table.clone(source)
@@ -285,6 +292,7 @@ local function clonePlayerData(data: PlayerData): PlayerData
 		Money = data.Money,
 		Food = data.Food,
 		FarmLevel = data.FarmLevel,
+		FeedPlateLevel = data.FeedPlateLevel,
 		FarmPower = data.FarmPower,
 		MaxPetSlots = data.MaxPetSlots,
 		Inventory = inventory,
@@ -302,6 +310,7 @@ function PlayerDataSchema.CreateDefault(): PlayerData
 		Money = GameConfig.StartingMoney,
 		Food = GameConfig.StartingFood,
 		FarmLevel = GameConfig.StartingFarmLevel,
+		FeedPlateLevel = GameConfig.StartingFeedPlateLevel,
 		FarmPower = GameConfig.StartingFarmPower,
 		MaxPetSlots = GameConfig.StartingMaxPetSlots,
 		Inventory = {},
@@ -338,6 +347,9 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 
 	if not isPositiveInteger(data.FarmLevel) then
 		return false, "FarmLevel must be a positive integer"
+	end
+	if not isPositiveInteger(data.FeedPlateLevel) then
+		return false, "FeedPlateLevel must be a positive integer"
 	end
 
 	if not isNonNegativeNumber(data.FarmPower) then

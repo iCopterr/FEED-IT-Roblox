@@ -4,6 +4,9 @@
   "tree": {
     "$className": "DataModel",
     "Workspace": {
+      "FeedPlateUpgradeSigns": {
+        "$path": "src/world/FeedPlateUpgradeSigns.rbxmx"
+      },
       "PetConveyor": {
         "$path": "src/world/PetConveyor.rbxmx"
       },

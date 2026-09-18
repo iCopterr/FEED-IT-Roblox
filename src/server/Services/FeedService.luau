@@ -9,6 +9,7 @@ local DebugOverrides = require(script.Parent.DebugFeedOverrides)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
 local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
 local Config = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
+local PlateConfig = require(game.ReplicatedStorage.Shared.Config.FeedPlateConfig)
 local FeedService = {}
 local sessions = {}
 local foodChanged, outcomeChanged
@@ -33,7 +34,9 @@ local function snapshot(player, state)
 		PetName=pet and (definition and definition.DisplayName or pet.SpeciesId),
 		Rarity=pet and pet.Rarity, FeedLevel=pet and pet.FeedLevel,
 		Food=data.Food, FoodAt=os.clock(), Cost=pet and Config.GetFoodCost(pet.FeedLevel+1,pet.Rarity),
-		Risk=pet and Config.ExplosionChance[pet.FeedLevel+1],
+		Risk=pet and Config.ExplosionChance[pet.FeedLevel+1] and PlateConfig.GetRisk(Config.ExplosionChance[pet.FeedLevel+1],data.FeedPlateLevel),
+		BaseRisk=pet and Config.ExplosionChance[pet.FeedLevel+1],
+		PlateLevel=math.min(data.FeedPlateLevel,#PlateConfig.RiskReduction), PlateReduction=PlateConfig.GetReduction(data.FeedPlateLevel),
 		MaxLevel=pet and pet.FeedLevel>=Config.MaxConfiguredLevel,
 		Busy=Locks.IsLocked(player), NextSequence=state.Sequence+1,
 		PendingRecoveryCount=count, LastOutcome=state.LastResult,
@@ -86,7 +89,7 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 	local oldFood = data.Food
 	data.Food -= result.Cost
 	local forced = DebugOverrides.Resolve(player, petId, pet.FeedLevel)
-	local outcome = forced or Resolver.Roll(pet.FeedLevel, state.TestRandom or function() return rng:NextNumber() end)
+	local outcome = forced or Resolver.Roll(pet.FeedLevel, state.TestRandom or function() return rng:NextNumber() end, result.Risk)
 	local attemptId = HttpService:GenerateGUID(false)
 	if outcome.Code == "Explosion" then
 		data.Inventory[petId] = nil
@@ -150,7 +153,8 @@ end
 function FeedService.SetTestRandom(player, random)
 	assert(game:GetService("RunService"):IsStudio()
 		and (game:GetService("StudioTestService"):GetTestArgs()=="FeedVerification"
-			or game:GetService("StudioTestService"):GetTestArgs()=="ReviveVerification")
+			or game:GetService("StudioTestService"):GetTestArgs()=="ReviveVerification"
+			or game:GetService("StudioTestService"):GetTestArgs()=="FeedPlateUpgradeVerification")
 		and require(script.Parent.Parent.Data.DataStoreAdapter).IsMemory(), "Test-only RNG")
 	session(player).TestRandom = random
 end

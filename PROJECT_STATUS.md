@@ -31,7 +31,7 @@ Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
-| Player Data Schema | ✅ v3 Studio Verified | Adds isolated PendingRecovery records; v2 migration, clone and reload checks pass. |
+| Player Data Schema | ✅ v4 Studio Verified | Adds FeedPlateLevel; old saves start at level 1 without resetting progress. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ⬜ Not Started | |
@@ -44,6 +44,7 @@ Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 | Pet Wandering | ✅ Server Verified | 21 Studio checks pass: walk/pause, live pickup, grown-pet bounds on six plots, cleanup and saved anchors. Manual feel pending. |
 | Money Generation | ✅ Server Verified | Placed pets pay BaseIncome x FeedMultiplier each second; 15 Studio checks pass. HUD rate included; published persistence remains separate. |
 | Farm | ✅ Upgrades Server Verified | Ten levels with preserved custom prices; Money purchase and active-only output. Manual sign input/feel pending. |
+| Feed Plate Upgrades | ✅ Studio Verified | Six authored signs, ten saved levels, farm-matched prices and up to 45% relative explosion-risk reduction; 58 multiplayer checks pass. |
 | Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
 | Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
 | Feeding Pedestal | ✅ Staging Server Verified | Six feed plates; carry/click placement and hold-E pickup. 23 multiplayer checks pass; Feed UI/RNG deferred. |
@@ -63,13 +64,18 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Shared K/M/B/T display formatting
+**Current Feature:** Permanent feed plate upgrades
 
-**Status:** Implemented and synced; 44 Studio formatter/parser/farm-sign checks, source compilation and build pass. Full visual Play review remains pending.
+**Status:** Implemented and synced; 58 multiplayer checks, six isolated sign-view checks, source compilation and build pass. Physical input/visual review and production DataStore verification remain pending.
 
-**Objective:** Compact all displayed economy amounts consistently without changing prices, balances, affordability or persistence. Levels/counts/percentages remain plain.
+**Objective:** Buy saved plate levels with Money at an in-world sign, reducing the server's explosion roll while preserving meaningful risk.
 
 ## 4. Completed
+
+- FeedPlateConfig defines ten levels, the same current prices as FarmConfig,
+  and 0–45% relative risk reduction. FarmConfig itself was not changed.
+  Server-validated purchases, stale-click protection, shared Feed/Revive locks,
+  save retries, v3-to-v4 migration, risk display and six authored signs are implemented.
 
 - Shared K/M/B/T formatter across HUD/inventory income, popups, farm signs,
   conveyor labels/prompts, Feed/Revive displays and debug amounts. Debug input
@@ -170,6 +176,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 5. In Progress
 
+- Physical feed plate sign mouse/touch/gamepad input and visual risk-display review.
+
 - Visual Play review of compact numeric text across UI and world labels.
 
 - Physical debug panel input/layout review and full-loop playtest using its
@@ -193,7 +201,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 6. Next Tasks
 
-Latest priority: fresh memory Play using STUDIO DEBUG to review high-level Feed,
+Latest priority: review the purple feed plate upgrade signs and reduced Feed risk,
+then fresh memory Play using STUDIO DEBUG to review high-level Feed,
 explosion -> Broken Pets -> free Revive -> inventory, then game pacing. Money balancing is
 explicitly deferred. Verify onboarding and live DataStore
 rejoin/outage/session transfer separately.
@@ -207,6 +216,14 @@ The numbered list below retains older prototype follow-ups.
 4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
 
 ## 7. Files Modified This Session
+
+Current plate-upgrade session: default.project.json; GameConfig and new
+FeedPlateConfig; PlayerDataSchema; FeedResolver/FeedService and new
+FeedPlateUpgradeService; client/server bootstraps; FeedController/HUDController;
+new FeedPlateUpgradeController/FeedPlateSignView; authored
+src/world/FeedPlateUpgradeSigns.rbxmx; FeedVerification and new
+FeedPlateUpgradeVerification; docs/feed-plate-upgrades.md, docs/feed-config.md,
+and this handoff. The list below records the preceding number-format session.
 
 ```text
 src/shared/NumberFormat.luau
@@ -225,6 +242,25 @@ PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session — Feed plate upgrades — 2026-09-19
+
+- Baseline 015fe8d. User delegated balance values: ten levels, farm-matched
+  prices, 5% relative reduction per upgrade, capped at 45%; 20% becomes 11%.
+- Direct MCP at localhost:58741; no Computer Use. Cloned/authored six real
+  Studio signs beside the feed plates and exported their static Rojo asset.
+- Schema v4 persists FeedPlateLevel; migration defaults existing players to 1.
+  Pet schema, recovery records, DataStore keys and custom FarmConfig unchanged.
+- Server owns price, ownership/range/life validation, level compare-and-swap,
+  Money+level mutation, save retry and shared Feed/Revive lock. Client displays
+  effective risk; same risk reaches FeedResolver. RNG ordering/cap unchanged.
+- PASS: 58 two-player memory-mode checks, six isolated sign UI checks, all
+  synchronized source compilation, Rojo build and diff whitespace checks.
+- Regression: all 55 existing Feed checks pass with schema v4 and the risk
+  modifier. Five isolated save-failure/retry assertions pass against the actual
+  service source with injected dependencies; no production data involved.
+- Remaining: physical input/visual review, live DataStore outage/rejoin tests.
+  This is permanent plate progression, not paid or single-use Protection.
 
 ### Latest Session — Compact K/M/B/T numbers — 2026-09-19
 
@@ -882,9 +918,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `a2ffc35` (verified baseline before compact-number formatting)
+**Commit:** `015fe8d` (verified baseline before feed plate upgrades; this session's checkpoint follows)
 
-**Message:** `feat: add Studio memory debug panel and one-use Feed overrides`
+**Message:** `feat: format displayed economy amounts with K M B T suffixes`
 
 ## 17. Important Decisions
 
@@ -899,6 +935,13 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Feed plate upgrades — 2026-09-19 (current)
+
+See the latest entry in section 8. Plate level is now part of schema v4.
+Keep FarmConfig intact; tune plate pricing/reduction in FeedPlateConfig.
+Next: physically playtest the authored purple signs and Feed risk display,
+then verify live persistence separately. No production data was used.
 
 ### One-second Money HUD — 2026-09-16 (latest)
 

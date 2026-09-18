@@ -1,9 +1,11 @@
 local Config = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local FeedResolver = {}
 -- Injected RNG is server-side only, enabling deterministic verification.
-function FeedResolver.Roll(level, random)
+function FeedResolver.Roll(level, random, explosionChance)
 	assert(type(level)=="number" and level%1==0 and level>=0 and level<Config.MaxConfiguredLevel, "MaxLevel")
-	if random() < Config.ExplosionChance[level+1] then
+	local risk = if explosionChance ~= nil then explosionChance else Config.ExplosionChance[level+1]
+	assert(type(risk)=="number" and risk==risk and risk>=0 and risk<=1,"Invalid explosion chance")
+	if random() < risk then
 		return {Code=if random()<Config.MiracleSaveChance then "MiracleSave" else "Explosion", FeedLevel=level, Gain=0}
 	end
 	local roll, cumulative = random(), 0

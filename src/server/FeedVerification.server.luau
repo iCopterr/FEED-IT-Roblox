@@ -40,7 +40,7 @@ local ok, failure = xpcall(function()
 	end
 	local legacy=schema.CreateDefault();legacy.DataVersion=2;legacy.PendingRecovery=nil
 	local migrated=assert(schema.Migrate(legacy))
-	check(migrated.DataVersion==3 and next(migrated.PendingRecovery)==nil and legacy.PendingRecovery==nil,"v2 migration adds isolated recovery map")
+	check(migrated.DataVersion==schema.CURRENT_VERSION and migrated.FeedPlateLevel==1 and next(migrated.PendingRecovery)==nil and legacy.PendingRecovery==nil,"v2 migration adds isolated recovery map and default plate level")
 	waitFor(function() return #players:GetPlayers()==2 end)
 	local a,b=table.unpack(players:GetPlayers())
 	waitFor(function() return data.IsLoaded(a) and data.IsLoaded(b) and plots.GetPlot(a) and a.Character

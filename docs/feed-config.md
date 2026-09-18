@@ -3,6 +3,8 @@
 FeedConfig is now consumed by FeedService, MoneyService and Feed presentation.
 
 - BaseFoodCost and ExplosionChance use the target level (current + 1), 1–40.
+- FeedPlateConfig applies the owner's saved relative reduction to base explosion
+  chance. The UI and actual roll use the same effective risk; see feed-plate-upgrades.md.
 - Multiplier uses current/resulting level, 0–40. Fractional rarity Food costs are preserved.
 - Explosion rolls first. An explosion gets a separate 5% Miracle Save roll;
   Miracle keeps the old level, spends Food, and skips Critical.
@@ -18,7 +20,8 @@ FeedConfig is now consumed by FeedService, MoneyService and Feed presentation.
 Player schema v3 adds PendingRecovery[PetId] with Pet (full pre-failure record),
 AttemptId, ExplodedAt and FoodSpent. Recovery pets are outside Inventory and
 cannot earn, equip, place or be removed. No automatic expiry or deletion;
-Revive/Protection/purchases are not implemented.
+Studio-only free Revive is implemented. Paid Revive and single-use Protection
+remain deferred. Schema v4 adds saved FeedPlateLevel without changing recovery.
 
 Food and outcome mutate without yielding and save together through DataService.
 A retry returns the same cached attempt. Feed/pickup/removal are locked during
