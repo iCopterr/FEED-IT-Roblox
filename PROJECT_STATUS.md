@@ -55,20 +55,24 @@ Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 | Protection | ⬜ Not Started | |
 | Revive | ✅ Studio Free Verified | Broken-pet browser and original-state recovery; 22 multiplayer + 6 isolated safety + 8 isolated UI checks pass. Paid recovery not implemented. |
 | Save / Load | 🟦 Implemented / Needs Testing | Memory-mode flow verified; production backend remains untested. |
-| Debug Tools | ⬜ Not Started | |
+| Debug Tools | ✅ Studio Memory Verified | Currency grants, six-rarity spawn, pet/farm levels, one-use Feed outcomes. 47 multiplayer + 12 gate + 10 isolated UI checks pass. |
 | Core Loop Playtest | ⬜ Not Started | |
 
 Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs Testing · ✅ Complete / Verified · ❌ Blocked
 
 ## 3. Current Feature
 
-**Current Feature:** Broken pets and free Studio-only Revive
+**Current Feature:** Studio-only debug panel for memory playtests
 
-**Status:** Implemented and synced; 22 multiplayer memory checks, six isolated safety checks and eight isolated UI checks pass. Physical input/layout and production backend remain unverified.
+**Status:** Implemented and synced; 47 multiplayer memory checks, 12 isolated access checks and 10 isolated UI checks pass. Physical input/layout review remains unverified.
 
-**Objective:** Preserve broken pets and restore the same pre-explosion pet through free Studio testing. No level-one reset, Food refund, paid purchase, deletion or economy rebalance.
+**Objective:** Test the full loop without grinding: grant currencies, spawn pets, set levels and force one Feed outcome. No production access, persistent Studio writes or economy rebalance.
 
 ## 4. Completed
+
+- Authored Studio Debug panel, server-validated bounded currency/spawn/level
+  commands, replay-safe sequences and one-use per-pet Feed outcome overrides.
+  Both remote availability and mutations require Studio plus memory data.
 
 - Broken Pets panel with previous level/income, record browsing, Keep Playing
   and Studio-only free Revive. Original identity/stats restored to inventory;
@@ -161,6 +165,9 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 5. In Progress
 
+- Physical debug panel input/layout review and full-loop playtest using its
+  grants, level editing and one-use forced outcomes.
+
 - Manual wandering movement/pickup feel review; server verification complete.
 
 - Physical mouse/touch and visual review of Feed effects/UI and Revive panel.
@@ -179,8 +186,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 6. Next Tasks
 
-Latest priority: fresh Play to review explosion -> Broken Pets -> free Studio
-Revive -> inventory, then wandering/conveyor/Feed pacing. Money balancing is
+Latest priority: fresh memory Play using STUDIO DEBUG to review high-level Feed,
+explosion -> Broken Pets -> free Revive -> inventory, then game pacing. Money balancing is
 explicitly deferred. Verify onboarding and live DataStore
 rejoin/outage/session transfer separately.
 The numbered list below retains older prototype follow-ups.
@@ -196,23 +203,49 @@ The numbered list below retains older prototype follow-ups.
 
 ```text
 default.project.json
-src/shared/Config/ReviveConfig.luau
-src/server/Services/ReviveService.luau
+src/shared/Config/DebugConfig.luau
+src/server/Services/DebugService.luau
+src/server/Services/DebugFeedOverrides.luau
 src/server/Services/FeedService.luau
-src/server/ReviveVerification.server.luau
+src/server/DebugVerification.server.luau
 src/server/init.server.luau
+src/client/Controllers/DebugController.luau
 src/client/Controllers/ReviveController.luau
 src/client/Controllers/FeedController.luau
-src/client/Controllers/FeedEffects.luau
 src/client/Controllers/CarryController.luau
 src/client/Controllers/ConveyorController.luau
 src/client/init.client.luau
-src/ui/ReviveUI.rbxmx
-docs/revive.md
+src/ui/DebugUI.rbxmx
+docs/debug-tools.md
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session — Studio debug panel — 2026-09-19
+
+- Baseline bd7415c; clean tree before changes. Inspected Feed/plate/farm source
+  and Studio before edits. Farm/Feed economy configs are unchanged.
+- Actual editable DebugUI authored via MCP and exported for Rojo. Studio memory
+  mode only: add Money/Food, cycle six rarity spawns, select owned PetId, set
+  pet level 0–40 / farm level 1–10, force Success/Critical/Mega/Insane/Explosion
+  once or clear the override. Placed-pet level editing requires pickup first;
+  plate edits rescale the authored pet immediately. No data reset added.
+- DebugService gates before data access; no remote in published or persistent
+  Studio sessions. Finite/integer/range/owner/species/mode validation, rate limit
+  and monotonic replay-safe requests. Debug mutations reject shared Feed locks.
+- DebugFeedOverrides is independent of services; Feed resolves it only after
+  eligibility/cost checks, and consumes it only on accepted validation. It is
+  per-player + per-pet, transient and cleared on leave. Forced explosion may
+  override natural zero-risk/Miracle behavior only in isolated Studio memory.
+- PASS: 47 actual two-player memory assertions; 12 isolated access-gate checks
+  and 10 isolated client checks. Tests cover grants/replays, six spawns, malformed
+  inputs/ownership/levels, plate growth, actual forced outcomes, level-40 cap,
+  rejected-Feed override retention, broken state and clearing. Tests auto-ended.
+- Build, synced compilation and diff pass. Manual input/layout still pending;
+  no Computer Use, production data writes or permanent odds edits.
+- Next: fresh Studio Play, open STUDIO DEBUG, set up a high-level pet and test
+  Feed/explosion/Revive. Usage and safety details: docs/debug-tools.md.
 
 ### Latest Session — Broken pets / free Studio Revive — 2026-09-19
 
@@ -828,9 +861,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `03d67d3` (verified baseline before the Studio Revive session)
+**Commit:** `bd7415c` (verified baseline before the debug-tools session)
 
-**Message:** `feat: add server-owned pet wandering and live-position pickup`
+**Message:** `feat: add broken pet recovery and Studio-only free revive`
 
 ## 17. Important Decisions
 

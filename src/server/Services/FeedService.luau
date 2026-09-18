@@ -5,6 +5,7 @@ local PedestalService = require(script.Parent.PedestalService)
 local CarryService = require(script.Parent.CarryService)
 local Locks = require(script.Parent.FeedLocks)
 local Resolver = require(script.Parent.FeedResolver)
+local DebugOverrides = require(script.Parent.DebugFeedOverrides)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
 local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
 local Config = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
@@ -84,7 +85,8 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 	assert(Locks.Begin(player, petId))
 	local oldFood = data.Food
 	data.Food -= result.Cost
-	local outcome = Resolver.Roll(pet.FeedLevel, state.TestRandom or function() return rng:NextNumber() end)
+	local forced = DebugOverrides.Resolve(player, petId, pet.FeedLevel)
+	local outcome = forced or Resolver.Roll(pet.FeedLevel, state.TestRandom or function() return rng:NextNumber() end)
 	local attemptId = HttpService:GenerateGUID(false)
 	if outcome.Code == "Explosion" then
 		data.Inventory[petId] = nil
@@ -99,6 +101,7 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 		Locks.Finish(player)
 		return {Ok=false, Code="InvalidData"}
 	end
+	if forced then DebugOverrides.Consume(player, petId) end
 	result.Origin = PedestalService.BeginPresentation(player)
 	result.SpeciesId, result.OwnerUserId = pet.SpeciesId, player.UserId
 	result.AttemptId, result.OldLevel = attemptId, before.FeedLevel

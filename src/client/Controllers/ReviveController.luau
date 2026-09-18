@@ -35,6 +35,8 @@ function Controller.Start()
 		panel.Revive.Text = if snapshot and not snapshot.CanRevive then "REVIVE: STUDIO TEST ONLY" else "REVIVE FREE (STUDIO)"
 	end
 	local function show()
+		local debugGui = playerGui:FindFirstChild("DebugUI")
+		if debugGui then debugGui.Panel.Visible = false end
 		local main = playerGui:FindFirstChild("FeedYourPetUI")
 		if main then main.Inventory.Visible = false; main.FeedPanel.Visible = false end
 		panel.Visible = true

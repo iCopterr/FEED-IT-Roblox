@@ -7,7 +7,7 @@ function CarryController.Start()
 	local remote = game.ReplicatedStorage:WaitForChild("PrototypeUI"):WaitForChild("Request")
 	local busy = false
 	local function click(screenPosition)
-		if player:GetAttribute("RevivePanelOpen") then return end
+		if player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") then return end
 		local gui = player.PlayerGui:FindFirstChild("FeedYourPetUI")
 		if busy or (gui and (gui.Inventory.Visible or (gui:FindFirstChild("FeedPanel") and gui.FeedPanel.Visible))) then return end
 		local camera = workspace.CurrentCamera
@@ -64,6 +64,7 @@ function CarryController.Start()
 					local model = prompt:FindFirstAncestorOfClass("Model")
 					prompt.Enabled = model:GetAttribute("OwnerUserId") == player.UserId
 						and not player:GetAttribute("RevivePanelOpen")
+						and not player:GetAttribute("DebugPanelOpen")
 						and not (prompt.Name=="OpenFeedUI" and player:GetAttribute("FeedBusy"))
 						and not (gui and (gui.Inventory.Visible or (gui:FindFirstChild("FeedPanel") and gui.FeedPanel.Visible)))
 				end

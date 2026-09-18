@@ -18,6 +18,9 @@
       }
     },
     "StarterGui": {
+      "DebugUI": {
+        "$path": "src/ui/DebugUI.rbxmx"
+      },
       "ReviveUI": {
         "$path": "src/ui/ReviveUI.rbxmx"
       },
