@@ -1,0 +1,146 @@
+<roblox version="4">
+<Item class="BillboardGui">
+<Properties>
+<string name="Name">ConveyorPetLabel</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size">
+<XS>0</XS>
+<XO>210</XO>
+<YS>0</YS>
+<YO>100</YO>
+</UDim2>
+<Vector3 name="StudsOffsetWorldSpace">
+<X>0</X>
+<Y>3.5</Y>
+<Z>0</Z>
+</Vector3>
+<float name="MaxDistance">45</float>
+<bool name="AlwaysOnTop">false</bool>
+<float name="LightInfluence">0</float>
+<bool name="Enabled">true</bool>
+</Properties>
+<Item class="TextLabel">
+<Properties>
+<string name="Name">NameLabel</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size">
+<XS>1</XS>
+<XO>0</XO>
+<YS>0</YS>
+<YO>30</YO>
+</UDim2>
+<UDim2 name="Position">
+<XS>0</XS>
+<XO>0</XO>
+<YS>0</YS>
+<YO>0</YO>
+</UDim2>
+<Vector2 name="AnchorPoint">
+<X>0</X>
+<Y>0</Y>
+</Vector2>
+<float name="BackgroundTransparency">0.25</float>
+<Color3 name="BackgroundColor3">
+<R>0.11372549086809158</R>
+<G>0.12156862765550613</G>
+<B>0.15294118225574493</B>
+</Color3>
+<float name="BorderSizePixel">0</float>
+<bool name="Visible">true</bool>
+<bool name="Active">false</bool>
+<string name="Text">PET</string>
+<Color3 name="TextColor3">
+<R>1</R>
+<G>1</G>
+<B>1</B>
+</Color3>
+<bool name="TextScaled">true</bool>
+<float name="TextSize">8</float>
+<bool name="TextWrapped">true</bool>
+<token name="Font">26</token>
+</Properties>
+</Item>
+<Item class="TextLabel">
+<Properties>
+<string name="Name">Rarity</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size">
+<XS>1</XS>
+<XO>0</XO>
+<YS>0</YS>
+<YO>30</YO>
+</UDim2>
+<UDim2 name="Position">
+<XS>0</XS>
+<XO>0</XO>
+<YS>0</YS>
+<YO>32</YO>
+</UDim2>
+<Vector2 name="AnchorPoint">
+<X>0</X>
+<Y>0</Y>
+</Vector2>
+<float name="BackgroundTransparency">0.25</float>
+<Color3 name="BackgroundColor3">
+<R>0.11372549086809158</R>
+<G>0.12156862765550613</G>
+<B>0.15294118225574493</B>
+</Color3>
+<float name="BorderSizePixel">0</float>
+<bool name="Visible">true</bool>
+<bool name="Active">false</bool>
+<string name="Text">COMMON</string>
+<Color3 name="TextColor3">
+<R>1</R>
+<G>1</G>
+<B>1</B>
+</Color3>
+<bool name="TextScaled">true</bool>
+<float name="TextSize">8</float>
+<bool name="TextWrapped">true</bool>
+<token name="Font">26</token>
+</Properties>
+</Item>
+<Item class="TextLabel">
+<Properties>
+<string name="Name">Price</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size">
+<XS>1</XS>
+<XO>0</XO>
+<YS>0</YS>
+<YO>30</YO>
+</UDim2>
+<UDim2 name="Position">
+<XS>0</XS>
+<XO>0</XO>
+<YS>0</YS>
+<YO>64</YO>
+</UDim2>
+<Vector2 name="AnchorPoint">
+<X>0</X>
+<Y>0</Y>
+</Vector2>
+<float name="BackgroundTransparency">0.25</float>
+<Color3 name="BackgroundColor3">
+<R>0.11372549086809158</R>
+<G>0.12156862765550613</G>
+<B>0.15294118225574493</B>
+</Color3>
+<float name="BorderSizePixel">0</float>
+<bool name="Visible">true</bool>
+<bool name="Active">false</bool>
+<string name="Text">100 MONEY</string>
+<Color3 name="TextColor3">
+<R>1</R>
+<G>1</G>
+<B>1</B>
+</Color3>
+<bool name="TextScaled">true</bool>
+<float name="TextSize">8</float>
+<bool name="TextWrapped">true</bool>
+<token name="Font">26</token>
+</Properties>
+</Item>
+</Item>
+</roblox>

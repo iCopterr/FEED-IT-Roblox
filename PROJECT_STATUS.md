@@ -4,7 +4,7 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-18
+**Last Updated:** 2026-09-19
 
 > This file is the current-state handoff between Codex sessions. Update it
 > before ending a meaningful development session. Do not mark a feature
@@ -35,13 +35,14 @@ then implement Protection/Revive only when requested.
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ⬜ Not Started | |
+| Pet Conveyor Alpha | ✅ Server Verified | Static center conveyor; six random priced pet rarities, inventory purchase and expiry. 37 multiplayer + five isolated client checks pass; physical playtest pending. |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
 | HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
 | Pet Placement | 🟦 Free Position Implemented | Click/tap inside own Pen, exact local coordinates, five-pet cap and click pickup; build passes, Studio test pending. |
 | Pet Wandering | ⬜ Not Started | |
 | Money Generation | ✅ Server Verified | Placed pets pay BaseIncome x FeedMultiplier each second; 15 Studio checks pass. HUD rate included; published persistence remains separate. |
-| Farm | ✅ Upgrades Server Verified | Six authored upgrade signs; 15 GDD levels, Money purchase and active-only output. 27 new multiplayer checks pass; manual sign input/feel pending. |
+| Farm | ✅ Upgrades Server Verified | Ten levels with preserved custom prices; Money purchase and active-only output. Manual sign input/feel pending. |
 | Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
 | Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
 | Feeding Pedestal | ✅ Staging Server Verified | Six feed plates; carry/click placement and hold-E pickup. 23 multiplayer checks pass; Feed UI/RNG deferred. |
@@ -61,13 +62,17 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Ten-level farm cap with owner's custom upgrade prices
+**Current Feature:** Direct-pet conveyor alpha in the reserved middle lane
 
-**Status:** Farm cap and signs updated to 10; custom Studio prices restored and verified in filesystem and synced Studio. Build passes. Cap behavior passed 30 multiplayer checks using earlier prices; restored-price integration rerun remains pending. Physical sign-button input/live DataStore tests remain.
+**Status:** Implemented; 37 multiplayer server checks, five isolated client checks, lane geometry/asset checks and build/compilation pass. Physical input/visual feel and production persistence remain unverified.
 
-**Objective:** Spend pet income on permanent farm progression, using a buy button directly on an editable map sign.
+**Objective:** Spawn random visible pets with rarity/prices, buy into inventory safely, and remove unsold offers at the end. No eggs in this alpha.
 
 ## 4. Completed
+
+- Authored center conveyor, pet rarity/price labels and purchase feedback UI.
+  Six weighted pet rarities, moving bounded offers, hold-E purchases, unique
+  inventory identity, replay/race protection, save retry and automatic expiry.
 
 - Six authored farm upgrade signs, displaying level, production and next-price
   Buy Upgrade button. GDD 15-level prices added to FarmConfig; owner/range/life/
@@ -164,8 +169,9 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 6. Next Tasks
 
-Latest priority: playtest the sign buy button and farm progression, then tune
-farm/Feed pacing. Verify live DataStore rejoin/outage/session transfer separately.
+Latest priority: fresh Play to review conveyor spawn pacing, movement/labels and
+buying, then farm/Feed pacing. Verify production onboarding and live DataStore
+rejoin/outage/session transfer separately.
 The numbered list below retains older prototype follow-ups.
 
 0. Restart Play and verify the HUD appears without the FeedYourPetUI infinite-yield
@@ -179,20 +185,51 @@ The numbered list below retains older prototype follow-ups.
 
 ```text
 default.project.json
-src/world/FarmUpgradeSigns.rbxmx
-src/shared/Config/FarmConfig.luau
-src/server/Services/FarmUpgradeService.luau
-src/server/FarmUpgradeVerification.server.luau
+src/world/PetConveyor.rbxmx
+src/ui/ConveyorPetLabel.rbxmx
+src/ui/ConveyorUI.rbxmx
+src/shared/Config/ConveyorConfig.luau
+src/server/Services/ConveyorService.luau
+src/server/ConveyorVerification.server.luau
 src/server/init.server.luau
-src/client/Controllers/FarmUpgradeController.luau
-src/client/UI/FarmSignView.luau
+src/client/Controllers/ConveyorController.luau
 src/client/Controllers/HUDController.luau
 src/client/init.client.luau
-docs/farm.md
+docs/conveyor.md
 PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session — Pet conveyor alpha — 2026-09-19
+
+- User now explicitly authorizes the previously reserved center conveyor, with
+  pets instead of eggs. Existing Common/Uncommon/Rare/Epic/Legendary/Mythic used.
+- Authored real conveyor parts through MCP, plus BillboardGui label template
+  and purchase-feedback ScreenGui; exported three assets and mapped in Rojo.
+  Runtime clones existing pet/UI assets only; no world geometry generator.
+- ConveyorConfig: 4s spawn, 36s travel, 10-offer cap; weights 600/250/100/40/9/1;
+  temporary prices 100/1.5K/5K/30K/100K/450K Money. Not GDD egg balance.
+- ConveyorService resolves random offers, server-clock movement/expiry and
+  validated purchases. Atomic non-yielding payment+PetService creation; one
+  winner per offer, replay-safe cached result, queued save retries with lock.
+  New pets enter inventory at level 0/unplaced. No conveyor pet produces income.
+- ConveyorController interpolates motion and animates authored tread positions,
+  handles hold-E/gamepad/touch purchase prompts and success/error feedback.
+  Immediate authoritative Money HUD push via ConveyorPurchaseChanged.
+- Tests PASS: 37 two-player memory checks, five isolated client source checks,
+  geometry inside reserved lane, unique assets, build/diff/synced compilation.
+  Main verification spawns deterministic offers; automatic scheduling and real
+  mouse/touch/gamepad feel still need ordinary Play review. Tests auto-ended.
+- Farm config inspected in both Studio/filesystem BEFORE changes; preserved
+  custom 10-level prices and output exactly. No Farm/Feed code/config edits.
+- Production onboarding remains a known gap: zero starting Money/no starter
+  pet outside existing developer-only Studio test grant. No free grant added.
+- Files: ConveyorConfig, ConveyorService, ConveyorController, ConveyorVerification,
+  PetConveyor.rbxmx, ConveyorPetLabel.rbxmx, ConveyorUI.rbxmx, HUDController,
+  client/server bootstraps, default.project.json, docs/conveyor.md, PROJECT_STATUS.md.
+- Baseline: 79e2e9c. Next: start ordinary Play and buy a passing pet; use existing
+  Studio starter pet for initial income. No Computer Use/live DataStore writes.
 
 ### Latest Session — Keep custom levels 1–10 — 2026-09-18
 
@@ -465,6 +502,9 @@ and diff checks before completing the local commit. No scope/config changes.
 
 ## 9. Known Issues / Blockers
 
+- Conveyor alpha: production onboarding (initial pet/Money) is not implemented;
+  existing developer Studio starter pet remains the test entry point.
+
 - Current: visual Play review and real DataStore outage/rejoin tests remain.
   Exploded pets stay in PendingRecovery indefinitely until Revive is built.
   Earlier MCP/Rojo connection blockers below are historical, not current.
@@ -727,9 +767,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `1d93a04` (verified baseline before this farm upgrade session)
+**Commit:** `79e2e9c` (verified baseline before the conveyor alpha session)
 
-**Message:** `feat: resolve feed outcomes with safe recovery and animations`
+**Message:** `fix: preserve custom farm prices and cap upgrades at level ten`
 
 ## 17. Important Decisions
 

@@ -1,0 +1,64 @@
+<roblox version="4">
+<Item class="ScreenGui">
+<Properties>
+<string name="Name">ConveyorUI</string>
+<bool name="Archivable">true</bool>
+<bool name="ResetOnSpawn">false</bool>
+<float name="DisplayOrder">6</float>
+<bool name="Enabled">true</bool>
+<bool name="IgnoreGuiInset">false</bool>
+<token name="ZIndexBehavior">0</token>
+</Properties>
+<Item class="TextLabel">
+<Properties>
+<string name="Name">Message</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size">
+<XS>0.6499999761581421</XS>
+<XO>0</XO>
+<YS>0</YS>
+<YO>68</YO>
+</UDim2>
+<UDim2 name="Position">
+<XS>0.5</XS>
+<XO>0</XO>
+<YS>0.1599999964237213</YS>
+<YO>0</YO>
+</UDim2>
+<Vector2 name="AnchorPoint">
+<X>0.5</X>
+<Y>0.5</Y>
+</Vector2>
+<float name="BackgroundTransparency">0.11999999731779099</float>
+<Color3 name="BackgroundColor3">
+<R>0.15294118225574493</R>
+<G>0.18431372940540314</G>
+<B>0.24313725531101227</B>
+</Color3>
+<float name="BorderSizePixel">0</float>
+<bool name="Visible">false</bool>
+<bool name="Active">false</bool>
+<string name="Text">Pet bought! Open your inventory.</string>
+<Color3 name="TextColor3">
+<R>1</R>
+<G>1</G>
+<B>1</B>
+</Color3>
+<bool name="TextScaled">false</bool>
+<float name="TextSize">24</float>
+<bool name="TextWrapped">true</bool>
+<token name="Font">26</token>
+</Properties>
+<Item class="UICorner">
+<Properties>
+<string name="Name">UICorner</string>
+<bool name="Archivable">true</bool>
+<UDim name="CornerRadius">
+<S>0</S>
+<O>14</O>
+</UDim>
+</Properties>
+</Item>
+</Item>
+</Item>
+</roblox>

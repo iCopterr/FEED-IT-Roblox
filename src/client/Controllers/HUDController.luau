@@ -36,6 +36,7 @@ function HUDController.Start()
 	end
 	ReplicatedStorage:WaitForChild("PetIncome").OnClientEvent:Connect(updateMoney)
 	ReplicatedStorage:WaitForChild("FarmUpgradeChanged").OnClientEvent:Connect(updateMoney)
+	ReplicatedStorage:WaitForChild("ConveyorPurchaseChanged").OnClientEvent:Connect(updateMoney)
 	local foodLabel = hud:WaitForChild("Food"):WaitForChild("Value")
 	local lastFoodAt = -math.huge
 	local function updateFood(state)

@@ -4,6 +4,9 @@
   "tree": {
     "$className": "DataModel",
     "Workspace": {
+      "PetConveyor": {
+        "$path": "src/world/PetConveyor.rbxmx"
+      },
       "FarmUpgradeSigns": {
         "$path": "src/world/FarmUpgradeSigns.rbxmx"
       },
@@ -15,11 +18,17 @@
       }
     },
     "StarterGui": {
+      "ConveyorUI": {
+        "$path": "src/ui/ConveyorUI.rbxmx"
+      },
       "FeedYourPetUI": {
         "$path": "src/ui/FeedYourPetUI.rbxmx"
       }
     },
     "ReplicatedStorage": {
+      "ConveyorPetLabel": {
+        "$path": "src/ui/ConveyorPetLabel.rbxmx"
+      },
       "PetIncomePopup": {
         "$path": "src/ui/PetIncomePopup.rbxmx"
       },
