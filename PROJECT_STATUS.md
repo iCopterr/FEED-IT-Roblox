@@ -61,12 +61,12 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Hold E opens plate Feed UI; UI button picks up pet
+**Current Feature:** Feed balance and presentation configuration (config-first)
 
-**Status:** Latest interaction revision implemented; 28 updated PedestalVerification server checks and three isolated UI checks pass. Rojo build/source compilation and diff checks pass. Physical input review remains separate.
+**Status:** Feed config extension implemented; build and Studio configuration checks pass. Full Feed outcomes and effects are not implemented yet.
 
-**Objective:** Open a Feed panel for the staged pet and consume Food on Feed.
-No config module, Feed Level changes, growth, income change or RNG in this step.
+**Objective:** Configure Feed balance and the requested presentation before
+implementing outcomes, UI closing and animated success/explosion sequences.
 
 ## 4. Completed
 
@@ -183,6 +183,23 @@ PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest Session — Feed config first — 2026-09-18
+
+- User requested Feed config first, ahead of UI closing, floating/accelerating
+  spin, explosion/success animations and screen banners. Extended the existing
+  FeedConfig, preserving its income Multiplier curve exactly.
+- Added target-level 1–40 Food costs and explosion odds, rarity cost factors,
+  Critical results and 5% Miracle Save from GDD. Added presentation-only defaults
+  for float/spin, success/explosion/Miracle banners and return/burst timings.
+- GetFoodCost returns nil outside configured levels/rarities; fractional costs
+  are preserved. No new level cap or critical overshoot behavior invented.
+- Files: src/shared/Config/FeedConfig.luau, docs/feed-config.md, PROJECT_STATUS.md.
+- Verification: Rojo build/diff checks passed; synced source evaluated in Studio
+  passed 40-level coverage, probability totals/bounds, example costs, invalid
+  level/rarity handling, multiplier anchors and nested immutability checks.
+- No transaction, UI behavior or animation changed. FeedService remains at
+  consumption-only 1 Food. Next: safe outcomes/recovery, then animated display.
 
 ### Latest Session — Jump-only farm exit — 2026-09-18
 
