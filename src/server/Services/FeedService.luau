@@ -92,14 +92,17 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 	local outcome = forced or Resolver.Roll(pet.FeedLevel, state.TestRandom or function() return rng:NextNumber() end, result.Risk)
 	local attemptId = HttpService:GenerateGUID(false)
 	if outcome.Code == "Explosion" then
-		-- Ordinary Feed failures no longer create Revive records. Keeping the
-		-- same inventory object preserves identity, rarity, traits and lock state.
+		-- Preserve the pre-failure pet until the owner chooses Revive or level 0.
+		-- Only one usable identity may exist; pending pets cannot earn or rebuild.
+		data.Inventory[petId] = nil
+		data.PendingRecovery[petId] = {Pet=before, AttemptId=attemptId, ExplodedAt=os.time(), FoodSpent=result.Cost}
 		outcome.FeedLevel = Config.ExplosionResetLevel
 	end
 	pet.FeedLevel = outcome.FeedLevel
 	if not Schema.Validate(data) then
 		data.Food = oldFood
 		pet.FeedLevel = before.FeedLevel
+		data.Inventory[petId], data.PendingRecovery[petId] = pet, nil
 		Locks.Finish(player)
 		return {Ok=false, Code="InvalidData"}
 	end

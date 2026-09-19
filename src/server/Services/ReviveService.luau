@@ -6,12 +6,13 @@ local Locks = require(script.Parent.FeedLocks)
 local MoneyService = require(script.Parent.MoneyService)
 local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
 local Config = require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
+local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local sessions = {}
 local Service = {}
 
 function Service.HandleRequest(player, action, petId, attemptId)
 	if player.Parent ~= Players then return {Ok=false, Code="Loading"} end
-	if action ~= "Snapshot" and action ~= "Revive" then return {Ok=false, Code="InvalidRequest"} end
+	if action ~= "Snapshot" and action ~= "Revive" and action ~= "KeepBase" then return {Ok=false, Code="InvalidRequest"} end
 	local state = sessions[player]
 	if not state then state = {}; sessions[player] = state end
 	local now = os.clock()
@@ -35,11 +36,12 @@ function Service.HandleRequest(player, action, petId, attemptId)
 			if a.ExplodedAt ~= b.ExplodedAt then return a.ExplodedAt > b.ExplodedAt end
 			return a.PetId < b.PetId
 		end)
-		return {Ok=true, Records=records, CanRevive=RunService:IsStudio(), Busy=Locks.IsLocked(player)}
+		return {Ok=true, Records=records, CanRevive=RunService:IsStudio(),
+			ResetLevel=FeedConfig.ExplosionResetLevel, Busy=Locks.IsLocked(player)}
 	end
 	-- The server gate is unconditional. A client flag/config cannot enable free
 	-- recovery in a published game; paid receipts are deliberately out of scope.
-	if not RunService:IsStudio() then return {Ok=false, Code="StudioOnly"} end
+	if action == "Revive" and not RunService:IsStudio() then return {Ok=false, Code="StudioOnly"} end
 	if type(petId) ~= "string" or #petId == 0 or #petId > 64
 		or type(attemptId) ~= "string" or #attemptId == 0 or #attemptId > 64 then
 		return {Ok=false, Code="InvalidRequest"}
@@ -53,6 +55,7 @@ function Service.HandleRequest(player, action, petId, attemptId)
 	local restored = table.clone(record.Pet)
 	restored.Traits = table.clone(record.Pet.Traits)
 	if record.Pet.PenPosition then restored.PenPosition = table.clone(record.Pet.PenPosition) end
+	if action == "KeepBase" then restored.FeedLevel = FeedConfig.ExplosionResetLevel end
 	data.PendingRecovery[petId] = nil
 	data.Inventory[petId] = restored
 	if not Schema.Validate(data) then
@@ -61,7 +64,8 @@ function Service.HandleRequest(player, action, petId, attemptId)
 		Locks.Finish(player)
 		return {Ok=false, Code="InvalidData"}
 	end
-	-- No Food refund, new PetId, level reset, placement, or automatic Feed.
+	-- Both decisions consume this offer. No Food refund, new identity, placement
+	-- or automatic Feed. KeepBase is irreversible, including after a reconnect.
 	-- Save the inventory/recovery transition together; never roll it back after
 	-- an ambiguous write. Feed/placement/pickup remain locked until confirmation.
 	task.spawn(function()
@@ -72,7 +76,8 @@ function Service.HandleRequest(player, action, petId, attemptId)
 			task.wait(Config.SaveRetrySeconds)
 		end
 	end)
-	return {Ok=true, Code="Revived", PetId=petId, AttemptId=attemptId, FeedLevel=restored.FeedLevel}
+	return {Ok=true, Code=if action=="KeepBase" then "KeptBase" else "Revived",
+		PetId=petId, AttemptId=attemptId, FeedLevel=restored.FeedLevel}
 end
 
 function Service.Start()

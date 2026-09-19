@@ -19,7 +19,10 @@ FeedConfig is now consumed by FeedService, MoneyService and Feed presentation.
 
 Player schema v3 adds PendingRecovery[PetId] with Pet (full pre-failure record),
 AttemptId, ExplodedAt and FoodSpent. Recovery pets are outside Inventory and
-cannot earn, equip, place or be removed. No automatic expiry or deletion;
+cannot earn, equip, place or be removed until the owner chooses a recovery.
+Revive restores the pre-failure level; KeepBase retains the pet at configured
+ExplosionResetLevel (0), consuming that offer. Neither refunds Food.
+No automatic expiry or deletion;
 Studio-only free Revive is implemented. Paid Revive and single-use Protection
 remain deferred. Schema v4 adds saved FeedPlateLevel without changing recovery.
 

@@ -39,7 +39,7 @@ local ok, failure = xpcall(function()
 	local beforeFood, beforeMoney = profile.Food, profile.Money
 	local function legacyRecovery()
 		-- Fixture for a record saved under the previous broken-pet rule.
-		-- New Feed explosions must not enter this system.
+		-- Existing saves must retain the same recovery choices as new failures.
 		local record={Pet=pets.GetPet(a,pet.PetId),
 			AttemptId=game:GetService("HttpService"):GenerateGUID(false),
 			ExplodedAt=os.time(),FoodSpent=feedConfig.GetFoodCost(21,"Rare")}
@@ -95,7 +95,7 @@ local ok, failure = xpcall(function()
 	task.wait(.3)
 	local replies = {}
 	task.spawn(function() replies[1] = revive.HandleRequest(a,"Revive",pet.PetId,newer.AttemptId) end)
-	task.spawn(function() replies[2] = revive.HandleRequest(a,"Revive",pet.PetId,newer.AttemptId) end)
+		task.spawn(function() replies[2] = revive.HandleRequest(a,"KeepBase",pet.PetId,newer.AttemptId) end)
 	waitFor(function() return replies[1] and replies[2] end)
 	check((if replies[1].Ok then 1 else 0)+(if replies[2].Ok then 1 else 0) == 1, "Concurrent duplicate requests restore exactly once")
 	waitFor(function() return not locks.IsLocked(a) end)

@@ -24,9 +24,9 @@ function Controller.Start()
 		index = math.clamp(index, 1, math.max(1, #records))
 		local record = records[index]
 		gui.Open.Visible = #records > 0
-		gui.Open.Text = string.format("BROKEN PETS (%d)", #records)
-		panel.Title.Text = string.format("BROKEN PETS  %d / %d", if record then index else 0, #records)
-		panel.PetName.Text = if record then record.PetName else "No broken pets"
+		gui.Open.Text = string.format("PET RECOVERY (%d)", #records)
+		panel.Title.Text = string.format("PET RECOVERY  %d / %d", if record then index else 0, #records)
+		panel.PetName.Text = if record then record.PetName else "No pending recovery"
 		panel.Details.Text = if record then string.format("%s • LEVEL %d • %s MONEY/SEC BEFORE BREAKING\n%s Food remains spent",
 			record.Rarity, record.FeedLevel, numberText(record.Income), numberText(record.FoodSpent)) else "Recovered pets are in MY PETS. Equip and place them again."
 		local enabled = record ~= nil and snapshot and snapshot.CanRevive and not snapshot.Busy and not busy
@@ -34,6 +34,10 @@ function Controller.Start()
 		panel.Revive.AutoButtonColor = enabled == true
 		panel.Revive.BackgroundColor3 = if enabled then Color3.fromRGB(85,166,102) else Color3.fromRGB(100,100,110)
 		panel.Revive.Text = if snapshot and not snapshot.CanRevive then "REVIVE: STUDIO TEST ONLY" else "REVIVE FREE (STUDIO)"
+		local canKeep = record ~= nil and snapshot ~= nil and not snapshot.Busy and not busy
+		panel.Later.Text = if record then string.format("KEEP AT LEVEL %d",snapshot and snapshot.ResetLevel or 0) else "CLOSE"
+		panel.Later.Active = canKeep or (record == nil and not busy)
+		panel.Later.AutoButtonColor = panel.Later.Active
 	end
 	local function show()
 		local debugGui = playerGui:FindFirstChild("DebugUI")
@@ -65,26 +69,38 @@ function Controller.Start()
 		-- Wait until the explosion presentation/save has ended before prompting.
 		if unseen and not result.Busy then
 			for _, record in records do seen[record.AttemptId] = true end
-			panel.Status.Text = "Your pet is broken, not deleted. Keep playing leaves it recoverable."
+			panel.Status.Text = string.format("Revive restores the previous level. Keep at level %d closes this Revive offer.",result.ResetLevel)
 			show()
 		end
 		render()
 	end
 	gui.Open.Activated:Connect(function() show(); task.spawn(refresh) end)
-	panel.Later.Activated:Connect(function() panel.Visible = false end)
 	panel.Previous.Activated:Connect(function() if not busy then index = math.max(1,index-1); render() end end)
 	panel.Next.Activated:Connect(function() if not busy then index = math.min(#records,index+1); render() end end)
-	panel.Revive.Activated:Connect(function()
+	local function decide(action)
 		local record = records[index]
-		if busy or not record or not snapshot or not snapshot.CanRevive or snapshot.Busy then return end
-		busy = true; render(); panel.Status.Text = "Restoring pet…"
-		local ok, result = pcall(function() return remote:InvokeServer("Revive",record.PetId,record.AttemptId) end)
+		if busy or not record or not snapshot or snapshot.Busy then return end
+		if action=="Revive" and not snapshot.CanRevive then return end
+		busy = true; render(); panel.Status.Text = "Saving your choice…"
+		local ok, result = pcall(function() return remote:InvokeServer(action,record.PetId,record.AttemptId) end)
 		busy = false
-		panel.Status.Text = if ok and result.Ok then "Revived! Find your pet in MY PETS. Food was not refunded."
+		panel.Status.Text = if ok and result.Ok then string.format("Pet returned to MY PETS at level %d. Food was not refunded.",result.FeedLevel)
 			else if ok then messages[result.Code] or "Unable to revive. Refreshing…" else "Connection interrupted. Refreshing recovery state…"
+		if ok and result.Ok then
+			-- Remove only the confirmed offer, even if the immediate snapshot is
+			-- throttled. Never leave a consumed choice clickable in stale UI.
+			for i=#records,1,-1 do
+				if records[i].PetId==record.PetId and records[i].AttemptId==record.AttemptId then table.remove(records,i) end
+			end
+		end
 		-- Always re-read state after an ambiguous response; never choose a new
 		-- recovery automatically or retry against a different explosion.
 		refresh()
+		if ok and result.Ok and #records==0 then panel.Visible=false end
+	end
+	panel.Revive.Activated:Connect(function() decide("Revive") end)
+	panel.Later.Activated:Connect(function()
+		if not busy and #records==0 then panel.Visible=false else decide("KeepBase") end
 	end)
 	local function resize()
 		panel.UIScale.Scale = math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/480,(gui.AbsoluteSize.Y-24)/410))

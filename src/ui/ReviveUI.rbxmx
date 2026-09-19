@@ -38,7 +38,7 @@
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">false</bool>
 <bool name="Active">true</bool>
-<string name="Text">BROKEN PETS</string>
+<string name="Text">PET RECOVERY</string>
 <Color3 name="TextColor3">
 <R>1</R>
 <G>1</G>
@@ -116,7 +116,7 @@
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">false</bool>
-<string name="Text">BROKEN PETS</string>
+<string name="Text">PET RECOVERY</string>
 <Color3 name="TextColor3">
 <R>1</R>
 <G>1</G>
@@ -363,7 +363,7 @@
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">true</bool>
-<string name="Text">KEEP PLAYING</string>
+<string name="Text">KEEP AT LEVEL 0</string>
 <Color3 name="TextColor3">
 <R>1</R>
 <G>1</G>

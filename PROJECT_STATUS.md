@@ -55,7 +55,7 @@ Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 | Pet Growth | 🟦 Implemented | Success scales plate/Pen models and income; manual visual review pending. |
 | Explosion Presentation | 🟦 Implemented | Float/spin, burst/fade and banners; six isolated effect checks pass. |
 | Protection | ⬜ Not Started | |
-| Revive | ✅ Studio Free Verified | Broken-pet browser and original-state recovery; 22 multiplayer + 6 isolated safety + 8 isolated UI checks pass. Paid recovery not implemented. |
+| Revive / Keep Base | 🟦 Choice Flow Server Verified | Failed Feed offers old-level Studio Revive or level-0 reset; 72 Feed checks pass. Legacy regression rerun and revised UI testing pending. Paid recovery not implemented. |
 | Save / Load | 🟦 Implemented / Needs Testing | Memory-mode flow verified; production backend remains untested. |
 | Debug Tools | ✅ Studio Memory Verified | Currency grants, six-rarity spawn, pet/farm levels, one-use Feed outcomes. 47 multiplayer + 12 gate + 10 isolated UI checks pass. |
 | Core Loop Playtest | ⬜ Not Started | |
@@ -64,13 +64,17 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Explosion base-level reset / revised Revive decision (in progress)
+**Current Feature:** Failed-feed Revive or keep-at-base choice
 
-**Status:** Partial implementation checkpoint requested by user, NOT gameplay-verified. Feed plate upgrades remain verified at 0f3db31. User clarified that Revive should still apply to failed feeds; final recovery-choice behavior is being discussed.
+**Status:** Implemented; 72 Feed and 47 Debug multiplayer checks pass. Revised UI physical testing, isolated production/save-failure checks, and legacy recovery regression remain pending because MCP disconnected.
 
 **Objective:** Keep exploded pets at base Feed level (0), with Revive able to restore the pre-failure level through an explicit recovery choice.
 
 ## 4. Completed
+
+- Failed Feed offers Revive to the pre-failure level or Keep at level 0.
+  Both retain identity and consume the saved recovery offer without refunding
+  Food. Level-0 pets can equip and grow again; old requests cannot undo a reset.
 
 - FeedPlateConfig defines ten levels, the same current prices as FarmConfig,
   and 0–45% relative risk reduction. FarmConfig itself was not changed.
@@ -176,6 +180,9 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 5. In Progress
 
+- Reconnect Studio MCP and rerun ReviveVerification plus revised client/public
+  KeepBase/save-failure checks. Test the two recovery buttons visually.
+
 - Physical feed plate sign mouse/touch/gamepad input and visual risk-display review.
 
 - Visual Play review of compact numeric text across UI and world labels.
@@ -201,7 +208,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 6. Next Tasks
 
-Latest priority: review the purple feed plate upgrade signs and reduced Feed risk,
+Latest priority: reconnect Studio MCP and finish recovery UI/legacy regression,
+then review the purple feed plate upgrade signs and reduced Feed risk,
 then fresh memory Play using STUDIO DEBUG to review high-level Feed,
 explosion -> Broken Pets -> free Revive -> inventory, then game pacing. Money balancing is
 explicitly deferred. Verify onboarding and live DataStore
@@ -216,6 +224,12 @@ The numbered list below retains older prototype follow-ups.
 4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
 
 ## 7. Files Modified This Session
+
+Current recovery-choice session: FeedService, ReviveService, FeedController,
+FeedEffects, ReviveController, ReviveUI.rbxmx, FeedVerification,
+ReviveVerification, DebugVerification, docs/revive.md, docs/feed-config.md,
+and this handoff. Prior checkpoint 84f4126 already contains reset config and
+the pedestal return-to-inventory parameter. Earlier lists below are historical.
 
 Current plate-upgrade session: default.project.json; GameConfig and new
 FeedPlateConfig; PlayerDataSchema; FeedResolver/FeedService and new
@@ -242,6 +256,30 @@ PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest — Recovery choice implemented (supersedes partial checkpoint notes)
+
+- Continued from user-requested checkpoint 84f4126. Feed failures again use the
+  existing PendingRecovery record to hold the pre-failure pet until a choice.
+  This prevents using a reset pet and later restoring an old version.
+- Revive restores the old level (free Studio-only as before); KeepBase restores
+  level 0 in Studio AND published servers. Both consume the exact PetId+AttemptId
+  offer atomically and save with shared locks/retries. Food remains spent.
+- Pending offers survive save/reload; legacy broken records support both choices.
+  No schema/store/price/odds changes. No paid recovery added.
+- Authored ReviveUI reused with PET RECOVERY and KEEP AT LEVEL 0 text; controller
+  routes both buttons, disables choices while busy, and removes confirmed offers
+  locally so a throttled snapshot cannot leave a stale actionable button.
+- PASS captured through MCP: 72 FeedVerification and 47 DebugVerification
+  multiplayer checks. Build and synced source compilation passed before the
+  final small client stale-offer cleanup. Final Rojo build/diff checks are local.
+- ReviveVerification returned no result in the sequential run; isolated rerun
+  was scheduled but its result could not be retrieved. Do not count it as passed.
+  MCP 58741 stopped listening; alternate 58742 reports zero connected instances.
+  Public KeepBase/save-retry isolated test did not execute (connection refused).
+- NEXT: enable/reconnect the Roblox Studio MCP plugin; rerun ReviveVerification,
+  isolated client/public KeepBase/save-failure checks and physical UI review.
+  Production DataStore rejoin/outage testing remains separate. No Computer Use.
 
 ### In progress — Base-level explosion reset and Revive clarification
 
@@ -957,6 +995,12 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Recovery choices — latest
+
+Implementation now supports Revive OR Keep at level 0 after failed Feed. See
+latest section 8 entry, not the superseded partial checkpoint notes. Core server
+flow passed multiplayer tests; Studio MCP disconnected before remaining checks.
 
 ### Feed plate upgrades — 2026-09-19 (current)
 
