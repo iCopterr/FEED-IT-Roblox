@@ -29,6 +29,7 @@ function FeedController.Start()
 		AlreadyProcessed="That request was already processed. Refreshing…", Cooldown="Please wait a moment.",
 		Loading="Loading player data…", Unavailable="Feeding is unavailable right now.",
 		Busy="Feed is animating or saving. Please wait.", MaxLevel="Maximum Feed level reached (40).",
+		NoProtection="No Protection Tokens left.", ProtectionUnavailable="Protection starts at target Feed Level 6.",
 	}
 	local function render(state)
 		latest = state
@@ -47,6 +48,11 @@ function FeedController.Start()
 		panel.Feed.Active = canFeed == true
 		panel.Feed.AutoButtonColor = canFeed == true
 		panel.Feed.BackgroundColor3 = if canFeed then Color3.fromRGB(112,219,89) else Color3.fromRGB(114,111,127)
+		local canProtect = canFeed and state.ProtectedRisk ~= nil and (state.ProtectionTokens or 0) > 0
+		panel.ProtectedFeed.Text = if state.ProtectedRisk then string.format("PROTECT • %d LEFT • %s%% RISK",state.ProtectionTokens or 0,numberText(state.ProtectedRisk*100)) else "PROTECTION AT LEVEL 6"
+		panel.ProtectedFeed.Active = canProtect == true
+		panel.ProtectedFeed.AutoButtonColor = canProtect == true
+		panel.ProtectedFeed.BackgroundColor3 = if canProtect then Color3.fromRGB(77,167,235) else Color3.fromRGB(114,111,127)
 		panel.Pickup.Active = state.PetId == player:GetAttribute("FeedPlatePetId") and state.PetId ~= nil and not busy and not state.Busy
 	end
 	local function refresh()
@@ -60,7 +66,7 @@ function FeedController.Start()
 			render(result)
 			if not result.Ok then panel.Status.Text = messages[result.Code] or "Unable to load feeding state." end
 		elseif not ok then
-			latest = nil; panel.Feed.Active = false; panel.Status.Text = "Connection error. Retrying…"
+			latest = nil; panel.Feed.Active = false; panel.ProtectedFeed.Active=false; panel.Status.Text = "Connection error. Retrying…"
 		end
 	end
 	local function show()
@@ -93,7 +99,7 @@ function FeedController.Start()
 	panel.Pickup.Activated:Connect(function()
 		local id = player:GetAttribute("FeedPlatePetId")
 		if busy or player:GetAttribute("FeedBusy") or not id then return end
-		busy = true; panel.Pickup.Active = false; panel.Feed.Active = false
+		busy = true; panel.Pickup.Active = false; panel.Feed.Active = false; panel.ProtectedFeed.Active=false
 		panel.Status.Text = "Picking up…"
 		local ok, result = pcall(function() return remote:InvokeServer("Pickup",id) end)
 		busy = false
@@ -104,22 +110,22 @@ function FeedController.Start()
 	Input.InputBegan:Connect(function(key, processed)
 		if not processed and key.KeyCode == Enum.KeyCode.Escape then panel.Visible = false end
 	end)
-	panel.Feed.Activated:Connect(function()
+	local function feed(action)
 		local state = latest
 		if busy or player:GetAttribute("FeedBusy") or not state or not state.Ok or not state.Cost or state.MaxLevel or state.Food < state.Cost
 			or state.PetId ~= player:GetAttribute("FeedPlatePetId") then return end
 		busy = true; render(state); panel.Status.Text = "Feeding…"
 		if Config.Presentation.CloseUIOnAcceptedFeed then panel.Visible=false end
-		local ok, result = pcall(function() return remote:InvokeServer("Feed",state.PetId,state.NextSequence) end)
+		local ok, result = pcall(function() return remote:InvokeServer(action,state.PetId,state.NextSequence) end)
 		busy = false
 		if ok and result.Accepted then
 			displayOutcome(result)
 		elseif ok then
 			if state.PetId ~= player:GetAttribute("FeedPlatePetId") then return end
-			panel.Visible=true; latest=nil; panel.Feed.Active=false
+			panel.Visible=true; latest=nil; panel.Feed.Active=false; panel.ProtectedFeed.Active=false
 			panel.Status.Text = messages[result.Code] or "Request rejected. Refreshing…"
 		else
-			latest = nil; panel.Feed.Active = false
+			latest = nil; panel.Feed.Active = false; panel.ProtectedFeed.Active=false
 			panel.Visible=true
 			panel.Status.Text = "Connection interrupted. Refreshing before another Feed."
 			-- Recover the server result instead of issuing a new attempt after an ambiguous reply.
@@ -128,7 +134,9 @@ function FeedController.Start()
 				if recovered and snapshot.LastOutcome and snapshot.LastOutcome.NextSequence==state.NextSequence+1 then displayOutcome(snapshot.LastOutcome) end
 			end)
 		end
-	end)
+	end
+	panel.Feed.Activated:Connect(function() feed("Feed") end)
+	panel.ProtectedFeed.Activated:Connect(function() feed("ProtectedFeed") end)
 	local function resize()
 		panel.UIScale.Scale = math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/520,(gui.AbsoluteSize.Y-130)/510))
 	end

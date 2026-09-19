@@ -21,7 +21,8 @@ Build a playable prototype that validates:
 The versioned data foundation and server-side pet foundation are implemented.
 Pet creation, plots, placement, income, active farming and Feed outcomes have
 Studio server verification. Next: visually playtest Feed tension and effects;
-Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
+Studio-only free Revive and token-based Feed Protection are implemented; paid
+Developer Product fulfillment remains deferred until product IDs exist.
 
 ## 2. Overall Progress
 
@@ -31,10 +32,10 @@ Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
-| Player Data Schema | 🟦 v6 Implemented / Runtime Pending | Egg duration and local position; migration preserves v5 timers/results. |
+| Player Data Schema | ✅ v7 Studio Verified | Egg placement/timers plus persisted ProtectionTokens; prior profiles migrate without resetting progress. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
-| Egg System | 🟦 Carry/Place Implemented / Runtime Pending | Buy/hold/click Pen starts timer; hatch returns pet to player. Prior v5 checks passed; expanded v6 suite not run. |
+| Egg System | ✅ Carry/Place Studio Verified | Buy/hold/click Pen starts timer; E hatch returns pet to player. 64 automated checks plus developer playtest. |
 | Egg Conveyor | ✅ Server Verified | Eggs replace direct pets; owner inventory slot, range/price validation, offer races/expiry tested. Existing static conveyor retained. |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
@@ -48,13 +49,13 @@ Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 | Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
 | Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
 | Feeding Pedestal | ✅ Staging Server Verified | Six feed plates; carry/click placement and hold-E pickup. 23 multiplayer checks pass; Feed UI/RNG deferred. |
-| Feed UI | 🟦 Outcome UI Implemented | Risk/cost, max-level limit, pickup and outcome banners; five updated isolated controller checks pass. Visual review pending. |
-| Feed Transaction | ✅ Studio Verified | Configured Food cost, authoritative outcomes, replay and save locks; 55 multiplayer checks pass. |
+| Feed UI | 🟦 Protection UI Implemented | Normal/Protected Feed, token count, exact risks, pickup and outcome banners. Protection visual review pending. |
+| Feed Transaction | ✅ Studio Verified | Food/token atomic mutation, authoritative outcomes, replay/save locks; expanded 113-check suite passes. |
 | Explosion RNG | ✅ Studio Verified | Explosion first, 5% Miracle Save, otherwise persisted quarantine. |
 | Critical Feed | ✅ Studio Verified | Configured odds; no skipped-level rolls; gains capped at 40. |
 | Pet Growth | 🟦 Implemented | Success scales plate/Pen models and income; manual visual review pending. |
 | Explosion Presentation | 🟦 Implemented | Float/spin, burst/fade and banners; six isolated effect checks pass. |
-| Protection | ⬜ Not Started | |
+| Protection | ✅ Token Prototype Verified | Three test tokens, configurable nonzero risk reduction, single-attempt consumption and replay safety. Earned/paid sources deferred. |
 | Revive / Keep Base | 🟦 Choice Flow Server Verified | 72 Feed and 22 legacy recovery checks pass with schema v5. Revised recovery UI physical testing pending. Paid recovery not implemented. |
 | Save / Load | 🟦 Implemented / Needs Testing | Memory-mode flow verified; production backend remains untested. |
 | Debug Tools | ✅ Studio Memory Verified | Currency grants, six-rarity spawn, pet/farm levels, one-use Feed outcomes. 47 multiplayer + 12 gate + 10 isolated UI checks pass. |
@@ -64,13 +65,19 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Egg carry, plot placement, and hatch return to player
+**Current Feature:** Feed Protection
 
-**Status:** Source implemented; Rojo build, diff checks and all 76 synced script compilations pass. Port 58743 reconnected; two-player EggVerification passes all 64 checks. Physical input and carry/feed/revive regressions remain pending. Changes remain uncommitted.
+**Status:** Implemented. Rojo build/diff and all 76 synced source compilations pass. Expanded two-player FeedVerification passes all 113 checks; Revive, plate-upgrade, and egg regressions also pass. Physical Protection UI review remains.
 
-**Objective:** Buy and hold an egg, click inside the owner's Pen to start incubation, then hatch back to the player rather than auto-placing the pet.
+**Objective:** Let players deliberately spend one bound token to reduce—but never remove—the explosion risk of one Feed attempt.
 
 ## 4. Completed
+
+- Egg carry/place/E-to-hatch was developer playtested and committed as `7aa05d8`.
+- Feed Protection uses saved account-bound tokens, GDD candidate risks, current
+  plate reduction, a static authored UI button, server-side transaction/replay
+  validation, persistence and protected outcome presentation. New/migrated
+  prototype profiles receive three tokens. Paid products are not fabricated.
 
 - Conveyor eggs replace direct pet sales per user request. EggConfig contains
   prototype price/time/pet result weights; PetService prepares reserved identities.
@@ -185,12 +192,11 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 5. In Progress
 
-- NEW priority: reconnect Studio MCP on 58742, compile synchronized sources,
-  run ExecuteMultiplayerTestAsync(2, "EggVerification"), then CarryVerification,
-  FeedVerification and ReviveVerification. Expanded egg tests are not yet run.
+- Physical visual/input review of the new side-by-side Feed and Protected Feed
+  buttons. Paid receipt fulfillment and earned token sources need later design.
 
-- Physical egg purchase/countdown/HATCH input and layout playtest; live backend
-  rejoin/outage/session-transfer testing. Production starter path remains missing.
+- Egg carry/place/E hatch was physically approved and committed as `7aa05d8`.
+  Live backend rejoin/outage/session-transfer testing remains separate.
 
 - MCP reconnected; ReviveVerification passes. Revised recovery client/public
   KeepBase/save-failure checks and physical button review remain.
@@ -204,8 +210,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 - Manual wandering movement/pickup feel review; server verification complete.
 
-- Physical mouse/touch and visual review of Feed effects/UI and Revive panel.
-  Protection and paid Revive are not implemented; free Revive is Studio-only.
+- Physical mouse/touch and visual review of Feed/Protection effects/UI and Revive.
+  Paid Protection/Revive remain deferred; free Revive is Studio-only.
 - Manual plate click/touch/hold-E presentation review; server verification complete.
 - Manual farm sign mouse/touch/gamepad input and visual review. Farm running
   animation asset remains unimplemented; upgrades/purchases are now implemented.
@@ -237,6 +243,10 @@ The numbered list below retains older prototype follow-ups.
 4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
 
 ## 7. Files Modified This Session
+
+2026-09-20 Protection: GameConfig, FeedConfig, PlayerDataSchema, FeedService,
+FeedController, FeedEffects, authored FeedYourPetUI.rbxmx, FeedVerification,
+docs/feed-config.md, new docs/protection.md, and PROJECT_STATUS.md.
 
 2026-09-20 carry/place: GameConfig, PlayerDataSchema, CarryService, EggService,
 new EggVisuals, CarryController, EggController, ConveyorController,
@@ -1057,7 +1067,25 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 18. Session Handoff
 
-### Egg carry/place — 2026-09-20 (latest, runtime verification pending)
+### Feed Protection — 2026-09-20 (latest)
+
+- Egg carry/place/E hatch was committed first as `7aa05d8` after developer test.
+- Schema v7 adds 0–10 bound ProtectionTokens. New and migrated prototype profiles
+  receive three test tokens; no quest/product source has been invented.
+- FeedConfig owns GDD candidate risks for targets 6–40. Protected risk retains
+  plate-upgrade relative reduction and always remains above zero.
+- Authored FeedPanel has side-by-side normal and Protected Feed buttons. It shows
+  token balance and exact protected risk; outcome banner identifies Protection.
+- Server validates staged ownership, Food, token, level, sequence, cooldown and
+  lock. Food + token + outcome mutate atomically and save under the Feed lock.
+  Replays return the original result without another token/Food/RNG roll.
+- Verification: Rojo build/diff pass; all 76 synced sources compile; expanded
+  FeedVerification passes 113 checks. Revive 22, plate-upgrade 58, and egg 64
+  regression checks also pass. Physical Protection UI review remains.
+- Paid receipt fulfillment needs actual Developer Product IDs. Earned sources
+  need explicit quest/event design. Production DataStore verification remains.
+
+### Egg carry/place — 2026-09-20 (completed)
 
 Latest verification update: MCP 58743 is connected and execute_luau works.
 All 76 synced Lua sources compile. ExecuteMultiplayerTestAsync(2,
@@ -1065,8 +1093,7 @@ All 76 synced Lua sources compile. ExecuteMultiplayerTestAsync(2,
 results, saved positions/timers, v5 migration, ready E prompt configuration,
 range rejection, hatch return to hands, replay, race and offer expiry.
 The developer physically tested the interaction and approved committing it.
-Earlier disconnected/NOT RUN notes below are historical. Next: carry/feed/revive
-regressions, followed by Protection. Still uncommitted until the commit below.
+Earlier disconnected/NOT RUN notes below are historical. Committed as `7aa05d8`.
 
 - User requested held eggs placed like pets, with hatched pets returning to player.
 - Implemented buy -> hold/store -> click/tap own Pen -> timer -> press E beside egg.
@@ -1078,18 +1105,12 @@ regressions, followed by Protection. Still uncommitted until the commit below.
   live character, finite floor position, range and pending transactions.
 - Authored templates reused; no Computer Use or generated geometry/UI.
 - Expanded existing EggVerification includes placement rejection, exact coordinates,
-  visual rebuild, migration, timer/replay and hatch return assertions. NOT RUN.
+  visual rebuild, migration, timer/replay and hatch return assertions; 64 pass.
 - Follow-up: ready eggs expose instant E Hatch prompt (X/gamepad or touch).
   MY EGGS hatch button is replaced with directions. Server validates live owner,
   timer and 10-stud range even for direct remote calls; client hides non-owner
   prompts. EggConfig now owns hatch distance/prompt name. Added prompt/range
-  assertions; runtime testing still blocked by disconnected Studio MCP.
-- Checks passed: Rojo build and git diff --check. No standalone Luau compiler
-  installed. MCP direct and registered tools show zero connected instances;
-  58741 refuses connections, 58742 responds but plugin is disconnected.
-- Next: reconnect plugin, check synchronized source compilation, run updated
-  two-client EggVerification and carry/feed/revive regressions, physical input
-  review, then commit. No new commit or push; last working commit 311659f.
+  assertions; runtime and physical input were verified afterward.
 - Live DataStore testing and production onboarding remain separate blockers.
 
 ### Conveyor eggs — previous v5 implementation

@@ -10,6 +10,18 @@ local FeedConfig = {
 	GrowthPerLevel = 0.06,
 	MaxVisualScale = 3.4,
 	MiracleSaveChance = 0.05,
+	ProtectionTokenCap = 10,
+	-- Candidate protected risks from GDD v0.5 §22. Plate reduction keeps its
+	-- relative effect, so both upgrades help without Protection reaching zero.
+	ProtectedRisk = table.freeze({
+		[6]=.01, [7]=.01, [8]=.04, [9]=.04, [10]=.07,
+		[11]=.06, [12]=.08, [13]=.10, [14]=.12, [15]=.14,
+		[16]=.15, [17]=.18, [18]=.20, [19]=.23, [20]=.25,
+		[21]=.40, [22]=.40, [23]=.40, [24]=.40, [25]=.40,
+		[26]=.48, [27]=.48, [28]=.48, [29]=.48, [30]=.48,
+		[31]=.58, [32]=.58, [33]=.58, [34]=.58, [35]=.58,
+		[36]=.68, [37]=.68, [38]=.68, [39]=.68, [40]=.68,
+	}),
 	CriticalResults = table.freeze({
 		table.freeze({Id="Normal", Chance=0.94, LevelGain=1}),
 		table.freeze({Id="Critical", Chance=0.05, LevelGain=2}),
@@ -65,6 +77,13 @@ end
 -- Conservative prototype size curve, keeping the plate and five-pet Pen usable.
 function FeedConfig.GetScale(level: number): number
 	return math.min(FeedConfig.MaxVisualScale, 1 + math.max(0, level) * FeedConfig.GrowthPerLevel)
+end
+
+function FeedConfig.GetProtectedRisk(currentRisk: number, targetLevel: number): number?
+	local base = FeedConfig.ExplosionChance[targetLevel]
+	local protected = FeedConfig.ProtectedRisk[targetLevel]
+	if not base or not protected or base <= 0 then return nil end
+	return currentRisk * protected / base
 end
 
 return table.freeze(FeedConfig)

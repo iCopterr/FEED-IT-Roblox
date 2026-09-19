@@ -3,6 +3,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
+local FeedConfig = require(ReplicatedStorage.Shared.Config.FeedConfig)
 
 export type PetData = {
 	DataVersion: number,
@@ -32,6 +33,7 @@ export type PlayerData = {
 	FeedPlateLevel: number,
 	FarmPower: number,
 	MaxPetSlots: number,
+	ProtectionTokens: number,
 	Inventory: { [string]: PetData },
 	PendingRecovery: { [string]: RecoveryData },
 	IncubatingEggs: { [string]: EggData },
@@ -52,6 +54,12 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+migrations[6] = function(source)
+	local result = table.clone(source)
+	result.ProtectionTokens = GameConfig.StartingProtectionTokens
+	return result, nil
+end
 
 migrations[5] = function(source)
 	if type(source.IncubatingEggs) ~= "table" then return nil, "Invalid legacy eggs" end
@@ -327,6 +335,7 @@ local function clonePlayerData(data: PlayerData): PlayerData
 		FeedPlateLevel = data.FeedPlateLevel,
 		FarmPower = data.FarmPower,
 		MaxPetSlots = data.MaxPetSlots,
+		ProtectionTokens = data.ProtectionTokens,
 		Inventory = inventory,
 		PendingRecovery = recovery,
 		IncubatingEggs = eggs,
@@ -346,6 +355,7 @@ function PlayerDataSchema.CreateDefault(): PlayerData
 		FeedPlateLevel = GameConfig.StartingFeedPlateLevel,
 		FarmPower = GameConfig.StartingFarmPower,
 		MaxPetSlots = GameConfig.StartingMaxPetSlots,
+		ProtectionTokens = GameConfig.StartingProtectionTokens,
 		Inventory = {},
 		PendingRecovery = {},
 		IncubatingEggs = {},
@@ -392,6 +402,9 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 
 	if not isPositiveInteger(data.MaxPetSlots) then
 		return false, "MaxPetSlots must be a positive integer"
+	end
+	if not isNonNegativeInteger(data.ProtectionTokens) or data.ProtectionTokens > FeedConfig.ProtectionTokenCap then
+		return false, `ProtectionTokens must be an integer from 0 to {FeedConfig.ProtectionTokenCap}`
 	end
 
 	if type(data.Inventory) ~= "table" then

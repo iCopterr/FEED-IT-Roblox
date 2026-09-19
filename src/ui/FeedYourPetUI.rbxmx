@@ -204,7 +204,7 @@ Check the explosion risk before every attempt.</string>
 <Item class="TextButton"><Properties>
 <string name="Name">Feed</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>0</XS><XO>472</XO><YS>0</YS><YO>64</YO></UDim2>
+<UDim2 name="Size"><XS>0</XS><XO>226</XO><YS>0</YS><YO>64</YO></UDim2>
 <UDim2 name="Position"><XS>0</XS><XO>24</XO><YS>0</YS><YO>348</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.43921568989753723</R><G>0.8588235378265381</G><B>0.3490196168422699</B></Color3>
@@ -238,6 +238,42 @@ Check the explosion risk before every attempt.</string>
 <token name="ApplyStrokeMode">1</token>
 </Properties>
 </Item>
+</Item>
+<Item class="TextButton"><Properties>
+<string name="Name">ProtectedFeed</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size"><XS>0</XS><XO>226</XO><YS>0</YS><YO>64</YO></UDim2>
+<UDim2 name="Position"><XS>0</XS><XO>270</XO><YS>0</YS><YO>348</YO></UDim2>
+<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
+<Color3 name="BackgroundColor3"><R>0.3019607961177826</R><G>0.6549019813537598</G><B>0.9215686321258545</B></Color3>
+<float name="BackgroundTransparency">0</float>
+<float name="BorderSizePixel">0</float>
+<bool name="Visible">true</bool>
+<float name="ZIndex">21</float>
+<bool name="Active">true</bool>
+<bool name="Selectable">true</bool>
+<string name="Text">PROTECTED FEED</string>
+<token name="Font">26</token>
+<float name="TextSize">16</float>
+<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
+<float name="TextStrokeTransparency">0.6000000238418579</float>
+<bool name="TextWrapped">true</bool>
+<token name="TextXAlignment">2</token>
+<token name="TextYAlignment">1</token>
+<bool name="AutoButtonColor">true</bool>
+</Properties>
+<Item class="UICorner"><Properties>
+<string name="Name">UICorner</string>
+<bool name="Archivable">true</bool>
+<UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
+</Properties></Item>
+<Item class="UIStroke"><Properties>
+<string name="Name">UIStroke</string>
+<bool name="Archivable">true</bool>
+<Color3 name="Color"><R>0.1882352977991104</R><G>0.05882352963089943</G><B>0.23529411852359772</B></Color3>
+<float name="Thickness">3</float>
+<token name="ApplyStrokeMode">1</token>
+</Properties></Item>
 </Item>
 <Item class="TextButton"><Properties>
 <string name="Name">Pickup</string>

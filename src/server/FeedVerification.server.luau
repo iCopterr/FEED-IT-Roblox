@@ -35,6 +35,11 @@ local ok, failure = xpcall(function()
 	check(resolver.Roll(20,random({0,0})).Code=="MiracleSave","Miracle skips Critical")
 	check(resolver.Roll(20,random({0,.5})).Code=="Explosion","Explosion skips Critical")
 	check(not pcall(resolver.Roll,40,random({})),"Level 40 cannot feed or roll")
+	for level=6,40 do
+		local normal=config.ExplosionChance[level]
+		local protected=config.GetProtectedRisk(normal,level)
+		check(protected and protected>0 and protected<normal,"Protection reduces but preserves risk at target "..level)
+	end
 	for level=36,39 do
 		for _, roll in {.1,.945,.995,.9995} do
 			check(resolver.Roll(level,random({.99,roll})).FeedLevel<=40,"Cap level "..level.." roll "..roll)
@@ -42,7 +47,13 @@ local ok, failure = xpcall(function()
 	end
 	local legacy=schema.CreateDefault();legacy.DataVersion=2;legacy.PendingRecovery=nil
 	local migrated=assert(schema.Migrate(legacy))
-	check(migrated.DataVersion==schema.CURRENT_VERSION and migrated.FeedPlateLevel==1 and next(migrated.PendingRecovery)==nil and legacy.PendingRecovery==nil,"v2 migration adds isolated recovery map and default plate level")
+	check(migrated.DataVersion==schema.CURRENT_VERSION and migrated.FeedPlateLevel==1 and migrated.ProtectionTokens==3
+		and next(migrated.PendingRecovery)==nil and legacy.PendingRecovery==nil,"v2 migration adds isolated recovery map, plate and Protection tokens")
+	local legacyV6=schema.CreateDefault();legacyV6.DataVersion=6;legacyV6.ProtectionTokens=nil
+	local migratedV6=assert(schema.Migrate(legacyV6))
+	check(migratedV6.ProtectionTokens==3 and legacyV6.ProtectionTokens==nil,"v6 migration grants isolated prototype Protection tokens")
+	local excess=assert(schema.Migrate(migratedV6));excess.ProtectionTokens=config.ProtectionTokenCap+1
+	check(not schema.Validate(excess),"Protection token inventory cap enforced")
 	waitFor(function() return #players:GetPlayers()==2 end)
 	local a,b=table.unpack(players:GetPlayers())
 	waitFor(function() return data.IsLoaded(a) and data.IsLoaded(b) and plots.GetPlot(a) and a.Character
@@ -62,11 +73,11 @@ local ok, failure = xpcall(function()
 	local state=feed.HandleRequest(a,"Snapshot")
 	check(state.Ok and state.Cost==30 and state.Risk==0,"Own staged snapshot uses configured target cost and risk")
 	profile.Food=1e12
-	local function attempt(sequence,values)
+	local function attempt(sequence,values,action)
 		waitFor(function() return not locks.IsLocked(a) end)
 		task.wait(.55);near()
 		feed.SetTestRandom(a,random(values))
-		return feed.HandleRequest(a,"Feed",pet.PetId,sequence)
+		return feed.HandleRequest(a,action or "Feed",pet.PetId,sequence)
 	end
 	task.wait(.55)
 	check(not feed.HandleRequest(a,"Feed",foreign.PetId,1).Ok,"Foreign ID rejected")
@@ -85,22 +96,36 @@ local ok, failure = xpcall(function()
 	waitFor(function() return not locks.IsLocked(a) end)
 	local actualScale=plots.GetPlot(a).FeedPlate.PlatePet:GetScale()
 	check(math.abs(actualScale-config.GetScale(1))<1e-5,"Surviving plate model grows ("..actualScale..")")
+	profile.Inventory[pet.PetId].FeedLevel=5
+	state=feed.HandleRequest(a,"Snapshot")
+	check(state.ProtectionTokens==3 and math.abs(state.Risk-.04)<1e-9 and math.abs(state.ProtectedRisk-.01)<1e-9,
+		"Snapshot exposes token count and normal/protected server risks")
+	profile.ProtectionTokens=0;task.wait(.55);before=profile.Food
+	check(feed.HandleRequest(a,"ProtectedFeed",pet.PetId,2).Code=="NoProtection" and profile.Food==before,
+		"Protected Feed without token rejects before Food charge")
+	profile.ProtectionTokens=3
+	result=attempt(2,{.02,.1},"ProtectedFeed")
+	check(result.Accepted and result.Protected and result.AppliedRisk==.01 and result.FeedLevel==6
+		and profile.ProtectionTokens==2,"Protected Feed consumes exactly one token and applies reduced risk")
+	local protectedReplay=feed.HandleRequest(a,"ProtectedFeed",pet.PetId,2)
+	check(protectedReplay.AttemptId==result.AttemptId and profile.ProtectionTokens==2,"Protected Feed replay cannot consume another token")
+	waitFor(function() return not locks.IsLocked(a) end)
 	profile.Inventory[pet.PetId].FeedLevel=38
-	result=attempt(2,{.99,.9995})
+	result=attempt(3,{.99,.9995})
 	check(result.Critical=="Insane" and result.Gain==2 and result.FeedLevel==40,"Actual Insane Feed clamps gain at 40")
 	waitFor(function() return not locks.IsLocked(a) end)
 	task.wait(.55)
 	before=profile.Food
-	check(feed.HandleRequest(a,"Feed",pet.PetId,3).Code=="MaxLevel" and profile.Food==before,"Level 40 rejects before charge")
+	check(feed.HandleRequest(a,"Feed",pet.PetId,4).Code=="MaxLevel" and profile.Food==before,"Level 40 rejects before charge")
 	profile.Inventory[pet.PetId].FeedLevel=20
 	assert(pets.SetLocked(a,pet.PetId,true))
 	before=profile.Food
-	result=attempt(3,{0,0})
+	result=attempt(4,{0,0})
 	check(result.Code=="MiracleSave" and profile.Inventory[pet.PetId].FeedLevel==20
 		and profile.Food==before-config.GetFoodCost(21,"Common"),"Miracle retains level but consumes Food")
 	waitFor(function() return not locks.IsLocked(a) end)
 	before=profile.Food
-	result=attempt(4,{0,.5})
+	result=attempt(5,{0,.5})
 	check(result.FeedLevel==0 and result.Income==pet.BaseIncome,"Explosion reports base-level outcome")
 	local recovery=profile.PendingRecovery[pet.PetId]
 	check(result.Code=="Explosion" and not profile.Inventory[pet.PetId] and recovery~=nil,"Explosion quarantines pet outside usable inventory")
@@ -150,12 +175,12 @@ local ok, failure = xpcall(function()
 		and loaded.Food==spentFood,"Reload preserves finalized reset and spent Food")
 	near();assert(carry.Equip(a,pet.PetId));assert(carry.PlaceOnPlate(a,pet.PetId))
 	check(math.abs(plots.GetPlot(a).FeedPlate.PlatePet:GetScale()-config.GetScale(0))<1e-5,"Reset pet restages at base size")
-	result=attempt(5,{.99,.1})
+	result=attempt(6,{.99,.1})
 	check(result.Accepted and result.FeedLevel==1,"Reset pet can grow again")
-	check(not feed.HandleRequest(a,"Feed",pet.PetId,4).Accepted and profile.Inventory[pet.PetId].FeedLevel==1,"Old explosion replay cannot reset rebuilt pet")
+	check(not feed.HandleRequest(a,"Feed",pet.PetId,5).Accepted and profile.Inventory[pet.PetId].FeedLevel==1,"Old explosion replay cannot reset rebuilt pet")
 	waitFor(function() return not locks.IsLocked(a) end)
 	profile.Inventory[pet.PetId].FeedLevel=20
-	result=attempt(6,{0,.5})
+	result=attempt(7,{0,.5})
 	check(revive.HandleRequest(a,"Revive",pet.PetId,result.AttemptId).Code=="Busy","Revive blocked until explosion presentation/save ends")
 	waitFor(function() return not locks.IsLocked(a) end)
 	spentFood=profile.Food

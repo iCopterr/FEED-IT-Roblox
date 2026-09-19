@@ -36,6 +36,7 @@ local function banner(gui, result)
 		text = if result.Critical == "Normal" then presentation.BannerText else string.upper(result.Critical) .. " FEED!"
 		text ..= string.format("\n+%d LEVEL • LEVEL %d • %s MONEY/SEC",result.Gain,result.FeedLevel,numberText(result.Income))
 	end
+	if result.Protected then text = "🛡 PROTECTED\n" .. text end
 	label.Text, label.TextColor3, label.Visible = text, color, true
 	label.UIScale.Scale = .8
 	TweenService:Create(label.UIScale,TweenInfo.new(.3,Enum.EasingStyle.Back),{Scale=1}):Play()

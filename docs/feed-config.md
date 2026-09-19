@@ -5,6 +5,9 @@ FeedConfig is now consumed by FeedService, MoneyService and Feed presentation.
 - BaseFoodCost and ExplosionChance use the target level (current + 1), 1–40.
 - FeedPlateConfig applies the owner's saved relative reduction to base explosion
   chance. The UI and actual roll use the same effective risk; see feed-plate-upgrades.md.
+- Protected Feed consumes one saved account-bound token for one accepted attempt.
+  It uses the GDD §22 candidate target risks, scaled by the current plate reduction,
+  and never makes explosion risk zero. Targets 1–5 cannot waste a token.
 - Multiplier uses current/resulting level, 0–40. Fractional rarity Food costs are preserved.
 - Explosion rolls first. An explosion gets a separate 5% Miracle Save roll;
   Miracle keeps the old level, spends Food, and skips Critical.
@@ -22,9 +25,12 @@ AttemptId, ExplodedAt and FoodSpent. Recovery pets are outside Inventory and
 cannot earn, equip, place or be removed until the owner chooses a recovery.
 Revive restores the pre-failure level; KeepBase retains the pet at configured
 ExplosionResetLevel (0), consuming that offer. Neither refunds Food.
-No automatic expiry or deletion;
-Studio-only free Revive is implemented. Paid Revive and single-use Protection
-remain deferred. Schema v4 adds saved FeedPlateLevel without changing recovery.
+No automatic expiry or deletion. Studio-only free Revive is implemented.
+Schema v4 adds FeedPlateLevel; v7 adds saved integer ProtectionTokens. New and
+migrated prototype profiles receive three test tokens, capped by config at ten.
+The authored Feed UI shows normal Feed beside Protected Feed, remaining tokens,
+and its exact server-calculated risk. Paid receipt fulfillment remains deferred
+until real Developer Product IDs are configured.
 
 Food and outcome mutate without yielding and save together through DataService.
 A retry returns the same cached attempt. Feed/pickup/removal are locked during
