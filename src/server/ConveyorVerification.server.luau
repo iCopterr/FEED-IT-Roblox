@@ -9,6 +9,9 @@ local ok,failure=xpcall(function()
 	local eggs=require(services.EggService)
 	local locks=require(services.FeedLocks)
 	local pets=require(services.PetService)
+	local carry=require(services.CarryService)
+	local plots=require(services.PlotService)
+	local visuals=require(services.EggVisuals)
 	local schema=require(script.Parent.Data.PlayerDataSchema)
 	local adapter=require(script.Parent.Data.DataStoreAdapter)
 	local config=require(game.ReplicatedStorage.Shared.Config.EggConfig)
@@ -23,7 +26,7 @@ local ok,failure=xpcall(function()
 	local function count(t) local n=0;for _ in t do n+=1 end;return n end
 	local legacy=schema.CreateDefault();legacy.DataVersion=4;legacy.IncubatingEggs=nil;legacy.Money=12345;legacy.FeedPlateLevel=7
 	local migrated=assert(schema.Migrate(legacy))
-	check(migrated.DataVersion==5 and next(migrated.IncubatingEggs)==nil and legacy.IncubatingEggs==nil
+	check(migrated.DataVersion==schema.CURRENT_VERSION and next(migrated.IncubatingEggs)==nil and legacy.IncubatingEggs==nil
 		and migrated.Money==12345 and migrated.FeedPlateLevel==7,"v4 migration adds isolated egg inventory without resetting progress")
 	for i,roll in {0,.401,.651,.831,.931,.981} do
 		check(config.Pick("prototype_egg",roll)==config.Definitions.prototype_egg.Results[i].SpeciesId,"Weighted pet result "..i)
@@ -57,13 +60,15 @@ local ok,failure=xpcall(function()
 	local result=conveyor.HandlePurchase(a,id)
 	check(result.Ok and profile.Money==15000 and count(profile.Inventory)==inventoryCount and count(profile.IncubatingEggs)==1,"Purchase charges once and reserves egg, not usable pet")
 	local uid=result.EggUid;local egg=profile.IncubatingEggs[uid];local petId=egg.Pet.PetId
-	check(egg.ReadyAt-egg.StartedAt==10 and egg.Pet.FeedLevel==0 and egg.Pet.EggId=="prototype_egg","Timer and source egg persisted")
+	check(egg.StartedAt==0 and egg.ReadyAt==0 and egg.HatchSeconds==10 and not egg.PenPosition
+		and egg.Pet.FeedLevel==0 and egg.Pet.EggId=="prototype_egg","New egg stores duration but timer waits for placement")
 	check(result.PetId==nil and result.Rarity==nil and model.Parent==nil,"Purchase hides result and consumes world offer")
 	local replay=conveyor.HandlePurchase(a,id)
 	check(replay.EggUid==uid and profile.Money==15000 and count(profile.IncubatingEggs)==1,"Purchase retry cannot charge or create egg twice")
 	other.Money=20000
 	check(not conveyor.HandlePurchase(b,id).Ok and other.Money==20000,"Sold egg cannot be bought by second player")
 	waitFor(function() return not locks.IsLocked(a) end)
+	check(carry.GetEggId(a)==uid and not carry.GetPetId(a) and a.Character:FindFirstChild("HeldEgg"),"Bought egg held when hands are free")
 	local snapshot=eggs.HandleRequest(a,"Snapshot")
 	check(snapshot.Ok and #snapshot.Eggs==1 and snapshot.Eggs[1].Pet==nil and snapshot.Eggs[1].PetId==nil
 		and snapshot.Eggs[1].SpeciesId==nil,"Snapshot reveals countdown but not reserved pet")
@@ -71,7 +76,37 @@ local ok,failure=xpcall(function()
 	check(eggs.HandleRequest(a,"Hatch",{}).Code=="InvalidRequest","Malformed hatch rejected")
 	check(eggs.HandleRequest(a,"Buy","prototype_egg").Code=="InvalidRequest","No unvalidated direct purchase remote")
 	check(eggs.HandleRequest(b,"Hatch",uid).Code=="Unavailable","Foreign hatch rejected")
-	check(eggs.HandleRequest(a,"Hatch",uid).Code=="NotReady","Early hatch rejected")
+	check(eggs.HandleRequest(a,"Hatch",uid).Code=="NotPlaced","Unplaced egg cannot hatch")
+	local floor=plots.GetPlot(a).Pen.Floor
+	local position=floor.CFrame:PointToWorldSpace(Vector3.new(3,floor.Size.Y/2,2))
+	check(eggs.HandleRequest(b,"Place",uid,position).Code=="Unavailable","Foreign egg cannot be placed")
+	check(eggs.HandleRequest(a,"Place",uid,Vector3.new(0/0,0,0)).Code=="OutsidePen","Nonfinite egg placement rejected")
+	task.wait(.3)
+	check(eggs.HandleRequest(a,"Place",uid,Vector3.new(1000,0,1000)).Code=="OutsidePen","Outside Pen placement rejected")
+	task.wait(.3);rootA.CFrame=CFrame.new(1000,5,1000)
+	check(eggs.HandleRequest(a,"Place",uid,position).Code=="TooFar","Distant egg placement rejected")
+	carry.Unequip(a);task.wait(.3)
+	check(eggs.HandleRequest(a,"Place",uid,position).Code=="NotCarrying","Egg must actually be held to place")
+	check(eggs.HandleRequest(a,"Equip",uid).Ok and carry.GetEggId(a)==uid,"Stored egg can be equipped")
+	check(not carry.PlaceOnPlate(a,uid) and not carry.PlaceAt(a,uid,position),"Egg cannot use pet or feed plate placement")
+	rootA.CFrame=CFrame.new(position+Vector3.new(0,4,4));task.wait(.3)
+	local placed=eggs.HandleRequest(a,"Place",uid,position)
+	check(placed.Ok and egg.StartedAt>0 and egg.ReadyAt-egg.StartedAt==10,"Placement starts configured incubation timer")
+	check(math.abs(egg.PenPosition.X-3)<.001 and math.abs(egg.PenPosition.Z-2)<.001
+		and not carry.GetEggId(a) and not a.Character:FindFirstChild("HeldEgg"),"Exact local position persisted and hands released")
+	local worldEgg=plots.GetPlot(a).Pen:FindFirstChild("Egg_"..uid)
+	check(worldEgg and worldEgg:GetAttribute("EggUid")==uid and worldEgg:FindFirstChild("ConveyorPetLabel",true),"Placed authored egg clone and countdown label exist")
+	local readyAt=egg.ReadyAt
+	waitFor(function() return not locks.IsLocked(a) end);task.wait(.3)
+	check(eggs.HandleRequest(a,"Place",uid,position).Code=="AlreadyPlaced" and egg.ReadyAt==readyAt,"Placement replay cannot restart incubation")
+	check(eggs.HandleRequest(a,"Hatch",uid).Code=="NotReady","Early placed hatch rejected")
+	visuals.Clear(a);visuals.Reconcile(a,profile)
+	check(plots.GetPlot(a).Pen:FindFirstChild("Egg_"..uid)~=nil and egg.ReadyAt==readyAt,"Visual reconstruction preserves timer and identity")
+	local old=assert(schema.Migrate(profile));old.DataVersion=5
+	old.IncubatingEggs[uid].HatchSeconds=nil;old.IncubatingEggs[uid].PenPosition=nil
+	local upgraded=assert(schema.Migrate(old))
+	check(upgraded.IncubatingEggs[uid].ReadyAt==readyAt and upgraded.IncubatingEggs[uid].Pet.PetId==petId
+		and upgraded.IncubatingEggs[uid].HatchSeconds==10 and old.IncubatingEggs[uid].HatchSeconds==nil,"v5 migration preserves paid timer and result without changing source")
 	check(not pets.GetPet(a,petId),"Unhatched pet is not usable")
 	local extraId,extraModel=conveyor.SpawnOffer(0);assert(extraId,extraModel)
 	task.wait(.3);near(rootA,extraModel)
@@ -80,7 +115,9 @@ local ok,failure=xpcall(function()
 	local read,record=adapter.UpdateAsync("Player_"..a.UserId,function() return nil end)
 	local loaded=assert(schema.Migrate(record.Data))
 	check(read and loaded.IncubatingEggs[uid].ReadyAt==egg.ReadyAt and loaded.IncubatingEggs[uid].Pet.PetId==petId
-		and loaded.Money==15000,"Reload retains payment timer and exact reserved result")
+		and loaded.IncubatingEggs[uid].PenPosition.X==egg.PenPosition.X and loaded.Money==15000,"Reload retains placement payment timer and exact reserved result")
+	loaded.IncubatingEggs[uid].PenPosition.X=999
+	check(egg.PenPosition.X~=999,"Saved egg position clone is isolated")
 	loaded.IncubatingEggs[uid].Pet.Traits[1]="clone"
 	check(#egg.Pet.Traits==0,"Egg clone isolation")
 	local invalid=assert(schema.Migrate(profile));invalid.Inventory[petId]=invalid.IncubatingEggs[uid].Pet
@@ -89,10 +126,21 @@ local ok,failure=xpcall(function()
 	check(not schema.Validate(invalid),"Malformed timer rejected")
 	invalid=assert(schema.Migrate(profile));invalid.IncubatingEggs["duplicate"]=invalid.IncubatingEggs[uid]
 	check(not schema.Validate(invalid),"Cannot reserve same pet in two eggs")
+	invalid=assert(schema.Migrate(profile));invalid.IncubatingEggs[uid].PenPosition.X=math.huge
+	check(not schema.Validate(invalid),"Nonfinite saved egg position rejected")
+	invalid=assert(schema.Migrate(profile));invalid.IncubatingEggs[uid].HatchSeconds=11
+	check(not schema.Validate(invalid),"Inconsistent saved duration rejected")
 	waitFor(function() return os.time()>=egg.ReadyAt end,15)
 	task.wait(.3);assert(locks.Begin(a,"test"))
 	check(eggs.HandleRequest(a,"Hatch",uid).Code=="Busy","Hatch respects shared transaction lock")
 	locks.Finish(a);task.wait(.3)
+	rootA.CFrame=CFrame.new(1000,5,1000)
+	check(eggs.HandleRequest(a,"Hatch",uid).Code=="TooFar","Ready egg cannot hatch from a distance")
+	rootA.CFrame=CFrame.new(position+Vector3.new(0,4,4));task.wait(.3)
+	visuals.Reconcile(a,profile)
+	local hatchPrompt=visuals.GetModel(a,uid):FindFirstChild(config.HatchPromptName,true)
+	check(hatchPrompt and hatchPrompt.Enabled and hatchPrompt.KeyboardKeyCode==Enum.KeyCode.E
+		and hatchPrompt.HoldDuration==0,"Ready egg has instant E hatch interaction")
 	local hatched=eggs.HandleRequest(a,"Hatch",uid)
 	check(hatched.Ok and hatched.PetId==petId and count(profile.Inventory)==inventoryCount+1
 		and profile.IncubatingEggs[uid]==nil,"Ready egg atomically becomes original reserved pet")
@@ -100,6 +148,8 @@ local ok,failure=xpcall(function()
 	local again=eggs.HandleRequest(a,"Hatch",uid)
 	check(again.PetId==petId and count(profile.Inventory)==inventoryCount+1 and profile.Money==15000,"Hatch replay cannot duplicate or charge")
 	waitFor(function() return not locks.IsLocked(a) end)
+	check(not profile.Inventory[petId].Placed and not profile.PlacedPetIds[petId]
+		and carry.GetPetId(a)==petId and not plots.GetPlot(a).Pen:FindFirstChild("Egg_"..uid),"Hatched pet returns to player hands, not Pen, and egg visual is removed")
 	assert(data.Save(a));read,record=adapter.UpdateAsync("Player_"..a.UserId,function() return nil end)
 	loaded=assert(schema.Migrate(record.Data))
 	check(read and loaded.Inventory[petId]~=nil and loaded.IncubatingEggs[uid]==nil,"Claimed egg cannot reappear after reload")

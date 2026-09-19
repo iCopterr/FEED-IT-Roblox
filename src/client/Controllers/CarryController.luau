@@ -5,6 +5,7 @@ local CarryController = {}
 function CarryController.Start()
 	local player = Players.LocalPlayer
 	local remote = game.ReplicatedStorage:WaitForChild("PrototypeUI"):WaitForChild("Request")
+	local eggRemote = game.ReplicatedStorage:WaitForChild("PrototypeEgg")
 	local busy = false
 	local function click(screenPosition)
 		if player:GetAttribute("EggPanelOpen") or player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") then return end
@@ -28,19 +29,29 @@ function CarryController.Start()
 		end
 		if not plot then return end
 		local action, id, position
-		if hit.Instance == plot.Pen.Floor and player:GetAttribute("CarriedPetId") then
+		if hit.Instance == plot.Pen.Floor and player:GetAttribute("CarriedEggUid") then
+			action, id, position = "Place", player:GetAttribute("CarriedEggUid"), hit.Position
+		elseif hit.Instance == plot.Pen.Floor and player:GetAttribute("CarriedPetId") then
 			action, id, position = "PlaceHeldPet", player:GetAttribute("CarriedPetId"), hit.Position
 		elseif plot:FindFirstChild("FeedPlate") and hit.Instance:IsDescendantOf(plot.FeedPlate) and player:GetAttribute("CarriedPetId") then
 			action, id = "PlaceOnPlate", player:GetAttribute("CarriedPetId")
 		else return end
 		busy = true
-		local ok, response = pcall(function() return remote:InvokeServer(action, id, position) end)
+		local request = if action == "Place" then eggRemote else remote
+		local ok, response = pcall(function() return request:InvokeServer(action, id, position) end)
 		-- HUD polling shares the request throttle. A rejected request has no effect.
 		if ok and response.Code == "Cooldown" then
 			task.wait(.3)
-			ok, response = pcall(function() return remote:InvokeServer(action, id, position) end)
+			ok, response = pcall(function() return request:InvokeServer(action, id, position) end)
 		end
-		if (not ok or not response.Ok) and gui then
+		if (not ok or not response.Ok) and action == "Place" then
+			local eggGui = player.PlayerGui:FindFirstChild("EggUI")
+			if eggGui then
+				eggGui.Panel.Visible = true
+				eggGui.Panel.Status.Text = if ok and response.Code == "Busy" then "Saving your egg. Please try again shortly."
+					else "Hold your egg and click nearby inside your own fenced Pen."
+			end
+		elseif (not ok or not response.Ok) and gui then
 			gui.Inventory.Visible = true
 			gui.Inventory.Panel.Layout.Status.Text = if ok and response.Code == "PenFull" then "Your Pen is full (5 pets)." elseif ok and response.Code == "PlateOccupied" then "Your feed plate already has a pet. Hold E near it to pick it up." else "Move closer to your own Pen or feed plate and try again."
 		end
@@ -60,9 +71,10 @@ function CarryController.Start()
 		while true do
 			local gui = player.PlayerGui:FindFirstChild("FeedYourPetUI")
 			for _, prompt in plots:GetDescendants() do
-				if prompt:IsA("ProximityPrompt") and (prompt.Name == "PickupPet" or prompt.Name == "OpenFeedUI") then
+				if prompt:IsA("ProximityPrompt") and (prompt.Name == "PickupPet" or prompt.Name == "OpenFeedUI" or prompt.Name == "HatchEgg") then
 					local model = prompt:FindFirstAncestorOfClass("Model")
 					prompt.Enabled = model:GetAttribute("OwnerUserId") == player.UserId
+						and (prompt.Name ~= "HatchEgg" or model:GetAttribute("HatchReady") == true)
 						and not player:GetAttribute("RevivePanelOpen") and not player:GetAttribute("EggPanelOpen")
 						and not player:GetAttribute("DebugPanelOpen")
 						and not (prompt.Name=="OpenFeedUI" and player:GetAttribute("FeedBusy"))

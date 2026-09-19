@@ -22,7 +22,8 @@ export type PetData = {
 }
 
 export type RecoveryData = {Pet: PetData, AttemptId: string, ExplodedAt: number, FoodSpent: number}
-export type EggData = {EggId: string, Pet: PetData, StartedAt: number, ReadyAt: number, PricePaid: number}
+export type EggData = {EggId: string, Pet: PetData, StartedAt: number, ReadyAt: number, PricePaid: number,
+	HatchSeconds: number, PenPosition: {X: number, Z: number}?}
 export type PlayerData = {
 	DataVersion: number,
 	Money: number,
@@ -51,6 +52,23 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+migrations[5] = function(source)
+	if type(source.IncubatingEggs) ~= "table" then return nil, "Invalid legacy eggs" end
+	local result = table.clone(source)
+	result.IncubatingEggs = {}
+	for id, egg in source.IncubatingEggs do
+		if type(egg) ~= "table" or type(egg.StartedAt) ~= "number" or type(egg.ReadyAt) ~= "number" then
+			return nil, "Invalid legacy egg timer"
+		end
+		local copy = table.clone(egg)
+		-- Existing purchased timers keep their progress; placement never rerolls a result.
+		copy.HatchSeconds = egg.ReadyAt - egg.StartedAt
+		copy.PenPosition = nil
+		result.IncubatingEggs[id] = copy
+	end
+	return result, nil
+end
 
 migrations[4] = function(source)
 	local result = table.clone(source)
@@ -288,7 +306,8 @@ local function clonePlayerData(data: PlayerData): PlayerData
 	local eggs: {[string]: EggData} = {}
 	for id, egg in data.IncubatingEggs do
 		eggs[id] = {EggId=egg.EggId,Pet=clonePetData(egg.Pet),StartedAt=egg.StartedAt,
-			ReadyAt=egg.ReadyAt,PricePaid=egg.PricePaid}
+			ReadyAt=egg.ReadyAt,PricePaid=egg.PricePaid,HatchSeconds=egg.HatchSeconds,
+			PenPosition=if egg.PenPosition then table.clone(egg.PenPosition) else nil}
 	end
 	local recovery: {[string]: RecoveryData} = {}
 	for id, record in data.PendingRecovery do
@@ -424,6 +443,17 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 			return false, "Invalid egg timer/payment"
 		end
 		reservedPets[petId] = true
+		if not isNonNegativeInteger(egg.HatchSeconds)
+			or (egg.StartedAt == 0 and egg.ReadyAt ~= 0)
+			or (egg.StartedAt > 0 and egg.ReadyAt - egg.StartedAt ~= egg.HatchSeconds) then
+			return false, "Invalid egg incubation duration"
+		end
+		if egg.PenPosition ~= nil then
+			if type(egg.PenPosition) ~= "table" or not isFiniteNumber(egg.PenPosition.X)
+				or not isFiniteNumber(egg.PenPosition.Z) or egg.StartedAt == 0 then
+				return false, "Invalid egg placement"
+			end
+		end
 	end
 	local placedIdsAreValid, placedIdsError = validateBooleanMap(data.PlacedPetIds, "PlacedPetIds")
 	if not placedIdsAreValid then

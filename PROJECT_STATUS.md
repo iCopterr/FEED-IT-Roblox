@@ -4,7 +4,7 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-19
+**Last Updated:** 2026-09-20
 
 > This file is the current-state handoff between Codex sessions. Update it
 > before ending a meaningful development session. Do not mark a feature
@@ -31,10 +31,10 @@ Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
-| Player Data Schema | ✅ v5 Studio Verified | Adds private IncubatingEggs with reserved result and absolute timer; v4 migration preserves existing progress. |
+| Player Data Schema | 🟦 v6 Implemented / Runtime Pending | Egg duration and local position; migration preserves v5 timers/results. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
-| Egg System | ✅ Prototype Studio Verified | One 5K egg, six configurable pet results, 10-second saved timer, manual hatch; 43 integration + 9 UI + 7 retry checks pass. |
+| Egg System | 🟦 Carry/Place Implemented / Runtime Pending | Buy/hold/click Pen starts timer; hatch returns pet to player. Prior v5 checks passed; expanded v6 suite not run. |
 | Egg Conveyor | ✅ Server Verified | Eggs replace direct pets; owner inventory slot, range/price validation, offer races/expiry tested. Existing static conveyor retained. |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
@@ -64,11 +64,11 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Configurable conveyor eggs and saved incubation
+**Current Feature:** Egg carry, plot placement, and hatch return to player
 
-**Status:** Implemented; 43 egg/conveyor integration, nine isolated client and seven save-retry checks pass. Physical input/visual review and live DataStore persistence remain separate.
+**Status:** Source implemented; Rojo build, diff checks and all 76 synced script compilations pass. Port 58743 reconnected; two-player EggVerification passes all 64 checks. Physical input and carry/feed/revive regressions remain pending. Changes remain uncommitted.
 
-**Objective:** Buy eggs on the conveyor, wait their configured hatch time, and claim one server-selected pet without rerolls or duplication.
+**Objective:** Buy and hold an egg, click inside the owner's Pen to start incubation, then hatch back to the player rather than auto-placing the pet.
 
 ## 4. Completed
 
@@ -185,6 +185,10 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 5. In Progress
 
+- NEW priority: reconnect Studio MCP on 58742, compile synchronized sources,
+  run ExecuteMultiplayerTestAsync(2, "EggVerification"), then CarryVerification,
+  FeedVerification and ReviveVerification. Expanded egg tests are not yet run.
+
 - Physical egg purchase/countdown/HATCH input and layout playtest; live backend
   rejoin/outage/session-transfer testing. Production starter path remains missing.
 
@@ -216,7 +220,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 6. Next Tasks
 
-Latest priority: playtest conveyor eggs and MY EGGS countdown/result, finish
+Latest priority: verify new egg carry/place flow (see section 18), then playtest
+conveyor eggs and MY EGGS countdown/result, finish
 recovery UI review, then review plate upgrade signs and reduced Feed risk,
 then fresh memory Play using STUDIO DEBUG to review high-level Feed,
 explosion -> Broken Pets -> free Revive -> inventory, then game pacing. Money balancing is
@@ -232,6 +237,11 @@ The numbered list below retains older prototype follow-ups.
 4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
 
 ## 7. Files Modified This Session
+
+2026-09-20 carry/place: GameConfig, PlayerDataSchema, CarryService, EggService,
+new EggVisuals, CarryController, EggController, ConveyorController,
+ConveyorVerification, docs/eggs.md, PROJECT_STATUS.md. No static assets or
+farm/feed balance changed. Runtime clones reuse authored egg and label assets.
 
 Current egg session: EggConfig, GameConfig, ConveyorConfig; PlayerDataSchema;
 EggService, PetService, ConveyorService; server/client bootstraps; EggController,
@@ -810,6 +820,12 @@ These warnings do not block Rojo, MCP, or prototype development.
 
 ## 10. Architecture Notes
 
+Egg v6: saved duration plus optional plot-local X/Z; zero timestamps mean not
+started. CarryService owns mutually exclusive pet/egg hands and lifecycle cleanup.
+EggVisuals clones authored templates into the owner Pen, reconciles saved eggs,
+updates countdown once/sec and removes visuals on hatch/leave. One egg slot
+remains separate from five active pet slots. No egg pickup/reposition action yet.
+
 Farm upgrades: static Workspace.FarmUpgradeSigns models bind by plot name.
 PlayerGui SurfaceGui clones adorn the authored boards. Public sign attributes
 are display-only; purchases validate private PlotService ownership and saved
@@ -1041,7 +1057,42 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 18. Session Handoff
 
-### Conveyor eggs — latest
+### Egg carry/place — 2026-09-20 (latest, runtime verification pending)
+
+Latest verification update: MCP 58743 is connected and execute_luau works.
+All 76 synced Lua sources compile. ExecuteMultiplayerTestAsync(2,
+"EggVerification") returned passed=true with 64 checks: carry/place, private
+results, saved positions/timers, v5 migration, ready E prompt configuration,
+range rejection, hatch return to hands, replay, race and offer expiry.
+The developer physically tested the interaction and approved committing it.
+Earlier disconnected/NOT RUN notes below are historical. Next: carry/feed/revive
+regressions, followed by Protection. Still uncommitted until the commit below.
+
+- User requested held eggs placed like pets, with hatched pets returning to player.
+- Implemented buy -> hold/store -> click/tap own Pen -> timer -> press E beside egg.
+  Hatched pet enters inventory, then auto-equips after confirmed save only if
+  hands are empty; occupied/dead/farming characters retain it safely in inventory.
+- New eggs start time only on placement. Existing v5 egg timers/results survive
+  migration and keep progressing; must place them but no countdown restart.
+- Shared save lock/retry covers placement. Server validates held ID, owner,
+  live character, finite floor position, range and pending transactions.
+- Authored templates reused; no Computer Use or generated geometry/UI.
+- Expanded existing EggVerification includes placement rejection, exact coordinates,
+  visual rebuild, migration, timer/replay and hatch return assertions. NOT RUN.
+- Follow-up: ready eggs expose instant E Hatch prompt (X/gamepad or touch).
+  MY EGGS hatch button is replaced with directions. Server validates live owner,
+  timer and 10-stud range even for direct remote calls; client hides non-owner
+  prompts. EggConfig now owns hatch distance/prompt name. Added prompt/range
+  assertions; runtime testing still blocked by disconnected Studio MCP.
+- Checks passed: Rojo build and git diff --check. No standalone Luau compiler
+  installed. MCP direct and registered tools show zero connected instances;
+  58741 refuses connections, 58742 responds but plugin is disconnected.
+- Next: reconnect plugin, check synchronized source compilation, run updated
+  two-client EggVerification and carry/feed/revive regressions, physical input
+  review, then commit. No new commit or push; last working commit 311659f.
+- Live DataStore testing and production onboarding remain separate blockers.
+
+### Conveyor eggs — previous v5 implementation
 
 See section 8 latest egg entry and docs/eggs.md. Schema is now v5; keep pending
 results private and never reroll/re-time them on load. MCP connected on 58742.

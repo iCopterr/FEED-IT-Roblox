@@ -25,30 +25,41 @@ function CarryService.Unequip(player)
 	carried[player] = nil
 	if state then state.Model:Destroy() end
 	player:SetAttribute("CarriedPetId", nil)
+	player:SetAttribute("CarriedEggUid", nil)
 	return true
 end
 
 function CarryService.GetPetId(player)
-	return carried[player] and carried[player].Id
+	local state = carried[player]
+	return if state and not state.Egg then state.Id else nil
 end
 
-function CarryService.Equip(player, id)
+function CarryService.GetEggId(player)
+	local state = carried[player]
+	local character = living(player)
+	return if state and state.Egg and state.Character == character and state.Model.Parent == character then state.Id else nil
+end
+
+local function equip(player, id, isEgg)
 	if require(script.Parent.FeedLocks).IsLocked(player, id) then return false, "Busy" end
 	if player:GetAttribute("IsFarming") then return false, "Farming" end
 	if type(id) ~= "string" or #id == 0 or #id > 64 then return false, "InvalidRequest" end
 	local data = DataService.GetData(player)
-	local pet = data and data.Inventory[id]
+	local egg = isEgg and data and data.IncubatingEggs[id]
+	local pet = if isEgg then egg else data and data.Inventory[id]
 	if not pet then return false, "NotOwned" end
+	if isEgg and egg.PenPosition then return false, "AlreadyPlaced" end
 	local character, root = living(player)
 	local hand = character and (character:FindFirstChild("RightHand") or character:FindFirstChild("Right Arm"))
 	if not hand or not hand:IsA("BasePart") then return false, "CharacterUnavailable" end
-	if carried[player] and carried[player].Id == id and carried[player].Model.Parent == character then return true end
+	if carried[player] and carried[player].Id == id and carried[player].Egg == isEgg and carried[player].Model.Parent == character then return true end
 	if pet.Placed then
 		local slot = PlacementService.GetLivePetCFrame(player, pet)
 		if not slot or (root.Position - slot.Position).Magnitude > Config.PickupDistance then return false, "TooFar" end
 	end
-	local templates = workspace:FindFirstChild("PetTemplates")
-	local template = templates and templates:FindFirstChild(pet.SpeciesId)
+	local definition = isEgg and require(game.ReplicatedStorage.Shared.Config.EggConfig).Definitions[egg.EggId]
+	local templates = workspace:FindFirstChild(if isEgg then "EggTemplates" else "PetTemplates")
+	local template = templates and templates:FindFirstChild(if isEgg then (definition and definition.TemplateName or egg.EggId) else pet.SpeciesId)
 	if not template or not template:IsA("Model") or not template.Archivable then return false, "TemplateUnavailable" end
 	for _, part in template:GetDescendants() do
 		if part:IsA("LuaSourceContainer") then return false, "TemplateUnavailable" end
@@ -56,8 +67,8 @@ function CarryService.Equip(player, id)
 	local model = template:Clone()
 	local prepared = pcall(function()
 		assert(model:FindFirstChildWhichIsA("BasePart", true), "Template has no parts")
-		model.Name = "HeldPet"
-		model:SetAttribute("PetId", id)
+		model.Name = if isEgg then "HeldEgg" else "HeldPet"
+		model:SetAttribute(if isEgg then "EggUid" else "PetId", id)
 		model:SetAttribute("OwnerUserId", player.UserId)
 		model:ScaleTo(Config.HeldScale)
 		local bounds = model:GetBoundingBox()
@@ -75,21 +86,25 @@ function CarryService.Equip(player, id)
 	end)
 	if not prepared then model:Destroy(); return false, "TemplateUnavailable" end
 	-- All potentially failing visual preparation precedes the persisted mutation.
-	local ok, reason = PlacementService.PickupPet(player, id)
+	local ok, reason = true, nil
+	if not isEgg then ok, reason = PlacementService.PickupPet(player, id) end
 	if not ok then model:Destroy(); return false, reason end
 	CarryService.Unequip(player)
 	if PedestalService.GetPetId(player) == id then PedestalService.Clear(player) end
-	carried[player] = {Id = id, Model = model, Character = character}
-	player:SetAttribute("CarriedPetId", id)
+	carried[player] = {Id = id, Model = model, Character = character, Egg = isEgg}
+	player:SetAttribute(if isEgg then "CarriedEggUid" else "CarriedPetId", id)
 	return true
 end
+
+function CarryService.Equip(player, id) return equip(player, id, false) end
+function CarryService.EquipEgg(player, id) return equip(player, id, true) end
 
 -- The client supplies an expected ID so delayed clicks cannot place a newly
 -- equipped pet. Positions are validated against the server-owned Pen floor.
 function CarryService.PlaceAt(player, id, position)
 	local state = carried[player]
 	local character, root = living(player)
-	if not state or id ~= state.Id or character ~= state.Character or state.Model.Parent ~= character then return false, "NotCarrying" end
+	if not state or state.Egg or id ~= state.Id or character ~= state.Character or state.Model.Parent ~= character then return false, "NotCarrying" end
 	local target = PlacementService.ResolvePosition(player, position)
 	if not target then return false, "OutsidePen" end
 	if (root.Position - target.Position).Magnitude > PlacementConfig.ClickDistance then return false, "TooFar" end
@@ -101,7 +116,7 @@ end
 function CarryService.PlaceOnPlate(player, id)
 	local state = carried[player]
 	local character = living(player)
-	if not state or id ~= state.Id or character ~= state.Character or state.Model.Parent ~= character then return false, "NotCarrying" end
+	if not state or state.Egg or id ~= state.Id or character ~= state.Character or state.Model.Parent ~= character then return false, "NotCarrying" end
 	local ok, reason = PedestalService.Place(player, id)
 	if ok then CarryService.Unequip(player) end
 	return ok, reason
@@ -184,8 +199,8 @@ function CarryService.Start()
 		for player, state in carried do
 			local character = living(player)
 			local data = DataService.GetData(player)
-			local pet = data and data.Inventory[state.Id]
-			if character ~= state.Character or state.Model.Parent ~= character or not pet or pet.Placed then
+			local pet = data and (if state.Egg then data.IncubatingEggs[state.Id] else data.Inventory[state.Id])
+			if character ~= state.Character or state.Model.Parent ~= character or not pet or pet.Placed or (state.Egg and pet.PenPosition) then
 				CarryService.Unequip(player)
 			end
 		end

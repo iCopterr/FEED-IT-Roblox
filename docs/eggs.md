@@ -1,8 +1,15 @@
 # Prototype eggs and incubation
 
 Eggs replace the alpha direct-pet conveyor offers. Hold E near an offer to buy;
-purchase starts incubation immediately. Open MY EGGS for odds/countdown, then
-press HATCH when ready. The pet goes to MY PETS, not automatically to the Pen.
+purchase holds the egg if hands are free, otherwise stores it in MY EGGS.
+Use HOLD EGG in MY EGGS, close the panel, then click/tap inside your own fenced
+Pen. Placement starts incubation. Once ready, stand beside the egg and press E
+(single press, not hold; gamepad X / touch prompt also supported).
+MY EGGS retains timer and hold/put-away controls, not a remote hatch button.
+Hatching validates ownership, a living character, readiness and 10-stud range.
+The pet returns to inventory and is held after saving if hands are free; it
+never automatically enters the Pen. PUT AWAY EGG stores an unplaced held egg.
+Placed eggs remain incubating until claimed (egg repositioning is not included).
 
 Balance is in src/shared/Config/EggConfig.luau:
 
@@ -14,9 +21,12 @@ Balance is in src/shared/Config/EggConfig.luau:
 - ConveyorConfig controls which egg types appear, their spawn weights and motion.
   PetConfig remains the species/rarity/base-income source.
 
-Schema v5 adds IncubatingEggs[EggUid] with EggId, StartedAt, ReadyAt, PricePaid,
-and a full reserved Pet record. v4 migrates to an empty egg map without touching
-existing money, pets, recovery, farm or plate levels. Pet schema remains v2.
+Schema v6 stores IncubatingEggs[EggUid] with EggId, StartedAt, ReadyAt, PricePaid,
+HatchSeconds, optional plot-local PenPosition, and a full private reserved Pet.
+New eggs use zero timestamps until placed. v5 migration preserves existing
+paid timers/results; those eggs must be placed, but their countdown never resets.
+v4 still migrates through an empty egg map without resetting progress.
+Pet schema remains v2. Saved local positions restore into the owner's next plot.
 
 The server rolls/reserves the result at purchase, charges and saves atomically.
 Snapshots do not reveal that result. ReadyAt is an absolute server timestamp:
@@ -25,7 +35,7 @@ Hatch cannot bypass the timer and moves the same reserved PetId into Inventory,
 consuming its egg and updating PetIndex without yielding. No reroll at claim.
 Saved timers/results remain valid if config is changed after purchase.
 
-Purchase/hatch use shared Feed locks through confirmed saving, retry ambiguous
+Purchase/placement/hatch use shared Feed locks through confirmed saving, retry ambiguous
 failures without refunding/rerolling, and reject stale/foreign/malformed requests.
 Replay of the latest purchase/hatch returns the original response; consumed
 eggs cannot create another pet after reconnect. No purchase remote accepts
@@ -39,9 +49,13 @@ The existing PetConveyor and ConveyorPetLabel names remain for asset stability.
 
 Verification: ConveyorVerification.server.luau now supports EggVerification
 and ConveyorVerification test arguments with two Studio clients in memory mode.
-43 integration checks pass. Nine isolated actual-controller checks and seven
+The expanded carry/place suite passes all 64 checks through two-client Studio
+memory testing on MCP port 58743 (2026-09-20). All 76 synced sources compile;
+Rojo build and diff checks pass. Includes ready E prompt configuration and
+server hatch/range checks; physical E/touch input still needs review.
+Previous v5 implementation: 43 integration checks passed. Nine isolated actual-controller checks and seven
 actual-service save-failure/retry checks pass. Regressions: 72 Feed and 22 legacy
-Revive checks pass with schema v5 (153 total checks this session).
+Revive checks passed with schema v5 (153 checks; not a verification of v6).
 Live DataStore rejoin/outages and
 physical desktop/touch/gamepad presentation need a separate playtest.
 

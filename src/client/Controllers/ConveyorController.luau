@@ -25,7 +25,7 @@ function Controller.Start()
 		local ok,result=pcall(function() return remote:InvokeServer(model:GetAttribute("OfferId")) end)
 		busy=false
 		messageToken+=1;local token=messageToken
-		gui.Message.Text=if ok and result.Ok then "Egg bought! Hatch timer started. Open MY EGGS."
+		gui.Message.Text=if ok and result.Ok then "Egg bought! Hold it from MY EGGS, then click inside your Pen."
 			else if ok then messages[result.Code] or "Purchase rejected. No egg bought."
 			else "Connection interrupted. Check MY EGGS before trying again."
 		gui.Message.Visible=true
