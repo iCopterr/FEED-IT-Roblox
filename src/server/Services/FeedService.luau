@@ -92,15 +92,14 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 	local outcome = forced or Resolver.Roll(pet.FeedLevel, state.TestRandom or function() return rng:NextNumber() end, result.Risk)
 	local attemptId = HttpService:GenerateGUID(false)
 	if outcome.Code == "Explosion" then
-		data.Inventory[petId] = nil
-		data.PendingRecovery[petId] = {Pet=before, AttemptId=attemptId, ExplodedAt=os.time(), FoodSpent=result.Cost}
-	else
-		pet.FeedLevel = outcome.FeedLevel
+		-- Ordinary Feed failures no longer create Revive records. Keeping the
+		-- same inventory object preserves identity, rarity, traits and lock state.
+		outcome.FeedLevel = Config.ExplosionResetLevel
 	end
+	pet.FeedLevel = outcome.FeedLevel
 	if not Schema.Validate(data) then
 		data.Food = oldFood
 		pet.FeedLevel = before.FeedLevel
-		data.Inventory[petId], data.PendingRecovery[petId] = pet, nil
 		Locks.Finish(player)
 		return {Ok=false, Code="InvalidData"}
 	end
@@ -125,7 +124,7 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 	end
 	state.Saved, state.PresentationDone = false, false
 	task.delay(duration, function()
-		PedestalService.EndPresentation(player, petId)
+		PedestalService.EndPresentation(player, petId, outcome.Code == "Explosion")
 		state.PresentationDone = true
 		releaseIfReady()
 	end)

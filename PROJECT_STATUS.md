@@ -64,11 +64,11 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Permanent feed plate upgrades
+**Current Feature:** Explosion base-level reset / revised Revive decision (in progress)
 
-**Status:** Implemented and synced; 58 multiplayer checks, six isolated sign-view checks, source compilation and build pass. Physical input/visual review and production DataStore verification remain pending.
+**Status:** Partial implementation checkpoint requested by user, NOT gameplay-verified. Feed plate upgrades remain verified at 0f3db31. User clarified that Revive should still apply to failed feeds; final recovery-choice behavior is being discussed.
 
-**Objective:** Buy saved plate levels with Money at an in-world sign, reducing the server's explosion roll while preserving meaningful risk.
+**Objective:** Keep exploded pets at base Feed level (0), with Revive able to restore the pre-failure level through an explicit recovery choice.
 
 ## 4. Completed
 
@@ -242,6 +242,28 @@ PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### In progress — Base-level explosion reset and Revive clarification
+
+- Baseline 0f3db31; clean tree before edits. Read existing Feed, pedestal,
+  recovery, tests and relevant GDD; MCP 58741 confirmed Edit mode.
+- Partial edits: FeedConfig.ExplosionResetLevel=0; FeedService retains inventory
+  identity and resets level instead of creating PendingRecovery; pedestal clears
+  after explosion presentation; Feed notice/banner explains reset and retained
+  pet. DebugVerification assertion updated. ReviveVerification now seeds legacy
+  recovery fixtures, preserving the existing recovery service.
+- User subsequently clarified: reset to base level, but Revive should be used
+  when Feed fails. Earlier assumption to defer its new purpose is superseded.
+  Proposed flow: restore pre-failure level OR keep level-0 pet; accepting the
+  reset closes that attempt's recovery. Food stays spent either way.
+- NOT DONE: wire the revised Revive offer/accept-reset transaction and UI,
+  update FeedVerification's obsolete quarantine assertions, verify replay/save/
+  leave safety and run tests. Current partial code does NOT offer Revive for new
+  explosions. Do not report this feature complete or ship the partial change.
+- Preserve existing PendingRecovery records and pet IDs; no production data,
+  schema, farm prices or explosion odds changed. User requested committing this
+  unfinished checkpoint as `wip: checkpoint level-zero explosion reset`.
+  Whitespace diff checks pass; revised gameplay tests have not been run.
 
 ### Latest Session — Feed plate upgrades — 2026-09-19
 

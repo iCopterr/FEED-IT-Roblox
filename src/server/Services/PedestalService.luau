@@ -110,13 +110,13 @@ function PedestalService.BeginPresentation(player)
 	return state.Model:GetPivot()
 end
 
-function PedestalService.EndPresentation(player, id)
+function PedestalService.EndPresentation(player, id, returnToInventory)
 	local state = states[player]
 	if not state or state.Id ~= id then return end
 	state.Animating = nil
 	local data = DataService.GetData(player)
 	local pet = data and data.Inventory[id]
-	if not pet then PedestalService.Clear(player); return end
+	if returnToInventory or not pet then PedestalService.Clear(player); return end
 	state.Model:ScaleTo(FeedConfig.GetScale(pet.FeedLevel))
 	local bounds, size = state.Model:GetBoundingBox()
 	local dish = state.Plate.Dish

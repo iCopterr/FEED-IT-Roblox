@@ -3,6 +3,8 @@
 -- Candidate balance; Critical gains are capped at 40 per the owner's direction.
 local FeedConfig = {
 	MaxConfiguredLevel = 40,
+	-- Owner's current prototype rule: keep the pet, lose its Feed growth.
+	ExplosionResetLevel = 0,
 	CooldownSeconds = 0.5,
 	SaveRetrySeconds = 5,
 	GrowthPerLevel = 0.06,

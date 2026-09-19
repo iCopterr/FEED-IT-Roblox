@@ -9,7 +9,7 @@ local ok, failure = xpcall(function()
 	local plots = require(services.PlotService)
 	local carry = require(services.CarryService)
 	local placement = require(services.PlacementService)
-	local feed = require(services.FeedService)
+	local feedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 	local revive = require(services.ReviveService)
 	local locks = require(services.FeedLocks)
 	local money = require(services.MoneyService)
@@ -37,20 +37,26 @@ local ok, failure = xpcall(function()
 	local original = pets.GetPet(a,pet.PetId)
 	profile.Food = 1e12
 	local beforeFood, beforeMoney = profile.Food, profile.Money
-	local function explode(sequence)
-		assert(carry.Equip(a,pet.PetId)); assert(carry.PlaceOnPlate(a,pet.PetId))
-		local rolls = {0,.9}; local i = 0
-		feed.SetTestRandom(a,function() i+=1; return assert(rolls[i]) end)
-		local result = feed.HandleRequest(a,"Feed",pet.PetId,sequence)
-		assert(result.Accepted and result.Code == "Explosion", "Expected forced explosion")
-		return result
+	local function legacyRecovery()
+		-- Fixture for a record saved under the previous broken-pet rule.
+		-- New Feed explosions must not enter this system.
+		local record={Pet=pets.GetPet(a,pet.PetId),
+			AttemptId=game:GetService("HttpService"):GenerateGUID(false),
+			ExplodedAt=os.time(),FoodSpent=feedConfig.GetFoodCost(21,"Rare")}
+		profile.Food-=record.FoodSpent
+		profile.Inventory[pet.PetId]=nil
+		profile.PendingRecovery[pet.PetId]=record
+		assert(schema.Validate(profile));assert(data.Save(a))
+		return record
 	end
-	local outcome = explode(1)
+	local outcome = legacyRecovery()
 	local attempt = outcome.AttemptId
-	check(profile.PendingRecovery[pet.PetId] ~= nil and profile.Inventory[pet.PetId] == nil, "Explosion creates broken state without deletion")
+	check(profile.PendingRecovery[pet.PetId] ~= nil and profile.Inventory[pet.PetId] == nil, "Legacy broken recovery remains supported")
 	check(not carry.Equip(a,pet.PetId) and not placement.PlacePet(a,pet.PetId), "Broken pet cannot equip or place")
 	check(money.GetRate(a) == 0, "Broken pet earns no Money")
-	check(revive.HandleRequest(a,"Revive",pet.PetId,attempt).Code == "Busy", "Revive blocked during Feed presentation/save")
+	assert(locks.Begin(a,"test-busy"))
+	check(revive.HandleRequest(a,"Revive",pet.PetId,attempt).Code == "Busy", "Revive respects shared transaction lock")
+	locks.Finish(a)
 	waitFor(function() return not locks.IsLocked(a) end)
 	local food = profile.Food
 	check(food < beforeFood, "Failed Food consumed")
@@ -81,7 +87,7 @@ local ok, failure = xpcall(function()
 	local loaded = assert(schema.Migrate(record.Data))
 	check(read and loaded.Inventory[pet.PetId].FeedLevel == 20 and loaded.PendingRecovery[pet.PetId] == nil and loaded.Food == food,
 		"Reloaded save contains restored pet, consumed recovery and spent Food")
-	local newer = explode(2)
+	local newer = legacyRecovery()
 	waitFor(function() return not locks.IsLocked(a) end)
 	check(newer.AttemptId ~= attempt, "Second explosion has distinct recovery identity")
 	check(revive.HandleRequest(a,"Revive",pet.PetId,attempt).Code == "PetChanged" and profile.PendingRecovery[pet.PetId] ~= nil,

@@ -27,7 +27,7 @@ local function banner(gui, result)
 	local color, text
 	if result.Code == "Explosion" then
 		color = Color3.fromRGB(255,108,73)
-		text = presentation.BannerText .. "\nPet is broken • Open BROKEN PETS • Food spent"
+		text = presentation.BannerText .. string.format("\nRESET TO LEVEL %d • Pet kept in MY PETS • Food spent",result.FeedLevel)
 	elseif result.Code == "MiracleSave" then
 		color = Color3.fromRGB(101,239,255)
 		text = presentation.BannerText .. "\nPet survived at the same level • Food spent"
