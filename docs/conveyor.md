@@ -1,5 +1,10 @@
 # Pet conveyor alpha
 
+**Historical direct-pet alpha:** superseded by configurable eggs and incubation.
+See [eggs.md](eggs.md) for the current behavior. ConveyorConfig now selects egg
+types; EggConfig owns prices, pet result pools and timers. The notes below
+describe the previous direct-pet implementation and are retained for history.
+
 The authored Workspace.PetConveyor occupies the reserved center lane, X ±7,
 between the two rows of plots. No runtime geometry generator is used. The
 server clones the six existing pet templates, never eggs, into transient Offers.

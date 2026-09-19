@@ -33,7 +33,7 @@ function Controller.Start()
 			local near=root~=nil and (root.Position-board.Position).Magnitude<=Config.UpgradeDistance
 			local owner=sign:GetAttribute("OwnerUserId")==player.UserId
 			local modal=playerGui:FindFirstChild("FeedYourPetUI")
-			local blocked=player:GetAttribute("DebugPanelOpen") or player:GetAttribute("RevivePanelOpen")
+			local blocked=player:GetAttribute("EggPanelOpen") or player:GetAttribute("DebugPanelOpen") or player:GetAttribute("RevivePanelOpen")
 				or player:GetAttribute("FeedBusy") or (modal and (modal.Inventory.Visible or modal.FeedPanel.Visible))
 			local message=if binding.MessageUntil and os.clock()<binding.MessageUntil then binding.Message else nil
 			binding.CanBuy=View.Render(gui,state,owner,near,binding.Busy or blocked,message)

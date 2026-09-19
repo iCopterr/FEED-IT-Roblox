@@ -1,15 +1,15 @@
 local Players=game:GetService("Players")
 local HttpService=game:GetService("HttpService")
 local Config=require(game.ReplicatedStorage.Shared.Config.ConveyorConfig)
-local PetConfig=require(game.ReplicatedStorage.Shared.Config.PetConfig)
+local EggConfig=require(game.ReplicatedStorage.Shared.Config.EggConfig)
 local DataService=require(script.Parent.DataService)
-local PetService=require(script.Parent.PetService)
+local EggService=require(script.Parent.EggService)
 local PlotService=require(script.Parent.PlotService)
 local MoneyService=require(script.Parent.MoneyService)
 local Schema=require(script.Parent.Parent.Data.PlayerDataSchema)
 local Service={}
 local numberText=require(game.ReplicatedStorage.Shared.NumberFormat).Compact
-local offers,lastRequest,lastPurchase,saving={},{},{},{}
+local offers,lastRequest,lastPurchase={},{},{}
 local rng=Random.new()
 local conveyor,visuals,changed
 
@@ -33,14 +33,15 @@ end
 function Service.SpawnOffer(testRoll)
 	if testRoll~=nil then
 		assert(game:GetService("RunService"):IsStudio()
-			and game:GetService("StudioTestService"):GetTestArgs()=="ConveyorVerification"
+			and (game:GetService("StudioTestService"):GetTestArgs()=="ConveyorVerification" or game:GetService("StudioTestService"):GetTestArgs()=="EggVerification")
 			and require(script.Parent.Parent.Data.DataStoreAdapter).IsMemory(),"Test-only roll")
 	end
 	local count=0
 	for _ in offers do count+=1 end
 	if not visuals or count>=Config.MaxOffers then return nil,"Full" end
 	local definition=Config.Pick(if testRoll~=nil then testRoll else rng:NextNumber())
-	local template=workspace.PetTemplates:FindFirstChild(definition.SpeciesId)
+	local egg=EggConfig.Definitions[definition.EggId]
+	local template=workspace.EggTemplates:FindFirstChild(egg.TemplateName)
 	if not template or not template:IsA("Model") then return nil,"TemplateUnavailable" end
 	for _,item in template:GetDescendants() do
 		if item:IsA("LuaSourceContainer") then return nil,"TemplateUnavailable" end
@@ -52,7 +53,7 @@ function Service.SpawnOffer(testRoll)
 	local ok,reason=pcall(function()
 		model.Name=id
 		model:ScaleTo(1)
-		local body=assert(model:FindFirstChildWhichIsA("BasePart",true),"Pet template has no body")
+		local body=assert(model:FindFirstChildWhichIsA("BasePart",true),"Egg template has no body")
 		for _,part in model:GetDescendants() do
 			if part:IsA("BasePart") then part.Anchored=true;part.CanCollide=false;part.CanTouch=false end
 		end
@@ -62,21 +63,20 @@ function Service.SpawnOffer(testRoll)
 		to=from+(b-a)
 		model:PivotTo(from)
 		model:SetAttribute("OfferId",id)
-		model:SetAttribute("SpeciesId",definition.SpeciesId)
-		model:SetAttribute("Rarity",definition.Rarity)
-		model:SetAttribute("Price",definition.Price)
+		model:SetAttribute("EggId",definition.EggId)
+		model:SetAttribute("Price",egg.Price)
 		model:SetAttribute("From",from);model:SetAttribute("To",to)
 		model:SetAttribute("StartedAt",started)
 		local label=game.ReplicatedStorage.ConveyorPetLabel:Clone()
-		label.NameLabel.Text=PetConfig.Species[definition.SpeciesId].DisplayName
-		label.Rarity.Text=string.upper(definition.Rarity)
+		label.NameLabel.Text=egg.DisplayName
+		label.Rarity.Text=string.format("%ds TO HATCH",egg.HatchSeconds)
 		label.Rarity.TextColor3=definition.Color
-		label.Price.Text=numberText(definition.Price).." MONEY"
+		label.Price.Text=numberText(egg.Price).." MONEY"
 		label.Adornee=body;label.Parent=body
 		local prompt=Instance.new("ProximityPrompt")
-		prompt.Name="BuyConveyorPet"
-		prompt.ActionText="Buy • "..numberText(definition.Price).." Money"
-		prompt.ObjectText=definition.Rarity.." Pet"
+		prompt.Name="BuyConveyorEgg"
+		prompt.ActionText="Buy • "..numberText(egg.Price).." Money"
+		prompt.ObjectText=egg.DisplayName
 		prompt.KeyboardKeyCode=Enum.KeyCode.E;prompt.GamepadKeyCode=Enum.KeyCode.ButtonX
 		prompt.HoldDuration=Config.BuyHoldSeconds;prompt.MaxActivationDistance=Config.BuyDistance
 		prompt.RequiresLineOfSight=false;prompt.Parent=body
@@ -95,7 +95,6 @@ function Service.HandlePurchase(player,id)
 	local now=os.clock()
 	if now-(lastRequest[player] or -math.huge)<Config.RequestCooldown then return {Ok=false,Code="Cooldown"} end
 	lastRequest[player]=now
-	if saving[player] then return {Ok=false,Code="Saving"} end
 	local data=DataService.GetData(player)
 	if not data or not Schema.Validate(data) or not PlotService.GetPlot(player) then return {Ok=false,Code="Loading"} end
 	local offer=offers[id]
@@ -107,28 +106,14 @@ function Service.HandlePurchase(player,id)
 	if not root or not humanoid or humanoid.Health<=0 then return {Ok=false,Code="Unavailable"} end
 	-- Distance is evaluated from the server timeline, never client-supplied position.
 	if (root.Position-position(offer,serverNow).Position).Magnitude>Config.BuyDistance then return {Ok=false,Code="TooFar"} end
-	local price=offer.Definition.Price
-	if data.Money<price then return {Ok=false,Code="NotEnoughMoney"} end
-	-- No yield between validation, payment, pet creation and consuming the offer.
-	-- Consequently simultaneous players cannot both buy the same display pet.
-	local oldMoney=data.Money
-	data.Money-=price
-	local pet,reason=PetService.CreatePet(player,offer.Definition.SpeciesId)
-	if not pet then data.Money=oldMoney;return {Ok=false,Code="CreateFailed",Reason=reason} end
+	-- The egg service atomically charges, reserves the result and starts incubation.
+	local result=EggService.BuyFromConveyor(player,offer.Definition.EggId)
+	if not result.Ok then return result end
 	remove(id)
-	local result={Ok=true,Code="Bought",OfferId=id,PetId=pet.PetId,Rarity=pet.Rarity,
-		Money=data.Money,MoneyAt=os.clock(),IncomePerSecond=MoneyService.GetRate(player)}
+	result.OfferId=id
+	result.MoneyAt=os.clock();result.IncomePerSecond=MoneyService.GetRate(player)
 	lastPurchase[player]=table.clone(result)
-	local token={};saving[player]=token
 	if changed then changed:FireClient(player,result) end
-	task.spawn(function()
-		while saving[player]==token and DataService.GetData(player)==data do
-			local ok,saved,errorMessage=pcall(DataService.Save,player)
-			if ok and saved then saving[player]=nil;return end
-			warn("[Conveyor] Purchase save pending:",errorMessage or saved)
-			task.wait(Config.SaveRetrySeconds)
-		end
-	end)
 	return result
 end
 
@@ -136,16 +121,16 @@ function Service.Start()
 	conveyor=assert(workspace:FindFirstChild("PetConveyor"),"Authored PetConveyor missing")
 	assert(conveyor.Start and conveyor.Finish,"Conveyor markers missing")
 	for _,entry in Config.Offers do
-		assert(PetConfig.Species[entry.SpeciesId].Rarity==entry.Rarity,"Conveyor rarity mismatch")
-		assert(entry.Price>=0 and entry.Price<math.huge and entry.Weight>0,"Invalid conveyor balance")
+		assert(EggConfig.Definitions[entry.EggId],"Unknown conveyor egg")
+		assert(entry.Weight>0 and entry.Weight<math.huge,"Invalid conveyor weight")
 	end
 	visuals=Instance.new("Folder");visuals.Name="Offers";visuals.Parent=conveyor
-	local remote=Instance.new("RemoteFunction");remote.Name="BuyConveyorPet"
+	local remote=Instance.new("RemoteFunction");remote.Name="BuyConveyorEgg"
 	remote.OnServerInvoke=Service.HandlePurchase;remote.Parent=game.ReplicatedStorage
 	changed=Instance.new("RemoteEvent");changed.Name="ConveyorPurchaseChanged";changed.Parent=game.ReplicatedStorage
-	Players.PlayerRemoving:Connect(function(player) lastRequest[player],lastPurchase[player],saving[player]=nil,nil,nil end)
+	Players.PlayerRemoving:Connect(function(player) lastRequest[player],lastPurchase[player]=nil,nil end)
 	local verification=game:GetService("RunService"):IsStudio()
-		and game:GetService("StudioTestService"):GetTestArgs()=="ConveyorVerification"
+		and (game:GetService("StudioTestService"):GetTestArgs()=="ConveyorVerification" or game:GetService("StudioTestService"):GetTestArgs()=="EggVerification")
 	task.spawn(function()
 		local nextSpawn=0
 		while conveyor.Parent do

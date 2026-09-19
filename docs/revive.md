@@ -53,5 +53,6 @@ visual layout review remain unverified. No Computer Use or live data writes.
 Current choice-flow verification: 72 FeedVerification multiplayer assertions and
 47 DebugVerification assertions pass, including actual explosions, both choices,
 Food retention, base-size regrowth, stale requests and memory save/reload.
-The revised legacy ReviveVerification returned no result; rerun it after reconnecting
-Studio MCP. New isolated client and public-server/save-failure checks remain pending.
+The legacy ReviveVerification subsequently passed all 22 checks during egg/schema-v5
+regression. Its fixture now waits out the request cooldown before testing a stale
+attempt ID. New isolated recovery-client and public-server/save-failure checks remain pending.

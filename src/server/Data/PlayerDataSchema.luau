@@ -22,6 +22,7 @@ export type PetData = {
 }
 
 export type RecoveryData = {Pet: PetData, AttemptId: string, ExplodedAt: number, FoodSpent: number}
+export type EggData = {EggId: string, Pet: PetData, StartedAt: number, ReadyAt: number, PricePaid: number}
 export type PlayerData = {
 	DataVersion: number,
 	Money: number,
@@ -32,6 +33,7 @@ export type PlayerData = {
 	MaxPetSlots: number,
 	Inventory: { [string]: PetData },
 	PendingRecovery: { [string]: RecoveryData },
+	IncubatingEggs: { [string]: EggData },
 	PlacedPetIds: { [string]: boolean },
 	PetIndex: { [string]: boolean },
 	Statistics: { [string]: number },
@@ -49,6 +51,12 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+migrations[4] = function(source)
+	local result = table.clone(source)
+	result.IncubatingEggs = {}
+	return result, nil
+end
 
 migrations[3] = function(source)
 	local result = table.clone(source)
@@ -277,6 +285,11 @@ local function clonePetData(pet: PetData): PetData
 end
 
 local function clonePlayerData(data: PlayerData): PlayerData
+	local eggs: {[string]: EggData} = {}
+	for id, egg in data.IncubatingEggs do
+		eggs[id] = {EggId=egg.EggId,Pet=clonePetData(egg.Pet),StartedAt=egg.StartedAt,
+			ReadyAt=egg.ReadyAt,PricePaid=egg.PricePaid}
+	end
 	local recovery: {[string]: RecoveryData} = {}
 	for id, record in data.PendingRecovery do
 		recovery[id] = {Pet=clonePetData(record.Pet), AttemptId=record.AttemptId,
@@ -297,6 +310,7 @@ local function clonePlayerData(data: PlayerData): PlayerData
 		MaxPetSlots = data.MaxPetSlots,
 		Inventory = inventory,
 		PendingRecovery = recovery,
+		IncubatingEggs = eggs,
 		PlacedPetIds = table.clone(data.PlacedPetIds),
 		PetIndex = table.clone(data.PetIndex),
 		Statistics = table.clone(data.Statistics),
@@ -315,6 +329,7 @@ function PlayerDataSchema.CreateDefault(): PlayerData
 		MaxPetSlots = GameConfig.StartingMaxPetSlots,
 		Inventory = {},
 		PendingRecovery = {},
+		IncubatingEggs = {},
 		PlacedPetIds = {},
 		PetIndex = {},
 		Statistics = {},
@@ -390,6 +405,25 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 		end
 		if not isNonEmptyString(record.AttemptId) or not isNonNegativeInteger(record.ExplodedAt)
 			or not isNonNegativeNumber(record.FoodSpent) then return false, "Invalid recovery metadata" end
+	end
+	if type(data.IncubatingEggs) ~= "table" then return false, "IncubatingEggs must be a map" end
+	local reservedPets = {}
+	for id, egg in data.IncubatingEggs do
+		if not isNonEmptyString(id) or type(egg) ~= "table" or not isNonEmptyString(egg.EggId) then
+			return false, "Invalid incubating egg"
+		end
+		local valid, reason = validatePetData(egg.Pet, `IncubatingEggs.{id}.Pet`)
+		if not valid then return false, reason end
+		local petId = egg.Pet.PetId
+		if egg.Pet.Placed or egg.Pet.FeedLevel ~= 0 or egg.Pet.EggId ~= egg.EggId
+			or inventory[petId] ~= nil or data.PendingRecovery[petId] ~= nil or reservedPets[petId] then
+			return false, "Incubating pet must be unique, base-level and inactive"
+		end
+		if not isNonNegativeInteger(egg.StartedAt) or not isNonNegativeInteger(egg.ReadyAt)
+			or egg.ReadyAt < egg.StartedAt or not isNonNegativeNumber(egg.PricePaid) then
+			return false, "Invalid egg timer/payment"
+		end
+		reservedPets[petId] = true
 	end
 	local placedIdsAreValid, placedIdsError = validateBooleanMap(data.PlacedPetIds, "PlacedPetIds")
 	if not placedIdsAreValid then

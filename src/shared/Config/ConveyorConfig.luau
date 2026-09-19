@@ -1,4 +1,4 @@
--- Temporary direct-pet alpha balance, NOT egg/hatch odds. Prices are Money.
+-- Conveyor egg availability. Pet results, prices and timers live in EggConfig.
 local Config = {
 	SpawnSeconds=4,
 	TravelSeconds=36,
@@ -9,12 +9,7 @@ local Config = {
 	RequestCooldown=.25,
 	SaveRetrySeconds=5,
 	Offers=table.freeze({
-		table.freeze({SpeciesId="test_common",Rarity="Common",Weight=600,Price=100,Color=Color3.fromRGB(221,226,230)}),
-		table.freeze({SpeciesId="test_uncommon",Rarity="Uncommon",Weight=250,Price=1500,Color=Color3.fromRGB(122,236,122)}),
-		table.freeze({SpeciesId="test_rare",Rarity="Rare",Weight=100,Price=5000,Color=Color3.fromRGB(103,180,255)}),
-		table.freeze({SpeciesId="test_epic",Rarity="Epic",Weight=40,Price=30000,Color=Color3.fromRGB(202,123,255)}),
-		table.freeze({SpeciesId="test_legendary",Rarity="Legendary",Weight=9,Price=100000,Color=Color3.fromRGB(255,210,80)}),
-		table.freeze({SpeciesId="test_mythic",Rarity="Mythic",Weight=1,Price=450000,Color=Color3.fromRGB(255,113,156)}),
+		table.freeze({EggId="prototype_egg",Weight=1,Color=Color3.fromRGB(255,235,180)}),
 	}),
 }
 function Config.Pick(roll: number)

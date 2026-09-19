@@ -23,7 +23,7 @@ local ok, failure = xpcall(function()
 	waitFor(function() return #players:GetPlayers() == 2 end)
 	local a, b = table.unpack(players:GetPlayers())
 	waitFor(function() return data.IsLoaded(a) and data.IsLoaded(b) and plots.GetPlot(a)
-		and a.Character and a.Character:FindFirstChild("RightHand") and game.ReplicatedStorage:FindFirstChild("BuyConveyorPet") end)
+		and a.Character and a.Character:FindFirstChild("RightHand") and game.ReplicatedStorage:FindFirstChild("BuyConveyorEgg") end)
 	local root = a.Character.HumanoidRootPart
 	root:SetNetworkOwner(nil); root.Anchored = true
 	local pet = assert(pets.CreatePet(a, "test_common"))

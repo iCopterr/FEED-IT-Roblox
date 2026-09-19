@@ -30,7 +30,7 @@ local ok,failure=xpcall(function()
 	local legacy=schema.CreateDefault()
 	legacy.DataVersion=3;legacy.FeedPlateLevel=nil;legacy.Money=12345;legacy.FarmLevel=7
 	local migrated=assert(schema.Migrate(legacy))
-	check(migrated.FeedPlateLevel==1 and migrated.DataVersion==4 and migrated.Money==12345 and migrated.FarmLevel==7 and legacy.FeedPlateLevel==nil,"v3 migration preserves progress without mutating source")
+	check(migrated.FeedPlateLevel==1 and migrated.DataVersion==schema.CURRENT_VERSION and migrated.Money==12345 and migrated.FarmLevel==7 and legacy.FeedPlateLevel==nil,"v3 migration preserves progress without mutating source")
 	for _,invalid in {0,-1,1.5,math.huge} do
 		migrated.FeedPlateLevel=invalid
 		check(not schema.Validate(migrated),"Reject invalid plate level "..invalid)

@@ -90,6 +90,9 @@ local ok, failure = xpcall(function()
 	local newer = legacyRecovery()
 	waitFor(function() return not locks.IsLocked(a) end)
 	check(newer.AttemptId ~= attempt, "Second explosion has distinct recovery identity")
+	-- The fixture has no Feed animation delay; wait out the prior request's
+	-- cooldown so this assertion exercises the attempt-ID guard specifically.
+	task.wait(.3)
 	check(revive.HandleRequest(a,"Revive",pet.PetId,attempt).Code == "PetChanged" and profile.PendingRecovery[pet.PetId] ~= nil,
 		"Delayed old request cannot revive a newer explosion")
 	task.wait(.3)

@@ -4,6 +4,9 @@
   "tree": {
     "$className": "DataModel",
     "Workspace": {
+      "EggTemplates": {
+        "$path": "src/world/EggTemplates.rbxmx"
+      },
       "FeedPlateUpgradeSigns": {
         "$path": "src/world/FeedPlateUpgradeSigns.rbxmx"
       },
@@ -21,6 +24,9 @@
       }
     },
     "StarterGui": {
+      "EggUI": {
+        "$path": "src/ui/EggUI.rbxmx"
+      },
       "DebugUI": {
         "$path": "src/ui/DebugUI.rbxmx"
       },

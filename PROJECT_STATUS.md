@@ -31,11 +31,11 @@ Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
-| Player Data Schema | ✅ v4 Studio Verified | Adds FeedPlateLevel; old saves start at level 1 without resetting progress. |
+| Player Data Schema | ✅ v5 Studio Verified | Adds private IncubatingEggs with reserved result and absolute timer; v4 migration preserves existing progress. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
-| Egg System | ⬜ Not Started | |
-| Pet Conveyor Alpha | ✅ Server Verified | Static center conveyor; six random priced pet rarities, inventory purchase and expiry. 37 multiplayer + five isolated client checks pass; physical playtest pending. |
+| Egg System | ✅ Prototype Studio Verified | One 5K egg, six configurable pet results, 10-second saved timer, manual hatch; 43 integration + 9 UI + 7 retry checks pass. |
+| Egg Conveyor | ✅ Server Verified | Eggs replace direct pets; owner inventory slot, range/price validation, offer races/expiry tested. Existing static conveyor retained. |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
 | Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
 | HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
@@ -55,7 +55,7 @@ Studio-only free Revive is implemented; paid Revive/Protection remain deferred.
 | Pet Growth | 🟦 Implemented | Success scales plate/Pen models and income; manual visual review pending. |
 | Explosion Presentation | 🟦 Implemented | Float/spin, burst/fade and banners; six isolated effect checks pass. |
 | Protection | ⬜ Not Started | |
-| Revive / Keep Base | 🟦 Choice Flow Server Verified | Failed Feed offers old-level Studio Revive or level-0 reset; 72 Feed checks pass. Legacy regression rerun and revised UI testing pending. Paid recovery not implemented. |
+| Revive / Keep Base | 🟦 Choice Flow Server Verified | 72 Feed and 22 legacy recovery checks pass with schema v5. Revised recovery UI physical testing pending. Paid recovery not implemented. |
 | Save / Load | 🟦 Implemented / Needs Testing | Memory-mode flow verified; production backend remains untested. |
 | Debug Tools | ✅ Studio Memory Verified | Currency grants, six-rarity spawn, pet/farm levels, one-use Feed outcomes. 47 multiplayer + 12 gate + 10 isolated UI checks pass. |
 | Core Loop Playtest | ⬜ Not Started | |
@@ -64,13 +64,18 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Failed-feed Revive or keep-at-base choice
+**Current Feature:** Configurable conveyor eggs and saved incubation
 
-**Status:** Implemented; 72 Feed and 47 Debug multiplayer checks pass. Revised UI physical testing, isolated production/save-failure checks, and legacy recovery regression remain pending because MCP disconnected.
+**Status:** Implemented; 43 egg/conveyor integration, nine isolated client and seven save-retry checks pass. Physical input/visual review and live DataStore persistence remain separate.
 
-**Objective:** Keep exploded pets at base Feed level (0), with Revive able to restore the pre-failure level through an explicit recovery choice.
+**Objective:** Buy eggs on the conveyor, wait their configured hatch time, and claim one server-selected pet without rerolls or duplication.
 
 ## 4. Completed
+
+- Conveyor eggs replace direct pet sales per user request. EggConfig contains
+  prototype price/time/pet result weights; PetService prepares reserved identities.
+  Schema v5 persists private results and absolute hatch timestamps. Authored egg
+  and MY EGGS UI; server-owned purchase/hatch and one incubation slot implemented.
 
 - Failed Feed offers Revive to the pre-failure level or Keep at level 0.
   Both retain identity and consume the saved recovery offer without refunding
@@ -180,8 +185,11 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 5. In Progress
 
-- Reconnect Studio MCP and rerun ReviveVerification plus revised client/public
-  KeepBase/save-failure checks. Test the two recovery buttons visually.
+- Physical egg purchase/countdown/HATCH input and layout playtest; live backend
+  rejoin/outage/session-transfer testing. Production starter path remains missing.
+
+- MCP reconnected; ReviveVerification passes. Revised recovery client/public
+  KeepBase/save-failure checks and physical button review remain.
 
 - Physical feed plate sign mouse/touch/gamepad input and visual risk-display review.
 
@@ -208,8 +216,8 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 6. Next Tasks
 
-Latest priority: reconnect Studio MCP and finish recovery UI/legacy regression,
-then review the purple feed plate upgrade signs and reduced Feed risk,
+Latest priority: playtest conveyor eggs and MY EGGS countdown/result, finish
+recovery UI review, then review plate upgrade signs and reduced Feed risk,
 then fresh memory Play using STUDIO DEBUG to review high-level Feed,
 explosion -> Broken Pets -> free Revive -> inventory, then game pacing. Money balancing is
 explicitly deferred. Verify onboarding and live DataStore
@@ -224,6 +232,14 @@ The numbered list below retains older prototype follow-ups.
 4. Verify pet identity, placement, Feed Level, and lock state survive a real DataStore rejoin.
 
 ## 7. Files Modified This Session
+
+Current egg session: EggConfig, GameConfig, ConveyorConfig; PlayerDataSchema;
+EggService, PetService, ConveyorService; server/client bootstraps; EggController,
+ConveyorController and modal guards in Carry/Feed/FarmUpgrade/FeedPlateUpgrade
+controllers; ConveyorVerification rewritten for eggs, schema-version assertion
+in FeedPlateUpgradeVerification and remote wait in WanderingVerification;
+default.project.json; authored EggTemplates.rbxmx/EggUI.rbxmx; docs/eggs.md,
+docs/conveyor.md and this handoff. Prior session lists below are historical.
 
 Current recovery-choice session: FeedService, ReviveService, FeedController,
 FeedEffects, ReviveController, ReviveUI.rbxmx, FeedVerification,
@@ -256,6 +272,34 @@ PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest — Prototype eggs and hatch timer
+
+- Baseline 8774d91, clean before edits. User confirmed replacing conveyor pets
+  with eggs. MCP 58742 reconnected; authored real egg shell and cloned editable
+  EggUI directly in Studio, exported assets and mapped them through Rojo.
+- One egg (prototype_egg), 5K Money, 10 sec; result weights 40/25/18/10/5/2 for
+  Common through Mythic. Prices/time/pools centralized in EggConfig. Existing
+  FarmConfig, FeedConfig and six species/income anchors untouched.
+- Schema v5 adds IncubatingEggs; full result reserved and saved privately at
+  purchase. Absolute server ReadyAt persists; no reset/reroll on reconnect.
+  Timer completion permits manual HATCH; consumed egg transfers same PetId to
+  inventory. One incubation slot is separate from five active Pen slots.
+- Shared save locks/retries cover purchase and hatch; client sends only IDs.
+  Existing conveyor range/life/offer/cooldown checks retained. Updated prompt/
+  remote is BuyConveyorEgg; ConveyorPurchaseChanged still updates Money HUD.
+- PASS: 43 EggVerification two-player memory checks; nine isolated EggController
+  checks using authored UI and mocked transport/input; seven actual EggService
+  purchase/hatch save-failure checks with injected dependencies; initial synced
+  compilation, Rojo build and diff checks.
+- Regression PASS: 72 FeedVerification and 22 ReviveVerification checks with
+  schema v5. Legacy Revive fixture initially hit request cooldown; inserted an
+  explicit .3s wait to test attempt-ID validation, then reran successfully.
+  No recovery gameplay changes were needed. Total checks this session: 153.
+- Next: physical UI/egg placement review and published test-store rejoin/outage
+  tests. Starter Money/pet onboarding remains an existing gap; not changed here.
+- Hatch result uses a simple UI reveal; no premium skips, egg tiers, new species,
+  offline income or runtime geometry generation added.
 
 ### Latest — Recovery choice implemented (supersedes partial checkpoint notes)
 
@@ -879,7 +923,8 @@ Ownership boundary:
 
 ## 12. Data / Persistence State
 
-**DataVersion:** Player v2; Pet v2 (v1 migration implemented)
+**DataVersion:** Player v5; Pet v2 (v1–v4 migrations implemented).
+IncubatingEggs privately reserves pet results and absolute hatch timestamps.
 
 **Persistence:** Implemented; Studio memory flow verified, live backend test pending
 
@@ -978,9 +1023,9 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
 
 ## 16. Last Working Git Commit
 
-**Commit:** `015fe8d` (verified baseline before feed plate upgrades; this session's checkpoint follows)
+**Commit:** `8774d91` (baseline before eggs; this session's egg checkpoint follows)
 
-**Message:** `feat: format displayed economy amounts with K M B T suffixes`
+**Message:** `feat: offer revive or base-level recovery after failed feeding`
 
 ## 17. Important Decisions
 
@@ -995,6 +1040,12 @@ Pet mutation integration tests pass; live DataStore tests remain pending.
   at a time.
 
 ## 18. Session Handoff
+
+### Conveyor eggs — latest
+
+See section 8 latest egg entry and docs/eggs.md. Schema is now v5; keep pending
+results private and never reroll/re-time them on load. MCP connected on 58742.
+MY EGGS is the new hatch UI. Older direct-pet conveyor notes are historical.
 
 ### Recovery choices — latest
 

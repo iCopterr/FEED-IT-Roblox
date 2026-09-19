@@ -65,7 +65,11 @@ end
 local function generateUniquePetId(data: PlayerData): string?
 	for _ = 1, PetConfig.PetIdGenerationAttempts do
 		local petId = HttpService:GenerateGUID(false)
-		if data.Inventory[petId] == nil and data.PendingRecovery[petId] == nil then
+		local reserved = false
+		for _, egg in data.IncubatingEggs do
+			if egg.Pet.PetId == petId then reserved = true; break end
+		end
+		if not reserved and data.Inventory[petId] == nil and data.PendingRecovery[petId] == nil then
 			return petId
 		end
 	end
@@ -109,7 +113,9 @@ function PetService.Start()
 	print(`[PetService] Started with six prototype species`)
 end
 
-function PetService.CreatePet(player: Player, speciesId: string): (PetData?, string?)
+-- Server-only preparation for purchases that reserve a pet before hatch.
+-- No inventory/index mutation or event occurs until the caller commits it.
+function PetService.PreparePet(player: Player, speciesId: string, eggId: string?): (PetData?, string?)
 	if type(speciesId) ~= "string" then
 		return nil, "SpeciesId must be a string"
 	end
@@ -133,7 +139,7 @@ function PetService.CreatePet(player: Player, speciesId: string): (PetData?, str
 		DataVersion = GameConfig.PetDataVersion,
 		PetId = petId,
 		SpeciesId = definition.SpeciesId,
-		EggId = definition.EggId,
+		EggId = eggId or definition.EggId,
 		Rarity = definition.Rarity,
 		Variant = PetConfig.DefaultVariant,
 		Traits = {},
@@ -144,6 +150,15 @@ function PetService.CreatePet(player: Player, speciesId: string): (PetData?, str
 		PlotSlot = nil,
 		CreatedAt = os.time(),
 	}
+	return pet, nil
+end
+
+function PetService.CreatePet(player: Player, speciesId: string): (PetData?, string?)
+	local pet, prepareError = PetService.PreparePet(player, speciesId)
+	if not pet then return nil, prepareError end
+	local data = DataService.GetData(player)
+	if not data then return nil, "Player data is not loaded" end
+	local petId = pet.PetId
 
 	local previousIndexValue = data.PetIndex[speciesId]
 	data.Inventory[petId] = pet
