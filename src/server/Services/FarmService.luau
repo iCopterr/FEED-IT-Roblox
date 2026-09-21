@@ -4,10 +4,24 @@ local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
 local CarryService = require(script.Parent.CarryService)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
+local MerchantConfig = require(game.ReplicatedStorage.Shared.Config.MerchantConfig)
 local FarmService = {}
 local sessions, blocked, lastRequest, connections = {}, {}, {}, {}
 local remote
+local tokenRemote
+local rng=Random.new()
 local started = false
+
+local function saveTokenDrop(player,data)
+	task.spawn(function()
+		while player.Parent==Players and DataService.GetData(player)==data do
+			local ok,saved,reason=pcall(DataService.Save,player)
+			if ok and saved then return end
+			warn("[FarmService] Token save pending:",reason or saved)
+			task.wait(MerchantConfig.SaveRetrySeconds)
+		end
+	end)
+end
 
 local function characterParts(player)
 	local character = player.Character
@@ -77,7 +91,8 @@ function FarmService.Enter(player)
 	-- Held pets return to inventory; farming never changes pet identity/placement.
 	CarryService.Unequip(player)
 	local state = {Character=character, Humanoid=humanoid, Root=root, Farm=farm, Work=work, Exit=exit,
-		Anchored=root.Anchored, AutoRotate=humanoid.AutoRotate, NextTick=os.clock()+Config.TickSeconds}
+		Anchored=root.Anchored, AutoRotate=humanoid.AutoRotate, NextTick=os.clock()+Config.TickSeconds,
+		NextTokenRoll=os.clock()+MerchantConfig.FarmDropInterval}
 	sessions[player] = state
 	root.Anchored = true
 	root.AssemblyLinearVelocity = Vector3.zero
@@ -121,7 +136,25 @@ function FarmService.Step(player)
 	if amount <= 0 or nextFood ~= nextFood or nextFood == math.huge then return 0 end
 	data.Food = nextFood
 	if remote then remote:FireClient(player, {Food=nextFood, FoodAt=now}) end
+	if now>=state.NextTokenRoll then
+		state.NextTokenRoll=now+MerchantConfig.FarmDropInterval
+		local roll=if state.TestTokenRandom then state.TestTokenRandom() else rng:NextNumber()
+		state.TestTokenRandom=nil
+		if roll<MerchantConfig.FarmDropChance and data.Tokens<MerchantConfig.TokenCap then
+			local awarded=math.min(MerchantConfig.FarmDropAmount,MerchantConfig.TokenCap-data.Tokens)
+			data.Tokens+=awarded
+			if tokenRemote then tokenRemote:FireClient(player,{Amount=awarded,Tokens=data.Tokens}) end
+			saveTokenDrop(player,data)
+		end
+	end
 	return amount
+end
+
+function FarmService.SetTestTokenRoll(player,random)
+	assert(game:GetService("RunService"):IsStudio() and game:GetService("StudioTestService"):GetTestArgs()=="MerchantVerification"
+		and require(script.Parent.Parent.Data.DataStoreAdapter).IsMemory(),"Test-only token RNG")
+	local state=assert(sessions[player],"Player must be farming")
+	state.TestTokenRandom=random;state.NextTokenRoll=0
 end
 
 function FarmService.HandleRequest(player, action)
@@ -139,6 +172,7 @@ function FarmService.Start()
 	remote.Name = "Farm"
 	remote.Parent = game.ReplicatedStorage
 	remote.OnServerEvent:Connect(FarmService.HandleRequest)
+	tokenRemote=Instance.new("RemoteEvent");tokenRemote.Name="FarmTokenDrop";tokenRemote.Parent=game.ReplicatedStorage
 	local function watch(player)
 		player:SetAttribute("IsFarming", false)
 		connections[player] = player.CharacterRemoving:Connect(function() FarmService.Exit(player, false) end)

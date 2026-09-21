@@ -43,7 +43,7 @@ function Controller.Start()
 			if from and to and start then model:PivotTo(from:Lerp(to,math.clamp((now-start)/Config.TravelSeconds,0,1))) end
 			local prompt=model:FindFirstChild("BuyConveyorEgg",true)
 			local modal=playerGui:FindFirstChild("FeedYourPetUI")
-			if prompt then prompt.Enabled=not busy and not player:GetAttribute("EggPanelOpen") and not player:GetAttribute("DebugPanelOpen") and not player:GetAttribute("RevivePanelOpen") and not (modal and (modal.Inventory.Visible or modal.FeedPanel.Visible)) end
+			if prompt then prompt.Enabled=not busy and not player:GetAttribute("EggPanelOpen") and not player:GetAttribute("DebugPanelOpen") and not player:GetAttribute("RevivePanelOpen") and not player:GetAttribute("MerchantPanelOpen") and not (modal and (modal.Inventory.Visible or modal.FeedPanel.Visible)) end
 		end
 		local length=conveyor.Deck.Size.Z
 		local travel=now*(conveyor.Finish.Position-conveyor.Start.Position).Magnitude/Config.TravelSeconds

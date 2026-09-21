@@ -4,7 +4,7 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-20
+**Last Updated:** 2026-09-21
 
 > This file is the current-state handoff between Codex sessions. Update it
 > before ending a meaningful development session. Do not mark a feature
@@ -32,7 +32,8 @@ Developer Product fulfillment remains deferred until product IDs exist.
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
-| Player Data Schema | ✅ v7 Studio Verified | Egg placement/timers plus persisted ProtectionTokens; prior profiles migrate without resetting progress. |
+| Player Data Schema | ✅ v8 Studio Verified | Adds merchant Tokens and purchased stock markers; preserves previous progress. |
+| Mystery Merchant | ✅ Server Verified | Three random offers every 30 minutes; Token purchases, private stock limits and memory persistence verified. Manual UI review pending. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ✅ Carry/Place Studio Verified | Buy/hold/click Pen starts timer; E hatch returns pet to player. 64 automated checks plus developer playtest. |
@@ -55,7 +56,7 @@ Developer Product fulfillment remains deferred until product IDs exist.
 | Critical Feed | ✅ Studio Verified | Configured odds; no skipped-level rolls; gains capped at 40. |
 | Pet Growth | 🟦 Implemented | Success scales plate/Pen models and income; manual visual review pending. |
 | Explosion Presentation | 🟦 Implemented | Float/spin, burst/fade and banners; six isolated effect checks pass. |
-| Protection | ✅ Token Prototype Verified | Three test tokens, configurable nonzero risk reduction, single-attempt consumption and replay safety. Earned/paid sources deferred. |
+| Protection | ✅ Token Prototype Verified | Single-attempt risk reduction with replay safety; merchant now supplies earned tokens. Paid sources deferred. |
 | Revive / Keep Base | 🟦 Choice Flow Server Verified | 72 Feed and 22 legacy recovery checks pass with schema v5. Revised recovery UI physical testing pending. Paid recovery not implemented. |
 | Save / Load | 🟦 Implemented / Needs Testing | Memory-mode flow verified; production backend remains untested. |
 | Debug Tools | ✅ Studio Memory Verified | Currency grants, six-rarity spawn, pet/farm levels, one-use Feed outcomes. 47 multiplayer + 12 gate + 10 isolated UI checks pass. |
@@ -65,11 +66,11 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Feed Protection
+**Current Feature:** Mystery Merchant and farm Token drops
 
-**Status:** Implemented. Rojo build/diff and all 76 synced source compilations pass. Expanded two-player FeedVerification passes all 113 checks; Revive, plate-upgrade, and egg regressions also pass. Physical Protection UI review remains.
+**Status:** Implemented. Rojo build and 80 synced source compilations pass. MerchantVerification passes 27 two-player checks. Farm/Debug/Feed regression results are recorded in the latest session handoff below. Manual merchant visual/input review and live DataStore tests remain.
 
-**Objective:** Let players deliberately spend one bound token to reduce—but never remove—the explosion risk of one Feed attempt.
+**Objective:** Let active farming occasionally award Tokens to spend on rotating Food and Protection offers.
 
 ## 4. Completed
 
@@ -292,6 +293,34 @@ PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest — Mystery Merchant — 2026-09-21
+
+- Implemented MerchantConfig, MerchantService, MerchantController, static
+  Workspace.MysteryMerchant and StarterGui.MerchantUI assets, plus opt-in tests.
+- Farm rolls 10% for one Token each 60 seconds of continuous active farming;
+  leaving resets the minute. No offline rewards. Farm prices/output are untouched.
+- Three weighted unique offers per shared 30-minute epoch; one purchase per
+  player per slot, persisted across rejoin. Food bundles and Guardian Charm
+  (one Protection Token) are the initial rewards. Merchant currency is separate.
+- Schema v8 migrates Tokens and merchant purchase markers. Purchases validate
+  proximity, sequence, affordability, cap, stock and shared save locks.
+- Added Token HUD/drop popup, modal placement guards and Studio + TOKEN debug.
+- Files modified: configs GameConfig/MerchantConfig; PlayerDataSchema;
+  FarmService/DebugService/MerchantService and server bootstrap; Merchant/Debug
+  verification; client bootstrap, Merchant/Debug and modal-aware controllers;
+  default.project.json, MerchantUI/DebugUI, MysteryMerchant; merchant/protection docs.
+- Verified through MCP localhost:58741: merchant asset present, 80 scripts
+  compile, MerchantVerification 27 checks pass; Rojo build/diff check pass.
+- Regression batch passed: Merchant 27, Farm 27, Debug 50 and Feed 113 checks
+  (217 total), using two-player Studio memory tests. No regression failures.
+- In progress: manual shop input/layout and balance playtest. Next: test the
+  merchant near the conveyor end; real DataStore reconnect tests remain unverified.
+- Merchant checkpoint: `feat: add mystery merchant and farm token drops`
+  (this commit). Previous working commit: d4d9173 (Feed Protection).
+- Architecture: deterministic epoch stock requires identical config on servers;
+  no global stock depletion/MemoryStore. Account purchase markers prevent
+  server-hopping same-slot purchases. See docs/merchant.md for tuning and limits.
 
 ### Latest — Prototype eggs and hatch timer
 

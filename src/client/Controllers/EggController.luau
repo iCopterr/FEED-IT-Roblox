@@ -91,7 +91,7 @@ function Controller.Start()
 	task.spawn(function()
 		while gui.Parent do
 			local main=playerGui:FindFirstChild("FeedYourPetUI")
-			if player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen")
+			if player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") or player:GetAttribute("MerchantPanelOpen")
 				or (main and (main.Inventory.Visible or main.FeedPanel.Visible)) then panel.Visible=false end
 			refresh();task.wait(1)
 		end

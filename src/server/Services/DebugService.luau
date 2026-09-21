@@ -9,6 +9,7 @@ local Config = require(game.ReplicatedStorage.Shared.Config.DebugConfig)
 local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local FarmConfig = require(game.ReplicatedStorage.Shared.Config.FarmConfig)
 local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
+local MerchantConfig = require(game.ReplicatedStorage.Shared.Config.MerchantConfig)
 local sessions = {}
 local Service = {}
 local function integer(value, low, high)
@@ -32,7 +33,7 @@ function Service.HandleRequest(player, action, value, petId, sequence)
 			table.insert(pets,{PetId=id,Name=PetConfig.Species[pet.SpeciesId].DisplayName,FeedLevel=pet.FeedLevel,Placed=pet.Placed})
 		end
 		table.sort(pets,function(a,b) return a.PetId<b.PetId end)
-		return {Ok=true,Pets=pets,Money=data.Money,Food=data.Food,FarmLevel=data.FarmLevel,
+		return {Ok=true,Pets=pets,Money=data.Money,Food=data.Food,Tokens=data.Tokens,FarmLevel=data.FarmLevel,
 			NextSequence=state.Sequence+1,Forced=Overrides.Get(player),Busy=Locks.IsLocked(player)}
 	end
 	if not integer(sequence,1,9007199254740991) then return {Ok=false,Code="InvalidRequest"} end
@@ -44,10 +45,15 @@ function Service.HandleRequest(player, action, value, petId, sequence)
 	state.LastRequest=now
 	if Locks.IsLocked(player) then return {Ok=false,Code="Busy"} end
 	local result={Ok=true,Code="Updated",NextSequence=sequence+1}
-	if action=="AddMoney" or action=="AddFood" then
-		local field=if action=="AddMoney" then "Money" else "Food"
-		if not integer(value,1,Config.MaxGrant) or data[field]+value>Config.MaxBalance then return {Ok=false,Code="InvalidAmount"} end
-		data[field]+=value
+	if action=="AddMoney" or action=="AddFood" or action=="AddTokens" then
+		local field=if action=="AddMoney" then "Money" else if action=="AddFood" then "Food" else "Tokens"
+		if action=="AddTokens" then
+			if not integer(value,1,MerchantConfig.TokenCap) or data.Tokens+value>MerchantConfig.TokenCap then return {Ok=false,Code="InvalidAmount"} end
+			data.Tokens+=value
+		else
+			if not integer(value,1,Config.MaxGrant) or data[field]+value>Config.MaxBalance then return {Ok=false,Code="InvalidAmount"} end
+			data[field]+=value
+		end
 	elseif action=="SpawnPet" then
 		if type(value)~="string" or not PetConfig.Species[value] then return {Ok=false,Code="InvalidSpecies"} end
 		local count=0; for _ in data.Inventory do count+=1 end

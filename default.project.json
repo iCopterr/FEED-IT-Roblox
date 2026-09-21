@@ -4,6 +4,9 @@
   "tree": {
     "$className": "DataModel",
     "Workspace": {
+      "MysteryMerchant": {
+        "$path": "src/world/MysteryMerchant.rbxmx"
+      },
       "EggTemplates": {
         "$path": "src/world/EggTemplates.rbxmx"
       },
@@ -24,6 +27,9 @@
       }
     },
     "StarterGui": {
+      "MerchantUI": {
+        "$path": "src/ui/MerchantUI.rbxmx"
+      },
       "EggUI": {
         "$path": "src/ui/EggUI.rbxmx"
       },

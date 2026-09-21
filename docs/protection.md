@@ -23,6 +23,7 @@ Sequence replay returns the original attempt without consuming another token.
 Food, token count and outcome are one in-memory transaction followed by the
 existing confirmed-save retry lock. Schema v7 persists `ProtectionTokens`.
 
-Current prototype limitation: no earned quest/event source and no Robux product
-receipt path yet. Those require explicit reward design and real product IDs.
-Earned and paid tokens must use this same strength when those sources are added.
+The Mystery Merchant now sells a Guardian Charm for five farm-earned merchant
+Tokens, granting one Protection Token (cap 10). These are two separate balances.
+See `merchant.md`. No quest/event source or Robux receipt path exists yet.
+Earned and paid tokens must use this same strength when paid sources are added.

@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local FeedConfig = require(ReplicatedStorage.Shared.Config.FeedConfig)
+local MerchantConfig = require(ReplicatedStorage.Shared.Config.MerchantConfig)
 
 export type PetData = {
 	DataVersion: number,
@@ -34,6 +35,9 @@ export type PlayerData = {
 	FarmPower: number,
 	MaxPetSlots: number,
 	ProtectionTokens: number,
+	Tokens: number,
+	MerchantRestockId: number,
+	MerchantPurchases: { [string]: boolean },
 	Inventory: { [string]: PetData },
 	PendingRecovery: { [string]: RecoveryData },
 	IncubatingEggs: { [string]: EggData },
@@ -54,6 +58,14 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+migrations[7] = function(source)
+	local result = table.clone(source)
+	result.Tokens = GameConfig.StartingTokens
+	result.MerchantRestockId = 0
+	result.MerchantPurchases = {}
+	return result, nil
+end
 
 migrations[6] = function(source)
 	local result = table.clone(source)
@@ -336,6 +348,9 @@ local function clonePlayerData(data: PlayerData): PlayerData
 		FarmPower = data.FarmPower,
 		MaxPetSlots = data.MaxPetSlots,
 		ProtectionTokens = data.ProtectionTokens,
+		Tokens = data.Tokens,
+		MerchantRestockId = data.MerchantRestockId,
+		MerchantPurchases = table.clone(data.MerchantPurchases),
 		Inventory = inventory,
 		PendingRecovery = recovery,
 		IncubatingEggs = eggs,
@@ -356,6 +371,9 @@ function PlayerDataSchema.CreateDefault(): PlayerData
 		FarmPower = GameConfig.StartingFarmPower,
 		MaxPetSlots = GameConfig.StartingMaxPetSlots,
 		ProtectionTokens = GameConfig.StartingProtectionTokens,
+		Tokens = GameConfig.StartingTokens,
+		MerchantRestockId = 0,
+		MerchantPurchases = {},
 		Inventory = {},
 		PendingRecovery = {},
 		IncubatingEggs = {},
@@ -406,6 +424,12 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 	if not isNonNegativeInteger(data.ProtectionTokens) or data.ProtectionTokens > FeedConfig.ProtectionTokenCap then
 		return false, `ProtectionTokens must be an integer from 0 to {FeedConfig.ProtectionTokenCap}`
 	end
+	if not isNonNegativeInteger(data.Tokens) or data.Tokens > MerchantConfig.TokenCap then
+		return false, `Tokens must be an integer from 0 to {MerchantConfig.TokenCap}`
+	end
+	if not isNonNegativeInteger(data.MerchantRestockId) then return false, "MerchantRestockId must be a non-negative integer" end
+	local purchasesValid,purchasesError=validateBooleanMap(data.MerchantPurchases,"MerchantPurchases")
+	if not purchasesValid then return false,purchasesError end
 
 	if type(data.Inventory) ~= "table" then
 		return false, "Inventory must be a PetId-keyed table"

@@ -1,7 +1,7 @@
 --!strict
 
 local GameConfig = {
-	PlayerDataVersion = 7,
+	PlayerDataVersion = 8,
 	PetDataVersion = 2,
 
 	StartingMoney = 0,
@@ -12,6 +12,7 @@ local GameConfig = {
 	StartingMaxPetSlots = 5,
 	-- Prototype grant so Protection can be tested before quests/products exist.
 	StartingProtectionTokens = 3,
+	StartingTokens = 0,
 }
 
 return table.freeze(GameConfig)

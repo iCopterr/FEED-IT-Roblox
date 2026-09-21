@@ -38,9 +38,9 @@ function Controller.Start()
 		selected=pet and pet.PetId
 		panel.Pet.Text=if pet then string.format("%d/%d • %s • Lv.%d • %s [%s]",petIndex,#pets,pet.Name,pet.FeedLevel,
 			if pet.Placed then "PLACED" else "STORED/HELD/PLATE",string.sub(pet.PetId,1,8)) else "No pets — spawn one above"
-		panel.Summary.Text=if state then string.format("Money %s • Food %s • Farm %d\nNext override: %s",NumberFormat.Compact(state.Money),NumberFormat.Compact(state.Food),state.FarmLevel,
+		panel.Summary.Text=if state then string.format("Money %s • Food %s • Tokens %s • Farm %d\nNext override: %s",NumberFormat.Compact(state.Money),NumberFormat.Compact(state.Food),NumberFormat.Compact(state.Tokens),state.FarmLevel,
 			if state.Forced then state.Forced.Mode.." ["..string.sub(state.Forced.PetId,1,8).."]" else "None (normal odds)") else "Loading…"
-		for _,name in {"AddMoney","AddFood","Spawn","SetPetLevel","SetFarmLevel","Force"} do
+		for _,name in {"AddMoney","AddFood","AddTokens","Spawn","SetPetLevel","SetFarmLevel","Force"} do
 			panel[name].Active=state~=nil and not busy and not state.Busy
 		end
 	end
@@ -75,6 +75,7 @@ function Controller.Start()
 	panel.Pet.Activated:Connect(function() if not busy and state and #state.Pets>0 then petIndex=petIndex%#state.Pets+1; render() end end)
 	panel.AddMoney.Activated:Connect(function() command("AddMoney",NumberFormat.Parse(panel.Amount.Text)) end)
 	panel.AddFood.Activated:Connect(function() command("AddFood",NumberFormat.Parse(panel.Amount.Text)) end)
+	panel.AddTokens.Activated:Connect(function() command("AddTokens",1) end)
 	panel.Spawn.Activated:Connect(function() command("SpawnPet",species[speciesIndex].Id) end)
 	panel.SetPetLevel.Activated:Connect(function() command("SetPetLevel",tonumber(panel.PetLevel.Text),selected) end)
 	panel.SetFarmLevel.Activated:Connect(function() command("SetFarmLevel",tonumber(panel.FarmLevel.Text)) end)

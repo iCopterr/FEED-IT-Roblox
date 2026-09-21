@@ -42,6 +42,10 @@ local ok,failure=xpcall(function()
 		check(not command("AddFood",bad).Ok,"Invalid currency input rejected: "..tostring(bad))
 	end
 	check(command("AddFood",1e12).Ok and profile.Food==1e12,"Food grant applied")
+	local beforeTokens=profile.Tokens
+	check(command("AddTokens",1).Ok and profile.Tokens==beforeTokens+1,"Merchant Token grant applied")
+	check(debugService.HandleRequest(a,"AddTokens",1,nil,sequence-1).Ok and profile.Tokens==beforeTokens+1,"Token grant replay cannot duplicate")
+	check(not command("AddTokens",10000).Ok and profile.Tokens==beforeTokens+1,"Token grant cap enforced")
 	local ids={}
 	for _,species in {"test_common","test_uncommon","test_rare","test_epic","test_legendary","test_mythic"} do
 		local result=command("SpawnPet",species)

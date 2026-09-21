@@ -70,7 +70,7 @@ function FeedController.Start()
 		end
 	end
 	local function show()
-		if player:GetAttribute("EggPanelOpen") or player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") then return end
+		if player:GetAttribute("EggPanelOpen") or player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") or player:GetAttribute("MerchantPanelOpen") then return end
 		if player:GetAttribute("FeedBusy") then return end
 		panel.Visible = true
 		gui.Inventory.Visible = false
