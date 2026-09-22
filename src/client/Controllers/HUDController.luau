@@ -16,7 +16,7 @@ function Controller.Start()
 		local timestamp=state.MoneyAt or 0
 		if timestamp<lastMoneyAt then return end
 		lastMoneyAt=timestamp
-		hud.Money.Value.Text=string.format(Config.Text.Money,numberText(state.Money),numberText(state.IncomePerSecond or 0))
+		hud.Money.Value.Text=string.format(Config.Text.Money,numberText(state.Money))
 	end
 	local function food(state)
 		local timestamp=state.FoodAt or 0
@@ -28,7 +28,17 @@ function Controller.Start()
 		ReplicatedStorage:WaitForChild(name).OnClientEvent:Connect(money)
 	end
 	for _,name in {"Farm","FeedFoodChanged"} do ReplicatedStorage:WaitForChild(name).OnClientEvent:Connect(food) end
-	local function resize() hud.UIScale.Scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-20)/1000)) end
+	local function resize()
+		local size=gui.AbsoluteSize
+		local narrow=size.X<760
+		local scale=if narrow then .68 else math.min(1,size.Y/650)
+		hud.UIScale.Scale=1
+		-- Keep currency above the mobile hotbar/touch-control area.
+		local bottom=if narrow then math.min(190,size.Y*.35) else 22
+		hud.Money.Position=UDim2.new(0,18,1,-bottom)
+		hud.Food.Position=UDim2.new(0,18,1,-bottom-66*scale)
+		hud.Money.UIScale.Scale=scale;hud.Food.UIScale.Scale=scale
+	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()
 	require(script.Parent.InventoryController).Start(gui,function(state) money(state);food(state) end)
 	return gui

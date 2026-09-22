@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — bottom-left currency HUD
+
+- Completed: replaced top Food/Money stud panels with transparent bottom-left rows,
+  emoji icons (chicken/money), yellow Food and green dollar amounts with black outlines.
+  K/M/B/T formatting and existing timestamp-ordered live balance events preserved.
+- Editable StarterGui asset owns all layout objects. HUD controller only binds/reflows;
+  narrow-screen currency sits above the hotbar/touch area. Inventory button remains top-right.
+- No nonfunctional plus button or unimplemented friend-boost claim added from reference.
+- Files: FeedYourPetUI asset, HUDController, UIConfig and this handoff.
+- Verified: 194 two-player Studio startup/inventory checks, authored hierarchy inspection,
+  screenshot review, 5.6B/$18T formatting checks, Rojo build and diff whitespace checks.
+- No blockers/in-progress work. Next: user visual/mobile comfort review.
+  Previous commit `a2c8b35`; included in `feat: restyle currency HUD at bottom left`.
+
 ### Latest session — preserve held-slot number and name
 
 - User clarification implemented: key number and pet/egg name remain visible
