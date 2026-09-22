@@ -6,6 +6,17 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — preserve held-slot number and name
+
+- User clarification implemented: key number and pet/egg name remain visible
+  while held. Gold border remains; HELD/state label and floating hints stay hidden.
+- Files: InventoryController, client InventoryVerification, docs/inventory.md,
+  this handoff. Supersedes earlier notes about hiding key/name labels.
+- Verified: 194 two-player Studio checks pass with visible held-slot labels,
+  Rojo build and git diff whitespace checks pass. No blockers or unfinished work.
+- Next: user visual review. Previous commit `5b36ce1`; included in
+  `fix: preserve hotbar number and name while held`.
+
 ### Latest session — visible slot borders and no floating instructions
 
 - Fixed actual border defect: ten slot UIStrokes were Contextual, which outlines

@@ -69,7 +69,7 @@ local ok,failure=xpcall(function()
 		waitFor(function()
 			for _,button in buttons do
 				if button:GetAttribute("Held") and button.Stroke.Thickness==3
-					and not button.Key.Visible and not button.ItemName.Visible and not button.State.Visible then return true end
+					and button.Key.Visible and button.ItemName.Visible and not button.State.Visible then return true end
 			end
 			return false
 		end)

@@ -22,8 +22,8 @@ the cameras stored in StarterGui do not reliably replicate to clients.
   Eggs still hatch by pressing E beside a finished egg in the Pen.
 - 1–9 and 0 (slot ten), or tapping a black translucent slot, equips/unequips its item.
 - Only occupied slots are visible: zero items means no hotbar, one means one square.
-- Held slots hide the key, name and state text; the gold border alone marks selection.
-  The item preview and normal translucent background remain; putting away restores labels.
+- Held slots keep the key number and item name visible; the gold border marks selection.
+  The HELD/state label stays hidden. Preview and normal translucent background remain.
 - Slot UIStrokes use Border mode (not Contextual text outlines). Floating hotbar
   hints are hidden; equipping/putting away no longer emits placement instructions.
   Visible slots pack together without changing their assigned key; narrow screens wrap.

@@ -153,8 +153,8 @@ function Controller.Start(gui,onSnapshot)
 			button.Key.Text=tostring(i%10)
 			local held=entry and stateOf(entry)=="HELD"
 			button:SetAttribute("Held",held==true)
-			button.Key.Visible=not held
-			button.ItemName.Visible=not held
+			button.Key.Visible=true
+			button.ItemName.Visible=true
 			button.Stroke.Color=if held then Color3.fromRGB(255,211,112) else Color3.fromRGB(150,150,164)
 			button.Stroke.Thickness=if held then 3 else 1
 			button.BackgroundTransparency=.38
