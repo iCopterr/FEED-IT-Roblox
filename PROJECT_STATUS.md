@@ -6,6 +6,17 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — remove travel button delay
+
+- Removed 0.6s post-request client lock; buttons release as soon as server replies.
+  Error-label reset is nonblocking. Reduced server spam guard from 1.5s to 0.1s.
+  No pre-teleport timer; server validation/network round trip still applies.
+- Verified all 23 two-player TravelVerification checks with 0.15s between valid
+  destinations, plus build and diff whitespace checks. Token HUD changes untouched.
+- Files: HUDController, TravelConfig, TravelVerification and this handoff.
+- No blockers; next user responsiveness playtest. Previous commit 0ddb97f;
+  included in `fix: remove unnecessary travel button delay`.
+
 ### Latest session — Base / Merchant travel buttons (server verified)
 
 - Implemented larger 250x86 stud ImageButtons in authored HUD.Travel at top center,

@@ -1,1 +1,1 @@
-return table.freeze({Cooldown=1.5,Clearance=3})
+return table.freeze({Cooldown=.1,Clearance=3})

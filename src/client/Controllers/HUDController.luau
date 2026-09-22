@@ -17,6 +17,7 @@ function Controller.Start()
 		button.Activated:Connect(function()
 			if travelBusy then return end
 			travelBusy=true
+			button.ButtonText.Text=string.upper(destination)
 			local ok,result=pcall(function()
 				local remote=ReplicatedStorage:WaitForChild("PrototypeTravel",5)
 				assert(remote,"Travel service unavailable")
@@ -30,9 +31,8 @@ function Controller.Start()
 				end
 			else
 				button.ButtonText.Text=if ok and result.Code=="Cooldown" then "WAIT…" else "TRY AGAIN"
+				task.delay(.6,function() button.ButtonText.Text=string.upper(destination) end)
 			end
-			task.wait(.6)
-			button.ButtonText.Text=string.upper(destination)
 			travelBusy=false
 		end)
 	end
