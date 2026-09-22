@@ -105,7 +105,7 @@ function Service.HandleRequest(player,action,id,position)
 		if not root or (root.Position-target.Position).Magnitude>PlacementConfig.ClickDistance then return {Ok=false,Code="TooFar"} end
 		local model=Visuals.Prepare(player,egg,target.Position)
 		if not model then return {Ok=false,Code="TemplateUnavailable"} end
-		local point=Plots.GetPlot(player).Pen.Floor.CFrame:PointToObjectSpace(target.Position)
+		local point=assert(Plots.GetPlacementOrigin(player)):PointToObjectSpace(target.Position)
 		local previousStart,previousReady=egg.StartedAt,egg.ReadyAt
 		assert(Locks.Begin(player,"EggPlacement"))
 		egg.PenPosition={X=point.X,Z=point.Z}

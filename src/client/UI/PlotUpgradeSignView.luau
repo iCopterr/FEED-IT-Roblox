@@ -2,6 +2,8 @@ local Config = require(game.ReplicatedStorage.Shared.Config.PlotUpgradeConfig)
 local Number = require(game.ReplicatedStorage.Shared.NumberFormat).Compact
 local View = {Number=Number}
 function View.Render(gui, state, owner, near, busy, message)
+ local addedDepth=if state.NextSlots and state.Level
+  then Config.RearDepthBySlots[state.NextSlots]-Config.RearDepthBySlots[state.Level] else 0
  gui.Level.Text=if state.Level then string.format("%d / %d PET SLOTS",state.Level,Config.MaxSlots) else "PLOT EXPANSION"
  gui.Rate.Text=if state.NextSlots then string.format("%d → %d ACTIVE PETS",state.Level,state.NextSlots)
   else if state.MaxLevel then "FULL CAPACITY UNLOCKED" else "Claim this plot to unlock more pet slots"
@@ -16,8 +18,10 @@ function View.Render(gui, state, owner, near, busy, message)
   else if state.Saving then "Waiting for save confirmation…"
   else if not near then "Move closer to buy an upgrade"
   else if busy then "Close menus / wait for Feed to finish"
+  else if state.MaxLevel then "FULLY EXPANDED • 10 PET SLOTS"
   else if state.Cost and not state.CanAfford then "Not enough Money — let your pets earn!"
-  else "Keep one more companion in your pen")
+  else if addedDepth>0 then "+"..addedDepth.." STUDS AT REAR + NEW FENCE COLOR"
+  else "EXTRA PET SLOT + NEW FENCE COLOR")
  return available==true
 end
 return table.freeze(View)

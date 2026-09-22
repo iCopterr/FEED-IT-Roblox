@@ -2,6 +2,7 @@
 local Players = game:GetService("Players")
 local Config = require(game:GetService("ReplicatedStorage").Shared.Config.PlotConfig)
 local DataService = require(script.Parent.DataService)
+local Appearance = require(script.Parent.PlotAppearance)
 
 type Plot = { Model: Model, Spawn: SpawnLocation, Owner: Player?, Connection: RBXScriptConnection? }
 local plots: {Plot} = {}
@@ -54,13 +55,14 @@ local function release(player: Player)
 	plot.Owner = nil
 	plot.Model:SetAttribute("OwnerUserId", 0)
 	plot.Model:SetAttribute("SlotCapacity", Config.StartingSlots)
+	Appearance.Apply(plot.Model, Config.StartingSlots)
 	sign(plot, "Available Plot • " .. Config.StartingSlots .. " slots")
 	-- Persistent placement belongs to player data, never to this reusable world plot.
 end
 
 function PlotService.Start()
 	assert(not started, "PlotService already started")
-	-- Geometry is authored in Workspace. This service only assigns ownership.
+	-- Geometry is authored in Workspace; ownership selects its expansion tier.
 	local folder = workspace:FindFirstChild(Config.FolderName)
 	assert(folder and folder:IsA("Folder"), "Workspace.PlayerPlots is missing")
 	local models = folder:GetChildren()
@@ -85,6 +87,8 @@ function PlotService.Start()
 		model:SetAttribute("OwnerUserId", 0)
 		model:SetAttribute("SlotCapacity", Config.StartingSlots)
 		local plot: Plot = {Model = model :: Model, Spawn = model.Spawn :: SpawnLocation}
+		Appearance.Capture(model)
+		Appearance.Apply(model, Config.StartingSlots)
 		table.insert(plots, plot)
 		sign(plot, "Available Plot • " .. Config.StartingSlots .. " slots")
 	end
@@ -96,12 +100,24 @@ end
 
 function PlotService.GetPlot(player: Player): Model?
 	local plot = owned[player]
+	if plot then
+		local data = DataService.GetData(player)
+		Appearance.Apply(plot.Model, if data then data.MaxPetSlots else Config.StartingSlots)
+	end
 	return if plot then plot.Model else nil
+end
+
+-- Persisted coordinates retain the ORIGINAL floor origin as its rear expands.
+-- This also preserves old saved positions without migrating pet/egg records.
+function PlotService.GetPlacementOrigin(player: Player): CFrame?
+	local plot = PlotService.GetPlot(player)
+	return if plot then Appearance.GetOrigin(plot) else nil
 end
 
 function PlotService.GetSlotCapacity(player: Player): number
 	local data = DataService.GetData(player)
 	if not owned[player] or not data then return 0 end
+	Appearance.Apply(owned[player].Model, data.MaxPetSlots)
 	return math.min(Config.SlotCount, data.MaxPetSlots)
 end
 

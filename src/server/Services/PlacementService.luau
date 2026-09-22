@@ -46,7 +46,8 @@ function PlacementService.GetPetCFrame(player: Player, pet: PetData): CFrame?
 	local plot = PlotService.GetPlot(player)
 	if pet.PenPosition and plot then
 		local floor = plot.Pen.Floor
-		return PlacementService.ResolvePosition(player, floor.CFrame:PointToWorldSpace(Vector3.new(pet.PenPosition.X, floor.Size.Y / 2, pet.PenPosition.Z)))
+		local origin = assert(PlotService.GetPlacementOrigin(player))
+		return PlacementService.ResolvePosition(player, origin:PointToWorldSpace(Vector3.new(pet.PenPosition.X, floor.Size.Y / 2, pet.PenPosition.Z)))
 	end
 	return if pet.PlotSlot then PlotService.GetSlotCFrame(player, pet.PlotSlot) else nil
 end
@@ -186,7 +187,7 @@ function PlacementService.PlacePet(player: Player, petId: string, position: Vect
 	if not model then return false, visualError end
 	pet.Placed, pet.PlotSlot = true, index
 	if position ~= nil then
-		local point = plot.Pen.Floor.CFrame:PointToObjectSpace(slot.Position)
+		local point = assert(PlotService.GetPlacementOrigin(player)):PointToObjectSpace(slot.Position)
 		pet.PenPosition = {X = point.X, Z = point.Z}
 	end
 	data.PlacedPetIds[petId] = true

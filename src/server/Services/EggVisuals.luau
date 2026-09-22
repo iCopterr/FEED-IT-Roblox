@@ -80,7 +80,7 @@ function Visuals.Reconcile(player,profile)
 		if egg.PenPosition then
 			if not state[id] then
 				local floor=plot.Pen.Floor
-				local position=floor.CFrame:PointToWorldSpace(Vector3.new(egg.PenPosition.X,floor.Size.Y/2,egg.PenPosition.Z))
+				local position=assert(Plots.GetPlacementOrigin(player)):PointToWorldSpace(Vector3.new(egg.PenPosition.X,floor.Size.Y/2,egg.PenPosition.Z))
 				local model=Visuals.Prepare(player,egg,position)
 				if model then Visuals.Install(player,id,model) end
 			end

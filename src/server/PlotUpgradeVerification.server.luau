@@ -13,6 +13,9 @@ local ok,failure=xpcall(function()
  local Schema=require(services.Parent.Data.PlayerDataSchema)
  local Adapter=require(services.Parent.Data.DataStoreAdapter)
  local Config=require(game.ReplicatedStorage.Shared.Config.PlotUpgradeConfig)
+ local Eggs=require(services.EggService)
+ local EggVisuals=require(services.EggVisuals)
+ local Appearance=require(services.PlotAppearance)
  local function check(v,label) assert(v,label);table.insert(checks,label) end
  local function waitFor(f)
   local deadline=os.clock()+60
@@ -41,7 +44,18 @@ local ok,failure=xpcall(function()
   check(p.Ground.Size==Vector3.new(80,1,80) and #p.Pen.Slots:GetChildren()==10,"Expanded geometry "..p.Name)
  end
  check(profile.MaxPetSlots==5 and Plots.GetSlotCapacity(a)==5,"Starts with five active slots")
- for i=1,5 do local pet=assert(Pets.CreatePet(a,"test_common"));assert(Placement.PlacePet(a,pet.PetId)) end
+ local origin=assert(Plots.GetPlacementOrigin(a))
+ local originalGround=plot.Ground.CFrame
+ local originalFront=plot.Pen.Floor.CFrame*Vector3.new(0,0,22)
+ local originalEntrance=plot.Pen.Fence.FrontLeft.CFrame
+ local originalSpawn=plot.Spawn.CFrame
+ local firstPet
+ for i=1,5 do
+  local pet=assert(Pets.CreatePet(a,"test_common"))
+  assert(Placement.PlacePet(a,pet.PetId,if i==1 then origin*Vector3.new(0,.15,0) else nil))
+  if i==1 then firstPet=profile.Inventory[pet.PetId];Placement.PauseWandering(a,pet.PetId,120) end
+ end
+ local petAnchor=Placement.GetPetCFrame(a,firstPet)
  local sixth=assert(Pets.CreatePet(a,"test_common"))
  local placed,reason=Placement.PlacePet(a,sixth.PetId)
  check(not placed and reason=="PenFull","Sixth pet blocked before purchase")
@@ -54,6 +68,16 @@ local ok,failure=xpcall(function()
  near();profile.Money=0
  check(request().Code=="NotEnoughMoney","Insufficient Money rejected")
  profile.Money=1e9
+ local eggPurchase=Eggs.BuyFromConveyor(a,"prototype_egg")
+ check(eggPurchase.Ok,"Egg bought before plot upgrade")
+ waitFor(function() return not Locks.IsLocked(a) end)
+ local eggPoint=origin*Vector3.new(10,.15,0)
+ root.CFrame=CFrame.new(eggPoint+Vector3.new(0,3,0))
+ task.wait(.3)
+ check(Eggs.HandleRequest(a,"Place",eggPurchase.EggUid,eggPoint).Ok,"Egg placed before plot upgrade")
+ waitFor(function() return not Locks.IsLocked(a) end)
+ local eggBefore=EggVisuals.GetModel(a,eggPurchase.EggUid):GetPivot()
+ near()
  Locks.Begin(a,"test")
  check(request().Code=="Busy","Feed/save lock blocks purchase")
  Locks.Finish(a)
@@ -63,6 +87,15 @@ local ok,failure=xpcall(function()
   local before=profile.Money
   local result=Upgrade.HandleRequest(a,plot.Name,profile.MaxPetSlots)
   check(result.Ok and profile.MaxPetSlots==level+1,"Capacity purchase "..(level+1))
+  local depth=Config.RearDepthBySlots[level+1]
+  check(plot.Ground.Size.Z==80+depth and plot.Pen.Floor.Size.Z==44+depth,"Milestone-only rear depth "..(level+1))
+  check((plot.Pen.Floor.CFrame*Vector3.new(0,0,plot.Pen.Floor.Size.Z/2)-originalFront).Magnitude<.001
+   and plot.Pen.Fence.FrontLeft.CFrame==originalEntrance and plot.Spawn.CFrame==originalSpawn,"Front and spawn unchanged "..(level+1))
+  check(plot.Pen.Fence.Back.Color==Config.TierColors[level+1] and plot.PostCap0.Color==Config.TierColors[level+1],"Fence tier color "..(level+1))
+  check((Placement.GetPetCFrame(a,firstPet).Position-petAnchor.Position).Magnitude<.001
+   and Plots.GetPlacementOrigin(a)==origin,"Existing pet anchor stays fixed "..(level+1))
+  EggVisuals.Clear(a);EggVisuals.Reconcile(a,profile)
+  check((EggVisuals.GetModel(a,eggPurchase.EggUid):GetPivot().Position-eggBefore.Position).Magnitude<.001,"Egg rebuild stays fixed "..(level+1))
   check(result.Cost==Config.UpgradeCost[level+2] or level==9,"Next price advances "..level)
   check(result.Money==before-Config.UpgradeCost[level+1],"Exact Money charged "..level)
   check(not Upgrade.HandleRequest(a,plot.Name,level).Ok,"Immediate replay rejected "..level)
@@ -70,7 +103,8 @@ local ok,failure=xpcall(function()
   local after=profile.MaxPetSlots
   check(request(nil,level).Code=="LevelChanged" and profile.MaxPetSlots==after,"Stale purchase rejected "..level)
   local pet=if level==5 then sixth else assert(Pets.CreatePet(a,"test_common"))
-  check(Placement.PlacePet(a,pet.PetId) and profile.Inventory[pet.PetId].PlotSlot==level+1,"New slot usable "..(level+1))
+  local newPoint=if depth>0 then origin*Vector3.new(-10,.15,-20-depth) else nil
+  check(Placement.PlacePet(a,pet.PetId,newPoint) and profile.Inventory[pet.PetId].PlotSlot==level+1,"New slot/rear space usable "..(level+1))
  end
  check(request().Code=="MaxLevel","Maximum ten slots enforced")
  local eleventh=assert(Pets.CreatePet(a,"test_common"))
@@ -83,6 +117,28 @@ local ok,failure=xpcall(function()
  local read,record=Adapter.UpdateAsync("Player_"..a.UserId,function() return nil end)
  local loaded=assert(Schema.Migrate(record.Data))
  check(read and loaded.MaxPetSlots==10 and Schema.Validate(loaded),"Save/reload preserves purchased capacity and placements")
+ local lastAnchor=Placement.GetPetCFrame(a,loaded.Inventory[eleventh.PetId])
+ check(lastAnchor==nil,"Unplaced pet has no world anchor")
+ -- Every orientation must fit the reserved rear space and restore exactly.
+ for _,model in workspace.PlayerPlots:GetChildren() do
+  Appearance.Apply(model,5)
+  local baseline=model.Ground.CFrame
+  local wood=model.Pen.Fence.Back.Color
+  local count=#model:GetDescendants()
+  Appearance.Apply(model,10)
+  check(model.Ground.Size==Vector3.new(80,1,120) and model.Foundation.Size.X==122,"Both plot orientations expand backward "..model.Name)
+  for _,part in model:GetDescendants() do
+   if part:IsA("BasePart") and part.Name~="HumanoidRootPart" then
+    local localPoint=workspace.SkyIsland.Meadow.CFrame:PointToObjectSpace(part.Position)
+    assert(math.abs(localPoint.X)<160 and math.abs(localPoint.Z)<210,"Expansion exceeded island")
+   end
+  end
+  check(#model:GetDescendants()==count,"No generated geometry "..model.Name)
+  Appearance.Apply(model,5)
+  check(model.Ground.CFrame==baseline and model.Pen.Fence.Back.Color==wood,"Exact base appearance restored "..model.Name)
+ end
+ Plots.GetPlot(a)
+ check(plot.Ground.Size.Z==120 and plot.Ground.CFrame~=originalGround,"Saved capacity reapplies appearance")
  check(Schema.Validate(profile) and Schema.Validate(Data.GetData(b)),"Both profiles valid")
 end,debug.traceback)
 testing:EndTest({passed=ok,checks=checks,failure=if ok then nil else tostring(failure)})

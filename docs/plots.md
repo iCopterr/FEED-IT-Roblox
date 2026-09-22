@@ -15,7 +15,13 @@ Each player starts with FIVE active pet slots. The matching world sign buys
 one additional slot per purchase, up to TEN for this prototype. Prices by
 target capacity: 6=20K, 7=100K, 8=500K, 9=2.5M, 10=10M Money.
 Tune src/shared/Config/PlotUpgradeConfig.luau; these are initial test prices.
-Upgrades increase capacity, not the physical size of the already-expanded pen.
+Every upgrade adds one pet slot and changes the fence/cap accent color.
+Physical expansion occurs only at milestones: 5–6 slots use the base size;
+7–9 slots add 16 studs behind the plot; 10 slots add 40 studs total.
+Grounds therefore reach 80x96, then 80x120; pens reach 60x60, then 60x84.
+The front edge, entrance, spawn and feeding plate remain fixed. Existing wood
+fences stretch/reposition at the rear without generating new geometry.
+All six plots have room on the island, including foundations at maximum tier.
 Food still comes from the merchant. No AFK farm or feed-plate risk bonus returns.
 
 PlotUpgradeService validates ownership, distance, living character, expected
@@ -28,7 +34,12 @@ Ten invisible slot markers provide fallback positions only; click-to-place
 anywhere inside the pen remains supported. PlotService caps usable slots by
 the player's purchased capacity. Signs and inventory display that capacity.
 Leaving releases the world plot; upgrade progress belongs to player data,
-not to the plot. MemoryOnly remains enabled: progress lasts only this server.
+not to the plot. Vacated plots reset their size and color; loaded capacity
+restores the appropriate appearance before placement validation.
+Pet/egg PenPosition coordinates use the original authored floor origin, not
+the shifting center of the resized floor. Old saves remain compatible and
+upgrades do not move existing placements. Bounds checks use the resized floor.
+MemoryOnly remains enabled: progress lasts only this server.
 
 Static assets: PlayerPlots.rbxmx, PlotUpgradeSigns.rbxmx, SkyIsland.rbxmx.
 Export Studio edits back to these files before resync; Rojo is not reverse sync.

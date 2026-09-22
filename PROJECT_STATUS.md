@@ -6,6 +6,41 @@
 
 **Last Updated:** 2026-09-23
 
+### Latest session — milestone rear expansion and tier colors
+
+- User clarified: physical plot size must NOT increase every upgrade.
+  Current milestones: 5–6 slots base size; 7–9 slots +16 studs rear depth;
+  10 slots +40 studs total. Each capacity purchase still adds one pet slot.
+  Fence/cap colors progress green, blue, purple, orange, gold at slots 6–10;
+  base wood/grass restored at five. Grass gets a subtle matching tint.
+- Kept original plot/fence format. PlotAppearance resizes/repositions/recolors
+  existing authored parts only. Back rails/posts/shrubs move; side rails,
+  floor, ground and foundation lengthen. Front edge, entrance, spawn,
+  feeding plate, upgrade sign, center lane and width stay fixed.
+- Max-size grounds are 80x120; pens 60x84. All six orientations remain
+  within the current 320x420 island. No new world geometry or runtime builders.
+- PlotService applies loaded capacity before placement, caches authored
+  baselines, and restores base appearance when ownership is released.
+- Architecture: persisted pet/egg PenPosition uses the ORIGINAL floor origin;
+  placement bounds still use the resized floor. No schema migration needed.
+  Existing placements do not shift when the center of the floor changes.
+- PASS: 100 expanded PlotUpgradeVerification checks (milestones/colors,
+  stable pet/egg anchors, exact prices, save/reload, all six plot orientations,
+  no generated geometry, reset); 22 ownership/respawn/reuse checks including
+  upgrade reset and new-owner isolation. Build, syntax and diff checks pass.
+- PASS: 35 FoodShopVerification checks after relaunching from Edit.
+  Total: 157 multiplayer checks. An immediately chained run returned nil
+  during Studio teardown; independent relaunch completed successfully.
+- Visual preview attempted through MCP but screenshot was blank; temporary
+  preview sizes were restored and verified before the next test. User
+  playtest remains useful for appearance/feel; numeric geometry checks pass.
+- Files: PlotAppearance, PlotService, PlotUpgradeConfig, PlotUpgradeSignView,
+  PlacementService, EggService, EggVisuals, both plot verification scripts,
+  docs/plots.md and this handoff. Previous commit: 421ce50.
+- Next: user playtest milestone expansion/color choices and tune config.
+  No known gameplay blocker. Included in
+  `feat: expand plots at capacity milestones with tier colors`.
+
 ### Latest session — larger floating base
 
 - Enlarged SkyIsland grass from 236x320 to 320x420 studs; expanded both
