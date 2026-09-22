@@ -6,6 +6,30 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — Base / Merchant travel buttons (server verified)
+
+- Implemented larger 250x86 stud ImageButtons in authored HUD.Travel at top center,
+  matching Inventory texture/style; Base green and Merchant blue per user follow-up.
+  Responsive row scale; Inventory moves below it
+  on narrow screens to avoid overlap. Client binds existing buttons only.
+- Added server TravelService and TravelConfig: Base resolves caller-owned plot Spawn;
+  Merchant resolves existing InteractionPoint. Server rejects arbitrary destinations,
+  unloaded/dead characters, save/feed locks and spam (1.5s). Exits farm before travel,
+  clears velocity, retains held items, charges nothing. Registered in server bootstrap.
+- Added opt-in memory-only TravelVerification for own-plot/merchant destination,
+  invalid input, cooldown, transaction lock, currency and authored button checks.
+- Files: HUDController, FeedYourPetUI.rbxmx, TravelService, TravelConfig,
+  server bootstrap, TravelVerification and this handoff. Prior Token HUD edits preserved.
+- Reconnected through direct MCP port 58742; removed confirmed duplicate Travel row
+  and identical TravelVerification script created by sync (filesystem sources retained).
+- Verified 23 two-player TravelVerification checks: own plot, merchant destination,
+  invalid target, cooldown, transaction lock, no charge and larger authored buttons.
+  Center alignment and green/blue gradient assertions, Rojo build and diff check pass.
+  Screenshot response exceeded tool output size; physical visual/input review remains.
+- Next: user playtest including travel from farm/while carrying. No implementation blocker.
+- Previous commit 4ba935d; included in `feat: add base and merchant teleport buttons`.
+  No UI Director or Computer Use used. Unfinished Token HUD files excluded from commit.
+
 ### Latest session — disable WASD inventory navigation
 
 - Inventory disables GuiNavigation/auto-selection for keyboard, mouse and touch,

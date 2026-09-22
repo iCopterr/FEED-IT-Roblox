@@ -11,6 +11,31 @@ function Controller.Start()
 	local gui=playerGui:WaitForChild("FeedYourPetUI",3)
 	if not gui then gui=GuiBootstrap.Ensure(playerGui,game.StarterGui:WaitForChild("FeedYourPetUI",3)) end
 	local hud=gui.HUD
+	local travelBusy=false
+	for _,destination in {"Base","Merchant"} do
+		local button=hud.Travel[destination]
+		button.Activated:Connect(function()
+			if travelBusy then return end
+			travelBusy=true
+			local ok,result=pcall(function()
+				local remote=ReplicatedStorage:WaitForChild("PrototypeTravel",5)
+				assert(remote,"Travel service unavailable")
+				return remote:InvokeServer(destination)
+			end)
+			if ok and result.Ok then
+				gui.Inventory.Visible=false;gui.FeedPanel.Visible=false
+				for _,name in {"EggUI","MerchantUI","ReviveUI","DebugUI"} do
+					local other=playerGui:FindFirstChild(name)
+					if other then other.Panel.Visible=false end
+				end
+			else
+				button.ButtonText.Text=if ok and result.Code=="Cooldown" then "WAIT…" else "TRY AGAIN"
+			end
+			task.wait(.6)
+			button.ButtonText.Text=string.upper(destination)
+			travelBusy=false
+		end)
+	end
 	local lastMoneyAt,lastFoodAt=-math.huge,-math.huge
 	local function money(state)
 		local timestamp=state.MoneyAt or 0
@@ -38,6 +63,9 @@ function Controller.Start()
 		hud.Money.Position=UDim2.new(0,18,1,-bottom)
 		hud.Food.Position=UDim2.new(0,18,1,-bottom-66*scale)
 		hud.Money.UIScale.Scale=scale;hud.Food.UIScale.Scale=scale
+		hud.Travel.UIScale.Scale=math.min(1,(size.X-24)/540)
+		-- Keep the existing inventory button separate on smaller displays.
+		hud.OpenInventory.Position=UDim2.new(1,-18,0,if size.X<1020 then 110*hud.Travel.UIScale.Scale else 12)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()
 	require(script.Parent.InventoryController).Start(gui,function(state) money(state);food(state) end)
