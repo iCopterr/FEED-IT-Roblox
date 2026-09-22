@@ -21,6 +21,13 @@ local ok,failure=xpcall(function()
 	local model=require(client.UI.InventoryModel)
 	local layout=require(client.UI.InventoryLayout)
 	waitFor(function() return gui.HUD.OpenInventory.ButtonText.Text=="INVENTORY" end)
+	for _,name in {"Money","Food"} do
+		local count=0
+		for _,row in gui.HUD:GetChildren() do if row.Name==name then count+=1 end end
+		check(count==1,"Exactly one "..name.." HUD row; no overlapping duplicates")
+		waitFor(function() return gui.HUD[name].Value.Text~="—" and gui.HUD[name].Value.Text~="$—" end)
+		check(true,"Live "..name.." balance replaces placeholder")
+	end
 	check(not game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack),"Default Backpack suppressed")
 	local remote=game.ReplicatedStorage.PrototypeUI.Request
 	local snapshot

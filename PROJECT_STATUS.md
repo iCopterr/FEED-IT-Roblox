@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — fix overlapping currency rows in Studio
+
+- Root cause: two Food and two Money frames existed in Studio HUD after live sync;
+  placeholder glyphs overlapped live values. Filesystem asset already had one of each.
+- Removed exactly two duplicate Studio-only rows via MCP; retained authored rows.
+  Diagnostic font edits were on removed duplicates; original typography retained.
+- Added client verification for unique currency rows and eventual live balances.
+  Initial test checked balance before async snapshot; corrected test to await it.
+- Verified clean large-number screenshot (5.6B/$18T), restored placeholder preview,
+  unique edit hierarchy, 202 two-player checks, Rojo build and diff whitespace.
+- Files modified: client InventoryVerification and this handoff; no economy/data changes.
+- No blockers. Next: user visual review. Previous commit `0f2c7e6`; checks/handoff
+  included in `test: detect duplicate currency HUD rows and stale placeholders`.
+
 ### Latest session — bottom-left currency HUD
 
 - Completed: replaced top Food/Money stud panels with transparent bottom-left rows,
