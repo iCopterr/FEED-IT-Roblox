@@ -31,6 +31,27 @@ function Controller.Start(gui,onSnapshot)
 	local noticeUntil=0
 	local refresh,render
 	modal.Visible=false
+	local savedNavigation,savedAutoSelect
+	local function updateNavigation()
+		local gamepad=string.match(Input:GetLastInputType().Name,"^Gamepad")~=nil
+		if modal.Visible and not gamepad then
+			if savedNavigation==nil then
+				savedNavigation=GuiService.GuiNavigationEnabled
+				savedAutoSelect=GuiService.AutoSelectGuiEnabled
+			end
+			GuiService.GuiNavigationEnabled=false
+			GuiService.AutoSelectGuiEnabled=false
+			GuiService.SelectedObject=nil
+		else
+			if savedNavigation~=nil then
+				GuiService.GuiNavigationEnabled=savedNavigation
+				GuiService.AutoSelectGuiEnabled=savedAutoSelect
+				savedNavigation,savedAutoSelect=nil,nil
+			end
+			if modal.Visible and gamepad and not GuiService.SelectedObject then GuiService.SelectedObject=layout.Close end
+		end
+	end
+	Input.LastInputTypeChanged:Connect(updateNavigation)
 	task.spawn(function()
 		for _=1,5 do
 			if pcall(function() StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack,false) end) then break end
@@ -51,7 +72,7 @@ function Controller.Start(gui,onSnapshot)
 			if other then other.Panel.Visible=false end
 		end
 		modal.Visible=true
-		if Input.GamepadEnabled then GuiService.SelectedObject=layout.Close end
+		updateNavigation()
 		task.spawn(refresh)
 	end
 	local function stateOf(entry)
@@ -190,6 +211,7 @@ function Controller.Start(gui,onSnapshot)
 	gui.HUD.OpenInventory.Activated:Connect(toggle)
 	layout.Close.Activated:Connect(function() modal.Visible=false end)
 	modal:GetPropertyChangedSignal("Visible"):Connect(function()
+		updateNavigation()
 		player:SetAttribute("InventoryPanelOpen",modal.Visible)
 		bar.Visible=next(slots)~=nil and not modal.Visible and not otherModal()
 		if not modal.Visible and GuiService.SelectedObject and GuiService.SelectedObject:IsDescendantOf(modal) then GuiService.SelectedObject=nil end

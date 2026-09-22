@@ -6,6 +6,19 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — disable WASD inventory navigation
+
+- Inventory disables GuiNavigation/auto-selection for keyboard, mouse and touch,
+  clears selection, and restores previous navigation settings when closed.
+- Uses actual last input type instead of GamepadEnabled (connected controller)
+  to opt into gamepad navigation. Keyboard movement inputs are not intercepted.
+- Files: InventoryController and this handoff. Token HUD edits remain untouched.
+- Verified synchronized compile, Rojo build, diff check, navigation property access,
+  and six state-transition checks using the actual extracted controller function.
+  Physical WASD/gamepad input still requires playtest; no full multiplayer claim.
+- No implementation blockers. Next: user input-feel check. Previous commit 8a72936;
+  included in fix commit for keyboard inventory navigation.
+
 ### Latest session — three eggs / eighteen pets
 
 - Completed: Advanced Egg (2M, 120s) and Elite Egg (500M, 720s), six new named
