@@ -3,6 +3,7 @@ local Pets=require(Shared.Config.PetConfig)
 local Feed=require(Shared.Config.FeedConfig)
 local Config=require(Shared.Config.InventoryConfig)
 local Model={}
+local Foods=require(Shared.Config.FoodConfig)
 
 function Model.Entries(snapshot)
 	local entries={}
@@ -20,13 +21,19 @@ function Model.Entries(snapshot)
 			State=if snapshot.CarriedEggUid==egg.EggUid then "HELD" elseif not egg.Placed then "STORED"
 				elseif egg.ReadyAt<=snapshot.ServerNow then "READY" else "INCUBATING"}
 	end
+	for _,id in Foods.Order do
+		local amount=(snapshot.Foods or {})[id] or 0
+		local food=Foods.Types[id]
+		if amount>0 then entries["food:"..id]={Key="food:"..id,Id=id,Kind="Food",Name=food.Name,
+			Rarity="Food",Quantity=amount,Reduction=food.Reduction,Level=0,Income=0,CreatedAt=0,State="FOOD"} end
+	end
 	return entries
 end
 
 function Model.Filter(entries,category,query,sort)
 	local result={};query=string.lower(query or "")
 	for _,entry in entries do
-		if (category=="All" or category==entry.Kind)
+		if ((category=="All" and entry.Kind~="Food") or category==entry.Kind)
 			and string.find(string.lower(entry.Name.." "..entry.Rarity),query,1,true) then table.insert(result,entry) end
 	end
 	table.sort(result,function(a,b)

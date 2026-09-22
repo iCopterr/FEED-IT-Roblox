@@ -66,6 +66,10 @@ local ok,failure=xpcall(function()
 	profile.Inventory[pet.PetId].FeedLevel=20
 	profile.Inventory[pet.PetId].Locked=true
 	assert(Plate.Place(a,pet.PetId))
+	waitFor(function() return reports[a] and reports[b] end,40)
+	for _,player in {a,b} do
+		check(reports[player].Passed,"Client inventory/feed UI: "..player.Name.." "..tostring(reports[player].Failure or ""))
+	end
 	check(Feed.HandleRequest(a,"ProtectedFeed",pet.PetId,1).Code=="InvalidRequest","Old Protection remote action removed")
 	local snap
 	waitFor(function() snap=Feed.HandleRequest(a,"Snapshot",nil,nil,special);return snap.Ok end)
@@ -96,7 +100,7 @@ local ok,failure=xpcall(function()
 	check(not Rescue.HandleRequest(a,"Revive",pet.PetId,expired.AttemptId).Ok,"Expired Rescue cannot restore growth")
 	check(Schema.Validate(profile),"Final profile validates")
 	check(game.StarterGui.MerchantUI:FindFirstChild("TokenHUD")==nil,"No Token HUD asset")
-	check(game.StarterGui.FeedYourPetUI.FeedPanel:FindFirstChild("FoodType")~=nil,"Authored food selector")
+	check(game.StarterGui.FeedYourPetUI.FeedPanel:FindFirstChild("FoodCards")~=nil,"Authored food cards")
 	check(game.ReplicatedStorage:FindFirstChild("Farm")==nil,"AFK farm runtime disabled")
 	waitFor(function() return reports[a] and reports[b] end,20)
 	for _,player in {a,b} do

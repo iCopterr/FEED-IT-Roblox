@@ -36,6 +36,7 @@ local function snapshot(player, state, foodId)
 	local risk = pet and Config.ExplosionChance[pet.FeedLevel+1] and PlateConfig.GetRisk(Config.ExplosionChance[pet.FeedLevel+1],data.FeedPlateLevel)
 	if risk then risk *= 1-food.Reduction end
 	return {
+		Foods=FoodConfig.Inventory(data), SpeciesId=pet and pet.SpeciesId,
 		FoodId=foodId, FoodName=food.Name, FoodReduction=food.Reduction,
 		Ok=pet ~= nil, Code=reason, PetId=pet and pet.PetId,
 		PetName=pet and (definition and definition.DisplayName or pet.SpeciesId),

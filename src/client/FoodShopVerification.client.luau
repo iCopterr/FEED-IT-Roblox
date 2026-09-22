@@ -20,7 +20,35 @@ local ok,failure=xpcall(function()
 	assert(merchant:FindFirstChild("TokenHUD")==nil and merchant:FindFirstChild("TokenPopup")==nil,"Old Token UI visible")
 	assert(merchant.Panel.Money.Text:find("YOUR MONEY",1,true),"Merchant binds Money label")
 	assert(merchant.Panel.Slot1.Text:find("Basic Food",1,true),"Basic Food rendered in shop: "..merchant.Panel.Status.Text.." / "..merchant.Panel.Slot1.Text)
-	assert(main.FeedPanel:FindFirstChild("FoodType") and not main.FeedPanel:FindFirstChild("ProtectedFeed"),"Food selector replaces protection")
+	assert(main.FeedPanel:FindFirstChild("FoodCards") and not main.FeedPanel:FindFirstChild("FoodType"),"Food cards replace cycling selector")
+	assert(main.Inventory.Panel.Layout:FindFirstChild("Food"),"Food inventory tab")
+	local model=require(script.Parent.UI.InventoryModel)
+	local entries=model.Entries({Inventory={},Foods={basic=5,royal=2}})
+	assert(#model.Filter(entries,"Food","","Newest")==2,"Owned foods appear in food tab")
+	assert(#model.Filter(entries,"All","","Newest")==0,"Food excluded from pets/eggs All tab")
+	assert(not model.CanSlot(entries["food:basic"]),"Food cannot enter hotbar")
+	local view=main.Inventory.Panel.Layout.Pets.PetCardTemplate.Preview
+	require(script.Parent.UI.ItemPreview).Set(view,entries["food:basic"])
+	assert(view.FoodArt.Visible and view.FoodArt.Emoji.Visible,"Food placeholder supports future image")
+	local deadline=os.clock()+15
+	repeat
+		if game.Players.LocalPlayer:GetAttribute("FeedPlatePetId") then break end
+		task.wait(.1)
+	until os.clock()>deadline
+	if game.Players.LocalPlayer:GetAttribute("FeedPlatePetId") then
+		local panel=main.FeedPanel
+		local deadline=os.clock()+10
+		repeat task.wait(.1) until panel.PetPreview.World:FindFirstChildOfClass("Model") or os.clock()>deadline
+		local pet=assert(panel.PetPreview.World:FindFirstChildOfClass("Model"),"Pet preview loaded")
+		local before=pet:GetPivot();task.wait(.3)
+		assert(before~=pet:GetPivot(),"Pet preview spins while feeding UI open")
+		local feed=require(script.Parent.Controllers.FeedController)
+		feed.SelectFood("royal")
+		assert(panel.FoodCards.royal:GetAttribute("Selected"),"Clicked food selected")
+		assert(not panel.Feed.Active,"Unowned food cannot be fed")
+		feed.SelectFood("basic")
+		assert(panel.FoodCards.basic:GetAttribute("Selected"),"Can switch selected food")
+	end
 	assert(main.HUD.Money.Value.Text~="—" and main.HUD.Money.Value.Text~="$—","Money HUD initialized")
 	assert(main.HUD:FindFirstChild("Food")==nil,"Food HUD removed")
 	assert(main.FeedPanel:FindFirstChild("Food")~=nil,"Feed quantity display retained")

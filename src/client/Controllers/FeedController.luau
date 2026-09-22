@@ -5,17 +5,18 @@ local GuiBootstrap = require(script.Parent.Parent.UI.GuiBootstrap)
 local Effects = require(script.Parent.FeedEffects)
 local Config = require(ReplicatedStorage.Shared.Config.FeedConfig)
 local Foods = require(ReplicatedStorage.Shared.Config.FoodConfig)
+local Preview=require(script.Parent.Parent.UI.ItemPreview)
+local FoodCard=require(script.Parent.Parent.UI.FoodCard)
 local FeedController = {}
 local numberText = require(ReplicatedStorage.Shared.NumberFormat).Compact
 
 function FeedController.Start()
 	local player = Players.LocalPlayer
 	local playerGui = assert(player:WaitForChild("PlayerGui",10), "PlayerGui missing")
-	local gui = playerGui:WaitForChild("FeedYourPetUI",3)
-		or GuiBootstrap.Ensure(playerGui, game:GetService("StarterGui"):WaitForChild("FeedYourPetUI",3))
+	local gui = assert(playerGui:WaitForChild("FeedYourPetUI",30),"FeedYourPetUI missing; check Rojo")
 	local panel = assert(gui:WaitForChild("FeedPanel",5), "FeedPanel asset missing; check Rojo")
 	local remote = ReplicatedStorage:WaitForChild("PrototypeFeed")
-	local foodIndex = 1
+	local selectedFood = "basic"
 	local latest, busy
 	local observedId = nil
 	local function displayOutcome(result)
@@ -50,23 +51,26 @@ function FeedController.Start()
 		panel.Feed.Active = canFeed == true
 		panel.Feed.AutoButtonColor = canFeed == true
 		panel.Feed.BackgroundColor3 = if canFeed then Color3.fromRGB(112,219,89) else Color3.fromRGB(114,111,127)
-		panel.FoodType.Text = "FOOD: "..(state.FoodName or Foods.Types[Foods.Order[foodIndex]].Name).." • CHANGE"
-		panel.FoodType.Active = not busy and not state.Busy
-		panel.FoodType.AutoButtonColor = panel.FoodType.Active
+		Preview.Set(panel.PetPreview,if state.SpeciesId then {Kind="Pet",SpeciesId=state.SpeciesId} else nil)
+		for _,id in Foods.Order do
+			local card=panel.FoodCards[id]
+			FoodCard.Paint(card,id,(state.Foods or {})[id] or 0,id==selectedFood)
+			card.Active=not busy and not state.Busy
+		end
 		panel.Pickup.Active = state.PetId == player:GetAttribute("FeedPlatePetId") and state.PetId ~= nil and not busy and not state.Busy
 	end
 	local function refresh()
 		if busy then return end
 		busy = true
 		local expectedId = player:GetAttribute("FeedPlatePetId")
-		local ok, result = pcall(function() return remote:InvokeServer("Snapshot",nil,nil,Foods.Order[foodIndex]) end)
+		local ok, result = pcall(function() return remote:InvokeServer("Snapshot",nil,nil,selectedFood) end)
 		busy = false
 		if expectedId ~= player:GetAttribute("FeedPlatePetId") then return end
 		if ok and result.Code ~= "Cooldown" then
 			render(result)
 			if not result.Ok then panel.Status.Text = messages[result.Code] or "Unable to load feeding state." end
 		elseif not ok then
-			latest = nil; panel.Feed.Active = false; panel.FoodType.Active=false; panel.Status.Text = "Connection error. Retrying…"
+			latest = nil; panel.Feed.Active = false; panel.Status.Text = "Connection error. Retrying…"
 		end
 	end
 	local function show()
@@ -99,7 +103,7 @@ function FeedController.Start()
 	panel.Pickup.Activated:Connect(function()
 		local id = player:GetAttribute("FeedPlatePetId")
 		if busy or player:GetAttribute("FeedBusy") or not id then return end
-		busy = true; panel.Pickup.Active = false; panel.Feed.Active = false; panel.FoodType.Active=false
+		busy = true; panel.Pickup.Active = false; panel.Feed.Active = false
 		panel.Status.Text = "Picking up…"
 		local ok, result = pcall(function() return remote:InvokeServer("Pickup",id) end)
 		busy = false
@@ -122,28 +126,44 @@ function FeedController.Start()
 			displayOutcome(result)
 		elseif ok then
 			if state.PetId ~= player:GetAttribute("FeedPlatePetId") then return end
-			panel.Visible=true; latest=nil; panel.Feed.Active=false; panel.FoodType.Active=false
+			panel.Visible=true; latest=nil; panel.Feed.Active=false
 			panel.Status.Text = messages[result.Code] or "Request rejected. Refreshing…"
 		else
-			latest = nil; panel.Feed.Active = false; panel.FoodType.Active=false
+			latest = nil; panel.Feed.Active = false
 			panel.Visible=true
 			panel.Status.Text = "Connection interrupted. Refreshing before another Feed."
 			-- Recover the server result instead of issuing a new attempt after an ambiguous reply.
 			task.delay(.5,function()
-				local recovered, snapshot = pcall(function() return remote:InvokeServer("Snapshot",nil,nil,Foods.Order[foodIndex]) end)
+				local recovered, snapshot = pcall(function() return remote:InvokeServer("Snapshot",nil,nil,selectedFood) end)
 				if recovered and snapshot.LastOutcome and snapshot.LastOutcome.NextSequence==state.NextSequence+1 then displayOutcome(snapshot.LastOutcome) end
 			end)
 		end
 	end
 	panel.Feed.Activated:Connect(function() feed("Feed") end)
-	panel.FoodType.Activated:Connect(function()
+	local function selectFood(id)
 		if busy or player:GetAttribute("FeedBusy") then return end
-		foodIndex = foodIndex % #Foods.Order + 1
-		latest = nil; panel.Feed.Active = false
-		task.spawn(refresh)
+		selectedFood=id
+		if latest and latest.Foods then
+			local state=table.clone(latest)
+			state.FoodId=id;state.FoodName=Foods.Types[id].Name
+			state.Food=state.Foods[id] or 0
+			state.Risk=(state.BaseRisk or 0)*(1-(state.PlateReduction or 0))*(1-Foods.Types[id].Reduction)
+			render(state)
+		else latest=nil;panel.Feed.Active=false;task.spawn(refresh) end
+	end
+	for _,id in Foods.Order do
+		FoodCard.Paint(panel.FoodCards[id],id,0,id==selectedFood)
+		panel.FoodCards[id].Activated:Connect(function() selectFood(id) end)
+	end
+	FeedController.SelectFood=selectFood
+	local angle=0
+	game:GetService("RunService").RenderStepped:Connect(function(dt)
+		if not panel.Visible then return end
+		local model=panel.PetPreview.World:FindFirstChildOfClass("Model")
+		if model then angle=(angle+dt*.65)%(math.pi*2);model:PivotTo(CFrame.Angles(0,angle,0)) end
 	end)
 	local function resize()
-		panel.UIScale.Scale = math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/520,(gui.AbsoluteSize.Y-130)/510))
+		panel.UIScale.Scale = math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/720,(gui.AbsoluteSize.Y-48)/620))
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
 	player:GetAttributeChangedSignal("FeedPlatePetId"):Connect(plateChanged)

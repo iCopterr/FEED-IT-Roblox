@@ -1,6 +1,15 @@
 local Eggs=require(game.ReplicatedStorage.Shared.Config.EggConfig)
 local Preview={}
+local foodEmoji={basic="🍗",hearty="🥩",gourmet="🍱",royal="🍰"}
 function Preview.Set(view,entry)
+	local art=view:FindFirstChild("FoodArt")
+	if art then
+		art.Visible=entry~=nil and entry.Kind=="Food"
+		if art.Visible then art.Emoji.Text=foodEmoji[entry.Id] or "🍗";art.Emoji.Visible=art.Image=="" end
+	end
+	if entry and entry.Kind=="Food" then
+		view.World:ClearAllChildren();view:SetAttribute("PreviewKey",nil);return
+	end
 	-- Cameras are client-local render helpers, not UI layout. StarterGui cameras
 	-- are not replicated reliably; bind a local camera to the authored viewport.
 	local camera=view:FindFirstChild("PreviewCamera")

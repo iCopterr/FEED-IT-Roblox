@@ -120,10 +120,11 @@ function Controller.Start(gui,onSnapshot)
 		local entry=entries[selected]
 		Preview.Set(detail.Preview,entry)
 		detail.Equip.Visible=entry~=nil and Model.CanSlot(entry);detail.Pin.Visible=false;detail.Lock.Visible=entry~=nil and entry.Kind=="Pet"
-		if not entry then detail.ItemName.Text="SELECT A PET";detail.Stats.Text="Tap a card to see its stats.";return end
+		if not entry then detail.ItemName.Text="SELECT AN ITEM";detail.Stats.Text="Tap a card to see its stats.";return end
 		local state=stateOf(entry)
 		detail.ItemName.Text=entry.Name
 		detail.Stats.Text=if entry.Kind=="Pet" then string.format("%s • LEVEL %s\n%s Money / sec\n%s%s",entry.Rarity,numberText(entry.Level),numberText(entry.Income),state,if entry.Locked then " • LOCKED" else "")
+			elseif entry.Kind=="Food" then string.format("%s servings\n%s%% explosion risk reduction\nSelect this food at your feed plate.",numberText(entry.Quantity),numberText(entry.Reduction*100))
 			else "EGG • "..state.."\n"..(if state=="INCUBATING" then numberText(math.max(0,entry.ReadyAt-snapshot.ServerNow)).."s remaining"
 				elseif state=="READY" then "Press E beside your egg to hatch."
 				else "Hold, then click inside your Pen.")
@@ -150,7 +151,7 @@ function Controller.Start(gui,onSnapshot)
 			card.Stroke.Thickness=if selected==entry.Key then 4 else 3
 			card.ImageColor3=if selected==entry.Key then Color3.fromRGB(255,210,96) else tint
 			card.BackgroundColor3=card.ImageColor3
-			card.ItemName.Text=entry.Name;card.Stats.Text=if entry.Kind=="Pet" then "Lv. "..numberText(entry.Level).." • "..numberText(entry.Income).."/s" else "EGG"
+			card.ItemName.Text=entry.Name;card.Stats.Text=if entry.Kind=="Pet" then "Lv. "..numberText(entry.Level).." • "..numberText(entry.Income).."/s" elseif entry.Kind=="Food" then "×"..numberText(entry.Quantity).." • -"..numberText(entry.Reduction*100).."% risk" else "EGG"
 			card.State.Text=stateOf(entry)..(if entry.Locked then " • LOCKED" else "");card.LockMark.Text=""
 			Preview.Set(card.Preview,entry)
 		end
@@ -158,12 +159,12 @@ function Controller.Start(gui,onSnapshot)
 			if not entries[key] then card:Destroy();cards[key]=nil else card.Visible=shown[key]==true end
 		end
 		layout.EmptyState.Visible=#visible==0
-		layout.EmptyState.Text=if not snapshot then "Loading your collection…" elseif next(entries)==nil then "Your collection starts with an egg.\nVisit the conveyor to get one." else "No matches. Try another name or category."
-		local count=0;for _ in entries do count+=1 end
-		layout.Title.Text="MY PETS  •  "..numberText(count)
+		layout.EmptyState.Text=if not snapshot then "Loading your collection…" elseif category=="Food" and layout.Search.Text=="" then "No food yet.\nVisit the food merchant." elseif next(entries)==nil then "Your collection starts with an egg.\nVisit the conveyor to get one." else "No matches. Try another name or category."
+		local count=0;for _,entry in entries do if (category=="Food")==(entry.Kind=="Food") then count+=1 end end
+		layout.Title.Text=(if category=="Food" then "MY FOOD  •  " else "MY COLLECTION  •  ")..numberText(count)
 		layout.PenSlots.Text=if snapshot then string.format("PEN %d / %d",snapshot.PlacedCount,snapshot.MaxPetSlots) else "PEN —"
 		layout.Sort.ButtonText.Text="SORT: "..string.upper(sort)
-		for _,name in {"All","Pet","Egg"} do
+		for _,name in {"All","Pet","Egg","Food"} do
 			layout[name].ImageColor3=if category==name then Color3.fromRGB(255,195,55) else Color3.fromRGB(111,172,241)
 			layout[name].BackgroundColor3=layout[name].ImageColor3
 			layout[name].ButtonText.TextColor3=Color3.new(1,1,1)
@@ -186,7 +187,7 @@ function Controller.Start(gui,onSnapshot)
 		updateDetail()
 		Responsive.Apply(gui,cards,buttons)
 		if os.clock()>noticeUntil then
-			layout.Status.Text="Add to hotbar • Close inventory • Tap a slot or press 1–0 to hold"
+			layout.Status.Text=if category=="Food" then "Food is selected and consumed at your feed plate." else "Add to hotbar • Close inventory • Tap a slot or press 1–0 to hold"
 			bar.Hint.Text=""
 		end
 		bar.Visible=next(slots)~=nil and not modal.Visible and not otherModal()
@@ -216,7 +217,7 @@ function Controller.Start(gui,onSnapshot)
 		bar.Visible=next(slots)~=nil and not modal.Visible and not otherModal()
 		if not modal.Visible and GuiService.SelectedObject and GuiService.SelectedObject:IsDescendantOf(modal) then GuiService.SelectedObject=nil end
 	end)
-	for _,name in {"All","Pet","Egg"} do layout[name].Activated:Connect(function() category=name;layout.Pets.CanvasPosition=Vector2.zero;render() end) end
+	for _,name in {"All","Pet","Egg","Food"} do layout[name].Activated:Connect(function() category=name;selected=nil;layout.Pets.CanvasPosition=Vector2.zero;render() end) end
 	layout.Search:GetPropertyChangedSignal("Text"):Connect(function() layout.Pets.CanvasPosition=Vector2.zero;render() end)
 	local sorts={"Newest","Income","Level","Rarity"}
 	layout.Sort.Activated:Connect(function() sort=sorts[(table.find(sorts,sort)%#sorts)+1];render() end)

@@ -21,12 +21,12 @@ function Layout.Apply(gui,cards,buttons,viewportOverride)
 	layout.PenSlots.TextSize=16;layout.PenSlots.Visible=not narrow
 	local toolbarY=62
 	layout.Search.Position=UDim2.fromOffset(pad,toolbarY)
-	layout.Search.Size=UDim2.fromOffset(if narrow then w-36 else w-476,40)
+	layout.Search.Size=UDim2.fromOffset(if narrow then w-36 else w-516,40)
 	layout.Search.TextSize=16
 	local tabsY=if narrow then 110 else toolbarY
-	local tabsX=if narrow then pad else w-446
-	local tabStep=if narrow then math.min(64,(w-162)/3) else 70
-	for i,name in {"All","Pet","Egg"} do
+	local tabsX=if narrow then pad else w-486
+	local tabStep=if narrow then math.min(64,(w-162)/4) else 64
+	for i,name in {"All","Pet","Egg","Food"} do
 		layout[name].Position=UDim2.fromOffset(tabsX+(i-1)*tabStep,tabsY)
 		layout[name].Size=UDim2.fromOffset(tabStep-6,40)
 		layout[name].ButtonText.TextSize=if narrow then 14 else 17

@@ -24,4 +24,10 @@ function Config.Total(data)
 	return total
 end
 
+function Config.Inventory(data)
+	local result = {}
+	for _, id in Config.Order do result[id] = Config.Count(data,id) end
+	return result
+end
+
 return table.freeze(Config)

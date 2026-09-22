@@ -6,6 +6,32 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — Food inventory and interactive Feed panel
+
+- Added Food tab inside existing inventory; shows owned food stacks, quantities,
+  risk reduction and emoji/image placeholders. Food excluded from All (pets/eggs)
+  and hotbar; no equip/lock actions for food. Empty Food tab points to merchant.
+- Reworked authored FeedPanel to 720x620 responsive layout: pet ViewportFrame
+  slowly rotates the existing model while panel is visible; four food cards show
+  quantity/reduction and selected border. Click chooses food only; Feed sends the
+  selected type to the server. Unowned food cannot enable Feed. Pickup retained.
+- New FoodCard presenter binds authored ImageLabels/emoji children, ready for
+  future pictures; no runtime UI constructors, UI Director or Computer Use.
+- UI/Feed snapshots provide cloned per-type counts and Feed pet SpeciesId.
+  No balance, rarity-food bonus, save schema or transaction changes.
+- PASS: 32 combined two-player FoodShopVerification checks, including client
+  food filtering/hotbar exclusion, image placeholders, preview rotation and
+  selection of unowned/owned foods. Existing purchase/Feed/Rescue checks pass.
+  Rojo build, diff check and synchronized Luau compilation pass.
+- Removed matching duplicate new UI/module Instances from Rojo sync; source
+  assets retained. Screenshot appearance and physical click/touch review remain
+  user playtest tasks; no blocking implementation issues.
+- Files: Feed/Inventory controllers; InventoryModel/Layout, ItemPreview and new
+  FoodCard; UIService/FeedService, FoodConfig; FeedYourPetUI asset; both
+  FoodShopVerification files and handoff. Previous commit a8de655; included in
+  `feat: add food inventory and pet preview feed selection`.
+- Next: playtest layout and food choice clarity. Food HUD stays removed.
+
 ### Latest session — remove Food HUD
 
 - Removed only the authored HUD.Food row and HUD controller food bindings/reflow.
