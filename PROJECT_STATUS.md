@@ -6,6 +6,60 @@
 
 **Last Updated:** 2026-09-22
 
+### Current session — food shop / timed Rescue redesign (verified)
+
+- User approved level-0 failure, immediate-only Rescue, replacing AFK farms with
+  restocking food purchases, and removing Tokens/consumable Protection. No real
+  players/refunds; remote DataStore access disabled with DataConfig.MemoryOnly.
+  Existing save infrastructure retained; no remote data deleted.
+- Implemented Money merchant: Basic always available; two distinct weighted
+  special offers every 30 minutes, one purchase per player/offer. FoodConfig owns
+  prices, quantities and 0/15/30/45% relative risk reductions; one serving per Feed.
+- Feed validates selected food server-side and multiplies its reduction with plate
+  upgrades. Existing RNG order/critical cap unchanged. Old ProtectedFeed rejected.
+- Rescue lasts 15 seconds plus the failure-presentation allowance, based on the
+  original server timestamp. Expiry/Keep Base restores the same pet at level 0;
+  immediate free Studio Rescue restores old growth. No Food refunds or replay.
+- AFK farm/upgrade services and controllers no longer start; removed six Farm
+  submodels from PlayerPlots and unmapped farm signs (assets/history retained).
+  Removed the matching six stale sign models left in Studio after unmapping;
+  the full FarmUpgradeSigns.rbxmx asset is retained for recovery.
+  Token HUD, popup and debug grants removed; authored food selector replaces
+  Protection button. Existing UI style used, no UI Director or Computer Use.
+- Schema v9 adds special Foods; Basic remains Food. HUD sums all servings.
+  Old farm/token fields/modules remain inactive compatibility/reference data.
+- PASS: 30 combined two-player checks; real timeout returns original identity at
+  level 0; ownership, duplicate requests, Money/food accounting, stock isolation.
+  Rojo build, diff whitespace and synchronized script compilation pass.
+- Fixed shop/Rescue startup lifecycle: early 3s fallback clones could be replaced
+  by Roblox's initial StarterGui copy, leaving stale controller references. Now
+  wait for actual authored ScreenGuis. Both clients render Money shop stock and
+  initialize HUD successfully. No anytime recovery button or Token UI remains.
+- In progress/blockers: none for this implementation. Physical click/touch and
+  visual comfort still need user playtest; automated tests verify UI binding and
+  server transitions, not screenshot appearance or physical inputs.
+- Removed confirmed identical Rojo duplicates in Studio: FoodConfig,
+  FoodShopVerification, FoodType and Money. Filesystem assets remain intact.
+- Files: shared food/data/game/merchant/revive configs; schema/adapter; feed,
+  merchant, rescue, HUD/debug/travel/UI services/controllers; both bootstraps;
+  authored merchant/feed/rescue/debug UI; plots/merchant world; project mapping;
+  new FoodShopVerification pair, InventoryVerification, design decisions/handoff.
+- Next: playtest food prices, personal stock and 15s Rescue pacing. Old
+  Farm/Protection/Merchant verification scripts target the superseded design.
+- Previous working commit a643007; this session is included in
+  `feat: replace farm economy with food shop and timed rescue`.
+  Direct MCP localhost:58742 and Rojo connected; tests ended back in Edit mode.
+
+### Latest discussion — failure, Rescue and food-shop proposal
+
+- Recorded pending design in docs/design-decisions.md: preserve failed pets at
+  base level 0; immediate limited-time Rescue only (15s proposed test window),
+  no Food refund or timer restart on disconnect. Not implemented this session.
+- Recorded restocking merchant food types with different failure-risk reduction
+  as a proposal, not an approved farm replacement. Balance/currency/migration and
+  interactions with existing protection/plate upgrades need decisions first.
+- Documentation only; no gameplay changes or tests. Existing Token HUD edits preserved.
+
 ### Latest session — remove travel button delay
 
 - Removed 0.6s post-request client lock; buttons release as soon as server replies.

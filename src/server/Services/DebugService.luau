@@ -45,15 +45,10 @@ function Service.HandleRequest(player, action, value, petId, sequence)
 	state.LastRequest=now
 	if Locks.IsLocked(player) then return {Ok=false,Code="Busy"} end
 	local result={Ok=true,Code="Updated",NextSequence=sequence+1}
-	if action=="AddMoney" or action=="AddFood" or action=="AddTokens" then
-		local field=if action=="AddMoney" then "Money" else if action=="AddFood" then "Food" else "Tokens"
-		if action=="AddTokens" then
-			if not integer(value,1,MerchantConfig.TokenCap) or data.Tokens+value>MerchantConfig.TokenCap then return {Ok=false,Code="InvalidAmount"} end
-			data.Tokens+=value
-		else
-			if not integer(value,1,Config.MaxGrant) or data[field]+value>Config.MaxBalance then return {Ok=false,Code="InvalidAmount"} end
-			data[field]+=value
-		end
+	if action=="AddMoney" or action=="AddFood" then
+		local field=if action=="AddMoney" then "Money" else "Food"
+		if not integer(value,1,Config.MaxGrant) or data[field]+value>Config.MaxBalance then return {Ok=false,Code="InvalidAmount"} end
+		data[field]+=value
 	elseif action=="SpawnPet" then
 		if type(value)~="string" or not PetConfig.Species[value] then return {Ok=false,Code="InvalidSpecies"} end
 		local count=0; for _ in data.Inventory do count+=1 end
@@ -61,9 +56,6 @@ function Service.HandleRequest(player, action, value, petId, sequence)
 		local pet=PetService.CreatePet(player,value)
 		if not pet then return {Ok=false,Code="CreateFailed"} end
 		result.PetId=pet.PetId
-	elseif action=="SetFarmLevel" then
-		if not integer(value,1,#FarmConfig.FoodPerSecond) then return {Ok=false,Code="InvalidLevel"} end
-		data.FarmLevel=value
 	elseif action=="SetPetLevel" or action=="ForceFeed" then
 		if type(petId)~="string" or #petId>64 or not data.Inventory[petId] then return {Ok=false,Code="NotOwned"} end
 		local pet=data.Inventory[petId]

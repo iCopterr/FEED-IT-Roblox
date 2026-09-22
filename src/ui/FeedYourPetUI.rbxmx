@@ -240,7 +240,7 @@ Check the explosion risk before every attempt.</string>
 </Item>
 </Item>
 <Item class="TextButton"><Properties>
-<string name="Name">ProtectedFeed</string>
+<string name="Name">FoodType</string>
 <bool name="Archivable">true</bool>
 <UDim2 name="Size"><XS>0</XS><XO>226</XO><YS>0</YS><YO>64</YO></UDim2>
 <UDim2 name="Position"><XS>0</XS><XO>270</XO><YS>0</YS><YO>348</YO></UDim2>
@@ -252,7 +252,7 @@ Check the explosion risk before every attempt.</string>
 <float name="ZIndex">21</float>
 <bool name="Active">true</bool>
 <bool name="Selectable">true</bool>
-<string name="Text">PROTECTED FEED</string>
+<string name="Text">CHOOSE FOOD</string>
 <token name="Font">26</token>
 <float name="TextSize">16</float>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>

@@ -7,14 +7,10 @@ local numberText = require(ReplicatedStorage.Shared.NumberFormat).Compact
 function Controller.Start()
 	local player = Players.LocalPlayer
 	local playerGui = player:WaitForChild("PlayerGui")
-	local gui = playerGui:WaitForChild("ReviveUI", 3)
-	if not gui then
-		local template = assert(game.StarterGui:WaitForChild("ReviveUI", 3), "ReviveUI asset missing; check Rojo")
-		gui = template:Clone()
-		gui.Parent = playerGui
-	end
+	local gui = assert(playerGui:WaitForChild("ReviveUI",30),"ReviveUI missing; check Rojo")
 	local panel = gui:WaitForChild("Panel")
 	local remote = ReplicatedStorage:WaitForChild("PrototypeRevive")
+	local receivedAt = 0
 	local records, seen, index, busy, snapshot = {}, {}, 1, false, nil
 	local messages = {Busy="Feed or recovery is still animating/saving. Please wait.",
 		Cooldown="Please wait a moment.", StudioOnly="Free Revive is available in Studio only.",
@@ -23,17 +19,18 @@ function Controller.Start()
 	local function render()
 		index = math.clamp(index, 1, math.max(1, #records))
 		local record = records[index]
-		gui.Open.Visible = #records > 0
+		gui.Open.Visible = false
 		gui.Open.Text = string.format("PET RECOVERY (%d)", #records)
-		panel.Title.Text = string.format("PET RECOVERY  %d / %d", if record then index else 0, #records)
+		local remaining = record and snapshot and math.max(0, math.ceil(record.ExpiresAt-snapshot.ServerNow-(os.clock()-receivedAt))) or 0
+		panel.Title.Text = string.format("RESCUE • %ds",remaining)
 		panel.PetName.Text = if record then record.PetName else "No pending recovery"
 		panel.Details.Text = if record then string.format("%s • LEVEL %d • %s MONEY/SEC BEFORE BREAKING\n%s Food remains spent",
 			record.Rarity, record.FeedLevel, numberText(record.Income), numberText(record.FoodSpent)) else "Recovered pets are in MY PETS. Equip and place them again."
-		local enabled = record ~= nil and snapshot and snapshot.CanRevive and not snapshot.Busy and not busy
+		local enabled = record ~= nil and snapshot and snapshot.CanRevive and remaining > 0 and not snapshot.Busy and not busy
 		panel.Revive.Active = enabled == true
 		panel.Revive.AutoButtonColor = enabled == true
 		panel.Revive.BackgroundColor3 = if enabled then Color3.fromRGB(85,166,102) else Color3.fromRGB(100,100,110)
-		panel.Revive.Text = if snapshot and not snapshot.CanRevive then "REVIVE: STUDIO TEST ONLY" else "REVIVE FREE (STUDIO)"
+		panel.Revive.Text = if snapshot and not snapshot.CanRevive then "RESCUE: STUDIO TEST ONLY" else "RESTORE GROWTH (FREE TEST)"
 		local canKeep = record ~= nil and snapshot ~= nil and not snapshot.Busy and not busy
 		panel.Later.Text = if record then string.format("KEEP AT LEVEL %d",snapshot and snapshot.ResetLevel or 0) else "CLOSE"
 		panel.Later.Active = canKeep or (record == nil and not busy)
@@ -61,6 +58,8 @@ function Controller.Start()
 		end
 		local selected = records[index]
 		records, snapshot = result.Records, result
+		receivedAt = os.clock()
+		if #records == 0 then panel.Visible = false end
 		local unseen = false
 		for i, record in records do
 			if selected and selected.AttemptId == record.AttemptId then index = i end
@@ -69,7 +68,7 @@ function Controller.Start()
 		-- Wait until the explosion presentation/save has ended before prompting.
 		if unseen and not result.Busy then
 			for _, record in records do seen[record.AttemptId] = true end
-			panel.Status.Text = string.format("Revive restores the previous level. Keep at level %d closes this Revive offer.",result.ResetLevel)
+			panel.Status.Text = string.format("Restore growth now, or keep level %d. When time runs out, your pet returns at base level.",result.ResetLevel)
 			show()
 		end
 		render()

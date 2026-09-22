@@ -1,6 +1,8 @@
 --!strict
 
 local DataConfig = {
+	-- Prototype playtests never read or write remote player data.
+	MemoryOnly = true,
 	ProductionDataStoreName = "FeedYourPet_PlayerData_v1",
 	StudioDataStoreName = "FeedYourPet_StudioPlayerData_v1",
 	PlayerKeyPrefix = "Player_",

@@ -3,7 +3,7 @@ local Data=require(script.Parent.DataService)
 local Schema=require(script.Parent.Parent.Data.PlayerDataSchema)
 local Locks=require(script.Parent.FeedLocks)
 local Config=require(game.ReplicatedStorage.Shared.Config.MerchantConfig)
-local FeedConfig=require(game.ReplicatedStorage.Shared.Config.FeedConfig)
+local FoodConfig=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 local Service={}
 local sessions,saving={},{}
 
@@ -37,9 +37,9 @@ local function snapshot(player,state)
 	for slot,id in stock do
 		local item=Config.Items[id]
 		table.insert(items,{Slot=slot,ItemId=id,Name=item.DisplayName,Description=item.Description,Price=item.Price,
-			Purchased=data.MerchantRestockId==restockId and data.MerchantPurchases[tostring(slot)]==true})
+			Purchased=id~="basic" and data.MerchantRestockId==restockId and data.MerchantPurchases[tostring(slot)]==true})
 	end
-	return {Ok=true,Tokens=data.Tokens,ProtectionTokens=data.ProtectionTokens,RestockId=restockId,
+	return {Ok=true,Money=data.Money,RestockId=restockId,
 		RestocksAt=(restockId+1)*Config.RestockSeconds,ServerNow=now,Items=items,NextSequence=state.Sequence+1,
 		Busy=Locks.IsLocked(player) or saving[player]~=nil}
 end
@@ -70,24 +70,22 @@ function Service.HandleRequest(player,action,slot,expectedRestock,sequence)
 	if not aliveAndNear(player) then return {Ok=false,Code="TooFar"} end
 	local itemId=Config.GetStock(current)[slot];local item=itemId and Config.Items[itemId]
 	if not item then return {Ok=false,Code="Unavailable"} end
-	if data.MerchantRestockId==current and data.MerchantPurchases[tostring(slot)] then return {Ok=false,Code="Sold"} end
-	if data.Tokens<item.Price then return {Ok=false,Code="NotEnoughTokens"} end
-	if item.RewardType=="Protection" and data.ProtectionTokens+item.Amount>FeedConfig.ProtectionTokenCap then return {Ok=false,Code="ProtectionFull"} end
-	local oldTokens,oldFood,oldProtection=data.Tokens,data.Food,data.ProtectionTokens
+	if itemId~="basic" and data.MerchantRestockId==current and data.MerchantPurchases[tostring(slot)] then return {Ok=false,Code="Sold"} end
+	if data.Money<item.Price then return {Ok=false,Code="NotEnoughMoney"} end
+	local oldMoney,oldFood,oldFoods=data.Money,data.Food,table.clone(data.Foods)
 	local oldRestock,oldPurchases=data.MerchantRestockId,table.clone(data.MerchantPurchases)
 	assert(Locks.Begin(player,"MerchantPurchase"))
 	if data.MerchantRestockId~=current then data.MerchantRestockId=current;data.MerchantPurchases={} end
-	data.Tokens-=item.Price
-	if item.RewardType=="Food" then data.Food+=item.Amount else data.ProtectionTokens+=item.Amount end
-	data.MerchantPurchases[tostring(slot)]=true
+	data.Money-=item.Price
+	FoodConfig.Add(data,itemId,item.Amount)
+	if itemId~="basic" then data.MerchantPurchases[tostring(slot)]=true end
 	if not Schema.Validate(data) then
-		data.Tokens,data.Food,data.ProtectionTokens=oldTokens,oldFood,oldProtection
+		data.Money,data.Food,data.Foods=oldMoney,oldFood,oldFoods
 		data.MerchantRestockId,data.MerchantPurchases=oldRestock,oldPurchases
 		Locks.Finish(player);return {Ok=false,Code="InvalidData"}
 	end
 	local result={Ok=true,Code="Purchased",Slot=slot,RestockId=current,ItemId=itemId,Name=item.DisplayName,
-		RewardType=item.RewardType,Amount=item.Amount,Tokens=data.Tokens,Food=data.Food,
-		ProtectionTokens=data.ProtectionTokens,NextSequence=sequence+1}
+		RewardType=item.RewardType,Amount=item.Amount,Money=data.Money,Food=FoodConfig.Total(data),NextSequence=sequence+1}
 	state.Sequence=sequence;state.Last=table.clone(result);queueSave(player,data)
 	return result
 end
@@ -96,12 +94,12 @@ function Service.Start()
 	assert(Config.StockSlots>0 and Config.StockSlots<=#Config.ItemOrder,"Invalid merchant slot count")
 	for _,id in Config.ItemOrder do
 		local item=assert(Config.Items[id],"Missing merchant item")
-		assert(item.Price>0 and item.Price%1==0 and item.Weight>0 and item.Amount>0,"Invalid merchant item")
-		assert(item.RewardType=="Food" or item.RewardType=="Protection","Invalid merchant reward")
+		assert(item.Price>0 and item.Price%1==0 and item.Weight>=0 and item.Amount>0,"Invalid merchant item")
+		assert(item.RewardType=="Food","Invalid merchant reward")
 	end
 	local point=workspace:WaitForChild("MysteryMerchant"):WaitForChild("InteractionPoint")
 	local prompt=point:FindFirstChild("OpenMysteryMerchant") or Instance.new("ProximityPrompt")
-	prompt.Name="OpenMysteryMerchant";prompt.ActionText="Browse";prompt.ObjectText="Mystery Merchant"
+	prompt.Name="OpenMysteryMerchant";prompt.ActionText="Browse";prompt.ObjectText="Food Merchant"
 	prompt.KeyboardKeyCode=Enum.KeyCode.E;prompt.GamepadKeyCode=Enum.KeyCode.ButtonX
 	prompt.HoldDuration=.25;prompt.MaxActivationDistance=Config.PurchaseDistance;prompt.RequiresLineOfSight=false;prompt.Parent=point
 	local remote=Instance.new("RemoteFunction");remote.Name="PrototypeMerchant";remote.OnServerInvoke=Service.HandleRequest;remote.Parent=game.ReplicatedStorage

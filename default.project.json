@@ -16,9 +16,6 @@
       "PetConveyor": {
         "$path": "src/world/PetConveyor.rbxmx"
       },
-      "FarmUpgradeSigns": {
-        "$path": "src/world/FarmUpgradeSigns.rbxmx"
-      },
       "PetTemplates": {
         "$path": "src/world/PetTemplates.rbxmx"
       },

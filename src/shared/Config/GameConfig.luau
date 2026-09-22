@@ -1,7 +1,7 @@
 --!strict
 
 local GameConfig = {
-	PlayerDataVersion = 8,
+	PlayerDataVersion = 9,
 	PetDataVersion = 2,
 
 	StartingMoney = 0,
@@ -10,8 +10,8 @@ local GameConfig = {
 	StartingFeedPlateLevel = 1,
 	StartingFarmPower = 1,
 	StartingMaxPetSlots = 5,
-	-- Prototype grant so Protection can be tested before quests/products exist.
-	StartingProtectionTokens = 3,
+	-- Deprecated fields retained for old schema/test fixtures; no active currency.
+	StartingProtectionTokens = 0,
 	StartingTokens = 0,
 }
 

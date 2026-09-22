@@ -10,6 +10,7 @@ local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
 local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
 local Config = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local PlateConfig = require(game.ReplicatedStorage.Shared.Config.FeedPlateConfig)
+local FoodConfig = require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 local FeedService = {}
 local sessions = {}
 local foodChanged, outcomeChanged
@@ -22,21 +23,25 @@ local function session(player)
 	end
 	return state
 end
-local function snapshot(player, state)
+local function snapshot(player, state, foodId)
 	local data = DataService.GetData(player)
 	if player.Parent ~= Players or not data or not Schema.Validate(data) then return {Ok=false, Code="Loading"} end
 	local pet, reason = PedestalService.GetFeedPet(player)
+	foodId = foodId or "basic"
+	local food = FoodConfig.Types[foodId]
+	if not food then return {Ok=false, Code="InvalidFood"} end
 	local definition = pet and PetConfig.Species[pet.SpeciesId]
 	local count = 0
 	for _ in data.PendingRecovery do count += 1 end
 	local risk = pet and Config.ExplosionChance[pet.FeedLevel+1] and PlateConfig.GetRisk(Config.ExplosionChance[pet.FeedLevel+1],data.FeedPlateLevel)
+	if risk then risk *= 1-food.Reduction end
 	return {
+		FoodId=foodId, FoodName=food.Name, FoodReduction=food.Reduction,
 		Ok=pet ~= nil, Code=reason, PetId=pet and pet.PetId,
 		PetName=pet and (definition and definition.DisplayName or pet.SpeciesId),
 		Rarity=pet and pet.Rarity, FeedLevel=pet and pet.FeedLevel,
-		Food=data.Food, FoodAt=os.clock(), Cost=pet and Config.GetFoodCost(pet.FeedLevel+1,pet.Rarity),
-		Risk=risk, ProtectedRisk=pet and risk and Config.GetProtectedRisk(risk,pet.FeedLevel+1),
-		ProtectionTokens=data.ProtectionTokens,
+		Food=FoodConfig.Count(data,foodId), FoodAt=os.clock(), Cost=pet and FoodConfig.ServingsPerFeed,
+		Risk=risk,
 		BaseRisk=pet and Config.ExplosionChance[pet.FeedLevel+1],
 		PlateLevel=math.min(data.FeedPlateLevel,#PlateConfig.RiskReduction), PlateReduction=PlateConfig.GetReduction(data.FeedPlateLevel),
 		MaxLevel=pet and pet.FeedLevel>=Config.MaxConfiguredLevel,
@@ -44,22 +49,22 @@ local function snapshot(player, state)
 		PendingRecoveryCount=count, LastOutcome=state.LastResult,
 	}
 end
-function FeedService.HandleRequest(player, action, petId, sequence)
+function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	if player.Parent ~= Players then return {Ok=false, Code="Loading"} end
-	if action ~= "Snapshot" and action ~= "Feed" and action ~= "ProtectedFeed" and action ~= "Pickup" then return {Ok=false, Code="InvalidRequest"} end
+	if action ~= "Snapshot" and action ~= "Feed" and action ~= "Pickup" then return {Ok=false, Code="InvalidRequest"} end
 	local state = session(player)
 	local now = os.clock()
 	if action == "Snapshot" then
 		if now-state.LastSnapshot < .2 then return {Ok=false, Code="Cooldown"} end
 		state.LastSnapshot = now
-		return snapshot(player, state)
+		return snapshot(player, state, foodId)
 	end
 	if type(petId) ~= "string" or #petId==0 or #petId>64 then return {Ok=false, Code="InvalidRequest"} end
 	if action == "Pickup" then
 		if Locks.IsLocked(player) then return {Ok=false, Code="Busy"} end
 		if now-(state.LastPickup or -math.huge) < .25 then return {Ok=false, Code="Cooldown"} end
 		state.LastPickup = now
-		local result = snapshot(player, state)
+		local result = snapshot(player, state, foodId)
 		if not result.Ok then return result end
 		if result.PetId ~= petId then return {Ok=false, Code="PetChanged"} end
 		local ok, reason = CarryService.Equip(player, petId)
@@ -75,15 +80,13 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 	if Locks.IsLocked(player) then return {Ok=false, Code="Busy"} end
 	if now-state.LastAttempt < Config.CooldownSeconds then return {Ok=false, Code="Cooldown"} end
 	state.LastAttempt = now
-	local result = snapshot(player, state)
+	local result = snapshot(player, state, foodId)
 	if not result.Ok then return result end
 	if result.PetId ~= petId then return {Ok=false, Code="PetChanged"} end
 	if result.MaxLevel then return {Ok=false, Code="MaxLevel"} end
 	if not result.Cost then return {Ok=false, Code="Unavailable"} end
 	if result.Food < result.Cost then result.Ok=false; result.Code="NotEnoughFood"; return result end
-	local protected = action == "ProtectedFeed"
-	if protected and not result.ProtectedRisk then return {Ok=false,Code="ProtectionUnavailable"} end
-	if protected and result.ProtectionTokens < 1 then return {Ok=false,Code="NoProtection"} end
+
 	local data = DataService.GetData(player)
 	local pet = data.Inventory[petId]
 	local before = table.clone(pet)
@@ -91,12 +94,9 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 	-- Food and outcome are one non-yielding profile mutation, then one queued
 	-- profile save. A failed/ambiguous save NEVER rolls back or rerolls.
 	assert(Locks.Begin(player, petId))
-	local oldFood = data.Food
-	local oldProtectionTokens = data.ProtectionTokens
-	data.Food -= result.Cost
-	if protected then data.ProtectionTokens -= 1 end
+	FoodConfig.Add(data,result.FoodId,-result.Cost)
 	local forced = DebugOverrides.Resolve(player, petId, pet.FeedLevel)
-	local appliedRisk = if protected then result.ProtectedRisk else result.Risk
+	local appliedRisk = result.Risk
 	local outcome = forced or Resolver.Roll(pet.FeedLevel, state.TestRandom or function() return rng:NextNumber() end, appliedRisk)
 	local attemptId = HttpService:GenerateGUID(false)
 	if outcome.Code == "Explosion" then
@@ -108,8 +108,7 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 	end
 	pet.FeedLevel = outcome.FeedLevel
 	if not Schema.Validate(data) then
-		data.Food = oldFood
-		data.ProtectionTokens = oldProtectionTokens
+		FoodConfig.Add(data,result.FoodId,result.Cost)
 		pet.FeedLevel = before.FeedLevel
 		data.Inventory[petId], data.PendingRecovery[petId] = pet, nil
 		Locks.Finish(player)
@@ -121,9 +120,9 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 	result.AttemptId, result.OldLevel = attemptId, before.FeedLevel
 	result.StartedAt = workspace:GetServerTimeNow()
 	result.Code, result.Critical, result.Gain = outcome.Code, outcome.Critical, outcome.Gain
-	result.Protected, result.AppliedRisk, result.ProtectionTokens = protected, appliedRisk, data.ProtectionTokens
+	result.AppliedRisk = appliedRisk
 	result.FeedLevel, result.Accepted = outcome.FeedLevel, true
-	result.Food, result.FoodAt = data.Food, os.clock()
+	result.Food, result.FoodAt = FoodConfig.Count(data,result.FoodId), os.clock()
 	result.Income = pet.BaseIncome * (Config.Multiplier[outcome.FeedLevel] or 1)
 	result.LastOutcome = nil
 	state.Sequence = sequence
@@ -151,7 +150,7 @@ function FeedService.HandleRequest(player, action, petId, sequence)
 			task.wait(Config.SaveRetrySeconds)
 		end
 	end)
-	if foodChanged then foodChanged:FireClient(player, {Food=result.Food, FoodAt=result.FoodAt}) end
+	if foodChanged then foodChanged:FireClient(player, {Food=FoodConfig.Total(data), FoodAt=result.FoodAt}) end
 	if outcomeChanged then
 		-- Other players need the visual result, not this player's balance/recovery data.
 		outcomeChanged:FireAllClients({Accepted=true, AttemptId=result.AttemptId, OwnerUserId=result.OwnerUserId,

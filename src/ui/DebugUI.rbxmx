@@ -294,48 +294,7 @@
 <bool name="ClearTextOnFocus">false</bool>
 </Properties>
 </Item>
-<Item class="TextBox">
-<Properties>
-<string name="Name">FarmLevel</string>
-<bool name="Archivable">true</bool>
-<UDim2 name="Size">
-<XS>0</XS>
-<XO>164</XO>
-<YS>0</YS>
-<YO>38</YO>
-</UDim2>
-<UDim2 name="Position">
-<XS>0</XS>
-<XO>16</XO>
-<YS>0</YS>
-<YO>324</YO>
-</UDim2>
-<Vector2 name="AnchorPoint">
-<X>0</X>
-<Y>0</Y>
-</Vector2>
-<float name="BackgroundTransparency">0</float>
-<Color3 name="BackgroundColor3">
-<R>0.23529411852359772</R>
-<G>0.2823529541492462</G>
-<B>0.35686275362968445</B>
-</Color3>
-<float name="BorderSizePixel">0</float>
-<bool name="Visible">true</bool>
-<bool name="Active">true</bool>
-<string name="Text">1</string>
-<Color3 name="TextColor3">
-<R>1</R>
-<G>1</G>
-<B>1</B>
-</Color3>
-<bool name="TextScaled">false</bool>
-<float name="TextSize">18</float>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-<bool name="ClearTextOnFocus">false</bool>
-</Properties>
-</Item>
+
 <Item class="TextButton">
 <Properties>
 <string name="Name">AddMoney</string>
@@ -418,26 +377,7 @@
 <token name="Font">26</token>
 </Properties>
 </Item>
-<Item class="TextButton">
-<Properties>
-<string name="Name">AddTokens</string>
-<bool name="Archivable">true</bool>
-<UDim2 name="Size">
-<XS>0</XS><XO>112</XO><YS>0</YS><YO>38</YO>
-</UDim2>
-<UDim2 name="Position">
-<XS>0</XS><XO>412</XO><YS>0</YS><YO>110</YO>
-</UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<float name="BackgroundTransparency">0</float>
-<Color3 name="BackgroundColor3"><R>0.23529411852359772</R><G>0.2823529541492462</G><B>0.35686275362968445</B></Color3>
-<float name="BorderSizePixel">0</float>
-<bool name="Visible">true</bool><bool name="Active">true</bool>
-<string name="Text">+ TOKEN</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<bool name="TextScaled">false</bool><float name="TextSize">16</float><bool name="TextWrapped">true</bool><token name="Font">26</token>
-</Properties>
-</Item>
+
 <Item class="TextButton">
 <Properties>
 <string name="Name">Species</string>
@@ -602,47 +542,7 @@
 <token name="Font">26</token>
 </Properties>
 </Item>
-<Item class="TextButton">
-<Properties>
-<string name="Name">SetFarmLevel</string>
-<bool name="Archivable">true</bool>
-<UDim2 name="Size">
-<XS>0</XS>
-<XO>336</XO>
-<YS>0</YS>
-<YO>38</YO>
-</UDim2>
-<UDim2 name="Position">
-<XS>0</XS>
-<XO>188</XO>
-<YS>0</YS>
-<YO>324</YO>
-</UDim2>
-<Vector2 name="AnchorPoint">
-<X>0</X>
-<Y>0</Y>
-</Vector2>
-<float name="BackgroundTransparency">0</float>
-<Color3 name="BackgroundColor3">
-<R>0.23529411852359772</R>
-<G>0.2823529541492462</G>
-<B>0.35686275362968445</B>
-</Color3>
-<float name="BorderSizePixel">0</float>
-<bool name="Visible">true</bool>
-<bool name="Active">true</bool>
-<string name="Text">SET FARM LEVEL (1–10)</string>
-<Color3 name="TextColor3">
-<R>1</R>
-<G>1</G>
-<B>1</B>
-</Color3>
-<bool name="TextScaled">false</bool>
-<float name="TextSize">18</float>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-</Properties>
-</Item>
+
 <Item class="TextButton">
 <Properties>
 <string name="Name">Mode</string>

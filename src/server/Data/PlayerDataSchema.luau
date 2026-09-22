@@ -5,6 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local FeedConfig = require(ReplicatedStorage.Shared.Config.FeedConfig)
 local MerchantConfig = require(ReplicatedStorage.Shared.Config.MerchantConfig)
+local FoodConfig = require(ReplicatedStorage.Shared.Config.FoodConfig)
 
 export type PetData = {
 	DataVersion: number,
@@ -30,6 +31,7 @@ export type PlayerData = {
 	DataVersion: number,
 	Money: number,
 	Food: number,
+	Foods: { [string]: number },
 	FarmLevel: number,
 	FeedPlateLevel: number,
 	FarmPower: number,
@@ -58,6 +60,14 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+migrations[8] = function(source)
+	local result = table.clone(source)
+	result.Foods = {}
+	result.Tokens, result.ProtectionTokens = 0, 0
+	result.MerchantRestockId, result.MerchantPurchases = 0, {}
+	return result, nil
+end
 
 migrations[7] = function(source)
 	local result = table.clone(source)
@@ -343,6 +353,7 @@ local function clonePlayerData(data: PlayerData): PlayerData
 		DataVersion = data.DataVersion,
 		Money = data.Money,
 		Food = data.Food,
+		Foods = table.clone(data.Foods),
 		FarmLevel = data.FarmLevel,
 		FeedPlateLevel = data.FeedPlateLevel,
 		FarmPower = data.FarmPower,
@@ -366,6 +377,7 @@ function PlayerDataSchema.CreateDefault(): PlayerData
 		DataVersion = GameConfig.PlayerDataVersion,
 		Money = GameConfig.StartingMoney,
 		Food = GameConfig.StartingFood,
+		Foods = {},
 		FarmLevel = GameConfig.StartingFarmLevel,
 		FeedPlateLevel = GameConfig.StartingFeedPlateLevel,
 		FarmPower = GameConfig.StartingFarmPower,
@@ -405,6 +417,12 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 
 	if not isNonNegativeNumber(data.Food) then
 		return false, "Food must be a non-negative finite number"
+	end
+	if type(data.Foods) ~= "table" then return false, "Foods must be a map" end
+	for id, amount in data.Foods do
+		if id == "basic" or not FoodConfig.Types[id] or not isNonNegativeInteger(amount) then
+			return false, "Invalid food inventory"
+		end
 	end
 
 	if not isPositiveInteger(data.FarmLevel) then

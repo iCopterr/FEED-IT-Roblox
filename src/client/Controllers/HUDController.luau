@@ -49,10 +49,10 @@ function Controller.Start()
 		lastFoodAt=timestamp
 		hud.Food.Value.Text=string.format(Config.Text.Food,numberText(state.Food))
 	end
-	for _,name in {"PetIncome","FarmUpgradeChanged","FeedPlateUpgradeChanged","ConveyorPurchaseChanged"} do
+	for _,name in {"PetIncome","FeedPlateUpgradeChanged","ConveyorPurchaseChanged"} do
 		ReplicatedStorage:WaitForChild(name).OnClientEvent:Connect(money)
 	end
-	for _,name in {"Farm","FeedFoodChanged"} do ReplicatedStorage:WaitForChild(name).OnClientEvent:Connect(food) end
+	for _,name in {"FeedFoodChanged"} do ReplicatedStorage:WaitForChild(name).OnClientEvent:Connect(food) end
 	local function resize()
 		local size=gui.AbsoluteSize
 		local narrow=size.X<760

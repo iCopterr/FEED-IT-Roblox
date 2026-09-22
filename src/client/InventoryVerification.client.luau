@@ -29,6 +29,8 @@ local ok,failure=xpcall(function()
 		check(true,"Live "..name.." balance replaces placeholder")
 	end
 	check(not game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack),"Default Backpack suppressed")
+	local merchant=game.Players.LocalPlayer.PlayerGui:WaitForChild("MerchantUI",10)
+	check(merchant:FindFirstChild("TokenHUD")==nil,"Token HUD removed")
 	local remote=game.ReplicatedStorage.PrototypeUI.Request
 	local snapshot
 	waitFor(function() local state=remote:InvokeServer("Snapshot");if state.Ok then snapshot=state;return true end end)

@@ -12,7 +12,7 @@ type Transform = (unknown) -> unknown
 local DataStoreAdapter = {}
 
 local memoryEntries: { [string]: unknown } = {}
-local useMemory = RunService:IsStudio() and not DataConfig.UseDataStoreInStudio
+local useMemory = DataConfig.MemoryOnly or (RunService:IsStudio() and not DataConfig.UseDataStoreInStudio)
 local dataStoreName = if RunService:IsStudio()
 	then DataConfig.StudioDataStoreName
 	else DataConfig.ProductionDataStoreName

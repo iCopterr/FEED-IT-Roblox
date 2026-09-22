@@ -9,6 +9,13 @@ local Config = require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
 local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local sessions = {}
 local Service = {}
+local presentation = FeedConfig.Presentation
+local presentationSeconds = math.ceil(presentation.FloatSeconds + presentation.SpinSeconds
+	+ math.max(presentation.Success.ReturnSeconds,presentation.MiracleSave.ReturnSeconds,
+		presentation.Explosion.BurstSeconds+presentation.Explosion.FadeSeconds))
+local function expiresAt(record)
+	return record.ExplodedAt + presentationSeconds + Config.WindowSeconds
+end
 
 function Service.HandleRequest(player, action, petId, attemptId)
 	if player.Parent ~= Players then return {Ok=false, Code="Loading"} end
@@ -30,14 +37,14 @@ function Service.HandleRequest(player, action, petId, attemptId)
 			table.insert(records, {PetId=id, AttemptId=record.AttemptId,
 				PetName=if definition then definition.DisplayName else pet.SpeciesId,
 				Rarity=pet.Rarity, FeedLevel=pet.FeedLevel, Income=MoneyService.GetPetRate(pet),
-				ExplodedAt=record.ExplodedAt, FoodSpent=record.FoodSpent})
+				ExplodedAt=record.ExplodedAt, ExpiresAt=expiresAt(record), FoodSpent=record.FoodSpent})
 		end
 		table.sort(records, function(a,b)
 			if a.ExplodedAt ~= b.ExplodedAt then return a.ExplodedAt > b.ExplodedAt end
 			return a.PetId < b.PetId
 		end)
 		return {Ok=true, Records=records, CanRevive=RunService:IsStudio(),
-			ResetLevel=FeedConfig.ExplosionResetLevel, Busy=Locks.IsLocked(player)}
+			ServerNow=os.time(), ResetLevel=FeedConfig.ExplosionResetLevel, Busy=Locks.IsLocked(player)}
 	end
 	-- The server gate is unconditional. A client flag/config cannot enable free
 	-- recovery in a published game; paid receipts are deliberately out of scope.
@@ -51,6 +58,8 @@ function Service.HandleRequest(player, action, petId, attemptId)
 	-- explosion of the same pet. Consuming the record is the durable replay guard.
 	if not record then return {Ok=false, Code="Unavailable"} end
 	if record.AttemptId ~= attemptId then return {Ok=false, Code="PetChanged"} end
+	local expired = os.time() >= expiresAt(record)
+	if expired then action = "KeepBase" end
 	if not Locks.Begin(player, petId) then return {Ok=false, Code="Busy"} end
 	local restored = table.clone(record.Pet)
 	restored.Traits = table.clone(record.Pet.Traits)
@@ -76,7 +85,7 @@ function Service.HandleRequest(player, action, petId, attemptId)
 			task.wait(Config.SaveRetrySeconds)
 		end
 	end)
-	return {Ok=true, Code=if action=="KeepBase" then "KeptBase" else "Revived",
+	return {Ok=true, Expired=expired, Code=if action=="KeepBase" then "KeptBase" else "Revived",
 		PetId=petId, AttemptId=attemptId, FeedLevel=restored.FeedLevel}
 end
 
@@ -86,6 +95,25 @@ function Service.Start()
 	remote.OnServerInvoke = Service.HandleRequest
 	remote.Parent = game.ReplicatedStorage
 	Players.PlayerRemoving:Connect(function(player) sessions[player] = nil end)
+	-- Expiry is server-owned and keeps the same deadline across reconnects.
+	task.spawn(function()
+		while true do
+			for _, player in Players:GetPlayers() do
+				local data = DataService.GetData(player)
+				if data and not Locks.IsLocked(player) then
+					for id, record in data.PendingRecovery do
+						if os.time() >= expiresAt(record) then
+							-- Client request spam cannot postpone automatic expiry.
+							if sessions[player] then sessions[player].LastRequest = nil end
+							Service.HandleRequest(player,"KeepBase",id,record.AttemptId)
+							break
+						end
+					end
+				end
+			end
+			task.wait(.25)
+		end
+	end)
 end
 
 return table.freeze(Service)

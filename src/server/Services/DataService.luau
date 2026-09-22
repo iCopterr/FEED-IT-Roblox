@@ -486,7 +486,7 @@ function DataService.Start()
 	end
 	task.spawn(autosaveLoop)
 
-	local mode = if DataStoreAdapter.IsMemory() then "Studio memory" else "DataStore"
+	local mode = if DataStoreAdapter.IsMemory() then "session memory" else "DataStore"
 	print(`[DataService] Started in {mode} mode ({DataStoreAdapter.GetStoreName()})`)
 end
 

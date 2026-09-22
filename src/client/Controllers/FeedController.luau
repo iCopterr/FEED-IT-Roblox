@@ -4,6 +4,7 @@ local Input = game:GetService("UserInputService")
 local GuiBootstrap = require(script.Parent.Parent.UI.GuiBootstrap)
 local Effects = require(script.Parent.FeedEffects)
 local Config = require(ReplicatedStorage.Shared.Config.FeedConfig)
+local Foods = require(ReplicatedStorage.Shared.Config.FoodConfig)
 local FeedController = {}
 local numberText = require(ReplicatedStorage.Shared.NumberFormat).Compact
 
@@ -14,6 +15,7 @@ function FeedController.Start()
 		or GuiBootstrap.Ensure(playerGui, game:GetService("StarterGui"):WaitForChild("FeedYourPetUI",3))
 	local panel = assert(gui:WaitForChild("FeedPanel",5), "FeedPanel asset missing; check Rojo")
 	local remote = ReplicatedStorage:WaitForChild("PrototypeFeed")
+	local foodIndex = 1
 	local latest, busy
 	local observedId = nil
 	local function displayOutcome(result)
@@ -25,11 +27,11 @@ function FeedController.Start()
 	ReplicatedStorage:WaitForChild("FeedOutcome").OnClientEvent:Connect(displayOutcome)
 	local messages = {
 		NoPet="Place a pet on your feed plate first.", TooFar="Move closer to your feed plate.",
-		NotEnoughFood="Not enough Food. Visit your farm!", PetChanged="The pet changed. Please try again.",
+		NotEnoughFood="Not enough Food. Visit the food merchant!", PetChanged="The pet changed. Please try again.",
 		AlreadyProcessed="That request was already processed. Refreshing…", Cooldown="Please wait a moment.",
 		Loading="Loading player data…", Unavailable="Feeding is unavailable right now.",
 		Busy="Feed is animating or saving. Please wait.", MaxLevel="Maximum Feed level reached (40).",
-		NoProtection="No Protection Tokens left.", ProtectionUnavailable="Protection starts at target Feed Level 6.",
+		InvalidFood="Choose a food type from the selector.",
 	}
 	local function render(state)
 		latest = state
@@ -40,7 +42,7 @@ function FeedController.Start()
 		if state.Food then panel.Food.Text = string.format("FOOD  %s   •   COST  %s", numberText(state.Food), if state.Cost then numberText(state.Cost) else "—") end
 		panel.Feed.Text = if state.MaxLevel then "MAX LEVEL 40" else if state.Cost then "FEED  •  "..numberText(state.Cost).." FOOD" else "FEED"
 		panel.Notice.Text = if state.MaxLevel then "LEVEL 40 REACHED\nYou can pick up your pet below."
-			else string.format("EXPLOSION: %s%% (BASE %s%%) • PLATE LV.%d (-%s%%)\nFail: Revive or keep Lv.%d • Miracle: %g%% • Food spent",
+			else string.format("EXPLOSION: %s%% (BASE %s%%) • PLATE LV.%d (-%s%%)\nFail: timed Rescue or Lv.%d • Miracle: %g%% • Food spent",
 				numberText((state.Risk or 0)*100),numberText((state.BaseRisk or state.Risk or 0)*100),state.PlateLevel or 1,
 				numberText((state.PlateReduction or 0)*100),Config.ExplosionResetLevel,Config.MiracleSaveChance*100)
 		local canFeed = state.Ok and state.Cost and not state.MaxLevel and not state.Busy
@@ -48,25 +50,23 @@ function FeedController.Start()
 		panel.Feed.Active = canFeed == true
 		panel.Feed.AutoButtonColor = canFeed == true
 		panel.Feed.BackgroundColor3 = if canFeed then Color3.fromRGB(112,219,89) else Color3.fromRGB(114,111,127)
-		local canProtect = canFeed and state.ProtectedRisk ~= nil and (state.ProtectionTokens or 0) > 0
-		panel.ProtectedFeed.Text = if state.ProtectedRisk then string.format("PROTECT • %d LEFT • %s%% RISK",state.ProtectionTokens or 0,numberText(state.ProtectedRisk*100)) else "PROTECTION AT LEVEL 6"
-		panel.ProtectedFeed.Active = canProtect == true
-		panel.ProtectedFeed.AutoButtonColor = canProtect == true
-		panel.ProtectedFeed.BackgroundColor3 = if canProtect then Color3.fromRGB(77,167,235) else Color3.fromRGB(114,111,127)
+		panel.FoodType.Text = "FOOD: "..(state.FoodName or Foods.Types[Foods.Order[foodIndex]].Name).." • CHANGE"
+		panel.FoodType.Active = not busy and not state.Busy
+		panel.FoodType.AutoButtonColor = panel.FoodType.Active
 		panel.Pickup.Active = state.PetId == player:GetAttribute("FeedPlatePetId") and state.PetId ~= nil and not busy and not state.Busy
 	end
 	local function refresh()
 		if busy then return end
 		busy = true
 		local expectedId = player:GetAttribute("FeedPlatePetId")
-		local ok, result = pcall(function() return remote:InvokeServer("Snapshot") end)
+		local ok, result = pcall(function() return remote:InvokeServer("Snapshot",nil,nil,Foods.Order[foodIndex]) end)
 		busy = false
 		if expectedId ~= player:GetAttribute("FeedPlatePetId") then return end
 		if ok and result.Code ~= "Cooldown" then
 			render(result)
 			if not result.Ok then panel.Status.Text = messages[result.Code] or "Unable to load feeding state." end
 		elseif not ok then
-			latest = nil; panel.Feed.Active = false; panel.ProtectedFeed.Active=false; panel.Status.Text = "Connection error. Retrying…"
+			latest = nil; panel.Feed.Active = false; panel.FoodType.Active=false; panel.Status.Text = "Connection error. Retrying…"
 		end
 	end
 	local function show()
@@ -99,7 +99,7 @@ function FeedController.Start()
 	panel.Pickup.Activated:Connect(function()
 		local id = player:GetAttribute("FeedPlatePetId")
 		if busy or player:GetAttribute("FeedBusy") or not id then return end
-		busy = true; panel.Pickup.Active = false; panel.Feed.Active = false; panel.ProtectedFeed.Active=false
+		busy = true; panel.Pickup.Active = false; panel.Feed.Active = false; panel.FoodType.Active=false
 		panel.Status.Text = "Picking up…"
 		local ok, result = pcall(function() return remote:InvokeServer("Pickup",id) end)
 		busy = false
@@ -116,27 +116,32 @@ function FeedController.Start()
 			or state.PetId ~= player:GetAttribute("FeedPlatePetId") then return end
 		busy = true; render(state); panel.Status.Text = "Feeding…"
 		if Config.Presentation.CloseUIOnAcceptedFeed then panel.Visible=false end
-		local ok, result = pcall(function() return remote:InvokeServer(action,state.PetId,state.NextSequence) end)
+		local ok, result = pcall(function() return remote:InvokeServer(action,state.PetId,state.NextSequence,state.FoodId) end)
 		busy = false
 		if ok and result.Accepted then
 			displayOutcome(result)
 		elseif ok then
 			if state.PetId ~= player:GetAttribute("FeedPlatePetId") then return end
-			panel.Visible=true; latest=nil; panel.Feed.Active=false; panel.ProtectedFeed.Active=false
+			panel.Visible=true; latest=nil; panel.Feed.Active=false; panel.FoodType.Active=false
 			panel.Status.Text = messages[result.Code] or "Request rejected. Refreshing…"
 		else
-			latest = nil; panel.Feed.Active = false; panel.ProtectedFeed.Active=false
+			latest = nil; panel.Feed.Active = false; panel.FoodType.Active=false
 			panel.Visible=true
 			panel.Status.Text = "Connection interrupted. Refreshing before another Feed."
 			-- Recover the server result instead of issuing a new attempt after an ambiguous reply.
 			task.delay(.5,function()
-				local recovered, snapshot = pcall(function() return remote:InvokeServer("Snapshot") end)
+				local recovered, snapshot = pcall(function() return remote:InvokeServer("Snapshot",nil,nil,Foods.Order[foodIndex]) end)
 				if recovered and snapshot.LastOutcome and snapshot.LastOutcome.NextSequence==state.NextSequence+1 then displayOutcome(snapshot.LastOutcome) end
 			end)
 		end
 	end
 	panel.Feed.Activated:Connect(function() feed("Feed") end)
-	panel.ProtectedFeed.Activated:Connect(function() feed("ProtectedFeed") end)
+	panel.FoodType.Activated:Connect(function()
+		if busy or player:GetAttribute("FeedBusy") then return end
+		foodIndex = foodIndex % #Foods.Order + 1
+		latest = nil; panel.Feed.Active = false
+		task.spawn(refresh)
+	end)
 	local function resize()
 		panel.UIScale.Scale = math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/520,(gui.AbsoluteSize.Y-130)/510))
 	end

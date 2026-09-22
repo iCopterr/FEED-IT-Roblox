@@ -12,25 +12,25 @@ end
 function Controller.Start()
 	local player=Players.LocalPlayer
 	local playerGui=player:WaitForChild("PlayerGui")
-	local gui=playerGui:WaitForChild("MerchantUI",3)
-	if not gui then gui=game.StarterGui:WaitForChild("MerchantUI"):Clone();gui.Parent=playerGui end
+	-- Wait for Roblox's initial StarterGui copy. An early fallback clone can be
+	-- replaced by that copy, leaving the controller bound to a detached screen.
+	local gui=assert(playerGui:WaitForChild("MerchantUI",30),"MerchantUI missing; check Rojo")
 	local panel=gui.Panel
 	local remote=ReplicatedStorage:WaitForChild("PrototypeMerchant")
 	local state,receivedAt,busy=nil,0,false
-	local messages={TooFar="Move closer to the Mystery Merchant.",NotEnoughTokens="You need more Tokens from the farm.",
-		Sold="You already bought this offer. Wait for restock.",ProtectionFull="Protection inventory is full (10).",
+	local messages={TooFar="Move closer to the Mystery Merchant.",NotEnoughMoney="You need more Money.",
+		Sold="You already bought this offer. Wait for restock.",
 		Restocked="The merchant restocked. Refreshing…",Busy="Another purchase is saving.",
-		StaleRequest="Shop state changed. Refreshing…",Loading="Loading your Tokens…",Cooldown="Please wait."}
+		StaleRequest="Shop state changed. Refreshing…",Loading="Loading your Money…",Cooldown="Please wait."}
 	local function render()
 		local remaining=state and state.RestocksAt-(state.ServerNow+os.clock()-receivedAt) or 0
-		gui.TokenHUD.Text="TOKENS  "..(state and NumberFormat.Compact(state.Tokens) or "—")
-		panel.Tokens.Text="YOUR TOKENS: "..(state and NumberFormat.Compact(state.Tokens) or "—")
+		panel.Money.Text="YOUR MONEY: $"..(state and NumberFormat.Compact(state.Money) or "—")
 		panel.Restock.Text="NEW STOCK IN "..clockText(remaining)
 		for i=1,3 do
 			local button=panel["Slot"..i];local item=state and state.Items[i]
 			if item then
 				button.Text=if item.Purchased then item.Name.."\n"..item.Description.."\nSOLD"
-					else string.format("%s\n%s\nBUY • %d TOKEN%s",item.Name,item.Description,item.Price,if item.Price==1 then "" else "S")
+					else string.format("%s\n%s\nBUY • $%s",item.Name,item.Description,NumberFormat.Compact(item.Price))
 				button.Active=not item.Purchased and not state.Busy and not busy
 				button.AutoButtonColor=button.Active
 				button.BackgroundColor3=if item.Purchased then Color3.fromRGB(91,87,102) else Color3.fromRGB(117,73,163)
@@ -52,7 +52,7 @@ function Controller.Start()
 		for _,name in {"EggUI","ReviveUI","DebugUI"} do local other=playerGui:FindFirstChild(name);if other then other.Panel.Visible=false end end
 	end
 	local function show()
-		closeOthers();panel.Visible=true;panel.Status.Text="Rare stock • One purchase per slot";task.spawn(refresh)
+		closeOthers();panel.Visible=true;panel.Status.Text="Basic always available • Special offers restock every 30 min";task.spawn(refresh)
 	end
 	Prompts.PromptTriggered:Connect(function(prompt,triggeringPlayer)
 		if triggeringPlayer and triggeringPlayer~=player then return end
@@ -71,14 +71,10 @@ function Controller.Start()
 	end
 	panel.Close.Activated:Connect(function() panel.Visible=false end)
 	panel:GetPropertyChangedSignal("Visible"):Connect(function() player:SetAttribute("MerchantPanelOpen",panel.Visible) end)
-	ReplicatedStorage:WaitForChild("FarmTokenDrop").OnClientEvent:Connect(function(result)
-		gui.TokenPopup.Text="+"..NumberFormat.Compact(result.Amount).." TOKEN!\nMYSTERY MERCHANT"
-		gui.TokenPopup.Visible=true
-		if state then state.Tokens=result.Tokens;render() else gui.TokenHUD.Text="TOKENS  "..NumberFormat.Compact(result.Tokens) end
-		local token=os.clock();gui.TokenPopup:SetAttribute("HideToken",token)
-		task.delay(3,function() if gui.TokenPopup:GetAttribute("HideToken")==token then gui.TokenPopup.Visible=false end end)
-	end)
-	local function resize() panel.UIScale.Scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/560,(gui.AbsoluteSize.Y-24)/500)) end
+	local function resize()
+		local size=gui.AbsoluteSize
+		panel.UIScale.Scale=math.max(.1,math.min(1,(size.X-24)/560,(size.Y-24)/500))
+	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize();render();task.spawn(refresh)
 	task.spawn(function()
 		while gui.Parent do

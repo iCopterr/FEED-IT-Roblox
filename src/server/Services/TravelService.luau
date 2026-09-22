@@ -3,7 +3,6 @@ local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local Config=require(ReplicatedStorage.Shared.Config.TravelConfig)
 local Data=require(script.Parent.DataService)
 local Plots=require(script.Parent.PlotService)
-local Farm=require(script.Parent.FarmService)
 local Locks=require(script.Parent.FeedLocks)
 local Service={}
 local lastRequest={}
@@ -29,8 +28,6 @@ function Service.HandleRequest(player,destination)
 		target=merchant and merchant:FindFirstChild("InteractionPoint",true)
 	end
 	if not target or not target:IsA("BasePart") or not target:IsDescendantOf(workspace) then return {Ok=false,Code="Unavailable"} end
-	-- Release the farm anchor before moving; never leave food production active remotely.
-	Farm.Exit(player,false)
 	if root.Anchored then return {Ok=false,Code="Busy"} end
 	humanoid.Sit=false
 	character:PivotTo(target.CFrame+Vector3.new(0,target.Size.Y/2+Config.Clearance,0))
