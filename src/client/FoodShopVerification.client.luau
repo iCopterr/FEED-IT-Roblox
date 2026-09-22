@@ -51,6 +51,15 @@ local ok,failure=xpcall(function()
 	end
 	assert(main.HUD.Money.Value.Text~="—" and main.HUD.Money.Value.Text~="$—","Money HUD initialized")
 	assert(main.HUD:FindFirstChild("Food")==nil,"Food HUD removed")
+	local signCount=0
+	for _,sign in workspace.PlotUpgradeSigns:GetChildren() do
+		local upgradeGui=assert(gui:WaitForChild("PlotUpgrade_"..sign.Name,5),"Plot upgrade controller did not bind")
+		assert(upgradeGui.Adornee==sign.Board and upgradeGui.Enabled,"Upgrade UI adorns authored world sign")
+		assert(upgradeGui.Title.Text=="PET CAPACITY","Correct upgrade title")
+		assert(not upgradeGui.Buy.Selectable,"World upgrade button must not capture keyboard navigation")
+		signCount+=1
+	end
+	assert(signCount==6,"All six plot signs have client bindings")
 	assert(main.FeedPanel:FindFirstChild("Food")~=nil,"Feed quantity display retained")
 	assert(not rescue.Open.Visible,"No anytime recovery button")
 	local debugGui=gui:FindFirstChild("DebugUI")

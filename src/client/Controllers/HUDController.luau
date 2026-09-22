@@ -43,7 +43,7 @@ function Controller.Start()
 		lastMoneyAt=timestamp
 		hud.Money.Value.Text=string.format(Config.Text.Money,numberText(state.Money))
 	end
-	for _,name in {"PetIncome","ConveyorPurchaseChanged"} do
+	for _,name in {"PetIncome","ConveyorPurchaseChanged","PlotUpgradeChanged"} do
 		ReplicatedStorage:WaitForChild(name).OnClientEvent:Connect(money)
 	end
 	local function resize()

@@ -4,6 +4,12 @@
   "tree": {
     "$className": "DataModel",
     "Workspace": {
+      "SkyIsland": {
+        "$path": "src/world/SkyIsland.rbxmx"
+      },
+      "PlotUpgradeSigns": {
+        "$path": "src/world/PlotUpgradeSigns.rbxmx"
+      },
       "MysteryMerchant": {
         "$path": "src/world/MysteryMerchant.rbxmx"
       },

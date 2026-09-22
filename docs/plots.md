@@ -1,37 +1,52 @@
-# Prototype plots
+# Prototype plots and capacity upgrades
 
-`Workspace.PlayerPlots` contains six prebuilt plot Models: three on each side,
-facing an empty 40-stud center lane reserved for a future conveyor. No conveyor
-is implemented. Each has a Spawn, an OwnerSign, and a fenced Pen with
-five hidden legacy slot references. Plots are 60x60 studs, with 45x33-stud Pens.
-Centers are X=-50/+50, Z=-72/0/72, leaving 12 studs between adjacent plots and
-the same 40-stud middle lane. Spawn/sign sizes and fence heights are unchanged.
-PlotService never generates or clones geometry.
+Six authored plots remain arranged three per side of the central egg conveyor.
+Each ground is 80x80 studs (previously 60x60); each fenced pen is 60x44
+(previously 45x33). Centers: X=-66/+66 and Z=-96/0/96.
+Open wood rails, capped posts, stone foundations, entrance paths and shrubs
+are editable Workspace instances, not generated at runtime.
 
-The static Workspace hierarchy is exported in `src/world/PlayerPlots.rbxmx`
-and mapped by Rojo. Edit the actual Models in Studio; export edits back to that
-asset before changing/rebuilding the file. Rojo does not export Studio edits.
-The rest of Workspace remains outside Rojo's ownership.
+SkyIsland.rbxmx provides a 236x320-stud grass platform with two smaller rock
+layers beneath it and a central promenade. The old 2048x2048 Baseplate is
+removed from Workspace (retained in Studio ServerStorage for recovery).
+The island floats over the empty sky/void.
 
-PlotService assigns one free plot per Player, directs initial spawns and
-respawns to it, and releases ownership on PlayerRemoving. Freed plots are
-reused. Assignment is session-only; it does not modify saved inventory or
-placed-pet records. PlotConfig.PlayerCapacity is six. Set the place's Maximum
-Players to 6 in Creator Dashboard as well: MCP cannot write Players.MaxPlayers.
-Until that external setting changes, Roblox may admit extra players, who are
-rejected when no plot is free. The script limit is not a matchmaking setting.
+Each player starts with FIVE active pet slots. The matching world sign buys
+one additional slot per purchase, up to TEN for this prototype. Prices by
+target capacity: 6=20K, 7=100K, 8=500K, 9=2.5M, 10=10M Money.
+Tune src/shared/Config/PlotUpgradeConfig.luau; these are initial test prices.
+Upgrades increase capacity, not the physical size of the already-expanded pen.
+Food still comes from the merchant. No AFK farm or feed-plate risk bonus returns.
 
-Server callers can use GetPlot(player), GetSlotCapacity(player), and
-GetSlotCFrame(player, index). Slot access requires loaded player data and is
-capped at five. Slot markers are layout references, not pets. Placement,
-pickup, wandering, and income are subsequent features.
+PlotUpgradeService validates ownership, distance, living character, expected
+capacity, affordability, cooldown and transaction locks. Money/capacity commit
+together without yielding; the save lock remains until confirmed. A stale
+capacity token cannot purchase the next tier accidentally. MaxPetSlots already
+exists in versioned player data, so no new schema field is needed.
+
+Ten invisible slot markers provide fallback positions only; click-to-place
+anywhere inside the pen remains supported. PlotService caps usable slots by
+the player's purchased capacity. Signs and inventory display that capacity.
+Leaving releases the world plot; upgrade progress belongs to player data,
+not to the plot. MemoryOnly remains enabled: progress lasts only this server.
+
+Static assets: PlayerPlots.rbxmx, PlotUpgradeSigns.rbxmx, SkyIsland.rbxmx.
+Export Studio edits back to these files before resync; Rojo is not reverse sync.
+The SurfaceGui sign is authored; its controller clones it into PlayerGui for
+clickable world buttons. No runtime UI layout/geometry builders.
+
+Set the place's Maximum Players to 6 in Creator Dashboard. The script's
+six-plot ownership limit is not the platform matchmaking setting.
 
 ## Verification
 
-Through MCP's Edit context, launch
-`StudioTestService:ExecuteMultiplayerTestAsync(2, "PlotVerification")` inside
-`task.spawn`, retaining its returned result for polling. The opt-in server
-test checks ownership, five-slot capacity, invalid indices, geometry, spawn,
-respawn, departing-player cleanup, and freed-plot reuse with a new client.
-It ends the test automatically. Ordinary Studio sessions and production do
-not execute the verification script's test actions.
+Opt-in Studio multiplayer tests:
+
+- PlotUpgradeVerification: prices, ownership, distance, malformed requests,
+  save/Feed locks, stale/repeated purchases, 5→10 placement capacity, maximum,
+  save/reload and unchanged other-player/Food state.
+- PlotVerification: ownership, spawn/respawn, departing player and plot reuse.
+- FoodShopVerification: food shop, Feed, Rescue and UI regression.
+
+Launch using StudioTestService:ExecuteMultiplayerTestAsync(2, testName) from
+the edit context in task.spawn. These tests require memory-only data.

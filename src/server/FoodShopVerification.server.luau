@@ -75,8 +75,13 @@ local ok,failure=xpcall(function()
 	local expectedRisk=FeedConfig.ExplosionChance[21]*(1-Food.Types[special].Reduction)
 	check(math.abs(snap.Risk-expectedRisk)<1e-9 and snap.Cost==1,"Only food reduces base risk; one serving per Feed")
 	profile.FeedPlateLevel=10
-	task.wait(.3)
-	local maxPlate=Feed.HandleRequest(a,"Snapshot",nil,nil,special)
+	-- The live client also polls Snapshot; wait out that shared throttle.
+	local maxPlate
+	waitFor(function()
+		maxPlate=Feed.HandleRequest(a,"Snapshot",nil,nil,special)
+		assert(maxPlate.Ok or maxPlate.Code=="Cooldown","Unexpected snapshot failure: "..tostring(maxPlate.Code))
+		return maxPlate.Ok
+	end)
 	check(maxPlate.Ok and maxPlate.Risk==snap.Risk and maxPlate.PlateReduction==nil,"Legacy plate level grants no risk reduction")
 	check(not workspace:FindFirstChild("FeedPlateUpgradeSigns"),"Upgrade signs removed; feed plate remains")
 	check(not game.ReplicatedStorage:FindFirstChild("FeedPlateUpgradeChanged"),"No upgrade runtime event")

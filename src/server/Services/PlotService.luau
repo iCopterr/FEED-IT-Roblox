@@ -39,7 +39,7 @@ local function assign(player: Player)
 	plot.Model:SetAttribute("OwnerUserId", player.UserId)
 	player:SetAttribute("PlotId", plot.Model:GetAttribute("PlotId"))
 	player.RespawnLocation = plot.Spawn
-	sign(plot, player.DisplayName .. "'s Pen" .. string.char(10) .. Config.SlotCount .. " active slots")
+	sign(plot, player.DisplayName .. "'s Pen")
 	plot.Connection = player.CharacterAdded:Connect(function(character) moveCharacter(player, plot, character) end)
 	if player.Character then moveCharacter(player, plot, player.Character) end
 end
@@ -53,7 +53,8 @@ local function release(player: Player)
 	player:SetAttribute("PlotId", nil)
 	plot.Owner = nil
 	plot.Model:SetAttribute("OwnerUserId", 0)
-	sign(plot, "Available Plot • " .. Config.SlotCount .. " slots")
+	plot.Model:SetAttribute("SlotCapacity", Config.StartingSlots)
+	sign(plot, "Available Plot • " .. Config.StartingSlots .. " slots")
 	-- Persistent placement belongs to player data, never to this reusable world plot.
 end
 
@@ -68,7 +69,7 @@ function PlotService.Start()
 		assert(model:IsA("Model"), "PlayerPlots must contain plot Models only")
 		assert(model:FindFirstChild("Spawn") and model.Spawn:IsA("SpawnLocation"), "Plot spawn missing")
 		assert(model:FindFirstChild("Pen") and model.Pen:FindFirstChild("Slots"), "Pen slots missing")
-		assert(#model.Pen.Slots:GetChildren() == Config.SlotCount, "Plot must have exactly five slots")
+		assert(#model.Pen.Slots:GetChildren() == Config.SlotCount, "Plot markers must match maximum capacity")
 		for slotIndex = 1, Config.SlotCount do
 			local slot = model.Pen.Slots:FindFirstChild(tostring(slotIndex))
 			assert(slot and slot:IsA("BasePart"), "Plot slot missing: " .. slotIndex)
@@ -82,10 +83,10 @@ function PlotService.Start()
 	for index, model in models do
 		model:SetAttribute("PlotId", index)
 		model:SetAttribute("OwnerUserId", 0)
-		model:SetAttribute("SlotCapacity", Config.SlotCount)
+		model:SetAttribute("SlotCapacity", Config.StartingSlots)
 		local plot: Plot = {Model = model :: Model, Spawn = model.Spawn :: SpawnLocation}
 		table.insert(plots, plot)
-		sign(plot, "Available Plot • " .. Config.SlotCount .. " slots")
+		sign(plot, "Available Plot • " .. Config.StartingSlots .. " slots")
 	end
 	started = true
 	Players.PlayerAdded:Connect(assign)
@@ -102,6 +103,14 @@ function PlotService.GetSlotCapacity(player: Player): number
 	local data = DataService.GetData(player)
 	if not owned[player] or not data then return 0 end
 	return math.min(Config.SlotCount, data.MaxPetSlots)
+end
+
+function PlotService.RefreshSign(player: Player)
+	local plot = owned[player]
+	if not plot then return end
+	local capacity = PlotService.GetSlotCapacity(player)
+	plot.Model:SetAttribute("SlotCapacity", capacity)
+	sign(plot, player.DisplayName .. "'s Pen\n" .. capacity .. " active slots")
 end
 
 function PlotService.GetSlotCFrame(player: Player, slotIndex: number): CFrame?

@@ -6,6 +6,51 @@
 
 **Last Updated:** 2026-09-23
 
+### Current session — larger sky plots and pet-capacity upgrades (verified)
+
+- Current feature: six larger, decorated plots on a compact floating island;
+  Money sign upgrades increase active pet slots from 5 through 10.
+- User's "farm ... 5 ... 6" interpreted as pet-capacity upgrades, not a return
+  of AFK food production. Async clarification was offered; no reply received.
+  Food merchant and food-only risk reduction remain unchanged.
+- Implemented: 80x80 grounds, 60x44 pens, centers X=±66 and Z=-96/0/96.
+  Added open timber rails/posts, caps, foundations, entrance paths and shrubs.
+  Real editable Instances created through MCP and exported to static assets.
+- Replaced Workspace Baseplate with 236x320 SkyIsland (grass, rock layers,
+  promenade). Original Baseplate moved to ServerStorage in Studio for recovery.
+  Six plots/central conveyor/merchant kept. No runtime world/UI builders added.
+- Added PlotUpgradeConfig/Service/Controller/SignView and six authored signs.
+  Starts at five slots; one-slot purchases cap at ten. Prices: 20K,100K,500K,
+  2.5M,10M. Uses existing MaxPetSlots data, ownership/distance/alive checks,
+  cooldown, expected-capacity compare-and-swap, affordability and save locks.
+  Owner signs, placement capacity, inventory and Money HUD use purchased slots.
+- PASS: Rojo build, git diff --check, XML parsing, Studio syntax checks,
+  six-plot/ten-marker geometry inspection, no duplicate sibling instances in
+  inspected gameplay roots. Captured and inspected an Edit viewport overview.
+- Reconnected successfully on retry: Rojo localhost:34872, MCP localhost:58742.
+  Verified current sources synced and no duplicate map/gameplay siblings.
+  Previous interrupted test ended before the retry; all new tests ended in Edit.
+- PASS: 53 PlotUpgradeVerification checks (exact debit, ownership/distance,
+  replay rejection, all slots 6–10 usable, maximum, save/reload); 19
+  PlotVerification checks (spawn/respawn, leaving and plot reuse); 35
+  FoodShopVerification checks (shop, feeding, Rescue, both client startups).
+  Total: 107 multiplayer checks. Client regression additionally checks all six
+  authored sign bindings, correct Adornee/title and no keyboard selection.
+- Stabilized an existing FoodShop test: its second Snapshot could race client
+  polling and receive Cooldown. Retry only that response; unexpected failures
+  still fail. No production Feed behavior changed.
+- Inspected front-facing sign screenshot at player scale: clear capacity,
+  next-slot and compact Money price. Physical mouse/touch purchase feel remains
+  a user playtest item; server purchases and client binding are verified.
+- No current blockers. Next: user playtest larger layout/sign interaction and
+  tune the configurable upgrade costs as needed.
+- Files: new PlotUpgrade modules/config/test, SkyIsland and PlotUpgradeSigns
+  assets; PlayerPlots asset, PlotService/Config, both bootstraps, HUDController,
+  PlotVerification, both FoodShopVerification tests, default.project.json,
+  docs/plots.md, this handoff.
+- Previous working commit: 9bab27e. This verified session is included in
+  `feat: expand sky plots and add pet capacity upgrades`.
+
 ### Latest session — remove feed plate upgrades
 
 - Removed upgrade service/controller from startup, upgrade-sign project mapping,

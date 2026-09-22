@@ -4,7 +4,8 @@ local GameConfig = require(script.Parent.GameConfig)
 return table.freeze({
 	FolderName = "PlayerPlots",
 	PlayerCapacity = 6,
-	SlotCount = GameConfig.StartingMaxPetSlots,
+	SlotCount = require(script.Parent.PlotUpgradeConfig).MaxSlots,
+	StartingSlots = GameConfig.StartingMaxPetSlots,
 	CharacterOffset = Vector3.new(0, 4, 0),
 	CharacterWaitSeconds = 10,
 })

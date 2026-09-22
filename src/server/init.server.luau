@@ -8,6 +8,7 @@ print(string.format("[%s] server started (%s)", ProjectInfo.Name, ProjectInfo.Ph
 DataService.Start()
 PetService.Start()
 require(script.Services.PlotService).Start()
+require(script.Services.PlotUpgradeService).Start()
 require(script.Services.PlacementService).Start()
 require(script.Services.CarryService).Start()
 require(script.Services.MoneyService).Start()

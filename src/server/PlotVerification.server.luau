@@ -31,12 +31,12 @@ local ok, failure = xpcall(function()
 	local left, right = 0, 0
 	for _, model in workspace.PlayerPlots:GetChildren() do
 		if model.Ground.Position.X < 0 then left += 1 else right += 1 end
-		assert(math.abs(model.Ground.Position.X) == 50 and model.Ground.Size == Vector3.new(60,1,60), "Larger plots must preserve center lane")
-		assert(model.Pen.Floor.Size.X == 45 and model.Pen.Floor.Size.Z == 33, "Expanded Pen dimensions")
+		assert(math.abs(model.Ground.Position.X) == 66 and model.Ground.Size == Vector3.new(80,1,80), "Larger plots must preserve center lane")
+		assert(model.Pen.Floor.Size.X == 60 and model.Pen.Floor.Size.Z == 44, "Expanded Pen dimensions")
 	end
-	check(left == 3 and right == 3, "Three plots per side with empty center lane")
+	check(left == 3 and right == 3, "Three plots per side with center conveyor lane")
 	check(first.RespawnLocation == a.Spawn and second.RespawnLocation == b.Spawn, "Personal respawn locations")
-	check(#a.Pen.Slots:GetChildren() == 5 and #b.Pen.Slots:GetChildren() == 5, "Exactly five slots per Pen")
+	check(#a.Pen.Slots:GetChildren() == 10 and #b.Pen.Slots:GetChildren() == 10, "Ten authored markers per Pen")
 	check(plots.GetSlotCapacity(first) == 5 and plots.GetSlotCapacity(second) == 5, "Five active slots after data load")
 	for i = 1, 5 do
 		check(plots.GetSlotCFrame(first, i) == a.Pen.Slots[tostring(i)].CFrame, "Owned slot " .. i)
