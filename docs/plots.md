@@ -6,7 +6,7 @@ Each ground is 80x80 studs (previously 60x60); each fenced pen is 60x44
 Open wood rails, capped posts, stone foundations, entrance paths and shrubs
 are editable Workspace instances, not generated at runtime.
 
-SkyIsland.rbxmx provides a 236x320-stud grass platform with two smaller rock
+SkyIsland.rbxmx provides a 320x420-stud grass platform with two smaller rock
 layers beneath it and a central promenade. The old 2048x2048 Baseplate is
 removed from Workspace (retained in Studio ServerStorage for recovery).
 The island floats over the empty sky/void.

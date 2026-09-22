@@ -6,6 +6,19 @@
 
 **Last Updated:** 2026-09-23
 
+### Latest session — larger floating base
+
+- Enlarged SkyIsland grass from 236x320 to 320x420 studs; expanded both
+  underlying rock layers to match. Heights and centers remain unchanged.
+- Six plots, conveyor, merchant, paths and all gameplay remain unchanged.
+- PASS: MCP readback verifies three new sizes and all six original plot
+  positions/sizes; Rojo build and diff check. Multiplayer tests not rerun for
+  this geometry-only change (previous feature passed 107 checks).
+- Files: SkyIsland.rbxmx, docs/plots.md, PlotUpgradeVerification expected
+  island size, this handoff. Previous commit: 2e80ff4.
+- No blockers. Next: user playtest island space. Included in
+  `chore: enlarge floating island base`.
+
 ### Current session — larger sky plots and pet-capacity upgrades (verified)
 
 - Current feature: six larger, decorated plots on a compact floating island;
