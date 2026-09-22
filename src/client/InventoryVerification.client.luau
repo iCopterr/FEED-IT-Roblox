@@ -63,7 +63,10 @@ local ok,failure=xpcall(function()
 	check(gui.Hotbar.BackgroundTransparency==1,"No hotbar frame background")
 	if game.Players.LocalPlayer:GetAttribute("CarriedEggUid") then
 		waitFor(function()
-			for _,button in buttons do if button.State.Text=="HELD" and button.Stroke.Thickness==3 then return true end end
+			for _,button in buttons do
+				if button:GetAttribute("Held") and button.Stroke.Thickness==3
+					and not button.Key.Visible and not button.ItemName.Visible and not button.State.Visible then return true end
+			end
 			return false
 		end)
 		check(true,"Held egg highlights actual hotbar selection")

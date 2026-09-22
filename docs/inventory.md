@@ -22,6 +22,8 @@ the cameras stored in StarterGui do not reliably replicate to clients.
   Eggs still hatch by pressing E beside a finished egg in the Pen.
 - 1–9 and 0 (slot ten), or tapping a black translucent slot, equips/unequips its item.
 - Only occupied slots are visible: zero items means no hotbar, one means one square.
+- Held slots hide the key, name and state text; the gold border alone marks selection.
+  The item preview and normal translucent background remain; putting away restores labels.
   Visible slots pack together without changing their assigned key; narrow screens wrap.
   Empty-slot keys do nothing. B no longer opens inventory.
 - ADD/REMOVE QUICK SLOT changes a shortcut without moving or deleting the item.

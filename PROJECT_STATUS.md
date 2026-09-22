@@ -6,6 +6,18 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — border-only held-slot indicator
+
+- Completed: held hotbar slots hide key/name/state text and use the gold border
+  as the selection indicator. Preview and normal translucent background remain;
+  key/name labels return when put away. No gameplay or ownership changes.
+- Modified InventoryController, InventoryLayout, client InventoryVerification,
+  docs/inventory.md and this handoff.
+- Verified: all 172 two-player Studio checks pass including held-slot hidden labels;
+  86 sources compile, Rojo build and git diff whitespace checks pass.
+- In progress/blockers: none. Next: user visual review. Previous commit `8b53ef6`;
+  included in `fix: show held hotbar selection with border only`.
+
 ### Latest session — ten dynamic square hotbar slots
 
 - Completed: ten authored slots mapped to 1–9/0; BAG object and keyboard B toggle

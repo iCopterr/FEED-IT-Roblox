@@ -152,11 +152,14 @@ function Controller.Start(gui,onSnapshot)
 			button.Visible=entry~=nil
 			button.Key.Text=tostring(i%10)
 			local held=entry and stateOf(entry)=="HELD"
+			button:SetAttribute("Held",held==true)
+			button.Key.Visible=not held
+			button.ItemName.Visible=not held
 			button.Stroke.Color=if held then Color3.fromRGB(255,211,112) else Color3.fromRGB(150,150,164)
 			button.Stroke.Thickness=if held then 3 else 1
-			button.BackgroundTransparency=if held then .12 else .38
+			button.BackgroundTransparency=.38
 			button.ItemName.Text=entry and entry.Name or "Empty"
-			button.State.Text=if held then "HELD" elseif entry and entry.State~="STORED" then "PLACED" else ""
+			button.State.Text=""
 			button.Active=not busy;Preview.Set(button.Preview,entry)
 		end
 		updateDetail()

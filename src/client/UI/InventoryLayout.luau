@@ -96,7 +96,7 @@ function Layout.Apply(gui,cards,buttons,viewportOverride)
 		button.Size=UDim2.fromOffset(side,side)
 		button.Preview.Size=UDim2.fromOffset(side-4,side-18)
 		button.ItemName.Position=UDim2.new(0,3,1,-22);button.ItemName.Size=UDim2.new(1,-6,0,20);button.ItemName.TextSize=if side<50 then 9 else 11
-		button.State.Visible=side>=50;button.State.Position=UDim2.new(1,-38,0,3)
+		button.State.Visible=false;button.State.Position=UDim2.new(1,-38,0,3)
 	end
 	bar.Hint.Size=UDim2.fromOffset(320,26)
 	bar.Hint.AnchorPoint=Vector2.new(.5,0)
