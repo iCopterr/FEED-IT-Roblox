@@ -31,11 +31,11 @@ Farm, Protection, currency and permanent-loss rules in GDD v0.5.
 - One serving per Feed. Basic: 5 for $100, no reduction. Hearty: 5 for $2.5K,
   15% relative reduction. Gourmet: 3 for $25K, 30%. Royal: 2 for $250K, 45%.
   All are prototype tuning values in FoodConfig, not final balance.
-- Final explosion risk = original risk × plate multiplier × food multiplier.
-  Plate upgrades stay; foods cannot make a positive base risk zero. Explosion,
+- Final explosion risk = original risk × food multiplier. Plate upgrades were
+  removed by user request on 2026-09-23; foods cannot make a positive base risk zero. Explosion,
   Miracle Save and Critical order is unchanged.
-- Food HUD sums all servings. Feed UI cycles types and shows the selected type's
-  quantity and final risk. UI remains authored StarterGui assets.
+- Food HUD removed. Inventory has a separate Food tab; Feed UI uses selectable
+  food cards and a rotating pet preview. UI remains authored StarterGui assets.
 - Game direction is pet farming/tending, not a straight tier-progression tycoon.
 
 ## Test data
@@ -54,3 +54,16 @@ Farm, Protection, currency and permanent-loss rules in GDD v0.5.
   Rescue, duplicate requests, and real-time automatic level-zero recovery.
 - Older Farm/Merchant/Protection verification scripts describe the previous
   design and are not a current acceptance suite. They remain opt-in only.
+
+## Deferred ideas — 2026-09-23 (not implementation approval)
+
+- User explicitly deferred additional food types and special gameplay effects.
+- Lucky Treat proposal: total Critical chance 6% -> 12%, conditional on survival;
+  no food-based risk reduction. The later removal of plate upgrades also applies.
+- Growth Feast proposal: +1 additional level on successful Feed, capped at 40.
+- Mystic Meal proposal: 45% relative risk reduction normally, 30% stronger for
+  Mystic pets (45% x 1.30 = 58.5%, not 75%).
+- These are discussion candidates only. Current four foods and odds stay unchanged.
+- Suggested next prototype priority: a fresh-player start and short onboarding
+  path through egg purchase/hatch, placement, earning, food purchase and feeding.
+  No onboarding implementation was authorized in this discussion.

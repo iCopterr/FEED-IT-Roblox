@@ -4,7 +4,35 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-22
+**Last Updated:** 2026-09-23
+
+### Latest session — remove feed plate upgrades
+
+- Removed upgrade service/controller from startup, upgrade-sign project mapping,
+  and all six matching Studio sign models. Feeding plates and their interactions
+  remain unchanged. Removed HUD wait for retired upgrade event.
+- Feed server/client now use base explosion risk multiplied only by selected
+  food reduction. Removed plate level/reduction labels from Feed UI/snapshot.
+- Legacy FeedPlateLevel is retained as inactive schema compatibility data;
+  retired modules/config/sign asset remain recoverable, never started by bootstrap.
+- PASS: 35 two-player FoodShopVerification checks, including level-10 data granting
+  no bonus, no signs/event, feeding/pickup-related UI startup, purchases and Rescue.
+  Rojo build and diff check pass. Tests returned Studio to Edit. No blockers.
+- Files: both bootstraps, FeedService, FeedController, HUDController,
+  FoodShopVerification.server, default.project.json, design decisions and handoff.
+  Includes prior deferred-food discussion notes; no special foods implemented.
+- Previous gameplay commit 1d733d9; included in `feat: remove feed plate upgrades`.
+  Next: user playtest food-only risk and approve fresh-player onboarding if desired.
+
+### Latest discussion — defer special foods
+
+- Recorded Lucky Treat, Growth Feast and Mystic Meal as deferred ideas in
+  docs/design-decisions.md, not approved implementation. No gameplay changes.
+- Verified fresh profiles still start with zero Money and no starter pet; the
+  existing Studio starter pet is developer-account-only. Fresh-player onboarding
+  is the recommended next prototype task, pending user approval.
+- Files: design decisions and this handoff. Documentation-only; diff check used,
+  no gameplay tests needed. Last gameplay commit 1d733d9. No active implementation.
 
 ### Latest session — Food inventory and interactive Feed panel
 

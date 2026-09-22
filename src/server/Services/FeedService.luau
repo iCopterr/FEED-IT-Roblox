@@ -9,7 +9,6 @@ local DebugOverrides = require(script.Parent.DebugFeedOverrides)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
 local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
 local Config = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
-local PlateConfig = require(game.ReplicatedStorage.Shared.Config.FeedPlateConfig)
 local FoodConfig = require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 local FeedService = {}
 local sessions = {}
@@ -33,7 +32,7 @@ local function snapshot(player, state, foodId)
 	local definition = pet and PetConfig.Species[pet.SpeciesId]
 	local count = 0
 	for _ in data.PendingRecovery do count += 1 end
-	local risk = pet and Config.ExplosionChance[pet.FeedLevel+1] and PlateConfig.GetRisk(Config.ExplosionChance[pet.FeedLevel+1],data.FeedPlateLevel)
+	local risk = pet and Config.ExplosionChance[pet.FeedLevel+1]
 	if risk then risk *= 1-food.Reduction end
 	return {
 		Foods=FoodConfig.Inventory(data), SpeciesId=pet and pet.SpeciesId,
@@ -44,7 +43,6 @@ local function snapshot(player, state, foodId)
 		Food=FoodConfig.Count(data,foodId), FoodAt=os.clock(), Cost=pet and FoodConfig.ServingsPerFeed,
 		Risk=risk,
 		BaseRisk=pet and Config.ExplosionChance[pet.FeedLevel+1],
-		PlateLevel=math.min(data.FeedPlateLevel,#PlateConfig.RiskReduction), PlateReduction=PlateConfig.GetReduction(data.FeedPlateLevel),
 		MaxLevel=pet and pet.FeedLevel>=Config.MaxConfiguredLevel,
 		Busy=Locks.IsLocked(player), NextSequence=state.Sequence+1,
 		PendingRecoveryCount=count, LastOutcome=state.LastResult,

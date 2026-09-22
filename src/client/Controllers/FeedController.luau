@@ -43,9 +43,9 @@ function FeedController.Start()
 		if state.Food then panel.Food.Text = string.format("FOOD  %s   •   COST  %s", numberText(state.Food), if state.Cost then numberText(state.Cost) else "—") end
 		panel.Feed.Text = if state.MaxLevel then "MAX LEVEL 40" else if state.Cost then "FEED  •  "..numberText(state.Cost).." FOOD" else "FEED"
 		panel.Notice.Text = if state.MaxLevel then "LEVEL 40 REACHED\nYou can pick up your pet below."
-			else string.format("EXPLOSION: %s%% (BASE %s%%) • PLATE LV.%d (-%s%%)\nFail: timed Rescue or Lv.%d • Miracle: %g%% • Food spent",
-				numberText((state.Risk or 0)*100),numberText((state.BaseRisk or state.Risk or 0)*100),state.PlateLevel or 1,
-				numberText((state.PlateReduction or 0)*100),Config.ExplosionResetLevel,Config.MiracleSaveChance*100)
+			else string.format("EXPLOSION: %s%% (BASE %s%%)\nFail: timed Rescue or Lv.%d • Miracle: %g%% • Food spent",
+				numberText((state.Risk or 0)*100),numberText((state.BaseRisk or state.Risk or 0)*100),
+				Config.ExplosionResetLevel,Config.MiracleSaveChance*100)
 		local canFeed = state.Ok and state.Cost and not state.MaxLevel and not state.Busy
 			and state.PetId == player:GetAttribute("FeedPlatePetId") and state.Food >= state.Cost and not busy
 		panel.Feed.Active = canFeed == true
@@ -147,7 +147,7 @@ function FeedController.Start()
 			local state=table.clone(latest)
 			state.FoodId=id;state.FoodName=Foods.Types[id].Name
 			state.Food=state.Foods[id] or 0
-			state.Risk=(state.BaseRisk or 0)*(1-(state.PlateReduction or 0))*(1-Foods.Types[id].Reduction)
+			state.Risk=(state.BaseRisk or 0)*(1-Foods.Types[id].Reduction)
 			render(state)
 		else latest=nil;panel.Feed.Active=false;task.spawn(refresh) end
 	end

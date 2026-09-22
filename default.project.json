@@ -10,9 +10,6 @@
       "EggTemplates": {
         "$path": "src/world/EggTemplates.rbxmx"
       },
-      "FeedPlateUpgradeSigns": {
-        "$path": "src/world/FeedPlateUpgradeSigns.rbxmx"
-      },
       "PetConveyor": {
         "$path": "src/world/PetConveyor.rbxmx"
       },

@@ -4,7 +4,7 @@ local ProjectInfo = require(ReplicatedStorage.Shared.ProjectInfo)
 
 print(string.format("[%s] client started (%s)", ProjectInfo.Name, ProjectInfo.Phase))
 -- A missing UI asset must not stall unrelated gameplay controllers.
-for _, name in { "HUDController", "CarryController", "IncomeEffectsController", "MerchantController", "FeedPlateUpgradeController", "FeedController", "ConveyorController", "EggController", "ReviveController", "DebugController" } do
+for _, name in { "HUDController", "CarryController", "IncomeEffectsController", "MerchantController", "FeedController", "ConveyorController", "EggController", "ReviveController", "DebugController" } do
 	task.spawn(function()
 		local ok, failure = xpcall(function()
 			require(script.Controllers[name]).Start()
