@@ -21,7 +21,8 @@ local ok,failure=xpcall(function()
 	local model=require(client.UI.InventoryModel)
 	local layout=require(client.UI.InventoryLayout)
 	waitFor(function() return gui.HUD.OpenInventory.ButtonText.Text=="INVENTORY" end)
-	for _,name in {"Money","Food"} do
+	check(gui.HUD:FindFirstChild("Food")==nil,"Food HUD removed")
+	for _,name in {"Money"} do
 		local count=0
 		for _,row in gui.HUD:GetChildren() do if row.Name==name then count+=1 end end
 		check(count==1,"Exactly one "..name.." HUD row; no overlapping duplicates")

@@ -6,6 +6,19 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — remove Food HUD
+
+- Removed only the authored HUD.Food row and HUD controller food bindings/reflow.
+  Money stays bottom-left; feeding UI quantities and all food gameplay stay intact.
+- Updated InventoryVerification and FoodShopVerification client assertions to
+  require no Food HUD and preserve the FeedPanel food display.
+- PASS: all 30 combined two-player FoodShopVerification checks, Rojo build,
+  diff whitespace and Studio hierarchy/controller compilation. No blockers.
+- Files: HUDController, FeedYourPetUI.rbxmx, both client verification files and
+  this handoff. Removed row is recoverable through Git. No economy/schema changes.
+- Next: user playtest. Previous commit 35cb346; included in
+  `ui: remove food counter from main HUD`. Rarity-food bonus remains idea-only.
+
 ### Current session — food shop / timed Rescue redesign (verified)
 
 - User approved level-0 failure, immediate-only Rescue, replacing AFK farms with
