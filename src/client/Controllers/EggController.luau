@@ -42,8 +42,8 @@ function Controller.Start()
 			else "Conveyor: "..(definition and numberText(definition.Price) or "—").." Money • "..(definition and timeText(definition.HatchSeconds) or "—"))
 		panel.Notice.Text=table.concat(odds," • ")
 		panel.Hatch.Text=if not egg then "BUY AN EGG ON THE CONVEYOR" elseif not egg.Placed then
-			(if player:GetAttribute("CarriedEggUid")==egg.EggUid then "PUT AWAY EGG" else "HOLD EGG") elseif remaining>0 then "INCUBATING…" else "PRESS E BESIDE YOUR EGG"
-		local enabled=egg~=nil and not egg.Placed and not busy and not state.Busy
+			"USE YOUR HOTBAR TO HOLD" elseif remaining>0 then "INCUBATING…" else "PRESS E BESIDE YOUR EGG"
+		local enabled=false -- Carry controls live exclusively in the hotbar.
 		panel.Hatch.Active=enabled;panel.Hatch.AutoButtonColor=enabled
 		panel.Hatch.BackgroundColor3=if enabled then Color3.fromRGB(85,166,102) else Color3.fromRGB(100,100,110)
 	end
@@ -70,21 +70,6 @@ function Controller.Start()
 	end)
 	panel:GetPropertyChangedSignal("Visible"):Connect(function() player:SetAttribute("EggPanelOpen",panel.Visible) end)
 	panel.Later.Activated:Connect(function() panel.Visible=false end)
-	panel.Hatch.Activated:Connect(function()
-		local egg=state and state.Eggs[1]
-		if busy or not egg or not panel.Hatch.Active then return end
-		local action=if egg.Placed then "Hatch" elseif player:GetAttribute("CarriedEggUid")==egg.EggUid then "Unequip" else "Equip"
-		busy=true;render();panel.Status.Text="Please wait…"
-		local ok,result=pcall(function() return remote:InvokeServer(action,egg.EggUid) end)
-		busy=false
-		if ok and result.Ok then
-			state=nil
-			panel.Status.Text=if action=="Hatch" then "Hatched "..result.PetName.." ("..result.Rarity..")! Returned to you / MY PETS."
-				elseif action=="Equip" then "Click inside your fenced Pen to place your egg." else "Egg safely stored in MY EGGS."
-			if action=="Equip" then panel.Visible=false end
-		else panel.Status.Text=if ok then messages[result.Code] or "Unable to hatch." else "Connection interrupted. Check MY PETS; refreshing eggs…" end
-		refresh()
-	end)
 	local function resize() panel.UIScale.Scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/480,(gui.AbsoluteSize.Y-24)/410)) end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
 	resize();render()

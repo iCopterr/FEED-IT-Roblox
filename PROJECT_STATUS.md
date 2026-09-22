@@ -6,6 +6,42 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — ten dynamic square hotbar slots
+
+- Completed: ten authored slots mapped to 1–9/0; BAG object and keyboard B toggle
+  removed. Main INVENTORY/backquote/gamepad controls remain. Empty-slot input is a no-op.
+- Only occupied slots render; zero items hides the bar, one item shows one square.
+  Squares pack together preserving key assignments; narrow screens wrap. The outer
+  frame is fully transparent and does not intercept input. Slot backgrounds remain black/translucent.
+- Files: InventoryConfig, InventoryController, InventoryLayout, FeedYourPetUI asset,
+  client InventoryVerification, docs/inventory.md and this handoff. Prior uncommitted
+  hotbar-only equip/placement work preserved; no server or save-schema changes.
+- Verified: 172 two-player Studio checks pass, including ten authored slots, no BAG,
+  transparent frame and 0/1/10-item square layouts on desktop/mobile; 86 sources compile,
+  Rojo build and git diff whitespace checks pass.
+- In progress: none. Next: physical input/visual comfort playtest. No known blockers.
+  Commit handoff: this work and the hotbar-only equip/placement changes below are
+  included in the requested `feat: streamline ten-slot hotbar equip and placement` commit.
+  Previous working commit: `22e0845`.
+
+### Latest session — hotbar-only equip and placement cleanup
+
+- Current feature: one-key/tap hotbar equip; inventory manages shortcuts rather than holding.
+- Completed: inventory Hold button now Add/Remove Hotbar; legacy egg panel carry
+  action removed. Existing nearby pickup and hatch behavior is preserved.
+- Snapshot requests no longer set the action-busy flag, avoiding dropped equip inputs
+  during polling. Revision checks discard snapshots crossing carry/placement actions.
+- Successful placement immediately removes the shortcut; reconciliation excludes
+  Pen/plate pets and placed eggs. Pickup makes items eligible for empty slots again.
+- Files modified: InventoryController, CarryController, EggController, InventoryModel,
+  InventoryLayout, client InventoryVerification, FeedYourPetUI asset, docs/inventory.md,
+  and this handoff. No server, economy, persistence or ownership changes.
+- Verified: two-player InventoryVerification passed, including added placement-state
+  removal/repeated polling/pickup cases; 86 Studio sources compile; Rojo build and
+  diff whitespace checks pass. Physical rapid-input/touch comfort remains to playtest.
+- In progress: none. Next: user playtest hotbar feel. Last working commit `22e0845`;
+  this hotbar behavior change is included in the commit noted above. No known test blockers.
+
 ### Latest session — inventory proportions correction
 
 - Current feature: compact inventory visual correction following the user's screenshot.

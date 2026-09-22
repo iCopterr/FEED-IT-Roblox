@@ -41,10 +41,15 @@ function Model.Filter(entries,category,query,sort)
 	return result
 end
 
+function Model.CanSlot(entry)
+	return entry~=nil and (entry.State=="STORED" or entry.State=="HELD")
+end
+
 function Model.Reconcile(slots,known,entries)
-	for i=1,Config.HotbarSlots do if slots[i] and not entries[slots[i]] then slots[i]=nil end end
+	for i=1,Config.HotbarSlots do if slots[i] and not Model.CanSlot(entries[slots[i]]) then slots[i]=nil end end
+	for key in known do if not Model.CanSlot(entries[key]) then known[key]=nil end end
 	for _,entry in Model.Filter(entries,"All","","Newest") do
-		if not known[entry.Key] then
+		if Model.CanSlot(entry) and not known[entry.Key] then
 			known[entry.Key]=true
 			for i=1,Config.HotbarSlots do if not slots[i] then slots[i]=entry.Key;break end end
 		end

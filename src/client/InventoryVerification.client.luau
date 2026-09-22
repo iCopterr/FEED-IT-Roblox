@@ -39,6 +39,18 @@ local ok,failure=xpcall(function()
 	model.Reconcile(slots,known,entries)
 	check(not model.SlotOf(slots,first),"Polling does not re-add a removed shortcut")
 	check(model.TogglePin(slots,first),"Item can be pinned again")
+	local originalState=entries[first].State
+	for _,placedState in {"IN PEN","FEED PLATE","INCUBATING","READY"} do
+		entries[first].State=placedState
+		model.Reconcile(slots,known,entries)
+		check(not model.SlotOf(slots,first),placedState.." clears hotbar")
+		model.Reconcile(slots,known,entries)
+		check(not model.SlotOf(slots,first),placedState.." stays out during polling")
+		entries[first].State="STORED"
+		model.Reconcile(slots,known,entries)
+		check(model.SlotOf(slots,first)~=nil,"Pickup restores available shortcut")
+	end
+	entries[first].State=originalState
 	model.Reconcile(slots,known,{})
 	check(not next(slots),"Removed or hatched IDs clear from hotbar")
 	check(#model.Filter(entries,"Pet","NO SUCH PET","Income")==0,"Search handles no matches")
@@ -46,7 +58,9 @@ local ok,failure=xpcall(function()
 	check(#model.Filter(entries,"Egg","","Newest")==eggCount,"Egg filter uses public eggs only")
 	local cards,buttons={},{}
 	for _,card in gui.Inventory.Panel.Layout.Pets:GetChildren() do if card:IsA("GuiButton") and card.Visible then cards[card.Name]=card end end
-	for i=1,6 do buttons[i]=gui.Hotbar["Slot"..i];check(buttons[i]:IsA("GuiButton"),"Authored hotbar slot "..i) end
+	for i=1,10 do buttons[i]=gui.Hotbar["Slot"..i];check(buttons[i]:IsA("GuiButton"),"Authored hotbar slot "..i) end
+	check(not gui.Hotbar:FindFirstChild("Bag"),"BAG removed")
+	check(gui.Hotbar.BackgroundTransparency==1,"No hotbar frame background")
 	if game.Players.LocalPlayer:GetAttribute("CarriedEggUid") then
 		waitFor(function()
 			for _,button in buttons do if button.State.Text=="HELD" and button.Stroke.Thickness==3 then return true end end
@@ -55,6 +69,21 @@ local ok,failure=xpcall(function()
 		check(true,"Held egg highlights actual hotbar selection")
 	end
 	local original=gui.Inventory.Visible;gui.Inventory.Visible=true
+	local visibility={}
+	for i,button in buttons do visibility[i]=button.Visible end
+	for _,count in {0,1,10} do
+		for i,button in buttons do button.Visible=i<=count end
+		for _,size in {Vector2.new(1280,720),Vector2.new(320,568)} do
+			layout.Apply(gui,cards,buttons,size)
+			check(gui.Hotbar.Size.X.Offset<=size.X,"Dynamic hotbar fits "..count.." items")
+			if count==0 then check(gui.Hotbar.Size.X.Offset==0,"Empty hotbar has zero width") end
+			for i=1,count do
+				local button=buttons[i]
+				check(button.Size.X.Offset==button.Size.Y.Offset,"Square hotbar item "..i)
+			end
+		end
+	end
+	for i,button in buttons do button.Visible=visibility[i] end
 	for _,size in {Vector2.new(1280,720),Vector2.new(390,844),Vector2.new(844,390),Vector2.new(360,640)} do
 		layout.Apply(gui,cards,buttons,size)
 		local panel=gui.Inventory.Panel.Layout

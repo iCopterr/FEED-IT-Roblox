@@ -78,18 +78,28 @@ function Layout.Apply(gui,cards,buttons,viewportOverride)
 	detail.Pin.Size=UDim2.new(if singleRow then .37 else .58,-14,0,42)
 	detail.Lock.ButtonText.TextSize=if singleRow then 12 else 16
 	detail.Pin.ButtonText.TextSize=if singleRow then 12 else 16
-	detail.Equip.ButtonText.TextSize=if singleRow then 13 else 21
+	detail.Equip.ButtonText.TextSize=if singleRow then 11 else 17
 	layout.Status.Position=UDim2.new(0,pad,1,-32);layout.Status.Size=UDim2.new(1,-36,0,24)
 	layout.Status.TextSize=if narrow then 11 else 13
-	local side=math.min(66,math.max(28,math.floor((viewport.X-80)/7)))
-	bar.Size=UDim2.fromOffset(side*7+8*8,side+22)
-	for i,button in buttons do
-		button.Position=UDim2.fromOffset(8+(i-1)*(side+8),6);button.Size=UDim2.fromOffset(side,side+10)
+	local count=0
+	for _,button in buttons do if button.Visible then count+=1 end end
+	local columns=math.max(1,math.min(count,math.floor((viewport.X-24)/60)))
+	local side=math.min(66,math.floor((viewport.X-24-(columns-1)*8)/columns))
+	local rows=math.ceil(count/columns)
+	bar.Size=UDim2.fromOffset(if count==0 then 0 else columns*(side+8)-8,if count==0 then 0 else rows*(side+8)-8)
+	local index=0
+	for _,button in buttons do
+		if button.Visible then
+			button.Position=UDim2.fromOffset((index%columns)*(side+8),math.floor(index/columns)*(side+8))
+			index+=1
+		end
+		button.Size=UDim2.fromOffset(side,side)
 		button.Preview.Size=UDim2.fromOffset(side-4,side-18)
 		button.ItemName.Position=UDim2.new(0,3,1,-22);button.ItemName.Size=UDim2.new(1,-6,0,20);button.ItemName.TextSize=if side<50 then 9 else 11
 		button.State.Visible=side>=50;button.State.Position=UDim2.new(1,-38,0,3)
 	end
-	bar.Bag.Position=UDim2.fromOffset(8+6*(side+8),6);bar.Bag.Size=UDim2.fromOffset(side,side+10);bar.Bag.TextSize=if side<50 then 11 else 15
-	bar.Hint.Size=UDim2.new(1,0,0,26)
+	bar.Hint.Size=UDim2.fromOffset(320,26)
+	bar.Hint.AnchorPoint=Vector2.new(.5,0)
+	bar.Hint.Position=UDim2.new(.5,0,0,-32)
 end
 return Layout

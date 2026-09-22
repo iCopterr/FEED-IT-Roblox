@@ -1,6 +1,6 @@
 -- Presentation only: quick slots do not add pet capacity or grant ownership.
 return table.freeze({
-	HotbarSlots = 6,
+	HotbarSlots = 10,
 	PollSeconds = 1,
 	RarityOrder = {Common=1,Uncommon=2,Rare=3,Epic=4,Legendary=5,Mythic=6},
 	RarityColors = {

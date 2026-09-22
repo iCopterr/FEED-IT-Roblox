@@ -44,6 +44,10 @@ function CarryController.Start()
 			task.wait(.3)
 			ok, response = pcall(function() return request:InvokeServer(action, id, position) end)
 		end
+		if ok and response.Ok then
+			local inventory=require(script.Parent.InventoryController)
+			if inventory.Placed then inventory.Placed(if action=="Place" then "Egg" else "Pet",id) end
+		end
 		if (not ok or not response.Ok) and action == "Place" then
 			local eggGui = player.PlayerGui:FindFirstChild("EggUI")
 			if eggGui then
