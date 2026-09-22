@@ -153,6 +153,42 @@ local ok,failure=xpcall(function()
 	assert(data.Save(a));read,record=adapter.UpdateAsync("Player_"..a.UserId,function() return nil end)
 	loaded=assert(schema.Migrate(record.Data))
 	check(read and loaded.Inventory[petId]~=nil and loaded.IncubatingEggs[uid]==nil,"Claimed egg cannot reappear after reload")
+	-- New tiers exercise the same paid conveyor -> carry -> place -> hatch path.
+	for _,tier in {{Id="advanced_egg",Roll=.8},{Id="elite_egg",Roll=.99}} do
+		local definition=config.Definitions[tier.Id]
+		local total=0;for _,entry in definition.Results do total+=entry.Weight end
+		local cursor=0
+		for _,entry in definition.Results do
+			check(config.Pick(tier.Id,(cursor+entry.Weight/2)/total)==entry.SpeciesId,"Weighted result "..entry.SpeciesId)
+			check(workspace.PetTemplates:FindFirstChild(entry.SpeciesId)~=nil,"Reused template "..entry.SpeciesId)
+			cursor+=entry.Weight
+		end
+		carry.Unequip(a)
+		local offerId,offerModel=conveyor.SpawnOffer(tier.Roll);assert(offerId,offerModel)
+		check(offerModel:GetAttribute("EggId")==tier.Id,"Conveyor offers "..tier.Id)
+		profile.Money=definition.Price+123
+		task.wait(.3);near(rootA,offerModel)
+		local bought=conveyor.HandlePurchase(a,offerId)
+		check(bought.Ok and profile.Money==123,"Configured price charged for "..tier.Id)
+		waitFor(function() return not locks.IsLocked(a) end)
+		local reserved=profile.IncubatingEggs[bought.EggUid]
+		rootA.CFrame=CFrame.new(position+Vector3.new(0,4,4))
+		task.wait(.3)
+		check(eggs.HandleRequest(a,"Place",bought.EggUid,position).Ok,"Place reused egg model "..tier.Id)
+		check(reserved.ReadyAt-reserved.StartedAt==definition.HatchSeconds,"Configured timer "..tier.Id)
+		waitFor(function() return not locks.IsLocked(a) end)
+		-- Memory-only fixture fast-forwards the timer; production still waits the full duration.
+		reserved.ReadyAt=os.time()-1;reserved.StartedAt=reserved.ReadyAt-reserved.HatchSeconds
+		check(schema.Validate(profile),"New tier validates for save "..tier.Id)
+		task.wait(.3)
+		local result=eggs.HandleRequest(a,"Hatch",bought.EggUid)
+		check(result.Ok and result.PetId==reserved.Pet.PetId,"Hatch preserves reserved identity "..tier.Id)
+		waitFor(function() return not locks.IsLocked(a) end)
+		check(carry.GetPetId(a)==result.PetId and profile.Inventory[result.PetId].EggId==tier.Id,"New pet held using reused model "..tier.Id)
+		assert(data.Save(a))
+		local saved,record=adapter.UpdateAsync("Player_"..a.UserId,function() return nil end)
+		check(saved and schema.Migrate(record.Data).Inventory[result.PetId]~=nil,"New pet survives save/load "..tier.Id)
+	end
 	local raceId,raceModel=conveyor.SpawnOffer(0);assert(raceId,raceModel)
 	task.wait(.3);near(rootA,raceModel,4);near(rootB,raceModel,-4)
 	profile.Money=20000;other.Money=20000

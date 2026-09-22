@@ -6,6 +6,28 @@ local Config = {
 	HatchDistance = 10,
 	HatchPromptName = "HatchEgg",
 	Definitions = table.freeze({
+		advanced_egg = table.freeze({
+			DisplayName="Advanced Egg", Price=2_000_000, HatchSeconds=120, TemplateName="prototype_egg",
+			Results=table.freeze({
+				table.freeze({SpeciesId="moss_buddy",Weight=25}),
+				table.freeze({SpeciesId="clover_cub",Weight=25}),
+				table.freeze({SpeciesId="river_sprite",Weight=25}),
+				table.freeze({SpeciesId="dusk_fox",Weight=15}),
+				table.freeze({SpeciesId="sun_guardian",Weight=9.5}),
+				table.freeze({SpeciesId="moon_spirit",Weight=0.5}),
+			}),
+		}),
+		elite_egg = table.freeze({
+			DisplayName="Elite Egg", Price=500_000_000, HatchSeconds=720, TemplateName="prototype_egg",
+			Results=table.freeze({
+				table.freeze({SpeciesId="crystal_cub",Weight=25}),
+				table.freeze({SpeciesId="prism_buddy",Weight=25}),
+				table.freeze({SpeciesId="amethyst_spirit",Weight=25}),
+				table.freeze({SpeciesId="solar_phoenix",Weight=12}),
+				table.freeze({SpeciesId="lunar_guardian",Weight=12}),
+				table.freeze({SpeciesId="astral_dragon",Weight=1}),
+			}),
+		}),
 		prototype_egg = table.freeze({
 			DisplayName = "Prototype Egg",
 			Price = 5000,

@@ -85,12 +85,17 @@ local function validateMutation(data: PlayerData): (boolean, string?)
 end
 
 local function validateConfig()
+	local eggs = require(game.ReplicatedStorage.Shared.Config.EggConfig)
 	local speciesCount = 0
 	local rarityCount: { [string]: number } = {}
 
 	for speciesId, definition in PetConfig.Species do
 		assert(speciesId == definition.SpeciesId, `PetConfig key {speciesId} does not match SpeciesId`)
-		assert(definition.EggId == PetConfig.PrototypeEggId, `Species {speciesId} is not in the prototype Egg`)
+		local egg = eggs.Definitions[definition.EggId]
+		assert(egg, `Species {speciesId} has unknown EggId`)
+		local inPool = false
+		for _, result in egg.Results do if result.SpeciesId == speciesId then inPool = true; break end end
+		assert(inPool, `Species {speciesId} is missing from its Egg pool`)
 
 		local expectedIncome = PetConfig.RarityBaseIncome[definition.Rarity]
 		assert(expectedIncome ~= nil, `Species {speciesId} has unknown rarity {definition.Rarity}`)
@@ -100,9 +105,9 @@ local function validateConfig()
 		rarityCount[definition.Rarity] = (rarityCount[definition.Rarity] or 0) + 1
 	end
 
-	assert(speciesCount == 6, "Prototype PetConfig must contain exactly six species")
+	assert(speciesCount > 0, "PetConfig must contain species")
 	for rarity in PetConfig.RarityBaseIncome do
-		assert(rarityCount[rarity] == 1, `Prototype PetConfig must contain one {rarity} species`)
+		assert((rarityCount[rarity] or 0) >= 1, `PetConfig must contain at least one {rarity} species`)
 	end
 end
 
@@ -110,7 +115,7 @@ function PetService.Start()
 	assert(not started, "PetService.Start may only be called once")
 	validateConfig()
 	started = true
-	print(`[PetService] Started with six prototype species`)
+	print(`[PetService] Started with configured species`)
 end
 
 -- Server-only preparation for purchases that reserve a pet before hatch.

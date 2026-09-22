@@ -6,6 +6,44 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — three eggs / eighteen pets
+
+- Completed: Advanced Egg (2M, 120s) and Elite Egg (500M, 720s), six new named
+  species each. Prices/timers/result weights use GDD 9.2 candidates; prototype egg
+  and saved IDs remain unchanged. Conveyor distribution 70/25/5. Unlock gates deferred.
+- Reused the existing egg template and exact per-rarity pet model copies under
+  new species names. No new geometry/runtime model builders. Removed 12 identical
+  Studio-only duplicate models created by live sync; filesystem templates retained.
+- Updated PetService's obsolete six-species/prototype-only startup assertion to
+  validate each species against its configured egg pool and retain rarity/income checks.
+- Verified: all 18 pool outcomes and three conveyor selections; 104 two-player
+  EggVerification checks including both new purchases, placement, configured timer,
+  fast-forwarded memory-only hatch, original identity, carry model and save/load.
+  Initial startup timeout exposed the fixed six-species assertion. Build/diff checks pass.
+- Files: EggConfig, PetConfig, ConveyorConfig, PetService, PetTemplates.rbxmx,
+  ConveyorVerification, docs/egg-content.md and this handoff. No schema change.
+- Next: playtest prices/odds/timers; no egg implementation blockers. Included in
+  `feat: add advanced and elite conveyor eggs with twelve pets`.
+- Token HUD edits remain separate/uncommitted and its verification is incomplete.
+
+### Latest session — Token HUD restyle (verification incomplete)
+
+- User explicitly prohibits roblox-ui-director for future work. Do not use it.
+- Implemented authored MerchantUI.TokenHUD Frame with medal emoji, purple outlined
+  compact value, transparent background, aligned above Food/Money. Coin emoji was
+  unsupported in Studio, so replaced with visually verified medal emoji.
+- MerchantController binds TokenHUD.Value and reflows with the existing currency
+  scale/spacing. Merchant transactions and farm-drop popup behavior are unchanged.
+- Removed one confirmed duplicate Studio-only TokenHUD Frame; source asset retained.
+- Files: MerchantUI.rbxmx, MerchantController, InventoryVerification.client.luau,
+  this handoff. Build/diff whitespace passed; screenshot shows clean single row.
+- NOT fully verified: first two-player test timed out waiting for Token Value to
+  replace placeholder. Added snapshot diagnostic to client test; rerun is pending in
+  game attribute TokenHudTest. Direct client-1 inspection timed out (plugin connection).
+  Do not claim live token updates pass. Next: inspect rerun result, merchant client
+  startup/remote availability and live value. Avoid spawning another test until done.
+- Last commit 6c81031. Token changes remain uncommitted pending verification.
+
 ### Latest session — fix overlapping currency rows in Studio
 
 - Root cause: two Food and two Money frames existed in Studio HUD after live sync;
