@@ -6,6 +6,19 @@
 
 **Last Updated:** 2026-09-22
 
+### Latest session — visible slot borders and no floating instructions
+
+- Fixed actual border defect: ten slot UIStrokes were Contextual, which outlines
+  empty TextButton text. Authored strokes now use Border mode.
+- Removed carry success/put-away instruction notices and hid authored Hotbar.Hint.
+  Inventory status errors remain available without floating text above the hotbar.
+- Files: InventoryController, FeedYourPetUI asset, client InventoryVerification,
+  docs/inventory.md and this handoff. No gameplay/save changes.
+- Verified: 194 two-player Studio checks pass, including each border mode and hidden
+  hint; synchronized StarterGui assertions, Rojo build and diff whitespace checks pass.
+- No blockers/in-progress work. Next: user visual review. Previous commit `3223872`;
+  correction included in `fix: render hotbar borders and remove carry hints`.
+
 ### Latest session — border-only held-slot indicator
 
 - Completed: held hotbar slots hide key/name/state text and use the gold border

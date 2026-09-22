@@ -61,6 +61,10 @@ local ok,failure=xpcall(function()
 	for i=1,10 do buttons[i]=gui.Hotbar["Slot"..i];check(buttons[i]:IsA("GuiButton"),"Authored hotbar slot "..i) end
 	check(not gui.Hotbar:FindFirstChild("Bag"),"BAG removed")
 	check(gui.Hotbar.BackgroundTransparency==1,"No hotbar frame background")
+	check(not gui.Hotbar.Hint.Visible,"No floating hotbar instruction text")
+	for _,button in buttons do
+		check(button.Stroke.ApplyStrokeMode==Enum.ApplyStrokeMode.Border,"Slot stroke outlines border, not empty text")
+	end
 	if game.Players.LocalPlayer:GetAttribute("CarriedEggUid") then
 		waitFor(function()
 			for _,button in buttons do

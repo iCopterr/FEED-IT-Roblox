@@ -38,7 +38,7 @@ function Controller.Start(gui,onSnapshot)
 		end
 	end)
 	local function notice(text)
-		layout.Status.Text=text;bar.Hint.Text=text;noticeUntil=os.clock()+4
+		layout.Status.Text=text;noticeUntil=os.clock()+4
 	end
 	local function otherModal()
 		return gui.FeedPanel.Visible or player:GetAttribute("EggPanelOpen") or player:GetAttribute("RevivePanelOpen")
@@ -81,7 +81,7 @@ function Controller.Start(gui,onSnapshot)
 		revision+=1
 		if ok and result.Ok then
 			if not locking and state~="HELD" then modal.Visible=false end
-			notice(if locking then "Pet lock updated." elseif state=="HELD" then "Returned to your inventory." else "Click inside your Pen to place. Pets can also go on the feed plate.")
+			if locking then notice("Pet lock updated.") end
 		else notice(if ok then errors[result.Code] or "Action unavailable. Refreshing your collection…" else "Connection interrupted. Refreshing your collection…") end
 		refresh()
 	end

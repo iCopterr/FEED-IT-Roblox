@@ -24,6 +24,8 @@ the cameras stored in StarterGui do not reliably replicate to clients.
 - Only occupied slots are visible: zero items means no hotbar, one means one square.
 - Held slots hide the key, name and state text; the gold border alone marks selection.
   The item preview and normal translucent background remain; putting away restores labels.
+- Slot UIStrokes use Border mode (not Contextual text outlines). Floating hotbar
+  hints are hidden; equipping/putting away no longer emits placement instructions.
   Visible slots pack together without changing their assigned key; narrow screens wrap.
   Empty-slot keys do nothing. B no longer opens inventory.
 - ADD/REMOVE QUICK SLOT changes a shortcut without moving or deleting the item.
