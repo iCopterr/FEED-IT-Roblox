@@ -4,7 +4,27 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-21
+**Last Updated:** 2026-09-22
+
+### Latest session — inventory proportions correction
+
+- Current feature: compact inventory visual correction following the user's screenshot.
+- Reduced desktop panel to a maximum 840px width and 82% viewport height; reflowed
+  search/filter controls, enlarged typography, centered empty-state text, and tightened
+  the detail/action area. Preserved the existing colorful stud style and translucent hotbar.
+- Saved matching editable StarterGui defaults in `src/ui/FeedYourPetUI.rbxmx`;
+  action buttons are hidden until selection. No runtime layout constructor added.
+- Files changed this correction: `InventoryLayout.luau`, `InventoryController.luau`,
+  the ScreenGui asset, and this handoff. Existing inventory feature changes preserved.
+- Verified: six layout sizes (1280x720, 1005x634, 390x844, 844x390, 360x640,
+  320x568), Studio empty-state screenshot, Rojo build, and `git diff --check`.
+  Earlier 76-check gameplay verification is unchanged; not rerun for this visual pass.
+- Next: user review of populated inventory and physical touch/gamepad comfort.
+  No economy, save schema, or server transaction changes in this correction.
+- Commit handoff: inventory/hotbar and visual corrections are included in the
+  user-requested `feat: add pet and egg inventory with quick-access hotbar` commit.
+  Previous merchant commit is `2602bea`. UI Director and
+  Computer Use were not used. Inventory restored hidden by default after inspection.
 
 > This file is the current-state handoff between Codex sessions. Update it
 > before ending a meaningful development session. Do not mark a feature
@@ -39,7 +59,7 @@ Developer Product fulfillment remains deferred until product IDs exist.
 | Egg System | ✅ Carry/Place Studio Verified | Buy/hold/click Pen starts timer; E hatch returns pet to player. 64 automated checks plus developer playtest. |
 | Egg Conveyor | ✅ Server Verified | Eggs replace direct pets; owner inventory slot, range/price validation, offer races/expiry tested. Existing static conveyor retained. |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
-| Inventory | 🟨 In Progress | Stud inventory UI, selection/details, and server-validated lock requests implemented; live verification and placement pending. |
+| Inventory / Hotbar | ✅ Studio Verified | Authored pet/egg collection, previews/search/sort/lock/equip, six translucent quick slots. Two-player server/client checks pass; physical device comfort pending. |
 | HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
 | Number Formatting | ✅ Studio Verified | Shared K/M/B/T amounts across UI/world labels; 44 formatter/parser/sign checks pass. |
 | Pet Placement | 🟦 Free Position Implemented | Click/tap inside own Pen, exact local coordinates, five-pet cap and click pickup; build passes, Studio test pending. |
@@ -66,11 +86,11 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Mystery Merchant and farm Token drops
+**Current Feature:** Authored inventory and translucent black hotbar
 
-**Status:** Implemented. Rojo build and 80 synced source compilations pass. MerchantVerification passes 27 two-player checks. Farm/Debug/Feed regression results are recorded in the latest session handoff below. Manual merchant visual/input review and live DataStore tests remain.
+**Status:** Inventory/hotbar implemented and synchronized. Focused two-player server/client verification passes, including previews, public egg data, equip/lock and responsive layout. Manual device comfort remains. Merchant remains committed and verified.
 
-**Objective:** Let active farming occasionally award Tokens to spend on rotating Food and Protection offers.
+**Objective:** Make owned pets/eggs easy to inspect, find, hold and access through quick slots.
 
 ## 4. Completed
 
@@ -293,6 +313,48 @@ PROJECT_STATUS.md
 ```
 
 ## 8. Current Uncommitted Work
+
+### Latest — Inventory and hotbar — 2026-09-22
+
+- Latest user correction: do NOT use roblox-ui-director again. Follow the
+  original colorful stud UI, chunky buttons, FredokaOne and dark outlined text.
+  Restyled inventory accordingly; the black translucent hotbar stays as requested.
+- Inventory panel/details/cards/buttons now use the same saved stud texture as
+  the original HUD. ImageButton text labels are authored children; controller
+  bindings and responsive typography updated. All 76 restyle client/server
+  checks pass. Final visual review caught transparent gaps in the stud texture;
+  added solid matching backplates and verified the corrected appearance in Studio.
+  Final Rojo build/diff checks pass. No UI Director skill used for this correction.
+
+- User requested a black translucent hotbar and inventory using roblox-ui-director;
+  explicitly requires all UI layouts in ScreenGui/StarterGui, not runtime generators.
+- Replaced the old inventory subtree in authored FeedYourPetUI; added six authored
+  hotbar slots. Runtime clones only saved item-card/model templates. Existing
+  Inventory visibility/status paths remain compatible with other controllers.
+- Unified public pet/egg cards, rarity color, previews, current income, search,
+  categories, sorting, lock/equip and session quick-slot pin/remove controls.
+- Keyboard 1–6 equips; B/backquote or BAG toggles inventory. Touch buttons and
+  gamepad selection/Y/B supported. Placed pet/egg actions still require proximity.
+- UIService adds public egg fields and separates snapshot/mutation throttles.
+  Private hatch results remain server-only; no schema/economy/config balance edits.
+- Files: FeedYourPetUI.rbxmx, HUDController, UIService; new InventoryController,
+  InventoryModel, InventoryLayout, ItemPreview, InventoryConfig, inventory docs,
+  server/client InventoryVerification, and this handoff.
+- Build and synchronized script compilation pass. Removed seven identical
+  duplicate Studio copies of newly synced scripts/modules; these had caused two
+  test runners to mutate the same profiles. Filesystem originals are preserved.
+- Clean run passed 15 server checks, then found missing client preview cameras.
+  ItemPreview now supplies a local Camera render helper inside each authored
+  ViewportFrame. UI hierarchy remains authored. Clean two-player verification now
+  passes: actual client startup/cards/cameras, held egg highlight, ownership,
+  equip/unequip, lock, public egg privacy, pin/remove and viewport checks.
+- Responsive layout bounds/overlap checks pass for 1280x720, 390x844, 844x390,
+  360x640 and 320x568. Manual device comfort still needs playtesting.
+- Next: physical input/feel playtest; real save/rejoin testing
+  remains the next gameplay priority. Device touch/gamepad comfort remains manual.
+- Last working commit: 2602bea (merchant, user committed). This UI work is uncommitted.
+- Quick slots store presentation references only, scoped to the session. They do
+  not grant ownership or expand the five active pet slots.
 
 ### Latest — Mystery Merchant — 2026-09-21
 

@@ -7,15 +7,19 @@ local CarryService = require(script.Parent.CarryService)
 local MoneyService = require(script.Parent.MoneyService)
 local PedestalService = require(script.Parent.PedestalService)
 local Config = require(ReplicatedStorage.Shared.Config.UIConfig)
+local EggConfig = require(ReplicatedStorage.Shared.Config.EggConfig)
+local Locks = require(script.Parent.FeedLocks)
 local UIService = {}
 local lastRequest = {}
+local lastSnapshot = {}
 
 function UIService.HandleRequest(player, action, petId, locked)
 	local now = os.clock()
-	if now - (lastRequest[player] or -math.huge) < Config.RequestCooldown then
+	local throttle = if action == "Snapshot" then lastSnapshot else lastRequest
+	if now - (throttle[player] or -math.huge) < Config.RequestCooldown then
 		return { Ok = false, Code = "Cooldown" }
 	end
-	lastRequest[player] = now
+	throttle[player] = now
 	local data = DataService.GetData(player)
 	if not data then
 		return { Ok = false, Code = "Loading" }
@@ -45,6 +49,13 @@ function UIService.HandleRequest(player, action, petId, locked)
 		return { Ok = false, Code = "InvalidRequest" }
 	end
 	local placedCount = 0
+	local eggs = {}
+	for uid, egg in data.IncubatingEggs do
+		local definition = EggConfig.Definitions[egg.EggId]
+		-- Never expose the reserved hatch result to the inventory client.
+		table.insert(eggs, {EggUid=uid, EggId=egg.EggId, Name=definition and definition.DisplayName or egg.EggId,
+			StartedAt=egg.StartedAt, ReadyAt=egg.ReadyAt, Placed=egg.PenPosition~=nil})
+	end
 	for _ in data.PlacedPetIds do
 		placedCount += 1
 	end
@@ -52,6 +63,8 @@ function UIService.HandleRequest(player, action, petId, locked)
 		Ok = true, Money = data.Money, Food = data.Food,
 		MaxPetSlots = data.MaxPetSlots, PlacedCount = placedCount,
 		Inventory = PetService.GetInventory(player),
+		Eggs = eggs, ServerNow = os.time(), Busy = Locks.IsLocked(player),
+		CarriedEggUid = CarryService.GetEggId(player),
 		CarriedPetId = CarryService.GetPetId(player),
 		FeedPlatePetId = PedestalService.GetPetId(player),
 		IncomePerSecond = MoneyService.GetRate(player),
@@ -70,6 +83,7 @@ function UIService.Start()
 	remotes.Parent = ReplicatedStorage
 	Players.PlayerRemoving:Connect(function(player)
 		lastRequest[player] = nil
+		lastSnapshot[player] = nil
 	end)
 end
 

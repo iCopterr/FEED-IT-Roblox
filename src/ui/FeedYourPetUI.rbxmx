@@ -667,756 +667,256 @@ Check the explosion risk before every attempt.</string>
 </Item>
 </Item>
 </Item>
-<Item class="Frame"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>1000</XO><YS>0</YS><YO>700</YO></UDim2>
-<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0.5799999833106995</YS><YO>0</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">0</float>
-<float name="ZIndex">0</float>
-<bool name="Visible">false</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">Inventory</string>
-<bool name="Archivable">true</bool>
-</Properties>
-<Item class="UIScale"><Properties>
-<string name="Name">UIScale</string>
-<bool name="Archivable">true</bool>
-<float name="Scale">0.6899999976158142</float>
-</Properties>
+<Item class="Frame"><Properties><string name="Name">Inventory</string><Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2><float name="BackgroundTransparency">1</float><bool name="Active">true</bool><float name="ZIndex">10</float><bool name="Visible">false</bool><UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0.5</YS><YO>0</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>840</XO><YS>0</YS><YO>519</YO></UDim2></Properties>
+<Item class="ImageLabel"><Properties><string name="Name">Panel</string><float name="BorderSizePixel">0</float><bool name="Active">true</bool><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>0.40784313725490196</R><G>0.3411764705882353</G><B>0.6862745098039216</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>0.40784313725490196</R><G>0.3411764705882353</G><B>0.6862745098039216</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2><UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>20</O></UDim></Properties>
 </Item>
-<Item class="ImageLabel"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>1000</XO><YS>0</YS><YO>700</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="BackgroundTransparency">0</float>
-<float name="BorderSizePixel">0</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">Panel</string>
-<bool name="Archivable">true</bool>
-<Content name="Image"><url>rbxassetid://6927295847</url></Content>
-<Color3 name="ImageColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="ImageTransparency">0</float>
-<token name="ScaleType">2</token>
-<UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2>
-</Properties>
-<Item class="UICorner"><Properties>
-<string name="Name">UICorner</string>
-<bool name="Archivable">true</bool>
-<UDim name="CornerRadius"><S>0</S><O>15</O></UDim>
-</Properties>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><token name="ApplyStrokeMode">0</token><Color3 name="Color"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="Thickness">3</float></Properties>
 </Item>
-<Item class="UIGradient"><Properties>
-<string name="Name">UIGradient</string>
-<bool name="Archivable">true</bool>
-<ColorSequence name="Color">0 0.40784314274787903 0.34117648005485535 0.686274528503418 0 1 0.3262745141983032 0.2729411721229553 0.5490196347236633 0 </ColorSequence>
-<float name="Rotation">90</float>
-<NumberSequence name="Transparency">0 0 0 1 0 0 </NumberSequence>
-<bool name="Enabled">true</bool>
-<Vector2 name="Offset"><X>0</X><Y>0</Y></Vector2>
-</Properties>
+<Item class="Frame"><Properties><string name="Name">Layout</string><float name="BackgroundTransparency">1</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2><UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2></Properties>
+<Item class="TextLabel"><Properties><string name="Name">Title</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="Font">26</token><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><Color3 name="TextColor3"><R>1</R><G>0.8235294117647058</G><B>0.3764705882352941</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>18</XO><YS>0</YS><YO>12</YO></UDim2><token name="TextXAlignment">0</token><string name="Text">MY PETS</string><float name="TextSize">30</float><UDim2 name="Size"><XS>0</XS><XO>605</XO><YS>0</YS><YO>38</YO></UDim2></Properties>
 </Item>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">1</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.14274510741233826</R><G>0.11941178143024445</G><B>0.2401961088180542</B></Color3>
-<token name="LineJoinMode">0</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">PenSlots</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="Font">26</token><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><Color3 name="TextColor3"><R>1</R><G>0.8235294117647058</G><B>0.3764705882352941</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>1</XS><XO>-202</XO><YS>0</YS><YO>19</YO></UDim2><token name="TextXAlignment">0</token><string name="Text">PEN 0 / 5</string><float name="TextSize">16</float><UDim2 name="Size"><XS>0</XS><XO>134</XO><YS>0</YS><YO>28</YO></UDim2></Properties>
 </Item>
-<Item class="Frame"><Properties>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">0</float>
-<float name="ZIndex">0</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">Layout</string>
-<bool name="Archivable">true</bool>
-</Properties>
-<Item class="TextLabel"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>700</XO><YS>0</YS><YO>100</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">Title</string>
-<bool name="Archivable">true</bool>
-<string name="Text">Loading your pets…</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="TextTransparency">0</float>
-<bool name="TextScaled">true</bool>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-<float name="TextSize">8</float>
-<token name="TextXAlignment">2</token>
-<token name="TextYAlignment">1</token>
-<bool name="RichText">false</bool>
-</Properties>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">0</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1882352977991104</R><G>0.05882352963089943</G><B>0.23529411852359772</B></Color3>
-<token name="LineJoinMode">1</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
+<Item class="ImageButton"><Properties><string name="Name">Close</string><float name="BorderSizePixel">0</float><bool name="AutoButtonColor">true</bool><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>0.9372549019607843</R><G>0.3176470588235294</G><B>0.4549019607843137</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>0.9372549019607843</R><G>0.3176470588235294</G><B>0.4549019607843137</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>1</XS><XO>-58</XO><YS>0</YS><YO>12</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>40</XO><YS>0</YS><YO>40</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
 </Item>
-<Item class="UITextSizeConstraint"><Properties>
-<string name="Name">UITextSizeConstraint</string>
-<bool name="Archivable">true</bool>
-<float name="MaxTextSize">38</float>
-<float name="MinTextSize">12</float>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">ButtonText</string><float name="BackgroundTransparency">1</float><bool name="TextWrapped">true</bool><bool name="Active">false</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>2</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">×</string><float name="TextSize">26</float><UDim2 name="Size"><XS>1</XS><XO>-8</XO><YS>1</YS><YO>-4</YO></UDim2></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.188</R><G>0.059</G><B>0.235</B></Color3><float name="Thickness">3</float><token name="ApplyStrokeMode">0</token></Properties>
 </Item>
 </Item>
-<Item class="ImageButton"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>200</XO><YS>0</YS><YO>100</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>800</XO><YS>0</YS><YO>0</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="BackgroundTransparency">0</float>
-<float name="BorderSizePixel">0</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">true</bool>
-<bool name="Selectable">true</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">Close</string>
-<bool name="Archivable">true</bool>
-<Content name="Image"><url>rbxassetid://6927295847</url></Content>
-<Color3 name="ImageColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="ImageTransparency">0</float>
-<token name="ScaleType">2</token>
-<UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2>
-<bool name="AutoButtonColor">true</bool>
-</Properties>
-<Item class="UICorner"><Properties>
-<string name="Name">UICorner</string>
-<bool name="Archivable">true</bool>
-<UDim name="CornerRadius"><S>0</S><O>15</O></UDim>
-</Properties>
+<Item class="TextBox"><Properties><string name="Name">Search</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><float name="BackgroundTransparency">0</float><string name="PlaceholderText">Search name or rarity…</string><bool name="ClearTextOnFocus">false</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><Color3 name="BackgroundColor3"><R>0.25882352941176473</R><G>0.18823529411764706</G><B>0.43137254901960786</B></Color3><Color3 name="PlaceholderColor3"><R>0.8666666666666667</R><G>0.8156862745098039</G><B>0.9568627450980393</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>18</XO><YS>0</YS><YO>62</YO></UDim2><token name="TextXAlignment">0</token><string name="Text"></string><float name="TextSize">16</float><UDim2 name="Size"><XS>0</XS><XO>364</XO><YS>0</YS><YO>40</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
 </Item>
-<Item class="UIGradient"><Properties>
-<string name="Name">UIGradient</string>
-<bool name="Archivable">true</bool>
-<ColorSequence name="Color">0 0.9215686321258545 0.3921568691730499 0.7921568751335144 0 1 0.7372549176216125 0.3137255012989044 0.6337255239486694 0 </ColorSequence>
-<float name="Rotation">90</float>
-<NumberSequence name="Transparency">0 0 0 1 0 0 </NumberSequence>
-<bool name="Enabled">true</bool>
-<Vector2 name="Offset"><X>0</X><Y>0</Y></Vector2>
-</Properties>
+<Item class="UIPadding"><Properties><string name="Name">Padding</string><UDim name="PaddingLeft"><S>0</S><O>12</O></UDim></Properties>
 </Item>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">1</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.322549045085907</R><G>0.13725492358207703</G><B>0.27725493907928467</B></Color3>
-<token name="LineJoinMode">0</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
 </Item>
-<Item class="TextLabel"><Properties>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
-<float name="ZIndex">2</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">ButtonText</string>
-<bool name="Archivable">true</bool>
-<string name="Text">CLOSE</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="TextTransparency">0</float>
-<bool name="TextScaled">true</bool>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-<float name="TextSize">8</float>
-<token name="TextXAlignment">2</token>
-<token name="TextYAlignment">1</token>
-<bool name="RichText">false</bool>
-</Properties>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">0</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1882352977991104</R><G>0.05882352963089943</G><B>0.23529411852359772</B></Color3>
-<token name="LineJoinMode">1</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
+<Item class="ImageButton"><Properties><string name="Name">All</string><float name="BorderSizePixel">0</float><bool name="AutoButtonColor">true</bool><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>1</R><G>0.7647058823529411</G><B>0.21568627450980393</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>1</R><G>0.7647058823529411</G><B>0.21568627450980393</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>394</XO><YS>0</YS><YO>62</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>64</XO><YS>0</YS><YO>40</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
 </Item>
-<Item class="UITextSizeConstraint"><Properties>
-<string name="Name">UITextSizeConstraint</string>
-<bool name="Archivable">true</bool>
-<float name="MaxTextSize">32</float>
-<float name="MinTextSize">12</float>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">ButtonText</string><float name="BackgroundTransparency">1</float><bool name="TextWrapped">true</bool><bool name="Active">false</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>2</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">ALL</string><float name="TextSize">17</float><UDim2 name="Size"><XS>1</XS><XO>-8</XO><YS>1</YS><YO>-4</YO></UDim2></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.188</R><G>0.059</G><B>0.235</B></Color3><float name="Thickness">3</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+</Item>
+<Item class="ImageButton"><Properties><string name="Name">Pet</string><float name="BorderSizePixel">0</float><bool name="AutoButtonColor">true</bool><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>0.4392156862745098</R><G>0.8588235294117647</G><B>0.34901960784313724</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>0.4392156862745098</R><G>0.8588235294117647</G><B>0.34901960784313724</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>464</XO><YS>0</YS><YO>62</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>64</XO><YS>0</YS><YO>40</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">ButtonText</string><float name="BackgroundTransparency">1</float><bool name="TextWrapped">true</bool><bool name="Active">false</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>2</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">PETS</string><float name="TextSize">17</float><UDim2 name="Size"><XS>1</XS><XO>-8</XO><YS>1</YS><YO>-4</YO></UDim2></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.188</R><G>0.059</G><B>0.235</B></Color3><float name="Thickness">3</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+</Item>
+<Item class="ImageButton"><Properties><string name="Name">Egg</string><float name="BorderSizePixel">0</float><bool name="AutoButtonColor">true</bool><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>0.3568627450980392</R><G>0.7490196078431373</G><B>0.9176470588235294</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>0.3568627450980392</R><G>0.7490196078431373</G><B>0.9176470588235294</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>534</XO><YS>0</YS><YO>62</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>64</XO><YS>0</YS><YO>40</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">ButtonText</string><float name="BackgroundTransparency">1</float><bool name="TextWrapped">true</bool><bool name="Active">false</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>2</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">EGGS</string><float name="TextSize">17</float><UDim2 name="Size"><XS>1</XS><XO>-8</XO><YS>1</YS><YO>-4</YO></UDim2></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.188</R><G>0.059</G><B>0.235</B></Color3><float name="Thickness">3</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+</Item>
+<Item class="ImageButton"><Properties><string name="Name">Sort</string><float name="BorderSizePixel">0</float><bool name="AutoButtonColor">true</bool><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>0.9215686274509803</R><G>0.39215686274509803</G><B>0.792156862745098</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>0.9215686274509803</R><G>0.39215686274509803</G><B>0.792156862745098</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>1</XS><XO>-230</XO><YS>0</YS><YO>62</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>212</XO><YS>0</YS><YO>40</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">ButtonText</string><float name="BackgroundTransparency">1</float><bool name="TextWrapped">true</bool><bool name="Active">false</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>2</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">SORT: NEWEST</string><float name="TextSize">17</float><UDim2 name="Size"><XS>1</XS><XO>-8</XO><YS>1</YS><YO>-4</YO></UDim2></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.188</R><G>0.059</G><B>0.235</B></Color3><float name="Thickness">3</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+</Item>
+<Item class="ScrollingFrame"><Properties><string name="Name">Pets</string><float name="BorderSizePixel">0</float><float name="ScrollBarThickness">5</float><token name="AutomaticCanvasSize">2</token><UDim2 name="CanvasSize"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2><bool name="ClipsDescendants">true</bool><Color3 name="BackgroundColor3"><R>0.2549019607843137</R><G>0.1843137254901961</G><B>0.4235294117647059</B></Color3><float name="BackgroundTransparency">0.12</float><Color3 name="ScrollBarImageColor3"><R>1</R><G>0.8235294117647058</G><B>0.3764705882352941</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>18</XO><YS>0</YS><YO>116</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>546</XO><YS>0</YS><YO>361</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>14</O></UDim></Properties>
+</Item>
+<Item class="UIGridLayout"><Properties><string name="Name">Grid</string><UDim2 name="CellPadding"><XS>0</XS><XO>10</XO><YS>0</YS><YO>10</YO></UDim2><token name="SortOrder">2</token><UDim2 name="CellSize"><XS>0</XS><XO>168</XO><YS>0</YS><YO>174</YO></UDim2></Properties>
+</Item>
+<Item class="UIPadding"><Properties><string name="Name">Padding</string><UDim name="PaddingTop"><S>0</S><O>8</O></UDim><UDim name="PaddingLeft"><S>0</S><O>8</O></UDim><UDim name="PaddingBottom"><S>0</S><O>8</O></UDim></Properties>
+</Item>
+<Item class="ImageButton"><Properties><string name="Name">PetCardTemplate</string><float name="BorderSizePixel">0</float><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>0.43529411764705883</R><G>0.6745098039215687</G><B>0.9450980392156862</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>0.43529411764705883</R><G>0.6745098039215687</G><B>0.9450980392156862</B></Color3><bool name="Visible">false</bool><UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>136</XO><YS>0</YS><YO>170</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>12</O></UDim></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><token name="ApplyStrokeMode">0</token><Color3 name="Color"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="Thickness">3</float></Properties>
+</Item>
+<Item class="Frame"><Properties><string name="Name">RarityStripe</string><Color3 name="BackgroundColor3"><R>0.45098039215686275</R><G>0.35294117647058826</G><B>0.6980392156862745</B></Color3><float name="BorderSizePixel">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2><UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>0</YS><YO>5</YO></UDim2></Properties>
+</Item>
+<Item class="ViewportFrame"><Properties><string name="Name">Preview</string><float name="BackgroundTransparency">1</float><Color3 name="Ambient"><R>0.7843137254901961</R><G>0.7843137254901961</G><B>0.8627450980392157</B></Color3><Color3 name="LightColor"><R>1</R><G>0.9647058823529412</G><B>0.8862745098039215</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>6</XO><YS>0</YS><YO>10</YO></UDim2><UDim2 name="Size"><XS>1</XS><XO>-12</XO><YS>0</YS><YO>87</YO></UDim2></Properties>
+<Item class="WorldModel"><Properties><string name="Name">World</string></Properties>
+</Item>
+<Item class="Camera"><Properties><string name="Name">PreviewCamera</string></Properties>
+</Item>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">ItemName</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>8</XO><YS>0</YS><YO>99</YO></UDim2><token name="TextXAlignment">0</token><string name="Text">Pet</string><float name="TextSize">15</float><UDim2 name="Size"><XS>1</XS><XO>-16</XO><YS>0</YS><YO>32</YO></UDim2></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">Stats</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>8</XO><YS>0</YS><YO>132</YO></UDim2><token name="TextXAlignment">0</token><string name="Text">Lv. 0</string><float name="TextSize">13</float><UDim2 name="Size"><XS>1</XS><XO>-16</XO><YS>0</YS><YO>18</YO></UDim2></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">State</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>8</XO><YS>0</YS><YO>152</YO></UDim2><token name="TextXAlignment">0</token><string name="Text">STORED</string><float name="TextSize">11</float><UDim2 name="Size"><XS>1</XS><XO>-16</XO><YS>0</YS><YO>16</YO></UDim2></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">LockMark</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>1</XS><XO>-30</XO><YS>0</YS><YO>9</YO></UDim2><token name="TextXAlignment">0</token><string name="Text"></string><float name="TextSize">12</float><UDim2 name="Size"><XS>0</XS><XO>24</XO><YS>0</YS><YO>22</YO></UDim2></Properties>
 </Item>
 </Item>
 </Item>
-<Item class="ScrollingFrame"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>600</XO><YS>0</YS><YO>400</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>100</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">0</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">true</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">true</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">Pets</string>
-<bool name="Archivable">true</bool>
-<token name="AutomaticCanvasSize">2</token>
-<UDim2 name="CanvasSize"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
-<float name="ScrollBarThickness">6</float>
-<token name="ScrollingDirection">4</token>
-<token name="ElasticBehavior">0</token>
-</Properties>
-<Item class="UIListLayout"><Properties>
-<string name="Name">UIListLayout</string>
-<bool name="Archivable">true</bool>
-<token name="HorizontalAlignment">0</token>
-<token name="VerticalAlignment">1</token>
-<UDim name="Padding"><S>0</S><O>100</O></UDim>
-<token name="SortOrder">2</token>
-<token name="FillDirection">1</token>
-</Properties>
+<Item class="ImageLabel"><Properties><string name="Name">Details</string><float name="BorderSizePixel">0</float><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>0.3215686274509804</R><G>0.2549019607843137</G><B>0.5647058823529412</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>0.3215686274509804</R><G>0.2549019607843137</G><B>0.5647058823529412</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>1</XS><XO>-258</XO><YS>0</YS><YO>116</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>240</XO><YS>0</YS><YO>361</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>16</O></UDim></Properties>
 </Item>
-<Item class="UIPadding"><Properties>
-<UDim name="PaddingTop"><S>0</S><O>100</O></UDim>
-<UDim name="PaddingBottom"><S>0</S><O>100</O></UDim>
-<UDim name="PaddingLeft"><S>0</S><O>0</O></UDim>
-<UDim name="PaddingRight"><S>0</S><O>0</O></UDim>
-<string name="Name">UIPadding</string>
-<bool name="Archivable">true</bool>
-</Properties>
+<Item class="ViewportFrame"><Properties><string name="Name">Preview</string><float name="BackgroundTransparency">1</float><Color3 name="Ambient"><R>0.7843137254901961</R><G>0.7843137254901961</G><B>0.8627450980392157</B></Color3><Color3 name="LightColor"><R>1</R><G>0.9647058823529412</G><B>0.8862745098039215</B></Color3><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>14</XO><YS>0</YS><YO>8</YO></UDim2><UDim2 name="Size"><XS>1</XS><XO>-28</XO><YS>0</YS><YO>100</YO></UDim2></Properties>
+<Item class="WorldModel"><Properties><string name="Name">World</string></Properties>
 </Item>
-<Item class="ImageButton"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>500</XO><YS>0</YS><YO>100</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="BackgroundTransparency">0</float>
-<float name="BorderSizePixel">0</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">false</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">true</bool>
-<bool name="Selectable">true</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">PetCardTemplate</string>
-<bool name="Archivable">true</bool>
-<Content name="Image"><url>rbxassetid://6927295847</url></Content>
-<Color3 name="ImageColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="ImageTransparency">0</float>
-<token name="ScaleType">2</token>
-<UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2>
-<bool name="AutoButtonColor">true</bool>
-</Properties>
-<Item class="UICorner"><Properties>
-<string name="Name">UICorner</string>
-<bool name="Archivable">true</bool>
-<UDim name="CornerRadius"><S>0</S><O>15</O></UDim>
-</Properties>
+<Item class="Camera"><Properties><string name="Name">PreviewCamera</string></Properties>
 </Item>
-<Item class="UIGradient"><Properties>
-<string name="Name">UIGradient</string>
-<bool name="Archivable">true</bool>
-<ColorSequence name="Color">0 0.43529412150382996 0.6745098233222961 0.9450980424880981 0 1 0.3482353091239929 0.5396078824996948 0.7560784220695496 0 </ColorSequence>
-<float name="Rotation">90</float>
-<NumberSequence name="Transparency">0 0 0 1 0 0 </NumberSequence>
-<bool name="Enabled">true</bool>
-<Vector2 name="Offset"><X>0</X><Y>0</Y></Vector2>
-</Properties>
 </Item>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">1</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1523529589176178</R><G>0.2360784411430359</G><B>0.33078432083129883</B></Color3>
-<token name="LineJoinMode">0</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">ItemName</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>14</XO><YS>0</YS><YO>112</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">SELECT A PET</string><float name="TextSize">22</float><UDim2 name="Size"><XS>1</XS><XO>-28</XO><YS>0</YS><YO>44</YO></UDim2></Properties>
 </Item>
-<Item class="TextLabel"><Properties>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
-<float name="ZIndex">2</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">ButtonText</string>
-<bool name="Archivable">true</bool>
-<string name="Text">PET NAME</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="TextTransparency">0</float>
-<bool name="TextScaled">true</bool>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-<float name="TextSize">8</float>
-<token name="TextXAlignment">2</token>
-<token name="TextYAlignment">1</token>
-<bool name="RichText">false</bool>
-</Properties>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">0</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1882352977991104</R><G>0.05882352963089943</G><B>0.23529411852359772</B></Color3>
-<token name="LineJoinMode">1</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">Stats</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>14</XO><YS>0</YS><YO>160</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">Tap a card to see its stats.</string><float name="TextSize">16</float><UDim2 name="Size"><XS>1</XS><XO>-28</XO><YS>0</YS><YO>87</YO></UDim2></Properties>
 </Item>
-<Item class="UITextSizeConstraint"><Properties>
-<string name="Name">UITextSizeConstraint</string>
-<bool name="Archivable">true</bool>
-<float name="MaxTextSize">32</float>
-<float name="MinTextSize">12</float>
-</Properties>
+<Item class="ImageButton"><Properties><string name="Name">Equip</string><float name="BorderSizePixel">0</float><bool name="AutoButtonColor">true</bool><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>0.4392156862745098</R><G>0.8588235294117647</G><B>0.34901960784313724</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>0.4392156862745098</R><G>0.8588235294117647</G><B>0.34901960784313724</B></Color3><bool name="Visible">false</bool><UDim2 name="Position"><XS>0</XS><XO>12</XO><YS>1</YS><YO>-56</YO></UDim2><UDim2 name="Size"><XS>1</XS><XO>-24</XO><YS>0</YS><YO>44</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">ButtonText</string><float name="BackgroundTransparency">1</float><bool name="TextWrapped">true</bool><bool name="Active">false</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>2</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">HOLD PET</string><float name="TextSize">21</float><UDim2 name="Size"><XS>1</XS><XO>-8</XO><YS>1</YS><YO>-4</YO></UDim2></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.188</R><G>0.059</G><B>0.235</B></Color3><float name="Thickness">3</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+</Item>
+<Item class="ImageButton"><Properties><string name="Name">Lock</string><float name="BorderSizePixel">0</float><bool name="AutoButtonColor">true</bool><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>0.3568627450980392</R><G>0.7490196078431373</G><B>0.9176470588235294</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>0.3568627450980392</R><G>0.7490196078431373</G><B>0.9176470588235294</B></Color3><bool name="Visible">false</bool><UDim2 name="Position"><XS>0</XS><XO>12</XO><YS>1</YS><YO>-106</YO></UDim2><UDim2 name="Size"><XS>0.41999998688697815</XS><XO>-16</XO><YS>0</YS><YO>42</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">ButtonText</string><float name="BackgroundTransparency">1</float><bool name="TextWrapped">true</bool><bool name="Active">false</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>2</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">LOCK</string><float name="TextSize">16</float><UDim2 name="Size"><XS>1</XS><XO>-8</XO><YS>1</YS><YO>-4</YO></UDim2></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.188</R><G>0.059</G><B>0.235</B></Color3><float name="Thickness">3</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+</Item>
+<Item class="ImageButton"><Properties><string name="Name">Pin</string><float name="BorderSizePixel">0</float><bool name="AutoButtonColor">true</bool><Content name="Image"><url>rbxassetid://6927295847</url></Content><token name="ScaleType">2</token><UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2><Color3 name="ImageColor3"><R>1</R><G>0.7647058823529411</G><B>0.21568627450980393</B></Color3><float name="BackgroundTransparency">0</float><Color3 name="BackgroundColor3"><R>1</R><G>0.7647058823529411</G><B>0.21568627450980393</B></Color3><bool name="Visible">false</bool><UDim2 name="Position"><XS>0.41999998688697815</XS><XO>2</XO><YS>1</YS><YO>-106</YO></UDim2><UDim2 name="Size"><XS>0.5799999833106995</XS><XO>-14</XO><YS>0</YS><YO>42</YO></UDim2></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">ButtonText</string><float name="BackgroundTransparency">1</float><bool name="TextWrapped">true</bool><bool name="Active">false</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>2</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">QUICK SLOT</string><float name="TextSize">16</float><UDim2 name="Size"><XS>1</XS><XO>-8</XO><YS>1</YS><YO>-4</YO></UDim2></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.188</R><G>0.059</G><B>0.235</B></Color3><float name="Thickness">3</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+</Item>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">EmptyState</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>34</XO><YS>0</YS><YO>251</YO></UDim2><token name="TextXAlignment">2</token><string name="Text">Your collection starts with an egg.
+Visit the conveyor to get one.</string><float name="TextSize">23</float><UDim2 name="Size"><XS>0</XS><XO>514</XO><YS>0</YS><YO>90</YO></UDim2></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">Status</string><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="Font">26</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><Color3 name="TextStrokeColor3"><R>0.18823529411764706</R><G>0.058823529411764705</G><B>0.23529411764705882</B></Color3><float name="TextStrokeTransparency">0</float><bool name="Visible">true</bool><UDim2 name="Position"><XS>0</XS><XO>18</XO><YS>1</YS><YO>-32</YO></UDim2><token name="TextXAlignment">0</token><string name="Text">Select a pet • Hold to carry • Pin to your hotbar</string><float name="TextSize">13</float><UDim2 name="Size"><XS>1</XS><XO>-36</XO><YS>0</YS><YO>24</YO></UDim2></Properties>
 </Item>
 </Item>
 </Item>
 </Item>
-<Item class="TextLabel"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>600</XO><YS>0</YS><YO>400</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>100</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">EmptyState</string>
-<bool name="Archivable">true</bool>
-<string name="Text">Loading your pets…</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="TextTransparency">0</float>
-<bool name="TextScaled">true</bool>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-<float name="TextSize">8</float>
-<token name="TextXAlignment">2</token>
-<token name="TextYAlignment">1</token>
-<bool name="RichText">false</bool>
-</Properties>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">0</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1882352977991104</R><G>0.05882352963089943</G><B>0.23529411852359772</B></Color3>
-<token name="LineJoinMode">1</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
+<Item class="Frame"><Properties><string name="Name">Hotbar</string><UDim2 name="Size"><XS>0</XS><XO>536</XO><YS>0</YS><YO>88</YO></UDim2><UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>1</YS><YO>-16</YO></UDim2><Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2><Color3 name="BackgroundColor3"><R>0</R><G>0</G><B>0</B></Color3><float name="BackgroundTransparency">0.42</float><float name="BorderSizePixel">0</float><bool name="Active">true</bool></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>14</O></UDim></Properties>
 </Item>
-<Item class="UITextSizeConstraint"><Properties>
-<string name="Name">UITextSizeConstraint</string>
-<bool name="Archivable">true</bool>
-<float name="MaxTextSize">28</float>
-<float name="MinTextSize">12</float>
-</Properties>
+<Item class="TextButton"><Properties><string name="Name">Slot1</string><UDim2 name="Position"><XS>0</XS><XO>8</XO><YS>0</YS><YO>6</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>66</XO><YS>0</YS><YO>76</YO></UDim2><string name="Text"></string><Color3 name="BackgroundColor3"><R>0</R><G>0</G><B>0</B></Color3><float name="BackgroundTransparency">0.38</float><float name="BorderSizePixel">0</float><bool name="Visible">true</bool></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.5490196078431373</R><G>0.5490196078431373</G><B>0.5882352941176471</B></Color3><float name="Thickness">1</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+<Item class="ViewportFrame"><Properties><string name="Name">Preview</string><UDim2 name="Position"><XS>0</XS><XO>2</XO><YS>0</YS><YO>5</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>62</XO><YS>0</YS><YO>47</YO></UDim2><float name="BackgroundTransparency">1</float><Color3 name="Ambient"><R>0.7843137254901961</R><G>0.7843137254901961</G><B>0.8627450980392157</B></Color3><Color3 name="LightColor"><R>1</R><G>0.9647058823529412</G><B>0.8862745098039215</B></Color3></Properties>
+<Item class="WorldModel"><Properties><string name="Name">World</string></Properties>
+</Item>
+<Item class="Camera"><Properties><string name="Name">PreviewCamera</string></Properties>
 </Item>
 </Item>
-<Item class="TextLabel"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>400</XO><YS>0</YS><YO>300</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>600</XO><YS>0</YS><YO>100</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">PetDetails</string>
-<bool name="Archivable">true</bool>
-<string name="Text">Select a pet to inspect it.</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="TextTransparency">0</float>
-<bool name="TextScaled">true</bool>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-<float name="TextSize">8</float>
-<token name="TextXAlignment">2</token>
-<token name="TextYAlignment">1</token>
-<bool name="RichText">false</bool>
-</Properties>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">0</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1882352977991104</R><G>0.05882352963089943</G><B>0.23529411852359772</B></Color3>
-<token name="LineJoinMode">1</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">Key</string><UDim2 name="Position"><XS>0</XS><XO>5</XO><YS>0</YS><YO>2</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>16</XO><YS>0</YS><YO>16</YO></UDim2><string name="Text">1</string><float name="TextSize">12</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
 </Item>
-<Item class="UITextSizeConstraint"><Properties>
-<string name="Name">UITextSizeConstraint</string>
-<bool name="Archivable">true</bool>
-<float name="MaxTextSize">26</float>
-<float name="MinTextSize">12</float>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">ItemName</string><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>52</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>58</XO><YS>0</YS><YO>18</YO></UDim2><string name="Text">Empty</string><float name="TextSize">11</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">State</string><UDim2 name="Position"><XS>0</XS><XO>25</XO><YS>0</YS><YO>3</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>36</XO><YS>0</YS><YO>14</YO></UDim2><string name="Text"></string><float name="TextSize">9</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
 </Item>
 </Item>
-<Item class="ImageButton"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>300</XO><YS>0</YS><YO>100</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>600</XO><YS>0</YS><YO>400</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="BackgroundTransparency">0</float>
-<float name="BorderSizePixel">0</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">false</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">true</bool>
-<bool name="Selectable">true</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">LockPet</string>
-<bool name="Archivable">true</bool>
-<Content name="Image"><url>rbxassetid://6927295847</url></Content>
-<Color3 name="ImageColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="ImageTransparency">0</float>
-<token name="ScaleType">2</token>
-<UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2>
-<bool name="AutoButtonColor">true</bool>
-</Properties>
-<Item class="UICorner"><Properties>
-<string name="Name">UICorner</string>
-<bool name="Archivable">true</bool>
-<UDim name="CornerRadius"><S>0</S><O>15</O></UDim>
-</Properties>
+<Item class="TextButton"><Properties><string name="Name">Slot2</string><UDim2 name="Position"><XS>0</XS><XO>82</XO><YS>0</YS><YO>6</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>66</XO><YS>0</YS><YO>76</YO></UDim2><string name="Text"></string><Color3 name="BackgroundColor3"><R>0</R><G>0</G><B>0</B></Color3><float name="BackgroundTransparency">0.38</float><float name="BorderSizePixel">0</float><bool name="Visible">true</bool></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
 </Item>
-<Item class="UIGradient"><Properties>
-<string name="Name">UIGradient</string>
-<bool name="Archivable">true</bool>
-<ColorSequence name="Color">0 0.43921568989753723 0.8588235378265381 0.3490196168422699 0 1 0.35137253999710083 0.6870588064193726 0.2792156934738159 0 </ColorSequence>
-<float name="Rotation">90</float>
-<NumberSequence name="Transparency">0 0 0 1 0 0 </NumberSequence>
-<bool name="Enabled">true</bool>
-<Vector2 name="Offset"><X>0</X><Y>0</Y></Vector2>
-</Properties>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.5490196078431373</R><G>0.5490196078431373</G><B>0.5882352941176471</B></Color3><float name="Thickness">1</float><token name="ApplyStrokeMode">0</token></Properties>
 </Item>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">1</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1537255048751831</R><G>0.3005882501602173</G><B>0.12215687334537506</B></Color3>
-<token name="LineJoinMode">0</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
+<Item class="ViewportFrame"><Properties><string name="Name">Preview</string><UDim2 name="Position"><XS>0</XS><XO>2</XO><YS>0</YS><YO>5</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>62</XO><YS>0</YS><YO>47</YO></UDim2><float name="BackgroundTransparency">1</float><Color3 name="Ambient"><R>0.7843137254901961</R><G>0.7843137254901961</G><B>0.8627450980392157</B></Color3><Color3 name="LightColor"><R>1</R><G>0.9647058823529412</G><B>0.8862745098039215</B></Color3></Properties>
+<Item class="WorldModel"><Properties><string name="Name">World</string></Properties>
 </Item>
-<Item class="TextLabel"><Properties>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
-<float name="ZIndex">2</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">ButtonText</string>
-<bool name="Archivable">true</bool>
-<string name="Text">LOCK PET</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="TextTransparency">0</float>
-<bool name="TextScaled">true</bool>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-<float name="TextSize">8</float>
-<token name="TextXAlignment">2</token>
-<token name="TextYAlignment">1</token>
-<bool name="RichText">false</bool>
-</Properties>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">0</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1882352977991104</R><G>0.05882352963089943</G><B>0.23529411852359772</B></Color3>
-<token name="LineJoinMode">1</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
-</Item>
-<Item class="UITextSizeConstraint"><Properties>
-<string name="Name">UITextSizeConstraint</string>
-<bool name="Archivable">true</bool>
-<float name="MaxTextSize">32</float>
-<float name="MinTextSize">12</float>
-</Properties>
+<Item class="Camera"><Properties><string name="Name">PreviewCamera</string></Properties>
 </Item>
 </Item>
+<Item class="TextLabel"><Properties><string name="Name">Key</string><UDim2 name="Position"><XS>0</XS><XO>5</XO><YS>0</YS><YO>2</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>16</XO><YS>0</YS><YO>16</YO></UDim2><string name="Text">2</string><float name="TextSize">12</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
 </Item>
-<Item class="ImageButton"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>300</XO><YS>0</YS><YO>100</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>600</XO><YS>0</YS><YO>500</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="BackgroundTransparency">0</float>
-<float name="BorderSizePixel">0</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">false</bool>
-<float name="LayoutOrder">1</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">true</bool>
-<bool name="Selectable">true</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">PlacePet</string>
-<bool name="Archivable">true</bool>
-<Content name="Image"><url>rbxassetid://6927295847</url></Content>
-<Color3 name="ImageColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="ImageTransparency">0</float>
-<token name="ScaleType">2</token>
-<UDim2 name="TileSize"><XS>0</XS><XO>100</XO><YS>0</YS><YO>100</YO></UDim2>
-<bool name="AutoButtonColor">true</bool>
-</Properties>
-<Item class="UICorner"><Properties>
-<string name="Name">UICorner</string>
-<bool name="Archivable">true</bool>
-<UDim name="CornerRadius"><S>0</S><O>15</O></UDim>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">ItemName</string><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>52</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>58</XO><YS>0</YS><YO>18</YO></UDim2><string name="Text">Empty</string><float name="TextSize">11</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
 </Item>
-<Item class="UIGradient"><Properties>
-<string name="Name">UIGradient</string>
-<bool name="Archivable">true</bool>
-<ColorSequence name="Color">0 0.43921568989753723 0.8588235378265381 0.3490196168422699 0 1 0.35137253999710083 0.6870588064193726 0.2792156934738159 0 </ColorSequence>
-<float name="Rotation">90</float>
-<NumberSequence name="Transparency">0 0 0 1 0 0 </NumberSequence>
-<bool name="Enabled">true</bool>
-<Vector2 name="Offset"><X>0</X><Y>0</Y></Vector2>
-</Properties>
-</Item>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">1</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1537255048751831</R><G>0.3005882501602173</G><B>0.12215687334537506</B></Color3>
-<token name="LineJoinMode">0</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
-</Item>
-<Item class="TextLabel"><Properties>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
-<float name="ZIndex">2</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">ButtonText</string>
-<bool name="Archivable">true</bool>
-<string name="Text">EQUIP PET</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="TextTransparency">0</float>
-<bool name="TextScaled">true</bool>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-<float name="TextSize">8</float>
-<token name="TextXAlignment">2</token>
-<token name="TextYAlignment">1</token>
-<bool name="RichText">false</bool>
-</Properties>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">0</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1882352977991104</R><G>0.05882352963089943</G><B>0.23529411852359772</B></Color3>
-<token name="LineJoinMode">1</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
-</Item>
-<Item class="UITextSizeConstraint"><Properties>
-<string name="Name">UITextSizeConstraint</string>
-<bool name="Archivable">true</bool>
-<float name="MaxTextSize">32</float>
-<float name="MinTextSize">12</float>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">State</string><UDim2 name="Position"><XS>0</XS><XO>25</XO><YS>0</YS><YO>3</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>36</XO><YS>0</YS><YO>14</YO></UDim2><string name="Text"></string><float name="TextSize">9</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
 </Item>
 </Item>
+<Item class="TextButton"><Properties><string name="Name">Slot3</string><UDim2 name="Position"><XS>0</XS><XO>156</XO><YS>0</YS><YO>6</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>66</XO><YS>0</YS><YO>76</YO></UDim2><string name="Text"></string><Color3 name="BackgroundColor3"><R>0</R><G>0</G><B>0</B></Color3><float name="BackgroundTransparency">0.38</float><float name="BorderSizePixel">0</float><bool name="Visible">true</bool></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
 </Item>
-<Item class="TextLabel"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>600</XO><YS>0</YS><YO>100</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>500</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">PenSlots</string>
-<bool name="Archivable">true</bool>
-<string name="Text"></string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="TextTransparency">0</float>
-<bool name="TextScaled">true</bool>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-<float name="TextSize">8</float>
-<token name="TextXAlignment">2</token>
-<token name="TextYAlignment">1</token>
-<bool name="RichText">false</bool>
-</Properties>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">0</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1882352977991104</R><G>0.05882352963089943</G><B>0.23529411852359772</B></Color3>
-<token name="LineJoinMode">1</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.5490196078431373</R><G>0.5490196078431373</G><B>0.5882352941176471</B></Color3><float name="Thickness">1</float><token name="ApplyStrokeMode">0</token></Properties>
 </Item>
-<Item class="UITextSizeConstraint"><Properties>
-<string name="Name">UITextSizeConstraint</string>
-<bool name="Archivable">true</bool>
-<float name="MaxTextSize">26</float>
-<float name="MinTextSize">12</float>
-</Properties>
+<Item class="ViewportFrame"><Properties><string name="Name">Preview</string><UDim2 name="Position"><XS>0</XS><XO>2</XO><YS>0</YS><YO>5</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>62</XO><YS>0</YS><YO>47</YO></UDim2><float name="BackgroundTransparency">1</float><Color3 name="Ambient"><R>0.7843137254901961</R><G>0.7843137254901961</G><B>0.8627450980392157</B></Color3><Color3 name="LightColor"><R>1</R><G>0.9647058823529412</G><B>0.8862745098039215</B></Color3></Properties>
+<Item class="WorldModel"><Properties><string name="Name">World</string></Properties>
+</Item>
+<Item class="Camera"><Properties><string name="Name">PreviewCamera</string></Properties>
 </Item>
 </Item>
-<Item class="TextLabel"><Properties>
-<UDim2 name="Size"><XS>0</XS><XO>1000</XO><YS>0</YS><YO>100</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>600</YO></UDim2>
-<Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
-<Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
-<float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
-<float name="ZIndex">1</float>
-<bool name="Visible">true</bool>
-<float name="LayoutOrder">0</float>
-<bool name="ClipsDescendants">false</bool>
-<bool name="Active">false</bool>
-<bool name="Selectable">false</bool>
-<token name="AutomaticSize">0</token>
-<string name="Name">Status</string>
-<bool name="Archivable">true</bool>
-<string name="Text">Loading your pets…</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
-<float name="TextTransparency">0</float>
-<bool name="TextScaled">true</bool>
-<bool name="TextWrapped">true</bool>
-<token name="Font">26</token>
-<float name="TextSize">8</float>
-<token name="TextXAlignment">2</token>
-<token name="TextYAlignment">1</token>
-<bool name="RichText">false</bool>
-</Properties>
-<Item class="UIStroke"><Properties>
-<string name="Name">UIStroke</string>
-<bool name="Archivable">true</bool>
-<token name="ApplyStrokeMode">0</token>
-<float name="Thickness">5</float>
-<Color3 name="Color"><R>0.1882352977991104</R><G>0.05882352963089943</G><B>0.23529411852359772</B></Color3>
-<token name="LineJoinMode">1</token>
-<float name="Transparency">0</float>
-<bool name="Enabled">true</bool>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">Key</string><UDim2 name="Position"><XS>0</XS><XO>5</XO><YS>0</YS><YO>2</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>16</XO><YS>0</YS><YO>16</YO></UDim2><string name="Text">3</string><float name="TextSize">12</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
 </Item>
-<Item class="UITextSizeConstraint"><Properties>
-<string name="Name">UITextSizeConstraint</string>
-<bool name="Archivable">true</bool>
-<float name="MaxTextSize">22</float>
-<float name="MinTextSize">12</float>
-</Properties>
+<Item class="TextLabel"><Properties><string name="Name">ItemName</string><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>52</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>58</XO><YS>0</YS><YO>18</YO></UDim2><string name="Text">Empty</string><float name="TextSize">11</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">State</string><UDim2 name="Position"><XS>0</XS><XO>25</XO><YS>0</YS><YO>3</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>36</XO><YS>0</YS><YO>14</YO></UDim2><string name="Text"></string><float name="TextSize">9</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
 </Item>
 </Item>
+<Item class="TextButton"><Properties><string name="Name">Slot4</string><UDim2 name="Position"><XS>0</XS><XO>230</XO><YS>0</YS><YO>6</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>66</XO><YS>0</YS><YO>76</YO></UDim2><string name="Text"></string><Color3 name="BackgroundColor3"><R>0</R><G>0</G><B>0</B></Color3><float name="BackgroundTransparency">0.38</float><float name="BorderSizePixel">0</float><bool name="Visible">true</bool></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
 </Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.5490196078431373</R><G>0.5490196078431373</G><B>0.5882352941176471</B></Color3><float name="Thickness">1</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+<Item class="ViewportFrame"><Properties><string name="Name">Preview</string><UDim2 name="Position"><XS>0</XS><XO>2</XO><YS>0</YS><YO>5</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>62</XO><YS>0</YS><YO>47</YO></UDim2><float name="BackgroundTransparency">1</float><Color3 name="Ambient"><R>0.7843137254901961</R><G>0.7843137254901961</G><B>0.8627450980392157</B></Color3><Color3 name="LightColor"><R>1</R><G>0.9647058823529412</G><B>0.8862745098039215</B></Color3></Properties>
+<Item class="WorldModel"><Properties><string name="Name">World</string></Properties>
+</Item>
+<Item class="Camera"><Properties><string name="Name">PreviewCamera</string></Properties>
+</Item>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">Key</string><UDim2 name="Position"><XS>0</XS><XO>5</XO><YS>0</YS><YO>2</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>16</XO><YS>0</YS><YO>16</YO></UDim2><string name="Text">4</string><float name="TextSize">12</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">ItemName</string><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>52</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>58</XO><YS>0</YS><YO>18</YO></UDim2><string name="Text">Empty</string><float name="TextSize">11</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">State</string><UDim2 name="Position"><XS>0</XS><XO>25</XO><YS>0</YS><YO>3</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>36</XO><YS>0</YS><YO>14</YO></UDim2><string name="Text"></string><float name="TextSize">9</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+</Item>
+<Item class="TextButton"><Properties><string name="Name">Slot5</string><UDim2 name="Position"><XS>0</XS><XO>304</XO><YS>0</YS><YO>6</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>66</XO><YS>0</YS><YO>76</YO></UDim2><string name="Text"></string><Color3 name="BackgroundColor3"><R>0</R><G>0</G><B>0</B></Color3><float name="BackgroundTransparency">0.38</float><float name="BorderSizePixel">0</float><bool name="Visible">true</bool></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.5490196078431373</R><G>0.5490196078431373</G><B>0.5882352941176471</B></Color3><float name="Thickness">1</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+<Item class="ViewportFrame"><Properties><string name="Name">Preview</string><UDim2 name="Position"><XS>0</XS><XO>2</XO><YS>0</YS><YO>5</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>62</XO><YS>0</YS><YO>47</YO></UDim2><float name="BackgroundTransparency">1</float><Color3 name="Ambient"><R>0.7843137254901961</R><G>0.7843137254901961</G><B>0.8627450980392157</B></Color3><Color3 name="LightColor"><R>1</R><G>0.9647058823529412</G><B>0.8862745098039215</B></Color3></Properties>
+<Item class="WorldModel"><Properties><string name="Name">World</string></Properties>
+</Item>
+<Item class="Camera"><Properties><string name="Name">PreviewCamera</string></Properties>
+</Item>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">Key</string><UDim2 name="Position"><XS>0</XS><XO>5</XO><YS>0</YS><YO>2</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>16</XO><YS>0</YS><YO>16</YO></UDim2><string name="Text">5</string><float name="TextSize">12</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">ItemName</string><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>52</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>58</XO><YS>0</YS><YO>18</YO></UDim2><string name="Text">Empty</string><float name="TextSize">11</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">State</string><UDim2 name="Position"><XS>0</XS><XO>25</XO><YS>0</YS><YO>3</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>36</XO><YS>0</YS><YO>14</YO></UDim2><string name="Text"></string><float name="TextSize">9</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+</Item>
+<Item class="TextButton"><Properties><string name="Name">Slot6</string><UDim2 name="Position"><XS>0</XS><XO>378</XO><YS>0</YS><YO>6</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>66</XO><YS>0</YS><YO>76</YO></UDim2><string name="Text"></string><Color3 name="BackgroundColor3"><R>0</R><G>0</G><B>0</B></Color3><float name="BackgroundTransparency">0.38</float><float name="BorderSizePixel">0</float><bool name="Visible">true</bool></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+</Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><Color3 name="Color"><R>0.5490196078431373</R><G>0.5490196078431373</G><B>0.5882352941176471</B></Color3><float name="Thickness">1</float><token name="ApplyStrokeMode">0</token></Properties>
+</Item>
+<Item class="ViewportFrame"><Properties><string name="Name">Preview</string><UDim2 name="Position"><XS>0</XS><XO>2</XO><YS>0</YS><YO>5</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>62</XO><YS>0</YS><YO>47</YO></UDim2><float name="BackgroundTransparency">1</float><Color3 name="Ambient"><R>0.7843137254901961</R><G>0.7843137254901961</G><B>0.8627450980392157</B></Color3><Color3 name="LightColor"><R>1</R><G>0.9647058823529412</G><B>0.8862745098039215</B></Color3></Properties>
+<Item class="WorldModel"><Properties><string name="Name">World</string></Properties>
+</Item>
+<Item class="Camera"><Properties><string name="Name">PreviewCamera</string></Properties>
+</Item>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">Key</string><UDim2 name="Position"><XS>0</XS><XO>5</XO><YS>0</YS><YO>2</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>16</XO><YS>0</YS><YO>16</YO></UDim2><string name="Text">6</string><float name="TextSize">12</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">ItemName</string><UDim2 name="Position"><XS>0</XS><XO>4</XO><YS>0</YS><YO>52</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>58</XO><YS>0</YS><YO>18</YO></UDim2><string name="Text">Empty</string><float name="TextSize">11</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">State</string><UDim2 name="Position"><XS>0</XS><XO>25</XO><YS>0</YS><YO>3</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>36</XO><YS>0</YS><YO>14</YO></UDim2><string name="Text"></string><float name="TextSize">9</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token></Properties>
+</Item>
+</Item>
+<Item class="TextButton"><Properties><string name="Name">Bag</string><UDim2 name="Position"><XS>0</XS><XO>460</XO><YS>0</YS><YO>6</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>66</XO><YS>0</YS><YO>76</YO></UDim2><string name="Text">BAG
+[B]</string><float name="TextSize">15</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">0.3</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><float name="BackgroundTransparency">0.3</float><Color3 name="BackgroundColor3"><R>0</R><G>0</G><B>0</B></Color3><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><bool name="AutoButtonColor">true</bool></Properties>
+<Item class="UICorner"><Properties><string name="Name">Corner</string><UDim name="CornerRadius"><S>0</S><O>10</O></UDim></Properties>
+</Item>
+</Item>
+<Item class="TextLabel"><Properties><string name="Name">Hint</string><UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>-32</YO></UDim2><UDim2 name="Size"><XS>0</XS><XO>536</XO><YS>0</YS><YO>26</YO></UDim2><string name="Text">1–6 to hold • B for inventory</string><float name="TextSize">14</float><token name="Font">18</token><Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3><float name="BackgroundTransparency">1</float><float name="BorderSizePixel">0</float><bool name="TextWrapped">true</bool><token name="TextXAlignment">0</token><float name="TextStrokeTransparency">0.45</float><token name="TextXAlignment">2</token></Properties>
 </Item>
 </Item>
 </Item>
