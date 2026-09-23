@@ -27,11 +27,11 @@
       }
     },
     "StarterGui": {
+      "PenManagerUI": {
+        "$path": "src/ui/PenManagerUI.rbxmx"
+      },
       "MerchantUI": {
         "$path": "src/ui/MerchantUI.rbxmx"
-      },
-      "EggUI": {
-        "$path": "src/ui/EggUI.rbxmx"
       },
       "DebugUI": {
         "$path": "src/ui/DebugUI.rbxmx"

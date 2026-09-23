@@ -31,6 +31,16 @@ function UIService.HandleRequest(player, action, petId, locked)
 		local ok = PetService.SetLocked(player, petId, locked)
 		return { Ok = ok, Code = if ok then "Updated" else "Rejected" }
 	elseif action ~= "Snapshot" then
+		if action=="PickupRemote" then
+			if type(petId)~="string" or #petId==0 or #petId>64 then return {Ok=false,Code="InvalidRequest"} end
+			if Locks.IsLocked(player) then return {Ok=false,Code="Busy"} end
+			local pet=data.Inventory[petId]
+			if not pet or not pet.Placed then return {Ok=false,Code="Unavailable"} end
+			local humanoid=player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+			if not humanoid or humanoid.Health<=0 then return {Ok=false,Code="CharacterUnavailable"} end
+			local ok,code=require(script.Parent.PlacementService).PickupPet(player,petId)
+			return {Ok=ok,Code=if ok then "PickedUp" else code}
+		end
 		if action == "PlaceHeldPet" then
 			local ok, code = CarryService.PlaceAt(player, petId, locked)
 			return { Ok = ok, Code = code }

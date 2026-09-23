@@ -42,18 +42,17 @@ function FeedController.Start()
 		end
 		if state.Food then panel.Food.Text = string.format("FOOD  %s   •   COST  %s", numberText(state.Food), if state.Cost then numberText(state.Cost) else "—") end
 		panel.Feed.Text = if state.MaxLevel then "MAX LEVEL 40" else if state.Cost then "FEED  •  "..numberText(state.Cost).." FOOD" else "FEED"
-		panel.Notice.Text = if state.MaxLevel then "LEVEL 40 REACHED\nYou can pick up your pet below."
-			else string.format("EXPLOSION: %s%% (BASE %s%%)\nFail: timed Rescue or Lv.%d • Miracle: %g%% • Food spent",
-				numberText((state.Risk or 0)*100),numberText((state.BaseRisk or state.Risk or 0)*100),
-				Config.ExplosionResetLevel,Config.MiracleSaveChance*100)
+		panel.Notice.Text = if state.MaxLevel then "MAX LEVEL"
+			else string.format("EXPLOSION: %s%%\nFailure → Rescue or Lv.%d",
+				numberText((state.Risk or 0)*100),Config.ExplosionResetLevel)
 		local canFeed = state.Ok and state.Cost and not state.MaxLevel and not state.Busy
 			and state.PetId == player:GetAttribute("FeedPlatePetId") and state.Food >= state.Cost and not busy
 		panel.Feed.Active = canFeed == true
 		panel.Feed.AutoButtonColor = canFeed == true
-		panel.Feed.BackgroundColor3 = if canFeed then Color3.fromRGB(112,219,89) else Color3.fromRGB(114,111,127)
+		panel.Feed.BackgroundColor3 = if canFeed then Color3.fromRGB(78,227,51) else Color3.fromRGB(100,100,110)
 		Preview.Set(panel.PetPreview,if state.SpeciesId then {Kind="Pet",SpeciesId=state.SpeciesId} else nil)
 		for _,id in Foods.Order do
-			local card=panel.FoodCards[id]
+			local card=panel.FoodCards.List[id]
 			FoodCard.Paint(card,id,(state.Foods or {})[id] or 0,id==selectedFood)
 			card.Active=not busy and not state.Busy
 		end
@@ -74,7 +73,7 @@ function FeedController.Start()
 		end
 	end
 	local function show()
-		if player:GetAttribute("EggPanelOpen") or player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") or player:GetAttribute("MerchantPanelOpen") then return end
+		if player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") or player:GetAttribute("MerchantPanelOpen") then return end
 		if player:GetAttribute("FeedBusy") then return end
 		panel.Visible = true
 		gui.Inventory.Visible = false
@@ -110,7 +109,7 @@ function FeedController.Start()
 		if ok and result.Ok then panel.Visible = false; latest = nil
 		else panel.Status.Text = if ok then messages[result.Code] or "Unable to pick up pet." else "Connection error. Try again." end
 	end)
-	panel.Close.Activated:Connect(function() panel.Visible = false end)
+	panel.Close.Activated:Connect(function() require(script.Parent.Parent.UI.Motion).Close(panel) end)
 	Input.InputBegan:Connect(function(key, processed)
 		if not processed and key.KeyCode == Enum.KeyCode.Escape then panel.Visible = false end
 	end)
@@ -152,8 +151,8 @@ function FeedController.Start()
 		else latest=nil;panel.Feed.Active=false;task.spawn(refresh) end
 	end
 	for _,id in Foods.Order do
-		FoodCard.Paint(panel.FoodCards[id],id,0,id==selectedFood)
-		panel.FoodCards[id].Activated:Connect(function() selectFood(id) end)
+		FoodCard.Paint(panel.FoodCards.List[id],id,0,id==selectedFood)
+		panel.FoodCards.List[id].Activated:Connect(function() selectFood(id) end)
 	end
 	FeedController.SelectFood=selectFood
 	local angle=0
@@ -163,7 +162,10 @@ function FeedController.Start()
 		if model then angle=(angle+dt*.65)%(math.pi*2);model:PivotTo(CFrame.Angles(0,angle,0)) end
 	end)
 	local function resize()
-		panel.UIScale.Scale = math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/720,(gui.AbsoluteSize.Y-48)/620))
+		local scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/816,(gui.AbsoluteSize.Y-48)/620))
+		panel.UIScale.Scale=scale
+		-- Include the attached sidebar when centering/scaling the whole group.
+		panel.Position=UDim2.new(.5,-128*scale,.5,0)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
 	player:GetAttributeChangedSignal("FeedPlatePetId"):Connect(plateChanged)

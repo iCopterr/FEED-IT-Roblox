@@ -2,6 +2,7 @@ local Players=game:GetService("Players")
 local HttpService=game:GetService("HttpService")
 local Config=require(game.ReplicatedStorage.Shared.Config.EggConfig)
 local PetConfig=require(game.ReplicatedStorage.Shared.Config.PetConfig)
+local Variants=require(game.ReplicatedStorage.Shared.Config.VariantConfig)
 local Data=require(script.Parent.DataService)
 local Pets=require(script.Parent.PetService)
 local Schema=require(script.Parent.Parent.Data.PlayerDataSchema)
@@ -40,12 +41,10 @@ function Service.BuyFromConveyor(player,eggId)
 	if not profile or not Schema.Validate(profile) then return {Ok=false,Code="Loading"} end
 	if not definition then return {Ok=false,Code="Unavailable"} end
 	if saving[player] or Locks.IsLocked(player) then return {Ok=false,Code="Busy"} end
-	local count=0
-	for _ in profile.IncubatingEggs do count+=1 end
-	if count>=Config.MaxIncubatingEggs then return {Ok=false,Code="IncubatorFull"} end
 	if profile.Money<definition.Price then return {Ok=false,Code="NotEnoughMoney"} end
 	local pet,reason=Pets.PreparePet(player,Config.Pick(eggId,rng:NextNumber()),eggId)
 	if not pet then return {Ok=false,Code="CreateFailed",Reason=reason} end
+	pet.Variant=Variants.Pick(rng:NextInteger(1,Variants.Tickets))
 	local id=HttpService:GenerateGUID(false)
 	if profile.IncubatingEggs[id] then return {Ok=false,Code="CreateFailed"} end
 	local egg={EggId=eggId,Pet=pet,StartedAt=0,ReadyAt=0,HatchSeconds=definition.HatchSeconds,PricePaid=definition.Price}
@@ -63,6 +62,8 @@ function Service.BuyFromConveyor(player,eggId)
 end
 
 function Service.HandleRequest(player,action,id,position)
+	local remoteHatch=action=="HatchRemote"
+	if remoteHatch then action="Hatch" end
 	if player.Parent~=Players then return {Ok=false,Code="Loading"} end
 	if action~="Snapshot" and action~="Hatch" and action~="Equip" and action~="Unequip" and action~="Place" then return {Ok=false,Code="InvalidRequest"} end
 	local profile=Data.GetData(player)
@@ -84,7 +85,7 @@ function Service.HandleRequest(player,action,id,position)
 				Name=if definition then definition.DisplayName else egg.EggId})
 		end
 		table.sort(eggs,function(a,b) if a.StartedAt==b.StartedAt then return a.EggUid<b.EggUid end;return a.StartedAt<b.StartedAt end)
-		return {Ok=true,Eggs=eggs,ServerNow=os.time(),Busy=Locks.IsLocked(player),MaxSlots=Config.MaxIncubatingEggs}
+		return {Ok=true,Eggs=eggs,ServerNow=os.time(),Busy=Locks.IsLocked(player)}
 	end
 	if saving[player] or Locks.IsLocked(player) then return {Ok=false,Code="Busy"} end
 	local egg=profile.IncubatingEggs[id]
@@ -125,7 +126,7 @@ function Service.HandleRequest(player,action,id,position)
 	local model=Visuals.GetModel(player,id)
 	local body=model and model:FindFirstChildWhichIsA("BasePart",true)
 	if not humanoid or humanoid.Health<=0 or not root then return {Ok=false,Code="CharacterUnavailable"} end
-	if not body or (root.Position-body.Position).Magnitude>Config.HatchDistance then return {Ok=false,Code="TooFar"} end
+	if not remoteHatch and (not body or (root.Position-body.Position).Magnitude>Config.HatchDistance) then return {Ok=false,Code="TooFar"} end
 	assert(Locks.Begin(player,egg.Pet.PetId))
 	local pet=egg.Pet
 	local previousIndex=profile.PetIndex[pet.SpeciesId]
@@ -139,7 +140,7 @@ function Service.HandleRequest(player,action,id,position)
 	end
 	local definition=PetConfig.Species[pet.SpeciesId]
 	local result={Ok=true,Code="Hatched",EggUid=id,PetId=pet.PetId,Rarity=pet.Rarity,
-		PetName=if definition then definition.DisplayName else pet.SpeciesId}
+		Variant=pet.Variant,PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant)}
 	state.LastHatch=table.clone(result)
 	Visuals.Reconcile(player,profile)
 	save(player,profile,function()

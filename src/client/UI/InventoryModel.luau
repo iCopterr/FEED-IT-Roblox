@@ -1,6 +1,7 @@
 local Shared=game:GetService("ReplicatedStorage").Shared
 local Pets=require(Shared.Config.PetConfig)
-local Feed=require(Shared.Config.FeedConfig)
+local Variants=require(Shared.Config.VariantConfig)
+local PetIncome=require(Shared.PetIncome)
 local Config=require(Shared.Config.InventoryConfig)
 local Model={}
 local Foods=require(Shared.Config.FoodConfig)
@@ -8,10 +9,12 @@ local Foods=require(Shared.Config.FoodConfig)
 function Model.Entries(snapshot)
 	local entries={}
 	for id,pet in snapshot.Inventory do
+		-- Placed pets remain owned in server data, but are not bag items.
+		if pet.Placed then continue end
 		local definition=Pets.Species[pet.SpeciesId]
-		entries["pet:"..id]={Key="pet:"..id,Id=id,Kind="Pet",Name=definition and definition.DisplayName or pet.SpeciesId,
+		entries["pet:"..id]={Key="pet:"..id,Id=id,Kind="Pet",Variant=pet.Variant,Name=Variants.Name(definition and definition.DisplayName or pet.SpeciesId,pet.Variant),
 			SpeciesId=pet.SpeciesId,Rarity=pet.Rarity,Level=pet.FeedLevel,Locked=pet.Locked,
-			Income=pet.BaseIncome*(Feed.Multiplier[pet.FeedLevel] or 1),CreatedAt=pet.CreatedAt,
+			Income=PetIncome(pet),CreatedAt=pet.CreatedAt,
 			State=if snapshot.CarriedPetId==id then "HELD" elseif snapshot.FeedPlatePetId==id then "FEED PLATE"
 				elseif pet.Placed then "IN PEN" else "STORED"}
 	end

@@ -1,6 +1,6 @@
 local Players = game:GetService("Players")
 local Config = require(game.ReplicatedStorage.Shared.Config.MoneyConfig)
-local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
+local PetIncome = require(game.ReplicatedStorage.Shared.PetIncome)
 local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
@@ -10,9 +10,7 @@ local payoutEvent
 
 function MoneyService.GetPetRate(pet)
 	-- Levels above 40 are unbalanced; never extrapolate an economy curve.
-	local multiplier = FeedConfig.Multiplier[pet.FeedLevel]
-	local rate = if multiplier then pet.BaseIncome * multiplier else 0
-	return if rate == rate and rate < math.huge then rate else 0
+	return PetIncome(pet)
 end
 
 function MoneyService.GetRate(player)

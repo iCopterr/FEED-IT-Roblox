@@ -21,6 +21,24 @@ local ok,failure=xpcall(function()
 	assert(merchant.Panel.Money.Text:find("YOUR MONEY",1,true),"Merchant binds Money label")
 	assert(merchant.Panel.Slot1.Text:find("Basic Food",1,true),"Basic Food rendered in shop: "..merchant.Panel.Status.Text.." / "..merchant.Panel.Slot1.Text)
 	assert(main.FeedPanel:FindFirstChild("FoodCards") and not main.FeedPanel:FindFirstChild("FoodType"),"Food cards replace cycling selector")
+	local feedLayout=main.FeedPanel
+	for _,panel in {main.Inventory.Panel,feedLayout,feedLayout.FoodCards,merchant.Panel,rescue.Panel} do
+		assert(panel.PageHeader:IsA("ImageLabel") and panel.PageTexture:IsA("ImageLabel"),"Authored page theme present")
+	end
+	assert(feedLayout.FoodCards.Title.ZIndex>feedLayout.FoodCards.PageHeader.ZIndex,"Food title stays above header")
+	assert(main.Inventory.Panel.Layout.Title.ZIndex>main.Inventory.Panel.PageHeader.ZIndex,"Inventory title stays above header")
+	assert(rescue.Panel:FindFirstChild("Close"),"Rescue close button authored")
+	assert(gui:FindFirstChild("EggUI")==nil,"Obsolete MY EGGS screen removed")
+	assert(feedLayout.FoodCards.Position.X.Offset>=feedLayout.Size.X.Offset+12,"Food sidebar sits beside main panel")
+	assert(feedLayout.PetPreview.Position.X.Offset+feedLayout.PetPreview.Size.X.Offset/2==feedLayout.Size.X.Offset/2,"Pet preview centered")
+	assert(not feedLayout.ClipsDescendants,"External sidebar is not clipped")
+	local previousOrder=0
+	assert(feedLayout.FoodCards.List:IsA("ScrollingFrame") and feedLayout.FoodCards.List.AutomaticCanvasSize==Enum.AutomaticSize.Y,"Food list grows automatically")
+	for _,id in {"basic","hearty","gourmet","royal"} do
+		local card=feedLayout.FoodCards.List[id]
+		assert(card.LayoutOrder>previousOrder,"Food cards form a vertical bar")
+		previousOrder=card.LayoutOrder
+	end
 	assert(main.Inventory.Panel.Layout:FindFirstChild("Food"),"Food inventory tab")
 	local model=require(script.Parent.UI.InventoryModel)
 	local entries=model.Entries({Inventory={},Foods={basic=5,royal=2}})
@@ -44,10 +62,10 @@ local ok,failure=xpcall(function()
 		assert(before~=pet:GetPivot(),"Pet preview spins while feeding UI open")
 		local feed=require(script.Parent.Controllers.FeedController)
 		feed.SelectFood("royal")
-		assert(panel.FoodCards.royal:GetAttribute("Selected"),"Clicked food selected")
+		assert(panel.FoodCards.List.royal:GetAttribute("Selected"),"Clicked food selected")
 		assert(not panel.Feed.Active,"Unowned food cannot be fed")
 		feed.SelectFood("basic")
-		assert(panel.FoodCards.basic:GetAttribute("Selected"),"Can switch selected food")
+		assert(panel.FoodCards.List.basic:GetAttribute("Selected"),"Can switch selected food")
 	end
 	assert(main.HUD.Money.Value.Text~="—" and main.HUD.Money.Value.Text~="$—","Money HUD initialized")
 	assert(main.HUD:FindFirstChild("Food")==nil,"Food HUD removed")

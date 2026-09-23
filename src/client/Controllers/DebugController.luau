@@ -20,7 +20,9 @@ function Controller.Start()
 	gui.Enabled=true
 	local panel=gui.Panel
 	local species={}
-	for id,definition in PetConfig.Species do table.insert(species,{Id=id,Rarity=definition.Rarity,Income=definition.BaseIncome}) end
+	for id,definition in PetConfig.Species do
+		table.insert(species,{Id=id,Name=definition.DisplayName,Rarity=definition.Rarity,Income=definition.BaseIncome})
+	end
 	table.sort(species,function(a,b) return a.Income<b.Income end)
 	local speciesIndex,modeIndex,petIndex=1,1,1
 	local state,busy,selected=nil,false,nil
@@ -30,7 +32,8 @@ function Controller.Start()
 		Cooldown="Please wait a moment.",StaleRequest="State changed. Refreshing before another command.",
 		InventoryLimit="Debug spawn limit: 200 inventory pets.",Loading="Loading player data…"}
 	local function render()
-		panel.Species.Text=species[speciesIndex].Rarity.." (click to cycle)"
+		panel.Species.Text=species[speciesIndex].Name.." • "..species[speciesIndex].Rarity.." • "
+			..NumberFormat.Compact(species[speciesIndex].Income).."/s (click to cycle)"
 		panel.Mode.Text=Config.Modes[modeIndex].." (click to cycle)"
 		local pets=state and state.Pets or {}
 		petIndex=math.clamp(petIndex,1,math.max(1,#pets))
@@ -88,7 +91,7 @@ function Controller.Start()
 			refresh()
 		end
 	end)
-	panel.Close.Activated:Connect(function() panel.Visible=false end)
+	panel.Close.Activated:Connect(function() require(script.Parent.Parent.UI.Motion).Close(panel) end)
 	panel:GetPropertyChangedSignal("Visible"):Connect(function() player:SetAttribute("DebugPanelOpen",panel.Visible) end)
 	local function resize() panel.UIScale.Scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/540,(gui.AbsoluteSize.Y-24)/500)) end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)

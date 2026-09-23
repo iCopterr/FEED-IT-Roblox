@@ -18,6 +18,15 @@ local ok,failure=xpcall(function()
 	local beltConfig=require(game.ReplicatedStorage.Shared.Config.ConveyorConfig)
 	assert(adapter.IsMemory(),"Memory-only verification")
 	local function check(v,n) assert(v,n);table.insert(checks,n) end
+	local variants=require(game.ReplicatedStorage.Shared.Config.VariantConfig)
+	local income=require(game.ReplicatedStorage.Shared.PetIncome)
+	local counts={Normal=0,Shiny=0,Rainbow=0,Celestial=0}
+	for ticket=1,variants.Tickets do counts[variants.Pick(ticket)]+=1 end
+	for name,definition in variants.Types do
+		check(counts[name]==definition.Tickets,"Exact hatch variant weight "..name)
+		check(income({BaseIncome=10,FeedLevel=0,Variant=name})==10*definition.IncomeMultiplier,"Variant income "..name)
+	end
+	check(not pcall(variants.Pick,0) and not pcall(variants.Pick,100001) and not pcall(variants.Pick,0/0),"Invalid variant tickets rejected")
 	local function waitFor(f,seconds)
 		local deadline=os.clock()+(seconds or 90)
 		repeat if f() then return end;task.wait(.05) until os.clock()>deadline
@@ -28,7 +37,7 @@ local ok,failure=xpcall(function()
 	local migrated=assert(schema.Migrate(legacy))
 	check(migrated.DataVersion==schema.CURRENT_VERSION and next(migrated.IncubatingEggs)==nil and legacy.IncubatingEggs==nil
 		and migrated.Money==12345 and migrated.FeedPlateLevel==7,"v4 migration adds isolated egg inventory without resetting progress")
-	for i,roll in {0,.401,.651,.831,.931,.981} do
+	for i,roll in {0,.361,.651,.831,.941,.991} do
 		check(config.Pick("prototype_egg",roll)==config.Definitions.prototype_egg.Results[i].SpeciesId,"Weighted pet result "..i)
 	end
 	check(not pcall(config.Pick,"prototype_egg",1) and not pcall(config.Pick,"prototype_egg",0/0),"Invalid result RNG rejected")
@@ -60,6 +69,9 @@ local ok,failure=xpcall(function()
 	local result=conveyor.HandlePurchase(a,id)
 	check(result.Ok and profile.Money==15000 and count(profile.Inventory)==inventoryCount and count(profile.IncubatingEggs)==1,"Purchase charges once and reserves egg, not usable pet")
 	local uid=result.EggUid;local egg=profile.IncubatingEggs[uid];local petId=egg.Pet.PetId
+	check(variants.Types[egg.Pet.Variant]~=nil,"Purchase reserves a configured variant")
+	-- Memory-only fixture guarantees rare-result persistence coverage without grinding.
+	egg.Pet.Variant="Celestial"
 	check(egg.StartedAt==0 and egg.ReadyAt==0 and egg.HatchSeconds==10 and not egg.PenPosition
 		and egg.Pet.FeedLevel==0 and egg.Pet.EggId=="prototype_egg","New egg stores duration but timer waits for placement")
 	check(result.PetId==nil and result.Rarity==nil and model.Parent==nil,"Purchase hides result and consumes world offer")
@@ -110,13 +122,21 @@ local ok,failure=xpcall(function()
 	check(not pets.GetPet(a,petId),"Unhatched pet is not usable")
 	local extraId,extraModel=conveyor.SpawnOffer(0);assert(extraId,extraModel)
 	task.wait(.3);near(rootA,extraModel)
-	check(conveyor.HandlePurchase(a,extraId).Code=="IncubatorFull" and profile.Money==15000 and extraModel.Parent~=nil,"Full incubator does not charge or consume offer")
+	local extraPurchase=conveyor.HandlePurchase(a,extraId)
+	check(extraPurchase.Ok and profile.Money==10000 and count(profile.IncubatingEggs)==2 and extraModel.Parent==nil,
+		"Player can buy another egg while the first egg is still incubating")
+	waitFor(function() return not locks.IsLocked(a) end)
+	carry.Unequip(a)
+	-- Remove the extra fixture so the remaining hatch/reload assertions stay isolated.
+	profile.IncubatingEggs[extraPurchase.EggUid]=nil
+	profile.Money=15000
 	assert(data.Save(a))
 	local read,record=adapter.UpdateAsync("Player_"..a.UserId,function() return nil end)
 	local loaded=assert(schema.Migrate(record.Data))
 	check(read and loaded.IncubatingEggs[uid].ReadyAt==egg.ReadyAt and loaded.IncubatingEggs[uid].Pet.PetId==petId
 		and loaded.IncubatingEggs[uid].PenPosition.X==egg.PenPosition.X and loaded.Money==15000,"Reload retains placement payment timer and exact reserved result")
 	loaded.IncubatingEggs[uid].PenPosition.X=999
+	check(loaded.IncubatingEggs[uid].Pet.Variant=="Celestial","Reserved variant survives save/load")
 	check(egg.PenPosition.X~=999,"Saved egg position clone is isolated")
 	loaded.IncubatingEggs[uid].Pet.Traits[1]="clone"
 	check(#egg.Pet.Traits==0,"Egg clone isolation")
@@ -142,10 +162,12 @@ local ok,failure=xpcall(function()
 	check(hatchPrompt and hatchPrompt.Enabled and hatchPrompt.KeyboardKeyCode==Enum.KeyCode.E
 		and hatchPrompt.HoldDuration==0,"Ready egg has instant E hatch interaction")
 	local hatched=eggs.HandleRequest(a,"Hatch",uid)
+	-- Manual E route remains covered above and by the later tier hatches.
 	check(hatched.Ok and hatched.PetId==petId and count(profile.Inventory)==inventoryCount+1
 		and profile.IncubatingEggs[uid]==nil,"Ready egg atomically becomes original reserved pet")
 	check(profile.PetIndex[egg.Pet.SpeciesId] and profile.Inventory[petId].EggId=="prototype_egg","Hatch updates index and preserves source")
 	local again=eggs.HandleRequest(a,"Hatch",uid)
+	check(again.Variant=="Celestial" and profile.Inventory[petId].Variant=="Celestial","Hatch replay preserves variant")
 	check(again.PetId==petId and count(profile.Inventory)==inventoryCount+1 and profile.Money==15000,"Hatch replay cannot duplicate or charge")
 	waitFor(function() return not locks.IsLocked(a) end)
 	check(not profile.Inventory[petId].Placed and not profile.PlacedPetIds[petId]
@@ -154,7 +176,7 @@ local ok,failure=xpcall(function()
 	loaded=assert(schema.Migrate(record.Data))
 	check(read and loaded.Inventory[petId]~=nil and loaded.IncubatingEggs[uid]==nil,"Claimed egg cannot reappear after reload")
 	-- New tiers exercise the same paid conveyor -> carry -> place -> hatch path.
-	for _,tier in {{Id="advanced_egg",Roll=.8},{Id="elite_egg",Roll=.99}} do
+	for _,tier in {{Id="advanced_egg",Roll=.8},{Id="elite_egg",Roll=.96},{Id="master_egg",Roll=.985},{Id="supreme_egg",Roll=.999}} do
 		local definition=config.Definitions[tier.Id]
 		local total=0;for _,entry in definition.Results do total+=entry.Weight end
 		local cursor=0
@@ -181,7 +203,13 @@ local ok,failure=xpcall(function()
 		reserved.ReadyAt=os.time()-1;reserved.StartedAt=reserved.ReadyAt-reserved.HatchSeconds
 		check(schema.Validate(profile),"New tier validates for save "..tier.Id)
 		task.wait(.3)
-		local result=eggs.HandleRequest(a,"Hatch",bought.EggUid)
+		if tier.Id=="elite_egg" then rootA.CFrame=CFrame.new(0,8,-170) end
+		local result=eggs.HandleRequest(a,if tier.Id=="elite_egg" then "HatchRemote" else "Hatch",bought.EggUid)
+		if tier.Id=="elite_egg" then
+			-- Both request routes share one cached result and transaction.
+			rootA.CFrame=CFrame.new(0,8,-170)
+			check(eggs.HandleRequest(a,"HatchRemote",bought.EggUid).PetId==result.PetId,"Remote/manual hatch replay shares cached result")
+		end
 		check(result.Ok and result.PetId==reserved.Pet.PetId,"Hatch preserves reserved identity "..tier.Id)
 		waitFor(function() return not locks.IsLocked(a) end)
 		check(carry.GetPetId(a)==result.PetId and profile.Inventory[result.PetId].EggId==tier.Id,"New pet held using reused model "..tier.Id)

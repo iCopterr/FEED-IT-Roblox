@@ -33,7 +33,7 @@ function Controller.Start()
 					else string.format("%s\n%s\nBUY • $%s",item.Name,item.Description,NumberFormat.Compact(item.Price))
 				button.Active=not item.Purchased and not state.Busy and not busy
 				button.AutoButtonColor=button.Active
-				button.BackgroundColor3=if item.Purchased then Color3.fromRGB(91,87,102) else Color3.fromRGB(117,73,163)
+				button.BackgroundColor3=if item.Purchased then Color3.fromRGB(67,70,83) else Color3.fromRGB(36,165,219)
 			else button.Text="RESTOCKING…";button.Active=false end
 		end
 	end
@@ -49,10 +49,10 @@ function Controller.Start()
 	local function closeOthers()
 		local main=playerGui:FindFirstChild("FeedYourPetUI")
 		if main then main.Inventory.Visible=false;main.FeedPanel.Visible=false end
-		for _,name in {"EggUI","ReviveUI","DebugUI"} do local other=playerGui:FindFirstChild(name);if other then other.Panel.Visible=false end end
+		for _,name in {"ReviveUI","DebugUI"} do local other=playerGui:FindFirstChild(name);if other then other.Panel.Visible=false end end
 	end
 	local function show()
-		closeOthers();panel.Visible=true;panel.Status.Text="Basic always available • Special offers restock every 30 min";task.spawn(refresh)
+		closeOthers();panel.Visible=true;panel.Status.Text="";task.spawn(refresh)
 	end
 	Prompts.PromptTriggered:Connect(function(prompt,triggeringPlayer)
 		if triggeringPlayer and triggeringPlayer~=player then return end
@@ -69,7 +69,7 @@ function Controller.Start()
 			state=nil;refresh()
 		end)
 	end
-	panel.Close.Activated:Connect(function() panel.Visible=false end)
+	panel.Close.Activated:Connect(function() require(script.Parent.Parent.UI.Motion).Close(panel) end)
 	panel:GetPropertyChangedSignal("Visible"):Connect(function() player:SetAttribute("MerchantPanelOpen",panel.Visible) end)
 	local function resize()
 		local size=gui.AbsoluteSize
@@ -79,7 +79,7 @@ function Controller.Start()
 	task.spawn(function()
 		while gui.Parent do
 			local main=playerGui:FindFirstChild("FeedYourPetUI")
-			if player:GetAttribute("EggPanelOpen") or player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen")
+			if player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen")
 				or (main and (main.Inventory.Visible or main.FeedPanel.Visible)) then panel.Visible=false end
 			if panel.Visible or os.clock()-receivedAt>=5 then refresh() end
 			task.wait(1)

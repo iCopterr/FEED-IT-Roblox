@@ -8,7 +8,7 @@ function CarryController.Start()
 	local eggRemote = game.ReplicatedStorage:WaitForChild("PrototypeEgg")
 	local busy = false
 	local function click(screenPosition)
-		if player:GetAttribute("EggPanelOpen") or player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") or player:GetAttribute("MerchantPanelOpen") then return end
+		if player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") or player:GetAttribute("MerchantPanelOpen") then return end
 		local gui = player.PlayerGui:FindFirstChild("FeedYourPetUI")
 		if busy or (gui and (gui.Inventory.Visible or (gui:FindFirstChild("FeedPanel") and gui.FeedPanel.Visible))) then return end
 		local camera = workspace.CurrentCamera
@@ -48,16 +48,13 @@ function CarryController.Start()
 			local inventory=require(script.Parent.InventoryController)
 			if inventory.Placed then inventory.Placed(if action=="Place" then "Egg" else "Pet",id) end
 		end
-		if (not ok or not response.Ok) and action == "Place" then
-			local eggGui = player.PlayerGui:FindFirstChild("EggUI")
-			if eggGui then
-				eggGui.Panel.Visible = true
-				eggGui.Panel.Status.Text = if ok and response.Code == "Busy" then "Saving your egg. Please try again shortly."
-					else "Hold your egg and click nearby inside your own fenced Pen."
-			end
-		elseif (not ok or not response.Ok) and gui then
+		if (not ok or not response.Ok) and gui then
 			gui.Inventory.Visible = true
-			gui.Inventory.Panel.Layout.Status.Text = if ok and response.Code == "PenFull" then "Your Pen is full (5 pets)." elseif ok and response.Code == "PlateOccupied" then "Your feed plate already has a pet. Hold E near it to pick it up." else "Move closer to your own Pen or feed plate and try again."
+			gui.Inventory.Panel.Layout.Status.Text = if action=="Place" and ok and response.Code=="Busy" then "Saving your egg. Please try again shortly."
+				elseif action=="Place" then "Move closer and click inside your own fenced Pen."
+				elseif ok and response.Code == "PenFull" then "Your Pen is full (5 pets)."
+				elseif ok and response.Code == "PlateOccupied" then "Your feed plate already has a pet. Hold E near it to pick it up."
+				else "Move closer to your own Pen or feed plate and try again."
 		end
 		task.wait(.3)
 		busy = false
@@ -79,7 +76,7 @@ function CarryController.Start()
 					local model = prompt:FindFirstAncestorOfClass("Model")
 					prompt.Enabled = model:GetAttribute("OwnerUserId") == player.UserId
 						and (prompt.Name ~= "HatchEgg" or model:GetAttribute("HatchReady") == true)
-						and not player:GetAttribute("RevivePanelOpen") and not player:GetAttribute("EggPanelOpen")
+						and not player:GetAttribute("RevivePanelOpen")
 						and not player:GetAttribute("DebugPanelOpen")
 						and not player:GetAttribute("MerchantPanelOpen")
 						and not (prompt.Name=="OpenFeedUI" and player:GetAttribute("FeedBusy"))

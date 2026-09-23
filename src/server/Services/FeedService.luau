@@ -10,6 +10,8 @@ local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
 local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
 local Config = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local FoodConfig = require(game.ReplicatedStorage.Shared.Config.FoodConfig)
+local Variants = require(game.ReplicatedStorage.Shared.Config.VariantConfig)
+local PetIncome = require(game.ReplicatedStorage.Shared.PetIncome)
 local FeedService = {}
 local sessions = {}
 local foodChanged, outcomeChanged
@@ -38,7 +40,7 @@ local function snapshot(player, state, foodId)
 		Foods=FoodConfig.Inventory(data), SpeciesId=pet and pet.SpeciesId,
 		FoodId=foodId, FoodName=food.Name, FoodReduction=food.Reduction,
 		Ok=pet ~= nil, Code=reason, PetId=pet and pet.PetId,
-		PetName=pet and (definition and definition.DisplayName or pet.SpeciesId),
+		PetName=pet and Variants.Name(definition and definition.DisplayName or pet.SpeciesId,pet.Variant),
 		Rarity=pet and pet.Rarity, FeedLevel=pet and pet.FeedLevel,
 		Food=FoodConfig.Count(data,foodId), FoodAt=os.clock(), Cost=pet and FoodConfig.ServingsPerFeed,
 		Risk=risk,
@@ -122,7 +124,7 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	result.AppliedRisk = appliedRisk
 	result.FeedLevel, result.Accepted = outcome.FeedLevel, true
 	result.Food, result.FoodAt = FoodConfig.Count(data,result.FoodId), os.clock()
-	result.Income = pet.BaseIncome * (Config.Multiplier[outcome.FeedLevel] or 1)
+	result.Income = PetIncome(pet,outcome.FeedLevel)
 	result.LastOutcome = nil
 	state.Sequence = sequence
 	result.NextSequence = sequence+1

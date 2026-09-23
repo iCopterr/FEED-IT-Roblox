@@ -1,11 +1,13 @@
 # Prototype eggs and incubation
 
 Eggs replace the alpha direct-pet conveyor offers. Hold E near an offer to buy;
-purchase holds the egg if hands are free, otherwise stores it in MY EGGS.
-Use HOLD EGG in MY EGGS, close the panel, then click/tap inside your own fenced
-Pen. Placement starts incubation. Once ready, stand beside the egg and press E
+purchase holds the egg if hands are free, otherwise stores it in Inventory.
+Players may own and buy any number of eggs without hatching earlier purchases.
+Equip an egg from Inventory, then click/tap inside your own fenced Pen.
+Placement starts incubation. Once ready, stand beside the egg and press E
 (single press, not hold; gamepad X / touch prompt also supported).
-MY EGGS retains timer and hold/put-away controls, not a remote hatch button.
+The right-side Growing Eggs panel lists placed eggs and allows remote claiming;
+manual E hatching remains available.
 Hatching validates ownership, a living character, readiness and 10-stud range.
 The pet returns to inventory and is held after saving if hands are free; it
 never automatically enters the Pen. PUT AWAY EGG stores an unplaced held egg.
@@ -13,9 +15,8 @@ Placed eggs remain incubating until claimed (egg repositioning is not included).
 
 Balance is in src/shared/Config/EggConfig.luau:
 
-- One prototype_egg, 5K Money, 10-second incubation.
-- Results: Common 40%, Uncommon 25%, Rare 18%, Epic 10%, Legendary 5%, Mythic 2%.
-- One incubation slot, independent of the five active pet slots.
+- Five configured egg tiers with six individually weighted pets per tier.
+- There is no ownership/incubation-slot cap; active pet slots remain separate.
 - These are test-friendly prototype values, not production hatch odds.
 - Price, HatchSeconds and weighted SpeciesId result pool are per egg.
 - ConveyorConfig controls which egg types appear, their spawn weights and motion.
@@ -42,8 +43,9 @@ eggs cannot create another pet after reconnect. No purchase remote accepts
 client price, result, time or species. The conveyor validates range/alive/plot/
 offer expiry before calling the server-only purchase method.
 
-Actual authored assets: Workspace.EggTemplates and StarterGui.EggUI, exported
-to .rbxmx for Rojo. Runtime clones only those templates and the existing label.
+Actual authored assets: Workspace.EggTemplates, StarterGui.FeedYourPetUI and
+StarterGui.PenManagerUI, exported to .rbxmx for Rojo. The old MY EGGS ScreenGui
+was removed. Runtime clones only egg/pet item rows, not complete interfaces.
 No runtime world/UI geometry generator, new pet species or paid hatch skips.
 The existing PetConveyor and ConveyorPetLabel names remain for asset stability.
 

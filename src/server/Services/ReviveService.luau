@@ -7,6 +7,7 @@ local MoneyService = require(script.Parent.MoneyService)
 local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
 local Config = require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
 local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
+local Variants = require(game.ReplicatedStorage.Shared.Config.VariantConfig)
 local sessions = {}
 local Service = {}
 local presentation = FeedConfig.Presentation
@@ -35,7 +36,7 @@ function Service.HandleRequest(player, action, petId, attemptId)
 			local pet = record.Pet
 			local definition = PetConfig.Species[pet.SpeciesId]
 			table.insert(records, {PetId=id, AttemptId=record.AttemptId,
-				PetName=if definition then definition.DisplayName else pet.SpeciesId,
+				PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant),
 				Rarity=pet.Rarity, FeedLevel=pet.FeedLevel, Income=MoneyService.GetPetRate(pet),
 				ExplodedAt=record.ExplodedAt, ExpiresAt=expiresAt(record), FoodSpent=record.FoodSpent})
 		end

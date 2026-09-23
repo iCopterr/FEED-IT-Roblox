@@ -62,12 +62,12 @@ function Controller.Start(gui,onSnapshot)
 		layout.Status.Text=text;noticeUntil=os.clock()+4
 	end
 	local function otherModal()
-		return gui.FeedPanel.Visible or player:GetAttribute("EggPanelOpen") or player:GetAttribute("RevivePanelOpen")
+		return gui.FeedPanel.Visible or player:GetAttribute("RevivePanelOpen")
 			or player:GetAttribute("MerchantPanelOpen") or player:GetAttribute("DebugPanelOpen")
 	end
 	local function show()
 		gui.FeedPanel.Visible=false
-		for _,name in {"EggUI","ReviveUI","MerchantUI","DebugUI"} do
+		for _,name in {"ReviveUI","MerchantUI","DebugUI"} do
 			local other=player.PlayerGui:FindFirstChild(name)
 			if other then other.Panel.Visible=false end
 		end
@@ -120,7 +120,7 @@ function Controller.Start(gui,onSnapshot)
 		local entry=entries[selected]
 		Preview.Set(detail.Preview,entry)
 		detail.Equip.Visible=entry~=nil and Model.CanSlot(entry);detail.Pin.Visible=false;detail.Lock.Visible=entry~=nil and entry.Kind=="Pet"
-		if not entry then detail.ItemName.Text="SELECT AN ITEM";detail.Stats.Text="Tap a card to see its stats.";return end
+		if not entry then detail.ItemName.Text="SELECT AN ITEM";detail.Stats.Text="";return end
 		local state=stateOf(entry)
 		detail.ItemName.Text=entry.Name
 		detail.Stats.Text=if entry.Kind=="Pet" then string.format("%s • LEVEL %s\n%s Money / sec\n%s%s",entry.Rarity,numberText(entry.Level),numberText(entry.Income),state,if entry.Locked then " • LOCKED" else "")
@@ -132,7 +132,7 @@ function Controller.Start(gui,onSnapshot)
 		detail.Lock.ButtonText.Text=if entry.Locked then "UNLOCK" else "LOCK"
 		detail.Pin.ButtonText.Text=if Model.SlotOf(slots,entry.Key) then "UNPIN" else "QUICK SLOT"
 		detail.Equip.Active=not busy and not snapshot.Busy;detail.Lock.Active=not busy and not snapshot.Busy
-		detail.Equip.ImageColor3=if busy or snapshot.Busy then Color3.fromRGB(147,136,164) else Color3.fromRGB(112,219,89)
+		detail.Equip.ImageColor3=if busy or snapshot.Busy then Color3.fromRGB(100,100,110) else Color3.fromRGB(78,227,51)
 		detail.Equip.BackgroundColor3=detail.Equip.ImageColor3
 	end
 	render=function()
@@ -147,9 +147,10 @@ function Controller.Start(gui,onSnapshot)
 			shown[entry.Key]=true;card.Visible=true;card.LayoutOrder=index
 			local tint=Config.RarityColors[entry.Rarity] or Config.RarityColors.Common
 			card.RarityStripe.BackgroundColor3=tint
-			card.Stroke.Color=if selected==entry.Key then Color3.fromRGB(255,210,96) else tint:Lerp(Color3.new(),.6)
-			card.Stroke.Thickness=if selected==entry.Key then 4 else 3
-			card.ImageColor3=if selected==entry.Key then Color3.fromRGB(255,210,96) else tint
+			card.Stroke.Color=if selected==entry.Key then Color3.new(1,1,1) else tint:Lerp(Color3.new(),.65)
+			card.Stroke.Thickness=5
+			card:SetAttribute("Selected",selected==entry.Key)
+			card.ImageColor3=tint
 			card.BackgroundColor3=card.ImageColor3
 			card.ItemName.Text=entry.Name;card.Stats.Text=if entry.Kind=="Pet" then "Lv. "..numberText(entry.Level).." • "..numberText(entry.Income).."/s" elseif entry.Kind=="Food" then "×"..numberText(entry.Quantity).." • -"..numberText(entry.Reduction*100).."% risk" else "EGG"
 			card.State.Text=stateOf(entry)..(if entry.Locked then " • LOCKED" else "");card.LockMark.Text=""
@@ -159,13 +160,13 @@ function Controller.Start(gui,onSnapshot)
 			if not entries[key] then card:Destroy();cards[key]=nil else card.Visible=shown[key]==true end
 		end
 		layout.EmptyState.Visible=#visible==0
-		layout.EmptyState.Text=if not snapshot then "Loading your collection…" elseif category=="Food" and layout.Search.Text=="" then "No food yet.\nVisit the food merchant." elseif next(entries)==nil then "Your collection starts with an egg.\nVisit the conveyor to get one." else "No matches. Try another name or category."
+		layout.EmptyState.Text=if not snapshot then "Loading…" elseif category=="Food" and layout.Search.Text=="" then "No food yet" elseif next(entries)==nil then "No pets or eggs yet" else "No matches"
 		local count=0;for _,entry in entries do if (category=="Food")==(entry.Kind=="Food") then count+=1 end end
 		layout.Title.Text=(if category=="Food" then "MY FOOD  •  " else "MY COLLECTION  •  ")..numberText(count)
 		layout.PenSlots.Text=if snapshot then string.format("PEN %d / %d",snapshot.PlacedCount,snapshot.MaxPetSlots) else "PEN —"
 		layout.Sort.ButtonText.Text="SORT: "..string.upper(sort)
 		for _,name in {"All","Pet","Egg","Food"} do
-			layout[name].ImageColor3=if category==name then Color3.fromRGB(255,195,55) else Color3.fromRGB(111,172,241)
+			layout[name].ImageColor3=if category==name then Color3.fromRGB(78,227,51) else Color3.fromRGB(36,165,219)
 			layout[name].BackgroundColor3=layout[name].ImageColor3
 			layout[name].ButtonText.TextColor3=Color3.new(1,1,1)
 		end
@@ -187,7 +188,7 @@ function Controller.Start(gui,onSnapshot)
 		updateDetail()
 		Responsive.Apply(gui,cards,buttons)
 		if os.clock()>noticeUntil then
-			layout.Status.Text=if category=="Food" then "Food is selected and consumed at your feed plate." else "Add to hotbar • Close inventory • Tap a slot or press 1–0 to hold"
+			layout.Status.Text=""
 			bar.Hint.Text=""
 		end
 		bar.Visible=next(slots)~=nil and not modal.Visible and not otherModal()
@@ -210,7 +211,7 @@ function Controller.Start(gui,onSnapshot)
 	local function toggle() if modal.Visible then modal.Visible=false else show() end end
 	gui.HUD.OpenInventory.ButtonText.Text="INVENTORY"
 	gui.HUD.OpenInventory.Activated:Connect(toggle)
-	layout.Close.Activated:Connect(function() modal.Visible=false end)
+	layout.Close.Activated:Connect(function() require(script.Parent.Parent.UI.Motion).Close(modal) end)
 	modal:GetPropertyChangedSignal("Visible"):Connect(function()
 		updateNavigation()
 		player:SetAttribute("InventoryPanelOpen",modal.Visible)

@@ -39,22 +39,22 @@ local ok, failure = xpcall(function()
 	assert(pets.SetLocked(a,common.PetId,true))
 	check(money.GetRate(a)==10, "Locked placed pets still earn")
 	assert(placement.PlacePet(a,rare.PetId))
-	check(money.GetRate(a)==510, "Placed pet rates add together")
+	check(money.GetRate(a)==45, "Placed species-specific pet rates add together")
 	profile.Inventory[common.PetId].FeedLevel=1
-	check(money.GetRate(a)==513, "Feed multiplier applies to income")
+	check(money.GetRate(a)==48, "Feed multiplier applies to income")
 	profile.Inventory[common.PetId].FeedLevel=40
-	check(money.GetRate(a)==50000500, "Level 40 uses locked GDD multiplier")
+	check(money.GetRate(a)==50000035, "Level 40 uses locked GDD multiplier")
 	profile.Inventory[common.PetId].FeedLevel=41
-	check(money.GetRate(a)==500, "Unbalanced levels are not extrapolated")
+	check(money.GetRate(a)==35, "Unbalanced levels are not extrapolated")
 	profile.Inventory[common.PetId].FeedLevel=0
 	local foreign = assert(pets.CreatePet(b,"test_mythic"))
 	assert(placement.PlacePet(b,foreign.PetId))
-	check(money.GetRate(a)==510 and money.GetRate(b)==45000, "Income belongs only to each pet owner")
+	check(money.GetRate(a)==45 and money.GetRate(b)==600, "Income belongs only to each pet owner")
 	before=profile.Money
-	waitFor(function() return profile.Money>=before+510 end)
+	waitFor(function() return profile.Money>=before+45 end)
 	check(true, "Automatic income loop runs")
 	assert(placement.PickupPet(a,common.PetId))
-	check(money.GetRate(a)==500, "Pickup stops that pet income immediately")
+	check(money.GetRate(a)==35, "Pickup stops that pet income immediately")
 	assert(placement.PickupPet(a,rare.PetId))
 	before=profile.Money
 	task.wait(2.2)

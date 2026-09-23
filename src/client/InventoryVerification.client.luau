@@ -17,6 +17,25 @@ local ok,failure=xpcall(function()
 	end
 	waitFor(function() return signal:GetAttribute("FixturesReady") end)
 	local gui=game.Players.LocalPlayer.PlayerGui:WaitForChild("FeedYourPetUI",10)
+	local manager=assert(game.Players.LocalPlayer.PlayerGui:WaitForChild("PenManagerUI",10),"Authored pen manager missing")
+	check(manager:IsA("ScreenGui") and manager.Dock.Eggs:IsA("GuiButton") and manager.Dock.Pets:IsA("GuiButton"),"Right-side ScreenGui buttons authored")
+	check(manager.Panel.List:IsA("ScrollingFrame") and manager.Panel.List.RowTemplate.Preview:IsA("ViewportFrame"),"Scrolling manager row and model preview authored")
+	local motion=require(script.Parent.UI.Motion)
+	local probe=manager.Panel:Clone();probe.Visible=false;probe.Parent=manager
+	local home=probe.Position
+	motion.BindPopup(probe,{FromRight=true});probe.Visible=true
+	task.wait(.04)
+	check(probe.Position.X.Offset>home.X.Offset and probe.Position.Y==home.Y,"Side panel enters from right")
+	task.wait(.4)
+	check(probe.Position==home,"Side panel settles")
+	local furthest=home.X.Offset
+	local track=probe:GetPropertyChangedSignal("Position"):Connect(function() furthest=math.max(furthest,probe.Position.X.Offset) end)
+	motion.Close(probe)
+	task.wait(.3)
+	track:Disconnect()
+	check(furthest>home.X.Offset,"Side panel exits right")
+	check(not probe.Visible and probe.Position==home,"Side panel closes and restores")
+	probe:Destroy()
 	local client=script.Parent
 	local model=require(client.UI.InventoryModel)
 	local layout=require(client.UI.InventoryLayout)
@@ -36,6 +55,21 @@ local ok,failure=xpcall(function()
 	local snapshot
 	waitFor(function() local state=remote:InvokeServer("Snapshot");if state.Ok then snapshot=state;return true end end)
 	local entries=model.Entries(snapshot)
+	local fixture={SpeciesId="test_common",Rarity="Common",Variant="Shiny",FeedLevel=0,BaseIncome=10,CreatedAt=1,Placed=false}
+	local fixtureSnapshot={Inventory={placement_test=fixture}}
+	local fixtureSlots,fixtureKnown={},{}
+	model.Reconcile(fixtureSlots,fixtureKnown,model.Entries(fixtureSnapshot))
+	check(model.SlotOf(fixtureSlots,"pet:placement_test")~=nil,"Stored pet appears in bag/hotbar")
+	fixture.Placed=true
+	local placedEntries=model.Entries(fixtureSnapshot)
+	check(placedEntries["pet:placement_test"]==nil and #model.Filter(placedEntries,"All","","Newest")==0,"Pen pet excluded from bag and All tab")
+	model.Reconcile(fixtureSlots,fixtureKnown,placedEntries)
+	check(not next(fixtureSlots),"Pen pet removed from hotbar")
+	check(fixtureSnapshot.Inventory.placement_test==fixture and fixture.Variant=="Shiny","Hiding does not mutate owned pet")
+	fixture.Placed=false
+	local pickedUp=model.Entries(fixtureSnapshot)
+	model.Reconcile(fixtureSlots,fixtureKnown,pickedUp)
+	check(pickedUp["pet:placement_test"] and model.SlotOf(fixtureSlots,"pet:placement_test"),"Pickup restores same pet to bag/hotbar")
 	waitFor(function()
 		for key in entries do if not gui.Inventory.Panel.Layout.Pets:FindFirstChild(key) then return false end end
 		return true

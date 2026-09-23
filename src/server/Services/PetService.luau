@@ -99,7 +99,8 @@ local function validateConfig()
 
 		local expectedIncome = PetConfig.RarityBaseIncome[definition.Rarity]
 		assert(expectedIncome ~= nil, `Species {speciesId} has unknown rarity {definition.Rarity}`)
-		assert(definition.BaseIncome == expectedIncome, `Species {speciesId} has incorrect BaseIncome`)
+		assert(type(definition.BaseIncome)=="number" and definition.BaseIncome>0 and definition.BaseIncome<math.huge,
+			`Species {speciesId} must have positive finite BaseIncome`)
 
 		speciesCount += 1
 		rarityCount[definition.Rarity] = (rarityCount[definition.Rarity] or 0) + 1

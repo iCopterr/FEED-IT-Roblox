@@ -6,6 +6,164 @@
 
 **Last Updated:** 2026-09-23
 
+### Latest session — baby griffin beside black wolf
+
+- Created `Workspace.BabyGriffin_RigTest`: oversized cream eagle head, hooked
+  gold beak, layered small wings, feathered chest, front talons, tan lion body,
+  hind paws and tufted tail. No animations or gameplay integration.
+- Seven studs beyond wolf away from fox for wing clearance; root
+  (216.50, 1.615, 49.05), matching display standing plane. Existing off-island
+  row preserved; ground needed before runtime physics testing.
+- PASS Edit checks: 67 connected unanchored parts, 9 aligned motors,
+  Torso-only collision, matching root size, Animator and relative placement.
+  Screenshot inspected; runtime not tested. Selected and framed for review.
+- New editor recipe `docs/studio/build-baby-griffin.luau`; Studio-owned outside
+  Rojo. Save place for persistence. Next user visual review. Recipe/handoff
+  only changed; other dirty work preserved. No commit; last recorded working
+  commit 7c33222. Overall gameplay progress unchanged.
+
+### Latest session — black wolf beside fox
+
+- Created `Workspace.BlackWolf_RigTest`: charcoal coat with slate highlights,
+  heavy chest, layered mane, amber eyes, pointed ears, small fangs, large paws
+  and long dark-tipped bushy tail. No animations or gameplay integration.
+- Six studs beyond fox away from bunny; root (209.50, 2.31, 49.05), shared
+  standing plane. Existing off-island display row preserved; needs ground for Play.
+- PASS Edit checks: 71 connected unanchored parts, 9 aligned motors,
+  Torso-only collision, matching root size, Animator and relative placement.
+  Screenshot inspected. Runtime not tested. Selected and framed for review.
+- Recipe `docs/studio/build-black-wolf.luau`; Studio-owned outside Rojo mappings.
+  Save place for persistence. Next user appearance review. Recipe and handoff
+  only changed; prior dirty work preserved. No commit; last recorded working
+  commit 7c33222. Overall gameplay progress unchanged.
+
+### Latest session — fox beside horned bunny
+
+- Created `Workspace.Fox_RigTest`: orange coat, white chest/cheek ruff and
+  muzzle, pointed dark-lined ears, dark paws and raised white-tipped tail.
+  No animation or gameplay integration. Existing models preserved.
+- Six studs beyond bunny away from boar, same standing plane; root
+  (203.50, 1.795, 49.05). Off-island display row needs ground before Play.
+- PASS Edit checks: 44 connected unanchored parts, 9 aligned motors,
+  Torso-only collision, matching root, Animator and relative placement.
+  Screenshot capture timed out; visual screenshot and runtime checks pending.
+- New editor recipe `docs/studio/build-fox.luau`; Studio-owned outside Rojo.
+  Selected and framed; save place for persistence. Next: user visual review.
+  Recipe and handoff only changed; concurrent roster/UI work preserved.
+  No commit; last recorded working commit 7c33222. Gameplay progress unchanged.
+
+### Latest session — initial five-egg / thirty-pet roster
+
+- Replaced placeholder display names with the requested 30-pet roster across
+  Basic, Advanced, Elite, Master and Supreme Eggs (six pets per Egg). Stable
+  internal SpeciesIds were retained so authored templates and saved identity
+  continue resolving without remapping.
+- Every species now has its own configured base income. All 30 values are
+  unique; rarity remains descriptive and no longer forces one shared income.
+  Existing saved pets intentionally retain their saved rarity and BaseIncome.
+- Every result has an individual hatch weight, including different weights for
+  pets of the same rarity. Each Egg pool totals exactly 100%. The Egg panel now
+  displays pet name, rarity and exact chance so duplicate rarity labels are not
+  ambiguous. Debug species selection now shows name, rarity and income.
+- Updated MoneyVerification for per-species values and documented the complete
+  tuning table in `docs/pet-roster.md`. Placeholder pet models are unchanged.
+- PASS: Rojo build and `git diff --check`; live config audit (5 Eggs, 30 pets,
+  6 per Egg, unique incomes, 100% pools); two-player EggVerification 157/157;
+  two-player MoneyVerification 16/16; Studio syntax analysis 0 errors across
+  ReplicatedStorage, ServerScriptService and StarterPlayer.
+- Files: PetConfig, EggConfig, PetService, EggController, DebugController,
+  ConveyorVerification, MoneyVerification, pet-roster documentation and this
+  handoff. Next: playtest economy/odds and tune the centralized values. No
+  commit requested; last working commit remains 7c33222.
+
+### Latest session — horned bunny beside boar
+
+- Created `Workspace.HornedBunny_RigTest`: cream body, long pink-lined ears,
+  branched tan antlers, cheek fluff, buck teeth, long hind paws and round tail.
+  No animations or gameplay integration. Existing models preserved.
+- Six studs beside boar on the side away from chicken; follows current moved
+  display arrangement. Root (197.50, 1.495, 49.05); shared standing plane.
+  Display row remains off-island; ground needed before runtime physics testing.
+- PASS Edit checks: 46 connected unanchored parts, 9 aligned Motor6Ds,
+  Torso-only collision, matching root size, Animator and relative placement.
+  Screenshot inspected. Runtime behavior not tested. Selected/framed model.
+- Recipe: `docs/studio/build-horned-bunny.luau`; Studio-owned, outside Rojo.
+  Save place for persistence. Next user appearance review. Files changed:
+  recipe and handoff only; prior dirty work preserved. No commit this session;
+  last recorded working commit 7c33222. Gameplay progress unchanged.
+
+### Latest session — boar left of chicken
+
+- Created `Workspace.Boar_RigTest`: brown stocky body, ivory tusks, snout,
+  bristled mane, pointed ears, split hooves and curled tail. No animations.
+- Placed seven studs along the chicken's local left, with matching standing
+  plane and orientation. Current root (178.45, 2.065, 49.05); chicken has been
+  moved to (185.45, 2.12, 49.05). These are off the island: placement follows
+  user's display layout; runtime pets would need ground before Play testing.
+- Initial ground ray hit the nearby dragon wing; corrected boar elevation to
+  the chicken's standing plane. Recipe now uses that plane directly.
+- PASS Edit checks: 54 connected unanchored parts, 7 aligned motors,
+  Torso-only collision. Humanoid/Animator and calculated HipHeight present.
+  Screenshot inspected; Play behavior not tested. Next user visual review.
+- New editor recipe `docs/studio/build-boar.luau`; Studio-owned model outside
+  Rojo mappings. Save place for persistence. Handoff and recipe only changed;
+  other uncommitted work preserved. No commit; last working commit 7c33222.
+
+### Latest session — IceDragon V2 detail pass
+
+- Updated existing `Workspace.IceDragon_V2` with 92 welded detail parts:
+  overlapping flank armor, throat plates, cheek/shoulder crystals, eye rims,
+  nostrils, luminous gill marks, frosted leading edges, wing veins/tips/crests,
+  breast crystal and tail crown. Richer blue body/ribs and pale wing palette.
+  Existing surface/material edits preserved; no animation or gameplay changes.
+- Backup: `ServerStorage.IceDragon_V2_BeforeDetails_1790153897`.
+  Recipe: `docs/studio/detail-ice-dragon-v2.luau`; refuses duplicate application.
+- PASS Edit checks: 1870 connected unanchored parts, 9 aligned Motor6Ds,
+  1860 welds; Torso-only collision; 92 added details. Viewport inspected.
+  Runtime behavior not tested; high-part-count art prototype still requires
+  consolidation before production cloning. Selected and framed for user review.
+- Next: user appearance feedback. Studio-owned model outside Rojo; save the
+  place to persist it. Files: detail recipe and handoff; other dirty work kept.
+  Last working commit 7c33222; no commit. Overall gameplay progress unchanged.
+
+### Latest session — five egg tiers / thirty pet placeholders
+
+- Egg order: Basic -> Advanced -> Elite -> Master -> Supreme. Basic keeps
+  prototype_egg internal ID so existing eggs/pets remain compatible.
+  Each tier has six distinct species IDs and six authored pet model slots.
+- Preserved existing 18 species/pools; added Master Pet 1–6 and Supreme Pet
+  1–6 placeholders using copies of existing Elite models. No final pet designs
+  or new species names chosen. Five egg templates reuse current shell geometry.
+- Existing first-three prices/timers unchanged. Temporary Master 5B/20min,
+  Supreme 50B/30min; their provisional pools use Elite weights/rarity incomes.
+  Conveyor weights: 68/25/5/1.5/.5. Balance centralized, not final economy.
+- Files: EggConfig, PetConfig, ConveyorConfig, EggTemplates/PetTemplates,
+  ConveyorVerification, this handoff. Stud materials preserved.
+- Build/diff pass. Removed 16 verified identical editor/Rojo duplicate clones;
+  source assets preserve all new templates. All 157 two-player EggVerification
+  checks passed, including purchases, timers, placement, hatch and save/load
+  for Master/Supreme. Studio confirms five eggs with six unique slots each.
+- Complete; user supplies final pet choices and balance adjustments later.
+  Existing dirty work preserved; not committed. Last commit 7c33222.
+
+### Latest session — ivory and shadow creature concept
+
+- User requested an approximate adaptation of supplied ivory-armored, hollow
+  dark creature with gold ornaments and a shadow beast underneath.
+- Created `Workspace.IvoryWraith_Concept` via connected Edit MCP port 58742:
+  tall arched neck, branching horns, open oval armor frames over dark core,
+  elongated legs, gold bridle/charms, ragged shroud and low clawed shadow beast.
+  Existing chicken/dragon models preserved. No animation or gameplay integration.
+- PASS: 439 unanchored connected parts, 8 Motor6Ds, 430 cosmetic welds;
+  Torso-only collision; joint transforms aligned; matching root and Animator.
+  HipHeight calculated from geometry; viewport screenshot inspected. Runtime
+  standing/movement NOT tested. Art prototype needs optimization before mass use.
+- New editor-only recipe: `docs/studio/build-ivory-wraith.luau`. Model remains
+  Studio-owned outside Rojo mappings, near X=13/Z=78; save place for persistence.
+  Selected model and framed camera. Next: user concept/silhouette feedback.
+- Files modified: recipe and handoff only. Other dirty work preserved.
+  Last working commit: 7c33222. No commit this session; gameplay progress unchanged.
+
 ### Latest session — preserve Studio stud/material edits
 
 - Captured current Studio appearance: all 428 BaseParts in seven Rojo-managed

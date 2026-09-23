@@ -14,7 +14,7 @@ function Controller.Start()
 	local messageToken=0
 	local messages={NotEnoughMoney="Not enough Money for this egg.",Unavailable="That egg was bought or reached the end.",
 		TooFar="Move closer to the egg.",Saving="Your previous purchase is saving. Please wait.",
-		Busy="Another transaction is saving. Please wait.",IncubatorFull="Your egg slot is full. Open MY EGGS to hatch it.",
+		Busy="Another transaction is saving. Please wait.",
 		Loading="Your inventory is still loading.",Cooldown="Please wait a moment."}
 	game:GetService("ProximityPromptService").PromptTriggered:Connect(function(prompt,triggeringPlayer)
 		if triggeringPlayer and triggeringPlayer~=player then return end
@@ -25,9 +25,9 @@ function Controller.Start()
 		local ok,result=pcall(function() return remote:InvokeServer(model:GetAttribute("OfferId")) end)
 		busy=false
 		messageToken+=1;local token=messageToken
-		gui.Message.Text=if ok and result.Ok then "Egg bought! Hold it from MY EGGS, then click inside your Pen."
+		gui.Message.Text=if ok and result.Ok then "Egg bought! It is in your inventory."
 			else if ok then messages[result.Code] or "Purchase rejected. No egg bought."
-			else "Connection interrupted. Check MY EGGS before trying again."
+			else "Connection interrupted. Check your inventory before trying again."
 		gui.Message.Visible=true
 		task.delay(3,function() if token==messageToken then gui.Message.Visible=false end end)
 	end)
@@ -43,7 +43,7 @@ function Controller.Start()
 			if from and to and start then model:PivotTo(from:Lerp(to,math.clamp((now-start)/Config.TravelSeconds,0,1))) end
 			local prompt=model:FindFirstChild("BuyConveyorEgg",true)
 			local modal=playerGui:FindFirstChild("FeedYourPetUI")
-			if prompt then prompt.Enabled=not busy and not player:GetAttribute("EggPanelOpen") and not player:GetAttribute("DebugPanelOpen") and not player:GetAttribute("RevivePanelOpen") and not player:GetAttribute("MerchantPanelOpen") and not (modal and (modal.Inventory.Visible or modal.FeedPanel.Visible)) end
+			if prompt then prompt.Enabled=not busy and not player:GetAttribute("DebugPanelOpen") and not player:GetAttribute("RevivePanelOpen") and not player:GetAttribute("MerchantPanelOpen") and not (modal and (modal.Inventory.Visible or modal.FeedPanel.Visible)) end
 		end
 		local length=conveyor.Deck.Size.Z
 		local travel=now*(conveyor.Finish.Position-conveyor.Start.Position).Magnitude/Config.TravelSeconds

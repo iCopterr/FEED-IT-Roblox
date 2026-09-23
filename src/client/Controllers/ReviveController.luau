@@ -29,7 +29,7 @@ function Controller.Start()
 		local enabled = record ~= nil and snapshot and snapshot.CanRevive and remaining > 0 and not snapshot.Busy and not busy
 		panel.Revive.Active = enabled == true
 		panel.Revive.AutoButtonColor = enabled == true
-		panel.Revive.BackgroundColor3 = if enabled then Color3.fromRGB(85,166,102) else Color3.fromRGB(100,100,110)
+		panel.Revive.BackgroundColor3 = if enabled then Color3.fromRGB(78,227,51) else Color3.fromRGB(100,100,110)
 		panel.Revive.Text = if snapshot and not snapshot.CanRevive then "RESCUE: STUDIO TEST ONLY" else "RESTORE GROWTH (FREE TEST)"
 		local canKeep = record ~= nil and snapshot ~= nil and not snapshot.Busy and not busy
 		panel.Later.Text = if record then string.format("KEEP AT LEVEL %d",snapshot and snapshot.ResetLevel or 0) else "CLOSE"
@@ -68,7 +68,7 @@ function Controller.Start()
 		-- Wait until the explosion presentation/save has ended before prompting.
 		if unseen and not result.Busy then
 			for _, record in records do seen[record.AttemptId] = true end
-			panel.Status.Text = string.format("Restore growth now, or keep level %d. When time runs out, your pet returns at base level.",result.ResetLevel)
+			panel.Status.Text = string.format("Timeout → Level %d",result.ResetLevel)
 			show()
 		end
 		render()
@@ -98,6 +98,8 @@ function Controller.Start()
 		if ok and result.Ok and #records==0 then panel.Visible=false end
 	end
 	panel.Revive.Activated:Connect(function() decide("Revive") end)
+	-- Closing hides the prompt; it does not spend or resolve the timed offer.
+	panel.Close.Activated:Connect(function() if not busy then require(script.Parent.Parent.UI.Motion).Close(panel) end end)
 	panel.Later.Activated:Connect(function()
 		if not busy and #records==0 then panel.Visible=false else decide("KeepBase") end
 	end)
