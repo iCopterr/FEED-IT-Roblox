@@ -11,19 +11,27 @@
 <Vector3 name="Size"><X>6</X><Y>4</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>4.300000190734863</Y><Z>116</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.26274511218070984</R><G>0.1921568661928177</G><B>0.3450980484485626</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Board</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 <Item class="SurfaceGui"><Properties>
 <bool name="Active">true</bool>
@@ -200,57 +208,81 @@
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>1.899999976158142</Y><Z>118</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">LeftPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>6.400000095367432</X><Y>0.30000001192092896</Y><Z>0.6499999761581421</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>6.449999809265137</Y><Z>116</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.9411764740943909</R><G>0.7568627595901489</G><B>0.30588236451148987</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Top</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>1.899999976158142</Y><Z>114</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">RightPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 </Item>
@@ -262,19 +294,27 @@
 <Vector3 name="Size"><X>6</X><Y>4</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>4.300000190734863</Y><Z>-20.000001907348633</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.26274511218070984</R><G>0.1921568661928177</G><B>0.3450980484485626</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Board</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 <Item class="SurfaceGui"><Properties>
 <bool name="Active">true</bool>
@@ -451,57 +491,81 @@
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>1.899999976158142</Y><Z>-22.000001907348633</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">LeftPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>1.899999976158142</Y><Z>-18.000003814697266</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">RightPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>6.400000095367432</X><Y>0.30000001192092896</Y><Z>0.6499999761581421</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>6.449999809265137</Y><Z>-20.000001907348633</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.9411764740943909</R><G>0.7568627595901489</G><B>0.30588236451148987</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Top</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 </Item>
@@ -513,38 +577,54 @@
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>1.899999976158142</Y><Z>-114</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">RightPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>6</X><Y>4</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>4.300000190734863</Y><Z>-116</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.26274511218070984</R><G>0.1921568661928177</G><B>0.3450980484485626</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Board</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 <Item class="SurfaceGui"><Properties>
 <bool name="Active">true</bool>
@@ -721,38 +801,54 @@
 <Vector3 name="Size"><X>6.400000095367432</X><Y>0.30000001192092896</Y><Z>0.6499999761581421</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>6.449999809265137</Y><Z>-116</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.9411764740943909</R><G>0.7568627595901489</G><B>0.30588236451148987</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Top</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>1.899999976158142</Y><Z>-118</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">LeftPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 </Item>
@@ -764,19 +860,27 @@
 <Vector3 name="Size"><X>6</X><Y>4</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>4.300000190734863</Y><Z>19.999998092651367</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.26274511218070984</R><G>0.1921568661928177</G><B>0.3450980484485626</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Board</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 <Item class="SurfaceGui"><Properties>
 <bool name="Active">true</bool>
@@ -953,57 +1057,81 @@
 <Vector3 name="Size"><X>6.400000095367432</X><Y>0.30000001192092896</Y><Z>0.6499999761581421</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>6.449999809265137</Y><Z>19.999998092651367</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.9411764740943909</R><G>0.7568627595901489</G><B>0.30588236451148987</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Top</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>1.899999976158142</Y><Z>17.999998092651367</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">RightPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>1.899999976158142</Y><Z>22</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">LeftPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 </Item>
@@ -1015,76 +1143,108 @@
 <Vector3 name="Size"><X>6.400000095367432</X><Y>0.30000001192092896</Y><Z>0.6499999761581421</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>6.449999809265137</Y><Z>76</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.9411764740943909</R><G>0.7568627595901489</G><B>0.30588236451148987</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Top</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>1.899999976158142</Y><Z>74</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">LeftPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>1.899999976158142</Y><Z>78</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">RightPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>6</X><Y>4</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>37</X><Y>4.300000190734863</Y><Z>76</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.26274511218070984</R><G>0.1921568661928177</G><B>0.3450980484485626</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Board</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 <Item class="SurfaceGui"><Properties>
 <bool name="Active">true</bool>
@@ -1266,76 +1426,108 @@
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>1.899999976158142</Y><Z>-74</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">LeftPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>0.4000000059604645</X><Y>3</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>1.899999976158142</Y><Z>-78</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4941176474094391</R><G>0.34117648005485535</G><B>0.21568627655506134</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">RightPost</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>6.400000095367432</X><Y>0.30000001192092896</Y><Z>0.6499999761581421</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>6.449999809265137</Y><Z>-76</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.9411764740943909</R><G>0.7568627595901489</G><B>0.30588236451148987</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Top</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 </Item>
 <Item class="Part"><Properties>
 <Vector3 name="Size"><X>6</X><Y>4</Y><Z>0.4000000059604645</Z></Vector3>
 <CoordinateFrame name="CFrame"><X>-37</X><Y>4.300000190734863</Y><Z>-76</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.26274511218070984</R><G>0.1921568661928177</G><B>0.3450980484485626</B></Color3>
-<token name="Material">272</token>
+<token name="Material">256</token>
 <bool name="Anchored">true</bool>
 <bool name="CanCollide">true</bool>
 <bool name="CanTouch">false</bool>
 <bool name="CanQuery">true</bool>
 <bool name="CastShadow">true</bool>
-<token name="TopSurface">0</token>
-<token name="BottomSurface">0</token>
+<token name="TopSurface">3</token>
+<token name="BottomSurface">3</token>
 <float name="Transparency">0</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
 <string name="Name">Board</string>
 <bool name="Archivable">true</bool>
+
+<token name="LeftSurface">3</token>
+
+<token name="RightSurface">3</token>
+
+<token name="FrontSurface">3</token>
+
+<token name="BackSurface">3</token>
 </Properties>
 <Item class="SurfaceGui"><Properties>
 <bool name="Active">true</bool>

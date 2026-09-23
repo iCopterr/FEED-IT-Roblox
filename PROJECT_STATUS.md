@@ -6,6 +6,344 @@
 
 **Last Updated:** 2026-09-23
 
+### Latest session — preserve Studio stud/material edits
+
+- Captured current Studio appearance: all 428 BaseParts in seven Rojo-managed
+  world roots use Plastic (256) and Studs (3) on all six faces. No Texture/Decal
+  children existed inside those mapped roots.
+- Saved exact settings in SkyIsland, PlotUpgradeSigns, MysteryMerchant,
+  EggTemplates, PetConveyor, PetTemplates and PlayerPlots .rbxmx assets.
+  Existing conveyor extension and merchant relocation retained.
+- Build/diff checks pass. Requested commit scope: these seven world assets
+  and handoff; unrelated UI/gameplay changes stay uncommitted. Standalone
+  Studio-owned art outside Rojo mappings unaffected: save place for persistence.
+- Future mapped-model appearance edits must be exported to files before
+  reconnecting Rojo, because filesystem properties override Studio edits.
+
+### Latest session — reference-inspired IceDragon V2 art trial
+
+- User's new style direction supersedes uniformly box-shaped pets: angular
+  sculpted anatomy, raised neck, tapered muzzle/tail, broad scalloped wings,
+  stud surface detail and selective glow, based on their supplied references.
+- Created standalone `Workspace.IceDragon_V2` at (13, 3.45, 49) through port
+  58742 after Studio plugin reconnected. Older dragon and chicken preserved.
+  New editor-only recipe: `docs/studio/build-ice-dragon-v2.luau`.
+- Completed art/rig construction: tapered faceted segments, swept horns,
+  jaw/teeth, bent legs/claws, cyan eyes and dorsal crystals. No animations or
+  gameplay integration. Humanoid/Animator; calculated HipHeight; matching root.
+  Torso is an invisible sole collider under welded visible body surfaces.
+- PASS Edit checks: 1778 parts, 9 Motor6Ds, 1768 welds; all connected,
+  unanchored; Torso-only collisions; joint position/orientation alignment.
+  Viewport captures inspected. Runtime standing/movement not tested.
+- IMPORTANT: detailed wedge-built ART TRIAL, not a production pet template.
+  High part count needs mesh/CSG consolidation before cloning across pens.
+  Next: user silhouette feedback, then geometry optimization if accepted.
+- Studio-owned model outside Rojo mapping; save place for persistence.
+  Recipe retained for reconstruction. Files: recipe and this handoff only;
+  other ongoing uncommitted UI/gameplay work preserved. No commit made;
+  last recorded working commit 56814f9. Overall gameplay progress unchanged.
+
+### Latest session — horizontal side-panel transition
+
+- PenManager opens from offscreen right to its compact resting position (.24s),
+  closes toward the right (.18s). Replaced header X with an authored red >
+  collapse button outside the left edge, vertically centered.
+- Motion.BindPopup accepts optional FromRight; other popups keep their current
+  vertical animations. Existing remote/manual gameplay unchanged.
+- Files: UI/Motion, PenManagerController, PenManagerUI and this handoff.
+  Build/diff pass; synced source verified. Edit tween check did not advance
+  while outside Play; added actual client tween assertions to inventory test.
+  All 227 two-player inventory checks passed, including horizontal entrance,
+  exit and restored position on both clients. Initial fixed-frame close probe
+  was timing-sensitive; replaced with position tracking across the transition.
+- Complete; next user motion trial. No commit; prior dirty work preserved.
+  Last working commit remains 56814f9.
+
+### Latest session — compact right-side manager sizing
+
+- Reduced manager to a compact right-edge card: 510x440 authored design,
+  max .82 scale, targeting ~22% screen width / 34% height on desktop.
+  At 1920x1080 rendered size is about 418x361. Right margin 16px.
+- Dock hides while panel is open and returns on close, matching reference
+  interaction; dock scales/centers with viewport. Existing X closes the panel.
+  Small-screen fit constraints retained; all remote/manual behavior unchanged.
+- Files: PenManagerController and PenManagerUI asset. Studio empty-panel
+  screenshot inspected; preview restored. Desktop/mobile bounds assertions,
+  build and diff check pass. No new gameplay test for sizing-only change.
+- Complete; next user visual trial. Rojo connect prompt still visible in Studio;
+  authored geometry mirrored in Edit, controller changes need connected Rojo
+  for reliable Play sync. Prior work preserved; no commit; last 56814f9.
+
+### Latest session — right-side egg/pet manager
+
+- Added authored StarterGui.PenManagerUI ScreenGui asset and Rojo mapping.
+  Two stacked right-middle egg/paw buttons open a scrolling shared panel with
+  model-preview rows, hatch countdowns or pet income/capacity, and per-row actions.
+  Uses current cyan/stud/outlined style and existing Motion helper.
+- HatchRemote reuses the authoritative Hatch transaction/cache/cooldown and
+  only skips proximity. Ownership, placement, ready time, character and locks
+  remain checked. Existing E Hatch still requires proximity. PickupRemote
+  validates owned placed pets and uses PlacementService to return to inventory.
+  No Grow All/Equip Best/paid upgrade behavior added from reference screenshots.
+- UI layout is static editable ScreenGui/row template. Controller clones rows,
+  binds models/data and actions, handles resizing/polling and modal switching.
+- 215 two-player InventoryVerification checks passed including foreign pickup
+  rejection, distant pickup and replay rejection. Build/diff checks pass.
+  All 117 EggVerification checks passed, including remote distant hatch and
+  cached replay across routes; two new client hierarchy checks added after the
+  inventory run. Empty panel screenshot inspected; increased icon/title sizes.
+- New ScreenGui did not initially appear via Rojo; imported exact authored
+  instance tree into StarterGui in Edit (not a runtime builder). Screenshot
+  later shows Rojo connect prompt; reconnect may be needed for future sync.
+- Files: PenManagerUI, PenManagerController, client init, default.project,
+  EggService/UIService, Conveyor/Inventory server tests and inventory client
+  test, this handoff. Existing dirty work preserved. No commit; last 56814f9.
+- Verified Studio has exactly one ScreenGui, automatic vertical scrolling and
+  final 48px icons/32px title. Confirmed new controller, remote hatch code and
+  remote test code present in Studio. No new UI layout scripts in runtime.
+- Complete; next user mouse/touch interaction and populated-list visual trial.
+
+### Latest session — pen pets hidden from inventory
+
+- InventoryModel excludes pets with Placed=true from bag entries. All/Pets
+  lists, search, inventory count and selected detail use the filtered entries.
+  Existing reconciliation removes their hotbar shortcuts; pickup restores
+  availability under the same pet ID. Pen capacity count remains unchanged.
+- Server ownership/data records are untouched: no deletion, migration,
+  income/placement change or variant loss. Eggs/feed-plate behavior unchanged.
+- Files: client/UI/InventoryModel, InventoryVerification.client, this handoff.
+  Build/diff checks pass; all 212 two-player InventoryVerification checks pass,
+  including new place/hide/pickup/identity tests on both clients. Complete.
+  Existing dirty work preserved; no commit. Next: user playtest.
+  Last working commit remains 56814f9.
+
+### Latest session — popup TweenService motion
+
+- Added reusable UI/Motion and UIMotionController. Popup opening slides 18px
+  into position over .18s; explicit corner-close buttons slide out over .1s.
+  Gameplay-triggered visibility changes remain immediate; no remote delay.
+- Popup buttons use authored MotionScale children: 1.025 hover, .96 press,
+  .09s easing, with mouse/touch handling and selected-card pulse. No HUD motion
+  or layout changes. Runtime binds existing UI; does not generate UI geometry.
+- Motion tracks responsive resting position, cancels superseded tweens,
+  invalidates old close callbacks after hide/reopen, resets hidden buttons and
+  disconnects per-button panel listeners on destruction.
+- Verification: build/diff check pass. Isolated Studio checks passed for
+  open settling, close restoration, resizing during animation, rapid reopen,
+  authored button scale and cleanup. All 37 two-player FoodShopVerification
+  checks passed. Final selection-pulse wiring was added after this run and
+  covered by build/source checks, not a second multiplayer run.
+- Files: new UI/Motion and Controllers/UIMotionController; client init and
+  six popup controllers; five popup assets; this handoff. Existing dirty work
+  preserved; no commit. Next user motion/feel trial (mouse and touch).
+  Last working commit remains 56814f9.
+
+### Latest session — popup typography/borders match HUD
+
+- Inspected existing Inventory/Base/Merchant HUD controls in Studio: Fredoka
+  One, 5px dark-purple contextual text outline, 5px dark-tinted button border
+  and 15px corners. Applied that treatment to popup assets only, preserving
+  texture, color, larger headings, layout and action semantics.
+- Added authored contextual TextOutline and missing ButtonBorder strokes.
+  Emoji labels excluded from font/outline change. Pet/food card selection
+  remains white; default border uses dark tint and 5px thickness.
+- Verification: Rojo build and diff check pass; Studio font/thickness
+  assertions pass. Merchant screenshot inspected; temporary preview restored.
+  HUD/hotbar/banner subtrees verified unchanged. No new full gameplay test
+  for this cosmetic pass (previous 37-check run passed).
+- Files: five popup UI assets, InventoryController, UI/FoodCard and handoff.
+  Complete; next user visual trial. Existing dirty work preserved. No commit;
+  last working commit remains 56814f9. No known blocker.
+
+### Latest session — cleaner popup text and consistent buttons
+
+- Removed repeated popup tutorials/footer hints and shortened inventory empty
+  states. Kept transaction errors, quantities, prices, timers, food effects,
+  feeding explosion chance and failure consequence. Rescue timer/food-spent
+  information retained. No gameplay changes.
+- Enlarged popup title text (36px standard; 30px food sidebar, 26px Debug).
+  Sidebar title simplified to FOOD. Existing header bands/layout preserved.
+- Authored stud-texture overlays on popup TextButtons; existing ImageButtons
+  use matching 96px tiled studs. Overlays are noninteractive; existing labels,
+  action colors and button handlers retained. No runtime UI generation.
+- Verified HUD/hotbar/banner/open-button asset subtrees unchanged. Build and
+  diff check pass; Studio confirms texture instances are present/noninteractive.
+  All 37 two-player FoodShopVerification checks passed. Merchant screenshot
+  confirms larger readable heading and textured buttons; preview restored.
+  Full manual input/mobile visual pass remains for user playtest.
+- Files: five popup assets, Inventory/Feed/Egg/Merchant/Revive controllers and
+  this handoff. Prior dirty work preserved; no commit. Next user visual trial.
+  Last working commit remains 56814f9.
+
+### Latest session — merchant follows extended conveyor
+
+- Moved all 10 existing MysteryMerchant parts +44 studs along Z, preserving
+  the previous gap beyond the conveyor end. Shop Base now Z=156; interaction/
+  teleport point Z=147.5. Persisted authored asset; no runtime builder.
+- TravelService and MerchantService already resolve the moved InteractionPoint,
+  so teleport, prompt and purchase-distance validation use the new location.
+- Studio Edit assertions pass: shop position, interaction clear of belt,
+  shop inside island. Rojo build and diff check pass; no new full Play test.
+- Files: src/world/MysteryMerchant.rbxmx and this handoff. Complete; next user
+  visual/Play check. Other dirty work preserved; no commit; last commit 56814f9.
+
+### Latest session — conveyor aligned with outer plots
+
+- Resized existing authored Workspace.PetConveyor from 184 to 272 studs along
+  the existing center-lane Z axis. Base/rails now end at Z=-136 and +136,
+  matching the outer Ground borders of the end plots on both sides.
+- Kept width, height and travel direction. Deck length 269.6; rollers at
+  +/-135.4; Start/Finish markers at -133/+133 (three-stud edge clearance).
+  Redistributed all 18 existing treads and moved the existing sign to Z=-138.
+  No new model generator or geometry; persisted changes in PetConveyor.rbxmx.
+- Existing ConveyorService reads Start/Finish, so egg travel follows the
+  extended lane. TravelSeconds remains 36 (longer route means faster movement).
+- Verification: Studio Edit assertions pass for end alignment, marker bounds,
+  unchanged width and contained treads; Rojo build and diff check pass.
+  No new full Play test or screenshot check in this resize session.
+- Current feature complete; next: user visual/Play check of extended belt.
+  Files: src/world/PetConveyor.rbxmx and this handoff. Other uncommitted work
+  preserved. Last commit remains 56814f9; not committed. No known blocker.
+
+### Latest session — rare hatch variants
+
+- Current feature: newly purchased conveyor eggs reserve a server-only,
+  species-independent Variant alongside the existing reserved pet result.
+  Shiny 1/1,000 (2x income), Rainbow 1/10,000 (5x), Celestial 1/100,000 (10x);
+  Normal 99.889%. Mutually exclusive integer ticket roll, centralized config.
+- Shared PetIncome now drives authoritative payouts, inventory estimates and
+  Feed result income. Names in inventory/hotbar, hatch results, Feed and Rescue
+  include non-Normal variants. Food costs, Feed risk/critical odds unchanged.
+- Existing eggs/pets remain unchanged; debug-spawned pets remain Normal.
+  Existing schema already preserves Variant, so no migration/version bump.
+  No traits, pity, luck boosts, skins/VFX or new UI Instances introduced.
+- Completed verification: Rojo build and diff check; two-player EggVerification
+  passed, including exhaustive 100,000-ticket counts, income multipliers,
+  reserved variant persistence and hatch replay. All 37 two-player
+  FoodShopVerification checks passed, including Rainbow preservation through
+  Rescue and automatic level-zero reset, plus both client UI startups.
+- Files: new shared/Config/VariantConfig and shared/PetIncome; EggService,
+  MoneyService, FeedService, ReviveService; client/UI/InventoryModel;
+  ConveyorVerification and FoodShopVerification; docs/variants.md; this handoff.
+- Overall: gameplay implementation complete and tested; no known blocker.
+  Next: user playtest; dedicated variant art remains deferred. Existing uncommitted
+  UI/art work preserved. Last working commit remains 56814f9; no commit yet.
+
+### Latest session — standalone ice dragon rig
+
+- Current feature: requested ice dragon art/rig trial, completed in
+  `Workspace.IceDragon_RigTest` beside the chicken at X=12, Z=26.
+  Frost-blue block body, four clawed feet, cyan triangular wings, horns,
+  back crystals, segmented-looking welded tail, and glowing eyes.
+- Verified in Edit through localhost:58742/mcp: 84 unanchored parts,
+  9 Motor6Ds, 74 cosmetic welds, all parts connected, only Torso collidable,
+  matching invisible root/PrimaryPart, Humanoid and Animator. HipHeight 1.01.
+  Joint position and orientation-basis assertions pass; screenshot inspected.
+- Initial check used overly strict axis-angle tolerance (wing rounding showed
+  0.00069 radians) and assumed GetConnectedParts excluded the root. Follow-up
+  checks compare rotation basis vectors and membership of every part; pass.
+  Temporary Edit peer disconnect on resume recovered on retry.
+- No animation assets/controller. Runtime standing/movement remains untested.
+  Next: user visual/Play trial. Selected dragon and framed the editor camera.
+- Files: `docs/studio/build-ice-dragon.luau` editor-only reproducible recipe,
+  plus this handoff. Studio-owned model outside Rojo mappings; save the place
+  for editor persistence. Existing chicken and uncommitted UI work preserved.
+  Overall gameplay progress unchanged; no current blocker. Last working commit
+  remains 56814f9; no commit made in this art session.
+
+### Latest session — standalone blocky chicken rig
+
+- Current feature: user-requested chicken art/rig trial in Workspace, with
+  animation deferred. Created `Workspace.Chicken_RigTest` through the connected
+  Edit MCP peer at localhost:58742/mcp; built-in bridge had no connected peer.
+- Completed: cream block chicken, red comb/wattle, orange beak/toes, wings and
+  tail. 35 parts, 7 Motor6Ds, 27 cosmetic WeldConstraints; invisible matching
+  HumanoidRootPart is PrimaryPart. Only Torso collides, all parts unanchored.
+  Humanoid/Animator present; calculated HipHeight 0.895; RequiresNeck false.
+  No animation assets/controller or gameplay/inventory integration added.
+- Verification: Edit assertions passed for collisions, anchoring, root size,
+  Animator and all joint rest transforms. Screenshot inspected successfully.
+  Runtime standing/movement has NOT been tested. Next: user visual/Play trial.
+- Architecture: standalone Studio-owned model, outside existing Rojo mappings.
+  Reproducible editor-only recipe is `docs/studio/build-chicken.luau`, not a
+  runtime generator. Recipe refuses to overwrite an existing named model.
+  Corrected supplied C1 formula to limb.CFrame:ToObjectSpace(jointWorld), so
+  Part0*C0 == Part1*C1 and limbs do not shift. No animation work performed.
+- Location: root approximately (12, 2.12, 12), beside the center conveyor.
+  Model selected and editor camera framed for inspection. Save the Studio place
+  to persist this editor model; recipe also permits reconstruction if needed.
+- Files modified: new editor recipe and this handoff only. Earlier uncommitted
+  UI work preserved. Last working commit remains 56814f9; no commit this session.
+  Overall prototype progress unchanged; no blocker for the art trial.
+
+### Latest session — reference-style popup pages
+
+- Current feature: cyan stud headers, charcoal stud bodies, near-square cards,
+  black borders, outlined white text, red corner close buttons and bright
+  green/blue actions across Inventory, Feed/food sidebar, Merchant, Eggs,
+  Rescue and Debug. Real authored StarterGui assets; no runtime UI builder.
+- Preserved centered pet preview, scrollable food sidebar and all gameplay.
+  Selection/availability colors in the existing controllers match the theme.
+  Egg Dismiss and Rescue Close hide their panels; Rescue Close does not spend,
+  accept, reject or extend a pending timed recovery offer.
+- HUD, hotbar, main inventory/travel buttons and outcome banners untouched.
+  Compared relevant asset subtrees to pre-theme snapshots (identical).
+- Verification: Rojo build and git diff --check pass. All 35 two-player
+  FoodShopVerification checks pass, including both client startups, authored
+  headers/close controls, title layering, food selection and core transactions.
+  Inspected Feed, Inventory and Merchant screenshots in Edit; restored preview
+  visibility/scale/position afterward. Other pages covered structurally/startup,
+  not a full manual interaction/phone visual pass.
+- Fixed header layering discovered in preview and a missing Egg close node
+  discovered in the initial failed test; renamed to Dismiss and verified sync.
+  Aligned stale editor-side FoodCards border/title/hint/corner properties with
+  the authored asset after final screenshot revealed old gold decoration.
+- Files: five src/ui assets (FeedYourPetUI, MerchantUI, EggUI, ReviveUI,
+  DebugUI); corresponding controllers plus InventoryController; UI/FoodCard;
+  FoodShopVerification.client; docs/feed-ui.md; this handoff.
+- Overall: style trial implemented and tested; user visual approval pending.
+  Next: user playtest/feedback on the reference-style pages, then commit the
+  combined uncommitted sidebar/scrolling/theme work when authorized/available.
+  Last working commit remains 56814f9. No commit made this session; prior
+  staging was blocked by approval-system usage limit. No known runtime blocker.
+
+### Latest session — scrollable food sidebar
+
+- FoodCards now contains authored List (ScrollingFrame) and UIListLayout.
+  AutomaticCanvasSize Y supports additional authored food cards; title/footer
+  stay fixed. Scrollbar supports standard Roblox mouse/touch scrolling.
+- Updated controller and client verification to use FoodCards.List.
+  Preserved prior uncommitted centered-pet/sidebar work.
+- Build and diff check pass. All 35 FoodShopVerification checks passed,
+  including updated client hierarchy/layout and food selection checks.
+  Removed an empty editor-created List duplicate left after Rojo reparenting;
+  the populated source-managed list remains.
+- No new foods or balance changes. Previous commit remains 56814f9;
+  previous sidebar commit was blocked by approval-system usage limit.
+- Next: user playtest mouse/touch scrolling with more food cards; commit when
+  approval is available. Current four cards fit without needing to scroll.
+
+### Latest session — centered Feed pet and right food sidebar
+
+- Reworked the authored FeedPanel: 560x620 main card with larger centered
+  rotating pet viewport; separate 240x620 FoodCards sidebar at X=576.
+  Four food choices now stack vertically under SELECT FOOD. Existing purple/
+  gold style, emoji/image placeholders, Feed and Pick Up Pet remain.
+- Controller only handles responsive scale/position: both panels fit and
+  center as one 816x620 group. All layout Instances live in StarterGui asset,
+  not generated at runtime. Selection/feeding/ownership logic unchanged.
+- PASS: 35 two-player FoodShopVerification checks including both client
+  startups, selection, pet spin and new centered/vertical-sidebar assertions;
+  Rojo build and diff check. Inspected authored layout screenshot in Edit.
+  Edit preview shows placeholders; runtime population covered by client tests.
+- Removed four exact duplicate editor nodes introduced by Rojo sync after
+  comparing their class and relevant properties. Source has one of each.
+  Temporary previews removed/restored; Studio returned to Edit.
+- Files: FeedYourPetUI.rbxmx, FeedController, FoodShopVerification.client,
+  docs/feed-ui.md, this handoff. Previous commit: 56814f9.
+- Implemented/tested but NOT committed: staging was blocked by approval-system
+  usage limit. Next: user playtest sizing/readability and commit pending changes.
+
 ### Latest session — milestone rear expansion and tier colors
 
 - User clarified: physical plot size must NOT increase every upgrade.
