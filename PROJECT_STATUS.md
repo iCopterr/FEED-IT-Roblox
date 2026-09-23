@@ -6,6 +6,23 @@
 
 **Last Updated:** 2026-09-23
 
+### Latest session — ember drake beside baby griffin
+
+- Created `Workspace.EmberDrake_RigTest`: charcoal armor, ember seams,
+  amber eyes, swept horns, red/orange membrane wings, back spines and glowing
+  tail blade. No animations or gameplay integration. Previous models preserved.
+- Nine studs beyond griffin for wing clearance; root (225.50, 2.025, 49.05),
+  matching standing plane. Existing display row remains off-island and needs
+  ground before runtime physics testing.
+- PASS Edit checks: 101 connected unanchored parts, 9 aligned motors,
+  Torso-only collision, matching root, Animator and relative placement.
+  Screenshot inspected. Runtime not tested. Selected and framed for review.
+- Editor-only recipe `docs/studio/build-ember-drake.luau`; model is Studio-owned
+  outside Rojo mappings. Save place for persistence. Next user visual review.
+- Files: recipe and this handoff, committed as `art: add rigged ember drake
+  concept beside griffin`. Previous working commit 94836cc; no push requested.
+  Overall gameplay progress unchanged.
+
 ### Current session — higher-tier pet roster names (2026-09-23)
 
 - Replaced the six display names in each of Advanced, Elite, Master and
