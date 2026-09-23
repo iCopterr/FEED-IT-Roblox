@@ -6,6 +6,32 @@
 
 **Last Updated:** 2026-09-23
 
+### Latest session — five sculpted pet rebuilds
+
+- User requested IceDragon_V2-level sculpted detail for Ember Drake, Frost Wolf,
+  Storm Griffin, Lava Golem and Thunder Serpent. Built new models from tapered,
+  beveled cross-sections, sculpted horns/claws, layered armor/feathers and
+  selective emissive accents. Original models and IceDragon_V2 preserved.
+- New Workspace names: EmberDrake_V2, FrostWolf_V2, StormGriffin_V2,
+  LavaGolem_V2, ThunderSerpent_V2. Frost Wolf is a new requested species art
+  model, not a renamed Black Wolf. No gameplay binding or animation added.
+- Parallel display row at Z=74, X=175.45/198.45/220.45/243.45/263.45.
+  All selected and overview camera framed. Existing off-island convention kept;
+  needs ground before Play. Runtime movement/standing not tested.
+- PASS Edit checks: all parts connected within their own rig, unanchored,
+  Torso-only collision, aligned joints, matching root and Animator; separated
+  model bounds. Five individual screenshots inspected. Visual corrections:
+  fuller griffin wing webs and golem molten heart moved in front of chest.
+  Rechecked connections/collisions/joints after corrections.
+- Final part counts: Ember 2116; Frost 1729; Storm 1678; Lava 1508; Thunder 1018.
+  High-detail ART PROTOTYPES like IceDragon_V2, not production-ready templates.
+  Geometry consolidation is required before mass spawning. Next: user silhouette
+  approval and consolidation; do not substitute these into gameplay yet.
+- Files: `docs/studio/rebuild-sculpted-pets.luau` editor recipe and handoff.
+  Studio-owned models outside Rojo; save the place for persistence. Recipe
+  refuses existing names. Committed as `art: rebuild five sculpted pet concepts`.
+  Previous working commit fecc715; no push. Gameplay progress unchanged.
+
 ### Latest session — four elemental pet art models
 
 - Built requested Storm Griffin, Lava Golem, Thunder Serpent and Ice Dragon
