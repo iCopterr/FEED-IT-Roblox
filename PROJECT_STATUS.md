@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-09-23
 
+### Current session — higher-tier pet roster names (2026-09-23)
+
+- Replaced the six display names in each of Advanced, Elite, Master and
+  Supreme Eggs with the latest requested roster. Basic Egg remains unchanged.
+- Retained all 24 stable SpeciesIds, existing placeholder model bindings,
+  rarity labels, base incomes and hatch weights. Existing saves therefore keep
+  the same pet identities and begin showing the new names without migration.
+- Updated the player-facing roster reference in `docs/pet-roster.md`.
+- PASS: `git diff --check`, Rojo build, synchronized Studio audit of all 24
+  name/egg mappings, Studio syntax analysis (0 errors across 88 scripts), and
+  two-player EggVerification 157/157 covering every egg pool plus purchase,
+  placement, incubation, hatch, identity and save/load.
+- Files: `src/shared/Config/PetConfig.luau`, `docs/pet-roster.md`, this handoff.
+  Work complete; next step is model/content production or balance playtesting.
+
 ### Current session — remove retired systems (2026-09-23)
 
 - Current feature: dependency-audited cleanup after the Money-food redesign.
