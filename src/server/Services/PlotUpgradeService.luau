@@ -84,7 +84,7 @@ function PlotUpgradeService.HandleRequest(player, plotName, expectedLevel)
 		return {Ok=false,Code="InvalidData"}
 	end
 	-- No yield before both fields change. Keep the committed state on ambiguous
-	-- save failure; never refund/rebuy while income or farming may also advance.
+	-- save failure; never refund/rebuy while income may also advance.
 	local token = {}
 	saving[player]=token
 	PlotUpgradeService.RefreshSigns()

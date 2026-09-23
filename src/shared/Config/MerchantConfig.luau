@@ -7,8 +7,6 @@ for id, food in Food.Types do
 end
 local Config = {
 	RestockSeconds=30*60, StockSlots=3, RequestCooldown=.25, PurchaseDistance=14, SaveRetrySeconds=5,
-	-- Deprecated schema-only cap; Tokens are not granted or spent.
-	TokenCap=9999,
 	ItemOrder=table.freeze({"basic","hearty","gourmet","royal"}),
 	Items=table.freeze(items),
 }

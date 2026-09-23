@@ -98,7 +98,6 @@ function Service.HandleRequest(player,action,id,position)
 		Carry.Unequip(player);return {Ok=true,Code="Unequipped"}
 	elseif action=="Place" then
 		if egg.PenPosition then return {Ok=false,Code="AlreadyPlaced"} end
-		if player:GetAttribute("IsFarming") then return {Ok=false,Code="Farming"} end
 		if Carry.GetEggId(player)~=id then return {Ok=false,Code="NotCarrying"} end
 		local target=Placement.ResolvePosition(player,position)
 		if not target then return {Ok=false,Code="OutsidePen"} end

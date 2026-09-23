@@ -6,6 +6,54 @@
 
 **Last Updated:** 2026-09-23
 
+### Current session — remove retired systems (2026-09-23)
+
+- Current feature: dependency-audited cleanup after the Money-food redesign.
+  Deleted retired AFK farm and farm/plate upgrade services, configs, controllers,
+  sign views/assets, Token merchant tests, unused Stud helper and old guides.
+  Removed obsolete protection risk/rarity food-cost tables, rarity-wide income
+  anchors, farming guards and retired debug fields. Active balance is unchanged.
+- Save schema stays v9. Legacy farm/plate/token fields remain compatible and
+  inert; legacy token caps now live in PlayerDataSchema. DataService and its
+  memory/persistence adapter remain required transaction infrastructure.
+- Updated current Feed resolver/migration and debug tests; merchant, selected
+  food, Feed failure and timed Rescue continue covered by FoodShopVerification.
+  Details and retention rationale: `docs/retired-features.md`.
+- Owner preference recorded in AGENTS.md: commit completed verified work each
+  implementation session, including handoff; do not push unless requested.
+- Verification complete: Feed RNG/migrations 48, FoodShop/UI 37, Debug 47,
+  Inventory 227, legacy Rescue 22, Travel 23, Eggs 157, NumberFormat 41:
+  all 602 assertions pass. All 88 remaining Luau scripts pass Studio syntax
+  checks; Rojo build and diff checks pass. Studio returned to Edit mode.
+  No active world art or player data deleted; retired files recoverable in Git.
+  Overall: cleanup complete. Next: playtest current loop; no cleanup blockers.
+  Files: retired configs/services/controllers/signs/tests/docs plus their
+  dependents, schema compatibility limits, README, AGENTS and this handoff.
+- Baseline commit cf3398f. Earlier sections below are historical handoffs and
+  may describe retired mechanics; this section and design-decisions.md take
+  precedence for current behavior.
+
+### Latest session — unlimited egg purchases / remove MY EGGS screen
+
+- Removed the one-egg ownership/incubation cap. Players can keep buying eggs
+  while other eggs are unplaced, incubating or ready; affordability, offer
+  ownership and the short transaction/save lock are still server validated.
+- Removed the obsolete authored `EggUI` / MY EGGS ScreenGui and its controller.
+  Stored eggs remain available in the Inventory Egg tab and hotbar. Placed eggs
+  remain visible in the compact right-side Growing Eggs panel; manual E hatch
+  and remote hatch both remain available.
+- Purchase feedback now directs players to Inventory. Egg placement errors also
+  reopen Inventory instead of the removed screen. Removed stale EggPanelOpen
+  checks from client controllers and updated egg documentation/tests.
+- PASS: Rojo build and `git diff --check`; two-player EggVerification 157/157
+  (including a second purchase while the first egg incubates); two-player
+  InventoryVerification 227/227; FoodShop/UI startup 37/37. One earlier
+  inventory run hit the known tween timing assertion, then passed unchanged.
+- Files: EggConfig, EggService, Conveyor/Carry and modal controllers,
+  ConveyorVerification, UI verification, `default.project.json`, `docs/eggs.md`,
+  removed EggController/EggUI, and this handoff. The implementation was captured
+  in user-created commit `cf3398f`; this final verification note is uncommitted.
+
 ### Latest session — baby griffin beside black wolf
 
 - Created `Workspace.BabyGriffin_RigTest`: oversized cream eagle head, hooked

@@ -8,13 +8,13 @@ export type SpeciesDefinition = {
 	BaseIncome: number,
 }
 
-local rarityBaseIncome: { [string]: number } = table.freeze({
-	Common = 10,
-	Uncommon = 150,
-	Rare = 500,
-	Epic = 3_000,
-	Legendary = 10_000,
-	Mythic = 45_000,
+local rarities: { [string]: boolean } = table.freeze({
+	Common = true,
+	Uncommon = true,
+	Rare = true,
+	Epic = true,
+	Legendary = true,
+	Mythic = true,
 })
 
 -- Stable IDs keep saved pets/templates compatible; display names define the roster.
@@ -60,7 +60,7 @@ local PetConfig = {
 	DefaultVariant = "Normal",
 	PetIdGenerationAttempts = 5,
 	PrototypeEggId = "prototype_egg",
-	RarityBaseIncome = rarityBaseIncome,
+	Rarities = rarities,
 	Species = species,
 }
 

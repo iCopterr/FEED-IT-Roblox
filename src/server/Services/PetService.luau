@@ -97,8 +97,7 @@ local function validateConfig()
 		for _, result in egg.Results do if result.SpeciesId == speciesId then inPool = true; break end end
 		assert(inPool, `Species {speciesId} is missing from its Egg pool`)
 
-		local expectedIncome = PetConfig.RarityBaseIncome[definition.Rarity]
-		assert(expectedIncome ~= nil, `Species {speciesId} has unknown rarity {definition.Rarity}`)
+		assert(PetConfig.Rarities[definition.Rarity], `Species {speciesId} has unknown rarity {definition.Rarity}`)
 		assert(type(definition.BaseIncome)=="number" and definition.BaseIncome>0 and definition.BaseIncome<math.huge,
 			`Species {speciesId} must have positive finite BaseIncome`)
 
@@ -107,7 +106,7 @@ local function validateConfig()
 	end
 
 	assert(speciesCount > 0, "PetConfig must contain species")
-	for rarity in PetConfig.RarityBaseIncome do
+	for rarity in PetConfig.Rarities do
 		assert((rarityCount[rarity] or 0) >= 1, `PetConfig must contain at least one {rarity} species`)
 	end
 end

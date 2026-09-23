@@ -1,39 +1,20 @@
 # Feed configuration
 
-FeedConfig is now consumed by FeedService, MoneyService and Feed presentation.
+FeedConfig contains explosion chances, Critical outcomes, income multipliers,
+growth and presentation timing. FoodConfig contains food prices, servings and
+risk reductions. Each accepted attempt consumes one selected serving.
 
-- BaseFoodCost and ExplosionChance use the target level (current + 1), 1–40.
-- FeedPlateConfig applies the owner's saved relative reduction to base explosion
-  chance. The UI and actual roll use the same effective risk; see feed-plate-upgrades.md.
-- Protected Feed consumes one saved account-bound token for one accepted attempt.
-  It uses the GDD §22 candidate target risks, scaled by the current plate reduction,
-  and never makes explosion risk zero. Targets 1–5 cannot waste a token.
-- Multiplier uses current/resulting level, 0–40. Fractional rarity Food costs are preserved.
-- Explosion rolls first. An explosion gets a separate 5% Miracle Save roll;
-  Miracle keeps the old level, spends Food, and skips Critical.
-- Otherwise Critical rolls 94% +1, 5% +2, 0.9% +3, 0.1% +5.
-  Skipped levels do not roll intermediate explosions.
-- Owner decision: all gains stop at 40. An Insane result at 38 grants only +2.
-  Level 40 cannot attempt another Feed; costs/odds are not extrapolated.
-- Presentation config controls rise, accelerating spin, landing, burst and banners.
-- GetScale is a conservative prototype curve: +6% original size per level,
-  capped at 3.4x to fit the current plate/Pen. It is presentation balance, not
-  a change to the GDD income multipliers. Carried models remain normalized.
+Explosion chance uses the target level (current + 1); food applies a relative
+reduction to that chance. Explosion rolls first, followed by a 5% Miracle Save
+roll on failure. Survival rolls Critical: 94% +1, 5% +2, 0.9% +3, 0.1% +5.
+Skipped levels do not roll intermediate failures, and all gains stop at 40.
 
-Player schema v3 adds PendingRecovery[PetId] with Pet (full pre-failure record),
-AttemptId, ExplodedAt and FoodSpent. Recovery pets are outside Inventory and
-cannot earn, equip, place or be removed until the owner chooses a recovery.
-Revive restores the pre-failure level; KeepBase retains the pet at configured
-ExplosionResetLevel (0), consuming that offer. Neither refunds Food.
-No automatic expiry or deletion. Studio-only free Revive is implemented.
-Schema v4 adds FeedPlateLevel; v7 adds saved integer ProtectionTokens. New and
-migrated prototype profiles receive three test tokens, capped by config at ten.
-The authored Feed UI shows normal Feed beside Protected Feed, remaining tokens,
-and its exact server-calculated risk. Paid receipt fulfillment remains deferred
-until real Developer Product IDs are configured.
+There are no protection tokens, plate upgrades or rarity-based food costs.
+On failure, the pet enters PendingRecovery with its original identity and level.
+The timed Rescue offer restores growth in Studio; decline/expiry returns the same
+pet at level 0. Failed food stays consumed. See design-decisions.md.
 
-Food and outcome mutate without yielding and save together through DataService.
-A retry returns the same cached attempt. Feed/pickup/removal are locked during
-presentation and until save confirmation. Failed/ambiguous saves retry without
-refunding, rerolling or restoring the pet. Leave/shutdown save the same profile.
-Production DataStore outages/session transfer still require live verification.
+Food/outcome mutate together without yielding, then save through DataService.
+Request replay returns the same result. Feed and pickup remain locked through
+presentation and save confirmation. FeedVerification covers RNG and migrations;
+FoodShopVerification covers food transactions, failure, Rescue and expiry.

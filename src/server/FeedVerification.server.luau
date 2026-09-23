@@ -1,192 +1,47 @@
+-- Resolver and save-compatibility coverage. Feed/Rescue transactions run in FoodShopVerification.
 if not game:GetService("RunService"):IsStudio() then return end
-local testing = game:GetService("StudioTestService")
-if testing:GetTestArgs() ~= "FeedVerification" then return end
-local checks = {}
-local ok, failure = xpcall(function()
-	local players=game:GetService("Players")
-	local data=require(script.Parent.Services.DataService)
-	local pets=require(script.Parent.Services.PetService)
-	local plots=require(script.Parent.Services.PlotService)
-	local carry=require(script.Parent.Services.CarryService)
-	local placement=require(script.Parent.Services.PlacementService)
-	local feed=require(script.Parent.Services.FeedService)
-	local resolver=require(script.Parent.Services.FeedResolver)
-	local locks=require(script.Parent.Services.FeedLocks)
-	local revive=require(script.Parent.Services.ReviveService)
-	local money=require(script.Parent.Services.MoneyService)
-	local schema=require(script.Parent.Data.PlayerDataSchema)
-	local config=require(game.ReplicatedStorage.Shared.Config.FeedConfig)
-	local adapter=require(script.Parent.Data.DataStoreAdapter)
-	assert(adapter.IsMemory(),"Memory data only")
-	local function check(v,name) assert(v,name);table.insert(checks,name) end
-	local function waitFor(predicate)
-		local deadline=os.clock()+120
-		repeat if predicate() then return end;task.wait(.1) until os.clock()>deadline
-		error("Test timed out")
-	end
-	local function random(values)
-		local i=0
-		return function() i+=1;assert(values[i]~=nil,"Extra RNG roll");return values[i] end
-	end
-	for _, case in {{0,.1,"Normal",1},{0,.945,"Critical",2},{17,.995,"Mega",20},{38,.9995,"Insane",40},{39,.945,"Critical",40}} do
-		local result=resolver.Roll(case[1],random({.99,case[2]}))
-		check(result.Critical==case[3] and result.FeedLevel==case[4],"Deterministic "..case[3].." at "..case[1])
-	end
-	check(resolver.Roll(20,random({0,0})).Code=="MiracleSave","Miracle skips Critical")
-	check(resolver.Roll(20,random({0,.5})).Code=="Explosion","Explosion skips Critical")
-	check(not pcall(resolver.Roll,40,random({})),"Level 40 cannot feed or roll")
-	for level=6,40 do
-		local normal=config.ExplosionChance[level]
-		local protected=config.GetProtectedRisk(normal,level)
-		check(protected and protected>0 and protected<normal,"Protection reduces but preserves risk at target "..level)
-	end
-	for level=36,39 do
-		for _, roll in {.1,.945,.995,.9995} do
-			check(resolver.Roll(level,random({.99,roll})).FeedLevel<=40,"Cap level "..level.." roll "..roll)
-		end
-	end
-	local legacy=schema.CreateDefault();legacy.DataVersion=2;legacy.PendingRecovery=nil
-	local migrated=assert(schema.Migrate(legacy))
-	check(migrated.DataVersion==schema.CURRENT_VERSION and migrated.FeedPlateLevel==1 and migrated.ProtectionTokens==3
-		and next(migrated.PendingRecovery)==nil and legacy.PendingRecovery==nil,"v2 migration adds isolated recovery map, plate and Protection tokens")
-	local legacyV6=schema.CreateDefault();legacyV6.DataVersion=6;legacyV6.ProtectionTokens=nil
-	local migratedV6=assert(schema.Migrate(legacyV6))
-	check(migratedV6.ProtectionTokens==3 and legacyV6.ProtectionTokens==nil,"v6 migration grants isolated prototype Protection tokens")
-	local excess=assert(schema.Migrate(migratedV6));excess.ProtectionTokens=config.ProtectionTokenCap+1
-	check(not schema.Validate(excess),"Protection token inventory cap enforced")
-	waitFor(function() return #players:GetPlayers()==2 end)
-	local a,b=table.unpack(players:GetPlayers())
-	waitFor(function() return data.IsLoaded(a) and data.IsLoaded(b) and plots.GetPlot(a) and a.Character
-		and a.Character:FindFirstChild("RightHand") and game.ReplicatedStorage:FindFirstChild("FeedOutcome") end)
-	local profile=data.GetData(a)
-	local pet=assert(pets.CreatePet(a,"test_common"))
-	local foreign=assert(pets.CreatePet(b,"test_rare"))
-	check(not feed.HandleRequest(a,"Feed",{},1).Ok,"Malformed ID rejected")
-	check(not feed.HandleRequest(a,"Feed",pet.PetId,0/0).Ok,"NaN sequence rejected")
-	check(not feed.HandleRequest(a,"AwardFood",pet.PetId,1).Ok,"Unknown action rejected")
-	check(not feed.HandleRequest(a,"Feed",pet.PetId,1).Ok,"Cannot feed inventory pet")
-	local root=a.Character.HumanoidRootPart;root:SetNetworkOwner(nil)
-	local dish=plots.GetPlot(a).FeedPlate.Dish
-	local function near() root.CFrame=CFrame.new(dish.Position+Vector3.new(0,3,6)) end
-	near()
-	assert(carry.Equip(a,pet.PetId));assert(carry.PlaceOnPlate(a,pet.PetId))
-	local state=feed.HandleRequest(a,"Snapshot")
-	check(state.Ok and state.Cost==30 and state.Risk==0,"Own staged snapshot uses configured target cost and risk")
-	profile.Food=1e12
-	local function attempt(sequence,values,action)
-		waitFor(function() return not locks.IsLocked(a) end)
-		task.wait(.55);near()
-		feed.SetTestRandom(a,random(values))
-		return feed.HandleRequest(a,action or "Feed",pet.PetId,sequence)
-	end
-	task.wait(.55)
-	check(not feed.HandleRequest(a,"Feed",foreign.PetId,1).Ok,"Foreign ID rejected")
-	check(not feed.HandleRequest(b,"Feed",pet.PetId,1).Ok,"Other player cannot feed your pet")
-	local before=profile.Food
-	local result=attempt(1,{.99,.1})
-	check(result.Accepted and result.FeedLevel==1 and profile.Food==before-30,"Normal Feed charges once and grows")
-	check(result.Income==13 and profile.Inventory[pet.PetId].BaseIncome==10,"Income multiplier changes without overwriting base income")
-	local replay=feed.HandleRequest(a,"Feed",pet.PetId,1)
-	check(replay.AttemptId==result.AttemptId and profile.Food==before-30,"Replay returns identical outcome without charge")
-	check(feed.HandleRequest(a,"Feed",pet.PetId,2).Code=="Busy","New feed blocked during animation/save")
-	check(not feed.HandleRequest(a,"Pickup",pet.PetId).Ok,"UI pickup blocked during Feed")
-	check(not carry.Equip(a,pet.PetId),"Direct equip blocked during Feed")
-	check(not placement.PlacePet(a,pet.PetId,Vector3.zero),"Direct placement blocked during Feed")
-	check(not pets.RemovePet(a,pet.PetId),"Removal blocked during Feed")
-	waitFor(function() return not locks.IsLocked(a) end)
-	local actualScale=plots.GetPlot(a).FeedPlate.PlatePet:GetScale()
-	check(math.abs(actualScale-config.GetScale(1))<1e-5,"Surviving plate model grows ("..actualScale..")")
-	profile.Inventory[pet.PetId].FeedLevel=5
-	state=feed.HandleRequest(a,"Snapshot")
-	check(state.ProtectionTokens==3 and math.abs(state.Risk-.04)<1e-9 and math.abs(state.ProtectedRisk-.01)<1e-9,
-		"Snapshot exposes token count and normal/protected server risks")
-	profile.ProtectionTokens=0;task.wait(.55);before=profile.Food
-	check(feed.HandleRequest(a,"ProtectedFeed",pet.PetId,2).Code=="NoProtection" and profile.Food==before,
-		"Protected Feed without token rejects before Food charge")
-	profile.ProtectionTokens=3
-	result=attempt(2,{.02,.1},"ProtectedFeed")
-	check(result.Accepted and result.Protected and result.AppliedRisk==.01 and result.FeedLevel==6
-		and profile.ProtectionTokens==2,"Protected Feed consumes exactly one token and applies reduced risk")
-	local protectedReplay=feed.HandleRequest(a,"ProtectedFeed",pet.PetId,2)
-	check(protectedReplay.AttemptId==result.AttemptId and profile.ProtectionTokens==2,"Protected Feed replay cannot consume another token")
-	waitFor(function() return not locks.IsLocked(a) end)
-	profile.Inventory[pet.PetId].FeedLevel=38
-	result=attempt(3,{.99,.9995})
-	check(result.Critical=="Insane" and result.Gain==2 and result.FeedLevel==40,"Actual Insane Feed clamps gain at 40")
-	waitFor(function() return not locks.IsLocked(a) end)
-	task.wait(.55)
-	before=profile.Food
-	check(feed.HandleRequest(a,"Feed",pet.PetId,4).Code=="MaxLevel" and profile.Food==before,"Level 40 rejects before charge")
-	profile.Inventory[pet.PetId].FeedLevel=20
-	assert(pets.SetLocked(a,pet.PetId,true))
-	before=profile.Food
-	result=attempt(4,{0,0})
-	check(result.Code=="MiracleSave" and profile.Inventory[pet.PetId].FeedLevel==20
-		and profile.Food==before-config.GetFoodCost(21,"Common"),"Miracle retains level but consumes Food")
-	waitFor(function() return not locks.IsLocked(a) end)
-	before=profile.Food
-	result=attempt(5,{0,.5})
-	check(result.FeedLevel==0 and result.Income==pet.BaseIncome,"Explosion reports base-level outcome")
-	local recovery=profile.PendingRecovery[pet.PetId]
-	check(result.Code=="Explosion" and not profile.Inventory[pet.PetId] and recovery~=nil,"Explosion quarantines pet outside usable inventory")
-	check(recovery.Pet.PetId==pet.PetId and recovery.Pet.FeedLevel==20 and recovery.Pet.Locked
-		and recovery.FoodSpent==config.GetFoodCost(21,"Common"),"Recovery preserves identity, pre-failure stats, lock and spent Food")
-	check(profile.Food==before-recovery.FoodSpent,"Failed Food remains consumed")
-	waitFor(function() return not locks.IsLocked(a) end)
-	check(a:GetAttribute("FeedPlatePetId")==nil and not plots.GetPlot(a).FeedPlate:FindFirstChild("PlatePet"),"Exploded plate clears after presentation")
-	check(not carry.Equip(a,pet.PetId) and not placement.PlacePet(a,pet.PetId,Vector3.zero),"Quarantined pet cannot equip or place")
-	check(not pets.RemovePet(a,pet.PetId),"Quarantined pet cannot be permanently removed")
-	assert(data.Save(a))
-	local read,record=adapter.UpdateAsync("Player_"..a.UserId,function() return nil end)
-	check(read and record.Data.Food==profile.Food and record.Data.PendingRecovery[pet.PetId].AttemptId==result.AttemptId,"Atomic memory save includes spent Food and recovery")
-	local loaded=assert(schema.Migrate(record.Data))
-	check(loaded.Inventory[pet.PetId]==nil and loaded.PendingRecovery[pet.PetId].Pet.FeedLevel==20,"Reload cannot restore exploded pet to inventory")
-	loaded.PendingRecovery[pet.PetId].Pet.Traits[1]="clone-test"
-	check(#profile.PendingRecovery[pet.PetId].Pet.Traits==0,"Recovery clone has independent nested pet data")
-	local bad=assert(schema.Migrate(profile));bad.Inventory[pet.PetId]=bad.PendingRecovery[pet.PetId].Pet
-	check(not schema.Validate(bad),"Schema rejects duplicate identity across recovery and inventory")
-	check(not revive.HandleRequest(b,"KeepBase",pet.PetId,result.AttemptId).Ok,"Foreign keep-base request rejected")
-	check(not revive.HandleRequest(a,"KeepBase",{},result.AttemptId).Ok,"Malformed keep-base request rejected")
-	task.wait(.3)
-	check(revive.HandleRequest(a,"KeepBase",pet.PetId,"wrong-attempt").Code=="PetChanged","Wrong attempt cannot reset pet")
-	task.wait(.3)
-	assert(locks.Begin(a,"verification"))
-	check(revive.HandleRequest(a,"KeepBase",pet.PetId,result.AttemptId).Code=="Busy","Keep-base respects transaction lock")
-	locks.Finish(a);task.wait(.3)
-	local spentFood=profile.Food
-	local kept=revive.HandleRequest(a,"KeepBase",pet.PetId,result.AttemptId)
-	check(kept.Ok and kept.Code=="KeptBase" and kept.FeedLevel==0,"Keep-base accepts reset")
-	local resetPet=profile.Inventory[pet.PetId]
-	check(resetPet.PetId==pet.PetId and resetPet.SpeciesId==recovery.Pet.SpeciesId
-		and resetPet.Rarity==recovery.Pet.Rarity and resetPet.Variant==recovery.Pet.Variant
-		and resetPet.CreatedAt==recovery.Pet.CreatedAt and resetPet.Locked
-		and resetPet.BaseIncome==recovery.Pet.BaseIncome,"Reset retains identity rarity variant age lock and base income")
-	check(profile.PendingRecovery[pet.PetId]==nil and profile.Food==spentFood and not resetPet.Placed,"Reset consumes offer without Food refund or placement")
-	waitFor(function() return not locks.IsLocked(a) end)
-	task.wait(.3)
-	check(not revive.HandleRequest(a,"Revive",pet.PetId,result.AttemptId).Ok,"Revive cannot undo accepted reset")
-	task.wait(.3)
-	check(not revive.HandleRequest(a,"KeepBase",pet.PetId,result.AttemptId).Ok and profile.Inventory[pet.PetId]==resetPet,"Duplicate keep cannot replace pet")
-	check(money.GetPetRate(resetPet)==pet.BaseIncome,"Reset uses base income")
-	assert(data.Save(a))
-	read,record=adapter.UpdateAsync("Player_"..a.UserId,function() return nil end)
-	loaded=assert(schema.Migrate(record.Data))
-	check(read and loaded.Inventory[pet.PetId].FeedLevel==0 and loaded.PendingRecovery[pet.PetId]==nil
-		and loaded.Food==spentFood,"Reload preserves finalized reset and spent Food")
-	near();assert(carry.Equip(a,pet.PetId));assert(carry.PlaceOnPlate(a,pet.PetId))
-	check(math.abs(plots.GetPlot(a).FeedPlate.PlatePet:GetScale()-config.GetScale(0))<1e-5,"Reset pet restages at base size")
-	result=attempt(6,{.99,.1})
-	check(result.Accepted and result.FeedLevel==1,"Reset pet can grow again")
-	check(not feed.HandleRequest(a,"Feed",pet.PetId,5).Accepted and profile.Inventory[pet.PetId].FeedLevel==1,"Old explosion replay cannot reset rebuilt pet")
-	waitFor(function() return not locks.IsLocked(a) end)
-	profile.Inventory[pet.PetId].FeedLevel=20
-	result=attempt(7,{0,.5})
-	check(revive.HandleRequest(a,"Revive",pet.PetId,result.AttemptId).Code=="Busy","Revive blocked until explosion presentation/save ends")
-	waitFor(function() return not locks.IsLocked(a) end)
-	spentFood=profile.Food
-	local restored=revive.HandleRequest(a,"Revive",pet.PetId,result.AttemptId)
-	check(restored.Ok and profile.Inventory[pet.PetId].FeedLevel==20 and profile.Food==spentFood,"New failed feed still offers original-level Revive")
-	waitFor(function() return not locks.IsLocked(a) end)
-	check(schema.Validate(profile),"Final profile schema valid")
+local testing=game:GetService("StudioTestService")
+if testing:GetTestArgs()~="FeedVerification" then return end
+local checks={}
+local ok,failure=xpcall(function()
+ local resolver=require(script.Parent.Services.FeedResolver)
+ local schema=require(script.Parent.Data.PlayerDataSchema)
+ local config=require(game.ReplicatedStorage.Shared.Config.FeedConfig)
+ local food=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
+ local function check(value,name) assert(value,name);table.insert(checks,name) end
+ local function random(values)
+  local i=0
+  return function() i+=1;assert(values[i]~=nil,"Unexpected extra RNG roll");return values[i] end
+ end
+ for _,case in {{0,.1,"Normal",1},{0,.945,"Critical",2},{17,.995,"Mega",20},{38,.9995,"Insane",40},{39,.945,"Critical",40}} do
+  local result=resolver.Roll(case[1],random({.99,case[2]}))
+  check(result.Critical==case[3] and result.FeedLevel==case[4],"Critical outcome "..case[3].." at "..case[1])
+ end
+ check(resolver.Roll(20,random({0,0})).Code=="MiracleSave","Miracle skips Critical")
+ check(resolver.Roll(20,random({0,.5})).Code=="Explosion","Explosion skips Critical")
+ check(not pcall(resolver.Roll,40,random({})),"Level 40 cannot feed")
+ for _,invalid in {-1,.5,0/0,math.huge} do
+  check(not pcall(resolver.Roll,invalid,random({})),"Reject invalid Feed level "..tostring(invalid))
+ end
+ for level=36,39 do
+  for _,roll in {.1,.945,.995,.9995} do
+   check(resolver.Roll(level,random({.99,roll})).FeedLevel<=40,"Cap "..level.." roll "..roll)
+  end
+ end
+ for id,definition in food.Types do
+  local risk=config.ExplosionChance[21]*(1-definition.Reduction)
+  check(resolver.Roll(20,random({risk-.001,.5}),risk).Code=="Explosion","Food risk below boundary "..id)
+  check(resolver.Roll(20,random({risk,.1}),risk).Code=="Success","Food risk at boundary "..id)
+ end
+ for _,version in {2,6,8} do
+  local old=schema.CreateDefault();old.DataVersion=version
+  old.Money=12345;old.Tokens=9;old.ProtectionTokens=3
+  if version==2 then old.PendingRecovery=nil end
+  local migrated=assert(schema.Migrate(old))
+  check(migrated.DataVersion==schema.CURRENT_VERSION and migrated.Money==12345,"Preserve money migrating v"..version)
+  check(migrated.Tokens==0 and migrated.ProtectionTokens==0,"Retired currencies cleared by v9 migration from v"..version)
+  check(old.Tokens==9 and old.ProtectionTokens==3,"Migration leaves source untouched v"..version)
+  check(schema.Validate(migrated),"Migrated save validates v"..version)
+ end
 end,debug.traceback)
 testing:EndTest({passed=ok,checks=checks,failure=if ok then nil else tostring(failure)})

@@ -98,7 +98,7 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	FoodConfig.Add(data,result.FoodId,-result.Cost)
 	local forced = DebugOverrides.Resolve(player, petId, pet.FeedLevel)
 	local appliedRisk = result.Risk
-	local outcome = forced or Resolver.Roll(pet.FeedLevel, state.TestRandom or function() return rng:NextNumber() end, appliedRisk)
+	local outcome = forced or Resolver.Roll(pet.FeedLevel, function() return rng:NextNumber() end, appliedRisk)
 	local attemptId = HttpService:GenerateGUID(false)
 	if outcome.Code == "Explosion" then
 		-- Preserve the pre-failure pet until the owner chooses Revive or level 0.
@@ -129,7 +129,6 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	state.Sequence = sequence
 	result.NextSequence = sequence+1
 	state.LastResult = table.clone(result)
-	state.TestRandom = nil
 	local p = Config.Presentation
 	local duration = p.FloatSeconds + p.SpinSeconds + math.max(p.Success.ReturnSeconds,p.MiracleSave.ReturnSeconds,p.Explosion.BurstSeconds+p.Explosion.FadeSeconds)
 	local function releaseIfReady()
@@ -158,18 +157,9 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 			PetId=petId, SpeciesId=result.SpeciesId, Origin=result.Origin, StartedAt=result.StartedAt,
 			OldLevel=result.OldLevel, FeedLevel=result.FeedLevel, Gain=result.Gain,
 			Code=result.Code, Critical=result.Critical, Income=result.Income,
-			Protected=result.Protected, AppliedRisk=result.AppliedRisk})
+			AppliedRisk=result.AppliedRisk})
 	end
 	return result
-end
--- No remote exposes this. Explicit Studio test + memory-only data are required.
-function FeedService.SetTestRandom(player, random)
-	assert(game:GetService("RunService"):IsStudio()
-		and (game:GetService("StudioTestService"):GetTestArgs()=="FeedVerification"
-			or game:GetService("StudioTestService"):GetTestArgs()=="ReviveVerification"
-			or game:GetService("StudioTestService"):GetTestArgs()=="FeedPlateUpgradeVerification")
-		and require(script.Parent.Parent.Data.DataStoreAdapter).IsMemory(), "Test-only RNG")
-	session(player).TestRandom = random
 end
 function FeedService.Start()
 	local request = Instance.new("RemoteFunction")

@@ -42,7 +42,6 @@ end
 
 local function equip(player, id, isEgg)
 	if require(script.Parent.FeedLocks).IsLocked(player, id) then return false, "Busy" end
-	if player:GetAttribute("IsFarming") then return false, "Farming" end
 	if type(id) ~= "string" or #id == 0 or #id > 64 then return false, "InvalidRequest" end
 	local data = DataService.GetData(player)
 	local egg = isEgg and data and data.IncubatingEggs[id]

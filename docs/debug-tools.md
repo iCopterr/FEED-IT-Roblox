@@ -6,14 +6,12 @@ enables it only in Studio when the server supplies PrototypeDebug.
 
 - Enter a positive whole amount and click + MONEY or + FOOD. Scientific notation
   such as 1e12 is accepted. Maximum grant is 1e15; resulting balance cap is 4e15.
-- Click the rarity button to cycle Common/Uncommon/Rare/Epic/Legendary/Mythic,
+- Click the species button to cycle pets (showing name, rarity and income),
   then SPAWN PET. It enters inventory with a unique PetId. Debug spawning stops
   at 200 inventory pets; this is not a general game inventory-cap change.
 - Click the target-pet button to cycle your pets (short PetId distinguishes
   duplicates). Enter 0–40 and SET PET LEVEL. Pick up a placed pet first; held,
   stored or plate pets can be edited. Plate model growth updates immediately.
-- Enter 1–10 and SET FARM LEVEL. This edits only your memory profile, not the
-  FarmConfig prices/rates. Existing farm sign and production read the new level.
 - Cycle Success / Critical / Mega / Insane / Explosion / Clear and ARM NEXT FEED.
   The target PetId is fixed when armed. Close DEBUG, put that pet on the feed
   plate and Feed normally. Critical gains use existing +2/+3/+5 configuration

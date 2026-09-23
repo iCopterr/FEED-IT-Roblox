@@ -10,18 +10,6 @@ local FeedConfig = {
 	GrowthPerLevel = 0.06,
 	MaxVisualScale = 3.4,
 	MiracleSaveChance = 0.05,
-	ProtectionTokenCap = 10,
-	-- Candidate protected risks from GDD v0.5 §22. Plate reduction keeps its
-	-- relative effect, so both upgrades help without Protection reaching zero.
-	ProtectedRisk = table.freeze({
-		[6]=.01, [7]=.01, [8]=.04, [9]=.04, [10]=.07,
-		[11]=.06, [12]=.08, [13]=.10, [14]=.12, [15]=.14,
-		[16]=.15, [17]=.18, [18]=.20, [19]=.23, [20]=.25,
-		[21]=.40, [22]=.40, [23]=.40, [24]=.40, [25]=.40,
-		[26]=.48, [27]=.48, [28]=.48, [29]=.48, [30]=.48,
-		[31]=.58, [32]=.58, [33]=.58, [34]=.58, [35]=.58,
-		[36]=.68, [37]=.68, [38]=.68, [39]=.68, [40]=.68,
-	}),
 	CriticalResults = table.freeze({
 		table.freeze({Id="Normal", Chance=0.94, LevelGain=1}),
 		table.freeze({Id="Critical", Chance=0.05, LevelGain=2}),
@@ -33,15 +21,6 @@ local FeedConfig = {
 		.12, .14, .16, .18, .20, .25, .28, .30, .33, .35,
 		.55, .55, .55, .55, .55, .64, .64, .64, .64, .64,
 		.76, .76, .76, .76, .76, .88, .88, .88, .88, .88,
-	}),
-	BaseFoodCost = table.freeze({
-		30, 45, 70, 110, 180, 300, 500, 850, 1400, 2400,
-		4000, 6500, 11000, 18000, 30000, 50000, 85000, 140000, 230000, 380000,
-		650000, 1100000, 1800000, 3000000, 5000000, 8000000, 13000000, 21000000, 34000000, 55000000,
-		85000000, 130000000, 200000000, 300000000, 450000000, 650000000, 900000000, 1250000000, 1700000000, 2300000000,
-	}),
-	RarityFoodMultiplier = table.freeze({
-		Common=1, Uncommon=1.15, Rare=1.35, Epic=1.65, Legendary=2, Mythic=2.5,
 	}),
 	-- Presentation defaults (seconds, studs and degrees/sec). Not GDD balance.
 	-- Future client effects must display the server outcome, never roll it.
@@ -65,25 +44,9 @@ local FeedConfig = {
 	}),
 }
 
--- Preserve fractional Food costs; the schema supports them and the GDD does
--- not specify rounding. Variant/traits deliberately do not affect this cost.
-function FeedConfig.GetFoodCost(targetLevel: number, rarity: string): number?
-	if type(targetLevel) ~= "number" or targetLevel % 1 ~= 0 then return nil end
-	local base = FeedConfig.BaseFoodCost[targetLevel]
-	local multiplier = FeedConfig.RarityFoodMultiplier[rarity]
-	return if base and multiplier then base * multiplier else nil
-end
-
 -- Conservative prototype size curve, keeping the plate and five-pet Pen usable.
 function FeedConfig.GetScale(level: number): number
 	return math.min(FeedConfig.MaxVisualScale, 1 + math.max(0, level) * FeedConfig.GrowthPerLevel)
-end
-
-function FeedConfig.GetProtectedRisk(currentRisk: number, targetLevel: number): number?
-	local base = FeedConfig.ExplosionChance[targetLevel]
-	local protected = FeedConfig.ProtectedRisk[targetLevel]
-	if not base or not protected or base <= 0 then return nil end
-	return currentRisk * protected / base
 end
 
 return table.freeze(FeedConfig)

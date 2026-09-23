@@ -17,8 +17,8 @@ Staging is transient: the original inventory record remains stored (no income,
 no Pen slot). Respawn/leaving clears the visual, not the pet. Save/rejoin safely
 returns it to inventory, preserving its ID, lock and Feed Level. No schema change.
 
-Feed UI and Food-only consumption now exist; Feed RNG, Protection and Revive
-remain unimplemented.
+Feed RNG, selected food and timed Rescue are implemented. Consumable Protection
+and plate upgrades are retired; see feed-config.md and revive.md.
 
 Opt-in Studio memory test:
 StudioTestService:ExecuteMultiplayerTestAsync(2, "PedestalVerification").

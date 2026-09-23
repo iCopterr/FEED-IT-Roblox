@@ -2,7 +2,10 @@
 
 Roblox prototype for validating the core loop:
 
-**Hatch → Place → Earn → Farm → Feed → Grow → Risk → Explode / Survive**
+**Hatch → Place → Earn → Buy Food → Feed → Grow → Risk → Rescue / Base-Level Reset**
+
+Current design updates are in `docs/design-decisions.md`; retired systems are
+listed in `docs/retired-features.md`. These supersede historical GDD mechanics.
 
 Read `AGENTS.md`, `PROJECT_STATUS.md`, and the relevant section of
 `Feed_Your_Pet_GDD_v0.5.md` before changing a system.

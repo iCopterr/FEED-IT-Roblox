@@ -3,8 +3,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
-local FeedConfig = require(ReplicatedStorage.Shared.Config.FeedConfig)
-local MerchantConfig = require(ReplicatedStorage.Shared.Config.MerchantConfig)
+-- Legacy validation limits are save-format compatibility, not gameplay balance.
+local LEGACY_PROTECTION_CAP = 10
+local LEGACY_TOKEN_CAP = 9999
 local FoodConfig = require(ReplicatedStorage.Shared.Config.FoodConfig)
 
 export type PetData = {
@@ -439,11 +440,11 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 	if not isPositiveInteger(data.MaxPetSlots) then
 		return false, "MaxPetSlots must be a positive integer"
 	end
-	if not isNonNegativeInteger(data.ProtectionTokens) or data.ProtectionTokens > FeedConfig.ProtectionTokenCap then
-		return false, `ProtectionTokens must be an integer from 0 to {FeedConfig.ProtectionTokenCap}`
+	if not isNonNegativeInteger(data.ProtectionTokens) or data.ProtectionTokens > LEGACY_PROTECTION_CAP then
+		return false, `ProtectionTokens must be an integer from 0 to {LEGACY_PROTECTION_CAP}`
 	end
-	if not isNonNegativeInteger(data.Tokens) or data.Tokens > MerchantConfig.TokenCap then
-		return false, `Tokens must be an integer from 0 to {MerchantConfig.TokenCap}`
+	if not isNonNegativeInteger(data.Tokens) or data.Tokens > LEGACY_TOKEN_CAP then
+		return false, `Tokens must be an integer from 0 to {LEGACY_TOKEN_CAP}`
 	end
 	if not isNonNegativeInteger(data.MerchantRestockId) then return false, "MerchantRestockId must be a non-negative integer" end
 	local purchasesValid,purchasesError=validateBooleanMap(data.MerchantPurchases,"MerchantPurchases")

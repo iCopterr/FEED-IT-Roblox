@@ -26,8 +26,7 @@ function PedestalService.GetFeedPet(player)
 	local character = player.Character
 	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 	local root = character and character:FindFirstChild("HumanoidRootPart")
-	if state.Character ~= character or not humanoid or humanoid.Health <= 0 or not root
-		or player:GetAttribute("IsFarming") then return nil, "Unavailable" end
+	if state.Character ~= character or not humanoid or humanoid.Health <= 0 or not root then return nil, "Unavailable" end
 	local dish = state.Plate:FindFirstChild("Dish")
 	if not dish or not dish:IsA("BasePart") then return nil, "Unavailable" end
 	if (root.Position-dish.Position).Magnitude > Config.PlateDistance then return nil, "TooFar" end
@@ -60,7 +59,7 @@ function PedestalService.Place(player, id)
 	if not data or not Schema.Validate(data) or not plate or not dish or not dish:IsA("BasePart") then return false, "Unavailable" end
 	local pet = data.Inventory[id]
 	if not pet or pet.Placed then return false, "NotOwned" end
-	if player.Parent ~= Players or not root or not humanoid or humanoid.Health <= 0 or player:GetAttribute("IsFarming") then return false, "Unavailable" end
+	if player.Parent ~= Players or not root or not humanoid or humanoid.Health <= 0 then return false, "Unavailable" end
 	if (root.Position - dish.Position).Magnitude > Config.PlateDistance then return false, "TooFar" end
 	local templates = workspace:FindFirstChild("PetTemplates")
 	local template = templates and templates:FindFirstChild(pet.SpeciesId)

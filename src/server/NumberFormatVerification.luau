@@ -20,12 +20,6 @@ function Verification.Run()
 	for _,value in {"", "oops", "1KK", "1Qa", "1e999", "K", "1M2"} do
 		check(format.Parse(value)==nil,"Reject "..value)
 	end
-	local view = require(game.StarterPlayer.StarterPlayerScripts.Client.UI.FarmSignView)
-	local gui={Level={},Rate={},Buy={},Status={}}
-	view.Render(gui,{Level=9,Rate=10000,NextRate=30000,Cost=1e15,CanAfford=true},true,true,false)
-	check(gui.Rate.Text=="10K FOOD / SEC\nNEXT: 30K FOOD / SEC","Farm current/next rates compact")
-	check(gui.Buy.Text=="BUY UPGRADE • 1000T MONEY","Farm price uses T rather than Qa/scientific notation")
-	check(gui.Level.Text=="LEVEL 9 / 10","Small levels remain unchanged")
 	check(game.StarterGui.DebugUI.Panel.Amount.Text=="1M","Authored debug input defaults to 1M")
 	return {passed=true, checks=checks}
 end

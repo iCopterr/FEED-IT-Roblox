@@ -43,7 +43,6 @@ local ok,failure=xpcall(function()
 	local profile=data.GetData(a)
 	profile.Inventory[own.PetId].FeedLevel=12
 	local root=a.Character.HumanoidRootPart
-	require(services.FarmService).Exit(a,false)
 	root.Anchored=false
 	root:SetNetworkOwner(nil);root.Anchored=true
 	root.CFrame=CFrame.new(plots.GetPlot(a).Pen.Floor.Position+Vector3.new(0,5,0))

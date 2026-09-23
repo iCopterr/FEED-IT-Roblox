@@ -9,7 +9,7 @@ local ok, failure = xpcall(function()
 	local plots = require(services.PlotService)
 	local carry = require(services.CarryService)
 	local placement = require(services.PlacementService)
-	local feedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
+	local foodConfig = require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 	local revive = require(services.ReviveService)
 	local locks = require(services.FeedLocks)
 	local money = require(services.MoneyService)
@@ -42,7 +42,7 @@ local ok, failure = xpcall(function()
 		-- Existing saves must retain the same recovery choices as new failures.
 		local record={Pet=pets.GetPet(a,pet.PetId),
 			AttemptId=game:GetService("HttpService"):GenerateGUID(false),
-			ExplodedAt=os.time(),FoodSpent=feedConfig.GetFoodCost(21,"Rare")}
+			ExplodedAt=os.time(),FoodSpent=foodConfig.ServingsPerFeed}
 		profile.Food-=record.FoodSpent
 		profile.Inventory[pet.PetId]=nil
 		profile.PendingRecovery[pet.PetId]=record

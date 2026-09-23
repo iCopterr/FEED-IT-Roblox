@@ -42,10 +42,7 @@ local ok,failure=xpcall(function()
 		check(not command("AddFood",bad).Ok,"Invalid currency input rejected: "..tostring(bad))
 	end
 	check(command("AddFood",1e12).Ok and profile.Food==1e12,"Food grant applied")
-	local beforeTokens=profile.Tokens
-	check(command("AddTokens",1).Ok and profile.Tokens==beforeTokens+1,"Merchant Token grant applied")
-	check(debugService.HandleRequest(a,"AddTokens",1,nil,sequence-1).Ok and profile.Tokens==beforeTokens+1,"Token grant replay cannot duplicate")
-	check(not command("AddTokens",10000).Ok and profile.Tokens==beforeTokens+1,"Token grant cap enforced")
+	check(not command("AddTokens",1).Ok,"Retired Token grant rejected")
 	local ids={}
 	for _,species in {"test_common","test_uncommon","test_rare","test_epic","test_legendary","test_mythic"} do
 		local result=command("SpawnPet",species)
@@ -60,8 +57,7 @@ local ok,failure=xpcall(function()
 	check(not command("ForceFeed","Explosion",foreign.PetId).Ok,"Foreign override rejected")
 	check(not command("SetPetLevel",41,id).Ok and not command("SetPetLevel",1.5,id).Ok,"Invalid pet levels rejected")
 	check(command("SetPetLevel",39,id).Ok and profile.Inventory[id].FeedLevel==39,"Stored pet level set without changing identity")
-	check(not command("SetFarmLevel",11).Ok and not command("SetFarmLevel",0).Ok,"Farm bounds enforced")
-	check(command("SetFarmLevel",10).Ok and profile.FarmLevel==10,"Farm level set within current config")
+	check(not command("SetFarmLevel",10).Ok,"Retired farm level command rejected")
 	assert(placement.PlacePet(a,id))
 	check(command("SetPetLevel",5,id).Code=="PickupFirst","Placed pet level edit requires pickup")
 	assert(placement.PickupPet(a,id))

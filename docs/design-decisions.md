@@ -23,8 +23,8 @@ Farm, Protection, currency and permanent-loss rules in GDD v0.5.
 - Shop periodically restocks different foods, inspired by a seed-shop restock loop.
 - Food types differ in how much they reduce Feed failure/explosion chance.
 - Money is the only shop currency. Token drops, Token HUD and consumable
-  Protection actions are removed from active gameplay. Legacy data/config/modules
-  remain for reference, but the old farm services/controllers do not start.
+  Protection actions are removed from active gameplay. Legacy save fields remain
+  readable; retired configs, modules and sign assets were deleted on 2026-09-23.
 - Restock every 30 minutes: Basic always available, two weighted distinct special
   offers, each purchasable once per player per restock. One player's purchases
   never empty another player's stock.
@@ -52,8 +52,8 @@ Farm, Protection, currency and permanent-loss rules in GDD v0.5.
 
 - FoodShopVerification covers the new merchant, selected-food Feed, immediate
   Rescue, duplicate requests, and real-time automatic level-zero recovery.
-- Older Farm/Merchant/Protection verification scripts describe the previous
-  design and are not a current acceptance suite. They remain opt-in only.
+- Superseded farm/plate/Token-merchant tests were removed. FeedVerification now
+  covers the current RNG and migrations; FoodShopVerification covers transactions.
 
 ## Deferred ideas — 2026-09-23 (not implementation approval)
 

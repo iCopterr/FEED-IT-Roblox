@@ -10,7 +10,7 @@ local Responsive=require(script.Parent.Parent.UI.InventoryLayout)
 local numberText=require(ReplicatedStorage.Shared.NumberFormat).Compact
 local Controller={}
 local keys={Enum.KeyCode.One,Enum.KeyCode.Two,Enum.KeyCode.Three,Enum.KeyCode.Four,Enum.KeyCode.Five,Enum.KeyCode.Six,Enum.KeyCode.Seven,Enum.KeyCode.Eight,Enum.KeyCode.Nine,Enum.KeyCode.Zero}
-local errors={Busy="An action is saving. Please wait.",Farming="Jump out of the farm first.",
+local errors={Busy="An action is saving. Please wait.",
 	HoldToPickup="Hold E beside your pet to pick it up.",CharacterUnavailable="Wait for your character to respawn.",
 	AlreadyPlaced="Visit your egg in the Pen. Press E when it is ready.",Loading="Your collection is loading…",
 	Cooldown="Please try again in a moment."}

@@ -529,6 +529,15 @@ Do not assume uncommitted changes belong to the current agent.
 
 Commit logical working units.
 
+Owner preference (2026-09-23): commit completed, verified changes at the end of
+each implementation session without asking again. Include the handoff update;
+preserve unrelated user changes. Do not push unless requested.
+
+Current design supersedes historical Farm/Protection guidance below and in the
+GDD: Food is purchased from the Money merchant; AFK farms, Tokens, consumable
+Protection and feed-plate upgrades are retired. Plot capacity upgrades and
+the feeding pedestal remain active. Legacy save fields are compatibility only.
+
 Good examples:
 
 ```text

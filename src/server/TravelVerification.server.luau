@@ -16,7 +16,6 @@ local ok,failure=xpcall(function()
 	assert(#players==2)
 	for _,p in players do
 		local root=p.Character:WaitForChild("HumanoidRootPart",10)
-		require(services.FarmService).Exit(p,false)
 		root.Anchored=false
 		local money=data.GetData(p).Money
 		check(travel.HandleRequest(p,{}).Code=="InvalidDestination","Reject client coordinate/table")
