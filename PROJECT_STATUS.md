@@ -6,6 +6,29 @@
 
 **Last Updated:** 2026-09-23
 
+### Latest session — four elemental pet art models
+
+- Built requested Storm Griffin, Lava Golem, Thunder Serpent and Ice Dragon
+  as standalone Workspace models after Ember Drake; existing models preserved.
+- `StormGriffin_RigTest`: enlarged griffin base, extended blue/silver feathers,
+  lightning wing markings and crown. `LavaGolem_RigTest`: rock limbs, large
+  fists, molten chest/eyes/joints. `ThunderSerpent_RigTest`: upright neck,
+  coiled tail, cobra hood with lightning marks and crown fins. `IceDragon_Roster`:
+  compact drake variant with icy membranes, crystal crown and wing icicles.
+  Earlier `IceDragon_V2` untouched. No animations or gameplay integration.
+- PASS Edit checks for all four: connected unanchored parts, internal-only
+  weld/joint references, aligned Motor6Ds, Torso-only collision, root/Animator,
+  and nonoverlapping spacing. Parts/motors/welds: Storm 85/9/75; Golem 38/6/31;
+  Serpent 38/5/32; Ice 115/9/105. Viewport screenshot inspected.
+- Positions continue display row at X=236.50,246.50,256.50,268.50; Z=49.05.
+  Row remains off-island and needs ground for runtime tests, which were not run.
+  Next user visual feedback. All four selected and camera framed.
+- Files: `docs/studio/build-elemental-pets.luau` and handoff. Editor-only recipe
+  clones existing griffin/drake templates and constructs the golem/serpent;
+  refuses name collisions. Studio-owned models outside Rojo: save place to persist.
+- Committed as `art: add four elemental pet concepts`; prior working commit
+  f1cafe2. No push. Overall gameplay progress unchanged.
+
 ### Latest session — ember drake beside baby griffin
 
 - Created `Workspace.EmberDrake_RigTest`: charcoal armor, ember seams,
