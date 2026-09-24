@@ -19,9 +19,6 @@
       "PetConveyor": {
         "$path": "src/world/PetConveyor.rbxmx"
       },
-      "PetTemplates": {
-        "$path": "src/world/PetTemplates.rbxmx"
-      },
       "PlayerPlots": {
         "$path": "src/world/PlayerPlots.rbxmx"
       }

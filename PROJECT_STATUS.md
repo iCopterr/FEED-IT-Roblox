@@ -6,7 +6,66 @@
 
 **Last Updated:** 2026-09-24
 
-### Latest session — six legendary pet art prototypes
+### Latest session — install all 30 named gameplay pet models
+
+- Moved the 30 reviewed loose art rigs into `Workspace.PetsModel` and renamed
+  each model to its final display name. Added authoritative `SpeciesId`, `EggId`
+  and `TemplateName` attributes. Stored templates are anchored, non-colliding,
+  non-queryable and script-free; all original rig joints and geometry remain.
+- Added `PetConfig.TemplateName` plus shared `PetModels` resolution. Placement,
+  carrying, feed pedestal, inventory previews and Feed effects now use the named
+  art while stable SpeciesIds/save data remain unchanged. Removed the obsolete
+  Rojo-managed `Workspace.PetTemplates` placeholder asset and mapping.
+- Added idempotent `docs/studio/install-pet-models.luau` for reconstruction.
+  `PetsModel` is intentionally Studio-owned because the art is too large for the
+  current Rojo asset workflow; save the place. The committed build recipes plus
+  installer are the recovery path for a fresh place.
+- Visual verification: prior per-model reviews remain documented below. The six
+  Supreme models were re-inspected together from front and opposite three-quarter
+  angles in temporary ViewportFrames, resolving the previous blank-viewport
+  blocker. Silhouettes/details remained readable; temporary review UI removed.
+- PASS: exact 30-model hierarchy/metadata/rig audit; Rojo build; diff check;
+  Studio syntax analysis (0 errors across 89 scripts); two-player Placement
+  28/28, Carry 33/33, Pedestal 28/28, Wandering 21/21, Egg 157/157, Feed 48/48,
+  Inventory/UI 227/227. Total relevant runtime assertions: 542.
+- Verification maintenance: Carry's old v2-only migration expectation now checks
+  current schema versions; placement throttle and UI tween tests now wait for
+  observable state instead of relying on fragile fixed delays.
+- Known limitation: these sculpted prototypes total roughly 60,000 visible
+  parts. They function, but must be consolidated to meshes/optimized geometry
+  before production scale. Next: performance playtest and geometry consolidation.
+- Files: PetConfig/PetModels/PlacementConfig; placement/carry/pedestal services;
+  preview/Feed consumers; verification suites; project mapping; placement/feed
+  docs; installer; celestial reconstruction recipe; this handoff. Session commit:
+  `feat: bind named pet models to gameplay`. No push.
+
+### Latest session — six celestial pet art prototypes
+
+- Built `AstralKitsune_V1`, `EclipseGriffin_V1`, `VoidLeviathan_V1`,
+  `CelestialDragon_V1`, `SeraphBeast_V1`, `WorldSerpent_V1` in Workspace.
+  Nine curved star-tipped tails; black/gold griffin feathers and halo;
+  long finned leviathan; pale antlered dragon; six-winged halo beast;
+  large crowned green/gold serpent coil. No animation/gameplay integration.
+  Overall gameplay progress unchanged.
+- First individual viewport screenshots inspected for all six. Refined
+  Leviathan's edge-on fins by lifting the outer tips and widening the silhouette.
+  The later blank-viewport blocker was resolved during gameplay integration;
+  all six were inspected again from front and opposite three-quarter angles.
+- PASS final Edit rig checks: all internally connected/unanchored; Torso-only
+  collision; aligned Motor6Ds; matching root and Animator. Confirmed nine
+  Kitsune tails and three Seraph wing pairs. Parts/motors/welds:
+  Kitsune 3665/15/3649; Griffin 1770/9/1760; Leviathan 740/5/734;
+  Dragon 2265/10/2254; Seraph 2884/13/2870; Serpent 2673/4/2668.
+- Created at X=484.449,504.449,524.449,544.449,564.449,584.449,
+  Z approximately 2.318 after Behemoth. Preserved off-island display convention.
+  Runtime not tested; high part counts require consolidation before mass use.
+- Files modified: `docs/studio/build-celestial-six.luau` and this handoff.
+  Studio-owned objects outside Rojo; save the place to persist. Recipe guards
+  duplicate names. Unrelated Kitsune reference recipe preserved.
+- Visual verification complete. Next task is gameplay performance/consolidation.
+  Last working commit daad04e. No push.
+
+### Previous session — six legendary pet art prototypes
 
 - Completed `Hydra_V1`, `Phoenix_V1`, `Kraken_V1`, `AncientWyvern_V1`,
   `BoneDragon_V1`, `Behemoth_V1` in Workspace, using the sculpted lineup style.

@@ -12,6 +12,7 @@ local ok, failure = xpcall(function()
 	local plots = require(script.Parent.Services.PlotService)
 	local schema = require(script.Parent.Data.PlayerDataSchema)
 	local adapter = require(script.Parent.Data.DataStoreAdapter)
+	local petModels = require(game.ReplicatedStorage.Shared.PetModels)
 	assert(adapter.IsMemory(), "Memory data required")
 	local function waitFor(predicate)
 		local deadline = os.clock() + 120
@@ -45,10 +46,10 @@ local ok, failure = xpcall(function()
 	check(#plot.Pen.ActivePets:GetChildren() == 4, "Pickup removes only one visual")
 	check(placement.PlacePet(a, ids[6]) and data.Inventory[ids[6]].PlotSlot == 1, "Freed slot reused")
 	assert(placement.PickupPet(a, ids[6]))
-	local template = workspace.PetTemplates.test_common
+	local template = assert(petModels.GetTemplate("test_common"))
 	template.Name = "UnavailableDuringTest"
 	local missing, reason = placement.PlacePet(a, ids[1])
-	template.Name = "test_common"
+	template.Name = "Chicken"
 	check(not missing and reason == "TemplateUnavailable" and not data.Inventory[ids[1]].Placed, "Missing template does not commit placement")
 	check(placement.PlacePet(a, ids[1]), "Locked pet can be placed")
 	plot.Pen.ActivePets:Destroy()
@@ -76,9 +77,9 @@ local ok, failure = xpcall(function()
 	end
 	check(not request("PickupPet", ids[1]).Ok and not request("PlacePet", ids[1]).Ok, "Legacy placement remotes disabled; carry prompt required")
 	check(not request("EquipPet", foreign).Ok and not request("EquipPet", {}).Ok, "Remote handler rejects foreign and malformed input")
+	check(ui.HandleRequest(a, "PickupPet", ids[1]).Code == "Cooldown", "Remote spam is throttled")
 	local snapshot = request("Snapshot")
 	check(snapshot.Ok and snapshot.PlacedCount == 5 and snapshot.Inventory[ids[1]].Placed, "UI snapshot reflects authoritative placement")
-	check(ui.HandleRequest(a, "PickupPet", ids[1]).Code == "Cooldown", "Remote spam is throttled")
 	snapshot.Inventory[ids[1]].Placed = false
 	check(data.Inventory[ids[1]].Placed, "UI snapshot cannot mutate placement")
 	a:Kick("Placement verification: release check")

@@ -1,4 +1,5 @@
 local Eggs=require(game.ReplicatedStorage.Shared.Config.EggConfig)
+local PetModels=require(game.ReplicatedStorage.Shared.PetModels)
 local Preview={}
 local foodEmoji={basic="🍗",hearty="🥩",gourmet="🍱",royal="🍰"}
 function Preview.Set(view,entry)
@@ -21,10 +22,10 @@ function Preview.Set(view,entry)
 	local world=view.World
 	world:ClearAllChildren()
 	if not entry then return end
-	local folder=workspace:FindFirstChild(if entry.Kind=="Pet" then "PetTemplates" else "EggTemplates")
 	local definition=entry.EggId and Eggs.Definitions[entry.EggId]
 	local name=entry.SpeciesId or (definition and definition.TemplateName) or entry.EggId
-	local template=folder and folder:FindFirstChild(name)
+	local folder=if entry.Kind=="Egg" then workspace:FindFirstChild("EggTemplates") else nil
+	local template=if entry.Kind=="Pet" then PetModels.GetTemplate(entry.SpeciesId) else folder and folder:FindFirstChild(name)
 	if not template or not template:IsA("Model") then view:SetAttribute("PreviewKey",nil);return end
 	local model=template:Clone()
 	for _,child in model:GetDescendants() do

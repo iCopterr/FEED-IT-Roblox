@@ -35,12 +35,12 @@ and rollback. A valid visual is prepared before placement is committed. Repeated
 requests are idempotent. UIService validates caller state and throttles requests;
 clients cannot supply a plot, slot, pet definition, or economy value.
 
-Workspace.PetTemplates contains six editable, static placeholder models,
-authored through Studio MCP and exported to src/world/PetTemplates.rbxmx.
-Re-export editor changes before Rojo sync: sync is not reverse export.
-Placement clones these authored templates into the owner's Pen.ActivePets;
-no runtime geometry constructor is used. Placed pets wander using server-owned
-anchored model movement. Template gallery is outside the plot area at Z=-110.
+Workspace.PetsModel contains the 30 named, editable pet art models. The folder
+is Studio-owned so Rojo does not overwrite high-detail art; the editor recipes
+under docs/studio are the repository reconstruction source. PetConfig maps each
+stable SpeciesId to its exact TemplateName. Placement clones those authored
+models into the owner's Pen.ActivePets; no runtime geometry constructor is used.
+Placed pets wander using server-owned anchored model movement.
 
 WanderingService chooses nearby destinations, walks at 3 studs/sec and pauses
 2–4 seconds. WanderingConfig centralizes presentation values. Destinations use

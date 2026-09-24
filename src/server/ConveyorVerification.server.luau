@@ -15,6 +15,7 @@ local ok,failure=xpcall(function()
 	local schema=require(script.Parent.Data.PlayerDataSchema)
 	local adapter=require(script.Parent.Data.DataStoreAdapter)
 	local config=require(game.ReplicatedStorage.Shared.Config.EggConfig)
+	local petModels=require(game.ReplicatedStorage.Shared.PetModels)
 	local beltConfig=require(game.ReplicatedStorage.Shared.Config.ConveyorConfig)
 	assert(adapter.IsMemory(),"Memory-only verification")
 	local function check(v,n) assert(v,n);table.insert(checks,n) end
@@ -182,7 +183,7 @@ local ok,failure=xpcall(function()
 		local cursor=0
 		for _,entry in definition.Results do
 			check(config.Pick(tier.Id,(cursor+entry.Weight/2)/total)==entry.SpeciesId,"Weighted result "..entry.SpeciesId)
-			check(workspace.PetTemplates:FindFirstChild(entry.SpeciesId)~=nil,"Reused template "..entry.SpeciesId)
+			check(petModels.GetTemplate(entry.SpeciesId)~=nil,"Authored model "..entry.SpeciesId)
 			cursor+=entry.Weight
 		end
 		carry.Unequip(a)

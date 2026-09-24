@@ -29,7 +29,7 @@ Popup pages now share a cyan stud-textured header, charcoal body, squared
 cards, black outlines, white outlined text and bright action colors. This
 theme is authored in the StarterGui assets; controllers only update existing
 selection/availability colors. HUD, hotbar and outcome banners are unchanged.
-Runtime effects clone existing Workspace.PetTemplates; no world generator.
+Runtime effects clone the named models in Workspace.PetsModel; no world generator.
 Duplicate results are suppressed; ambiguous replies can recover the cached
 server outcome rather than submit a fresh roll.
 

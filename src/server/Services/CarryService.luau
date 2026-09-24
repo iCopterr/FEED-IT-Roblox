@@ -7,6 +7,7 @@ local PlacementService = require(script.Parent.PlacementService)
 local PlacementConfig = require(game.ReplicatedStorage.Shared.Config.PlacementConfig)
 local PlotService = require(script.Parent.PlotService)
 local PedestalService = require(script.Parent.PedestalService)
+local PetModels = require(game.ReplicatedStorage.Shared.PetModels)
 local carried, connections = {}, {}
 local pickupHolds = {}
 local CarryService = {}
@@ -57,8 +58,9 @@ local function equip(player, id, isEgg)
 		if not slot or (root.Position - slot.Position).Magnitude > Config.PickupDistance then return false, "TooFar" end
 	end
 	local definition = isEgg and require(game.ReplicatedStorage.Shared.Config.EggConfig).Definitions[egg.EggId]
-	local templates = workspace:FindFirstChild(if isEgg then "EggTemplates" else "PetTemplates")
-	local template = templates and templates:FindFirstChild(if isEgg then (definition and definition.TemplateName or egg.EggId) else pet.SpeciesId)
+	local templates = if isEgg then workspace:FindFirstChild("EggTemplates") else nil
+	local template = if isEgg then templates and templates:FindFirstChild(definition and definition.TemplateName or egg.EggId)
+		else PetModels.GetTemplate(pet.SpeciesId)
 	if not template or not template:IsA("Model") or not template.Archivable then return false, "TemplateUnavailable" end
 	for _, part in template:GetDescendants() do
 		if part:IsA("LuaSourceContainer") then return false, "TemplateUnavailable" end

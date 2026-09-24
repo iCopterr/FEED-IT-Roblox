@@ -1,6 +1,6 @@
 --!strict
 return table.freeze({
-	TemplateFolderName = "PetTemplates",
+	TemplateFolderName = "PetsModel",
 	VisualFolderName = "ActivePets",
 	ReconcileSeconds = 1,
 	HeightOffset = 0.05,

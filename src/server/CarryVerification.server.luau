@@ -65,7 +65,9 @@ local ok, failure = xpcall(function()
 	legacy.DataVersion = 1
 	for _, p in legacy.Inventory do p.DataVersion = 1; p.PenPosition = nil end
 	local migrated = assert(schema.Migrate(legacy))
-	check(migrated.DataVersion == 2 and migrated.Inventory[pet.PetId].DataVersion == 2 and legacy.DataVersion == 1 and migrated.Inventory[pet.PetId].PetId == pet.PetId, "V1 migration preserves IDs without changing input")
+	check(migrated.DataVersion == schema.CURRENT_VERSION and migrated.Inventory[pet.PetId].DataVersion == schema.PET_CURRENT_VERSION
+		and legacy.DataVersion == 1 and migrated.Inventory[pet.PetId].PetId == pet.PetId,
+		"V1 migration preserves IDs without changing input")
 	check(not carry.GetPetId(a) and not a.Character:FindFirstChild("HeldPet") and data.GetData(a).Inventory[pet.PetId].Placed, "Placed and held states are exclusive")
 	check(not carry.PlaceAt(a, pet.PetId, target), "Duplicate placement rejected")
 	a.Character:PivotTo(CFrame.new(target + Vector3.new(0,4,0)))

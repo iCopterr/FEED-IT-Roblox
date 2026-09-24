@@ -1,6 +1,7 @@
 --!strict
 local Players = game:GetService("Players")
 local Config = require(game:GetService("ReplicatedStorage").Shared.Config.PlacementConfig)
+local PetModels = require(game:GetService("ReplicatedStorage").Shared.PetModels)
 local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
@@ -74,8 +75,7 @@ local function visualState(player: Player, plot: Model): VisualState
 end
 
 local function prepareVisual(player: Player, pet: PetData, slot: CFrame): (Model?, string?)
-	local templates = workspace:FindFirstChild(Config.TemplateFolderName)
-	local template = templates and templates:FindFirstChild(pet.SpeciesId)
+	local template = PetModels.GetTemplate(pet.SpeciesId)
 	if not template or not template:IsA("Model") or not template.Archivable then return nil, "TemplateUnavailable" end
 	local hasPart = false
 	for _, descendant in template:GetDescendants() do

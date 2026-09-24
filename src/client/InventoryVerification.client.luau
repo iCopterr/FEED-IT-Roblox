@@ -23,15 +23,20 @@ local ok,failure=xpcall(function()
 	local motion=require(script.Parent.UI.Motion)
 	local probe=manager.Panel:Clone();probe.Visible=false;probe.Parent=manager
 	local home=probe.Position
+	local entranceFurthest=home.X.Offset
+	local entranceTrack=probe:GetPropertyChangedSignal("Position"):Connect(function()
+		entranceFurthest=math.max(entranceFurthest,probe.Position.X.Offset)
+	end)
 	motion.BindPopup(probe,{FromRight=true});probe.Visible=true
-	task.wait(.04)
-	check(probe.Position.X.Offset>home.X.Offset and probe.Position.Y==home.Y,"Side panel enters from right")
-	task.wait(.4)
+	waitFor(function() return entranceFurthest>home.X.Offset end)
+	waitFor(function() return probe.Position==home end)
+	entranceTrack:Disconnect()
+	check(entranceFurthest>home.X.Offset and probe.Position.Y==home.Y,"Side panel enters from right")
 	check(probe.Position==home,"Side panel settles")
 	local furthest=home.X.Offset
 	local track=probe:GetPropertyChangedSignal("Position"):Connect(function() furthest=math.max(furthest,probe.Position.X.Offset) end)
 	motion.Close(probe)
-	task.wait(.3)
+	waitFor(function() return not probe.Visible and probe.Position==home end)
 	track:Disconnect()
 	check(furthest>home.X.Offset,"Side panel exits right")
 	check(not probe.Visible and probe.Position==home,"Side panel closes and restores")

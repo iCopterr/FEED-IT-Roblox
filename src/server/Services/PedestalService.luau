@@ -4,6 +4,7 @@ local PlotService = require(script.Parent.PlotService)
 local Config = require(game.ReplicatedStorage.Shared.Config.CarryConfig)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
 local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
+local PetModels = require(game.ReplicatedStorage.Shared.PetModels)
 local PedestalService = {}
 local states = {}
 
@@ -61,8 +62,7 @@ function PedestalService.Place(player, id)
 	if not pet or pet.Placed then return false, "NotOwned" end
 	if player.Parent ~= Players or not root or not humanoid or humanoid.Health <= 0 then return false, "Unavailable" end
 	if (root.Position - dish.Position).Magnitude > Config.PlateDistance then return false, "TooFar" end
-	local templates = workspace:FindFirstChild("PetTemplates")
-	local template = templates and templates:FindFirstChild(pet.SpeciesId)
+	local template = PetModels.GetTemplate(pet.SpeciesId)
 	if not template or not template:IsA("Model") or not template.Archivable then return false, "TemplateUnavailable" end
 	for _, item in template:GetDescendants() do
 		if item:IsA("LuaSourceContainer") then return false, "TemplateUnavailable" end

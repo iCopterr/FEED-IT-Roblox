@@ -12,6 +12,7 @@ local ok, failure = xpcall(function()
 	local carry = require(services.CarryService)
 	local money = require(services.MoneyService)
 	local adapter = require(script.Parent.Data.DataStoreAdapter)
+	local petModels = require(game.ReplicatedStorage.Shared.PetModels)
 	assert(adapter.IsMemory(), "Memory-only verification")
 	local function check(value, name) assert(value, name); table.insert(checks, name) end
 	local function waitFor(predicate)
@@ -67,7 +68,7 @@ local ok, failure = xpcall(function()
 	-- Exercise authored floors on both rotated rows, with grown template clones.
 	for _, plot in workspace.PlayerPlots:GetChildren() do
 		if not plot:IsA("Model") then continue end
-		local testModel = workspace.PetTemplates.test_common:Clone()
+		local testModel = assert(petModels.GetTemplate("test_common")):Clone()
 		testModel:ScaleTo(3.4)
 		local bounds, size = testModel:GetBoundingBox()
 		local penFloor = plot.Pen.Floor

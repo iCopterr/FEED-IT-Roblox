@@ -4,6 +4,7 @@ local Config = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local P = Config.Presentation
 local FeedEffects = {}
 local numberText = require(game.ReplicatedStorage.Shared.NumberFormat).Compact
+local PetModels = require(game.ReplicatedStorage.Shared.PetModels)
 local seen = {}
 local bannerToken = 0
 
@@ -52,8 +53,7 @@ function FeedEffects.Play(result, gui)
 	task.spawn(function()
 		local model
 		local ok, failure = xpcall(function()
-			local templates = workspace:FindFirstChild("PetTemplates")
-			local template = templates and templates:FindFirstChild(result.SpeciesId)
+			local template = PetModels.GetTemplate(result.SpeciesId)
 			if not template then banner(gui,result); return end
 			-- Clone the authored pet, never generate replacement world geometry.
 			model = template:Clone()

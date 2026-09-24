@@ -12,6 +12,7 @@ local ok, failure = xpcall(function()
 	local money = require(script.Parent.Services.MoneyService)
 	local ui = require(script.Parent.Services.UIService)
 	local adapter = require(script.Parent.Data.DataStoreAdapter)
+	local petModels = require(game.ReplicatedStorage.Shared.PetModels)
 	assert(adapter.IsMemory(), "Memory profiles only")
 	local function waitFor(predicate, seconds)
 		local deadline = os.clock()+(seconds or 120)
@@ -38,7 +39,7 @@ local ok, failure = xpcall(function()
 	check(not carry.PlaceOnPlate(a,one.PetId),"Cannot use another player's plate")
 	check(carry.GetPetId(a)==one.PetId,"Rejected placement preserves held pet")
 	root.CFrame=CFrame.new(dish.Position+Vector3.new(0,3,6))
-	local template=workspace.PetTemplates.test_common
+	local template=assert(petModels.GetTemplate("test_common"))
 	template.Archivable=false
 	local denied=not carry.PlaceOnPlate(a,one.PetId)
 	template.Archivable=true
