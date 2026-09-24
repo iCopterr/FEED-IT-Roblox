@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Config = require(game.ReplicatedStorage.Shared.Config.CarryConfig)
+local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local DataService = require(script.Parent.DataService)
 local PetService = require(script.Parent.PetService)
 local PlacementService = require(script.Parent.PlacementService)
@@ -73,7 +74,9 @@ local function equip(player, id, isEgg)
 		model.Name = if isEgg then "HeldEgg" else "HeldPet"
 		model:SetAttribute(if isEgg then "EggUid" else "PetId", id)
 		model:SetAttribute("OwnerUserId", player.UserId)
-		model:ScaleTo(Config.HeldScale)
+		local heldScale = Config.HeldScale
+		if not isEgg then heldScale *= FeedConfig.GetScale(pet.FeedLevel) end
+		model:ScaleTo(heldScale)
 		local bounds, size = model:GetBoundingBox()
 		local targetBounds = if isEgg
 			then attachment.CFrame * Config.HandOffset

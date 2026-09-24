@@ -41,6 +41,22 @@ local ok, failure = xpcall(function()
 	end
 	check(true, "Held model is welded, massless and noncolliding")
 	check(carry.Equip(a, pet.PetId) and a.Character:FindFirstChild("HeldPet") == model, "Repeated equip does not duplicate visual")
+	local grown = assert(pets.CreatePet(a, "test_common"))
+	local grownLevel = 10
+	data.GetData(a).Inventory[grown.PetId].FeedLevel = grownLevel
+	carry.Unequip(a)
+	assert(carry.Equip(a, grown.PetId))
+	local grownModel = a.Character:FindFirstChild("HeldPet")
+	local carryConfig = require(game.ReplicatedStorage.Shared.Config.CarryConfig)
+	local feedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
+	check(math.abs(grownModel:GetScale() - carryConfig.HeldScale * feedConfig.GetScale(grownLevel)) < 1e-5,
+		"Held pet preserves its Feed-level growth")
+	local grownBounds, grownSize = grownModel:GetBoundingBox()
+	check(grownBounds.Position.Y - grownSize.Y / 2 >= headTop + carryConfig.PetHeadClearance - 0.05,
+		"Grown held pet remains clear above the player's head")
+	carry.Unequip(a)
+	assert(pets.RemovePet(a, grown.PetId))
+	assert(carry.Equip(a, pet.PetId))
 	local floor = plot.Pen.Floor
 	local target = floor.CFrame:PointToWorldSpace(Vector3.new(3.25, floor.Size.Y/2, -2.75))
 	local otherTarget = other.Pen.Floor.CFrame:PointToWorldSpace(Vector3.new(0, other.Pen.Floor.Size.Y/2, 0))

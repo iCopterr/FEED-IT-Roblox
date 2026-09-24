@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-09-24
 
+### Latest session — preserve grown pet size while carried
+
+- Held pets now multiply the compact base carry scale by the authoritative
+  `FeedConfig.GetScale(FeedLevel)` growth factor. A grown pet therefore stays
+  visibly larger overhead instead of reverting to the level-0 carry size.
+  Eggs remain unchanged. Overhead positioning recalculates from the final grown
+  bounds, preserving the configured 0.35-stud clearance above the avatar.
+- PASS: Rojo build; diff check; all 36 two-player CarryVerification assertions,
+  including exact level-10 carry scale and grown-model head clearance. Visually
+  compared level-0 and level-10 Chicken poses in Studio; the 1.6x difference is
+  clear and both poses remain centered. Temporary review objects were removed.
+- Files: CarryService, CarryVerification, placement documentation and this
+  handoff. Preserve unrelated untracked Kitsune reference recipe. Session
+  commit: `fix: preserve pet growth while carried`. No push.
+
 ### Latest session — carry pets above the player
 
 - Changed pet carry presentation from the right hand to a centered overhead
