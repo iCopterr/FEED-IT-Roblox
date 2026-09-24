@@ -4,7 +4,30 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-23
+**Last Updated:** 2026-09-24
+
+### Latest session — sculpted nine-tailed Kitsune
+
+- Completed `Workspace.Kitsune_V2` at (283.45, 2.876, 74), beside the
+  sculpted pet display row. Ivory tapered body, pointed ears, layered cheek
+  and neck fur, crimson face markings and nine red-tipped fan tails, gold
+  eyes/claws and a collar bell. No animations or gameplay integration.
+- Inspected side/front/three-quarter viewport screenshots. Refined all coat
+  surfaces to SmoothPlastic/Smooth after the first review showed distracting
+  studs; inspected the result again. Nine tail tips have readable separation.
+- PASS Edit verification: 3395 parts, 17 Motor6Ds, 3377 welds; nine tail limbs,
+  all parts internally connected and unanchored, Torso-only collision,
+  matching root size, aligned joint positions/orientations, Animator present.
+- High-detail art prototype; geometry consolidation remains necessary before
+  mass spawning. Off-island display needs ground before runtime testing;
+  Play movement/standing was not tested. Gameplay progress unchanged.
+- Files modified: `docs/studio/build-kitsune.luau`, `AGENTS.md`, this handoff.
+  User's standing create/verify/visually inspect/remodel rule saved in AGENTS.
+  Recipe refuses duplicate names. Studio model is outside Rojo: save the place
+  to persist it. Connected to the user-specified MCP port 58741.
+- Next task: user art feedback, then geometry consolidation if requested.
+  No active implementation remaining. Prior working commit ff8a237; session
+  commit `art: add sculpted nine-tailed kitsune`; no push.
 
 ### Latest session — five sculpted pet rebuilds
 

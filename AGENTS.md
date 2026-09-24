@@ -753,6 +753,12 @@ When tradeoffs are required, prioritize:
 
 # 25. Final Rule
 
+Owner preference (2026-09-24): For every requested pet model, create it,
+verify its geometry and rig, inspect it visually in Studio from useful angles,
+and remodel/recheck visible issues until the model looks cohesive and readable.
+Do not declare a model complete from structural checks alone. If visual
+verification is blocked, report that limitation explicitly.
+
 The purpose of this Prototype is not to prove how much content can be built.
 
 The purpose is to prove that this decision is fun:
