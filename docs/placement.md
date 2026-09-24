@@ -1,16 +1,16 @@
 # Pet placement and pickup
 
-Select an owned pet in MY PETS, then choose EQUIP PET. The pet appears attached
-to the character's right hand. Click/tap your Pen floor to place it at that
+Select an owned pet in MY PETS, then choose EQUIP PET. The pet appears centered
+above the character's head. Click/tap your Pen floor to place it at that
 horizontal position, up to five pets. Hold E for one second near a placed pet
-(within ten studs) to pick it into your hand. UNEQUIP stores it. Clicking a pet
+(within ten studs) to pick it up overhead. UNEQUIP stores it. Clicking a pet
 or the inventory button cannot bypass the pickup hold. Touch/gamepad use the
 same ProximityPrompt hold interaction.
 Locked pets support these actions. The developer's empty Studio memory profile
 receives one test pet; there is no production starter reward or hatch flow yet.
 
 CarryService keeps transient carry state separate from persisted placement.
-It prepares the hand model before removing a placed pet, checks server distance,
+It prepares the carried model before removing a placed pet, checks server distance,
 ownership, life/character state and requested floor coordinates, and uses
 PlacementService for the final transaction. Full Pens keep the pet held;
 death/respawn/leave clear only the held visual.
@@ -26,8 +26,8 @@ Input uses ViewportPointToRay to avoid GUI-inset offsets (see the
 
 CarryVerification runs with StudioTestService:ExecuteMultiplayerTestAsync(2,
 "CarryVerification") using memory data. It now exercises click positioning,
-pickup, boundary checks, v1 migration, memory saving and coordinate isolation.
-This updated suite has not run while Studio MCP is disconnected.
+pickup, above-head alignment, boundary checks, v1 migration, memory saving and
+coordinate isolation. All 34 checks pass after the overhead carry change.
 
 PlacementService owns placement mutations. Inventory records, PlacedPetIds,
 Placed and PlotSlot change together without yielding, with schema validation

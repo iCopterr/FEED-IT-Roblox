@@ -6,6 +6,22 @@
 
 **Last Updated:** 2026-09-24
 
+### Latest session — carry pets above the player
+
+- Changed pet carry presentation from the right hand to a centered overhead
+  pose. The pet bounding-box bottom is placed 0.35 studs above the head so all
+  species clear the avatar despite different model sizes. R6 and R15 both use
+  the standard Head part. Eggs intentionally retain their existing hand pose.
+- `CarryConfig.PetHeadClearance` centralizes the gap. Carry ownership, pickup,
+  placement, persistence, capacity and lifecycle behavior are unchanged.
+- PASS: Rojo build; diff check; all 34 two-player CarryVerification assertions,
+  including measured overhead clearance and horizontal centering. Studio pose
+  screenshots of Chicken and World Serpent were inspected; both were centered,
+  readable and clear of the avatar. Temporary review objects were removed.
+- Files: CarryConfig, CarryService, CarryVerification, placement documentation
+  and this handoff. Preserve unrelated untracked Kitsune reference recipe.
+  Session commit: `feat: carry pets above player heads`. No push.
+
 ### Latest session — store pet templates outside Workspace
 
 - Moved the Studio-owned 30-model template library from `Workspace.PetsModel`
@@ -1318,7 +1334,7 @@ Developer Product fulfillment remains deferred until product IDs exist.
 | Farm | ✅ Upgrades Server Verified | Ten levels with preserved custom prices; Money purchase and active-only output. Manual sign input/feel pending. |
 | Feed Plate Upgrades | ✅ Studio Verified | Six authored signs, ten saved levels, farm-matched prices and up to 45% relative explosion-risk reduction; 58 multiplayer checks pass. |
 | Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
-| Carry System | 🟦 Click Flow Implemented | Equip/unequip and hand-held models retained; hold-E replaced by click placement and nearby click pickup. Updated test pending. |
+| Carry System | ✅ Overhead Carry Verified | Equip/unequip and centered above-head models; click placement and nearby hold-E pickup. All 34 checks pass. |
 | Feeding Pedestal | ✅ Staging Server Verified | Six feed plates; carry/click placement and hold-E pickup. 23 multiplayer checks pass; Feed UI/RNG deferred. |
 | Feed UI | 🟦 Protection UI Implemented | Normal/Protected Feed, token count, exact risks, pickup and outcome banners. Protection visual review pending. |
 | Feed Transaction | ✅ Studio Verified | Food/token atomic mutation, authoritative outcomes, replay/save locks; expanded 113-check suite passes. |

@@ -29,6 +29,13 @@ local ok, failure = xpcall(function()
 	check(carry.Equip(a, pet.PetId) and carry.GetPetId(a) == pet.PetId, "Locked owned pet equipped")
 	local model = a.Character:FindFirstChild("HeldPet")
 	check(model and model:GetAttribute("PetId") == pet.PetId, "Held model retains pet identity")
+	local heldBounds, heldSize = model:GetBoundingBox()
+	local head = a.Character:FindFirstChild("Head")
+	local heldBottom = heldBounds.Position.Y - heldSize.Y / 2
+	local headTop = head.Position.Y + head.Size.Y / 2
+	check(heldBottom >= headTop + require(game.ReplicatedStorage.Shared.Config.CarryConfig).PetHeadClearance - 0.05
+		and (Vector2.new(heldBounds.Position.X, heldBounds.Position.Z) - Vector2.new(head.Position.X, head.Position.Z)).Magnitude < 0.05,
+		"Held pet is centered above the player's head")
 	for _, part in model:GetDescendants() do
 		if part:IsA("BasePart") then assert(not part.Anchored and not part.CanCollide and part.Massless and part:FindFirstChildOfClass("WeldConstraint")) end
 	end
