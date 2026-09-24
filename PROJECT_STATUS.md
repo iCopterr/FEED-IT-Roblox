@@ -6,7 +6,63 @@
 
 **Last Updated:** 2026-09-24
 
-### Latest session — Higgsfield Blender kitsune export
+### Latest session — six legendary pet art prototypes
+
+- Completed `Hydra_V1`, `Phoenix_V1`, `Kraken_V1`, `AncientWyvern_V1`,
+  `BoneDragon_V1`, `Behemoth_V1` in Workspace, using the sculpted lineup style.
+  Five independent Hydra heads/necks; Phoenix feather wings and flame train;
+  eight curled Kraken arms; two-legged Wyvern; exposed Bone Dragon ribs and
+  torn sails; armored Behemoth with sweeping tusks. No animations/gameplay
+  integration. Overall gameplay progress unchanged.
+- Individually inspected viewport screenshots. Refined Phoenix with broader
+  overlapping feathers, an undercoat and breast feathers; refined Kraken with
+  mantle ridges and brows; inspected both again. Existing Studio surface
+  styling changed during review and was preserved. Recipe uses smooth surfaces.
+  Also inspected opposite-side views of Hydra, Wyvern, Bone Dragon and Behemoth.
+- PASS final Edit rig checks: internal connections, unanchored parts,
+  Torso-only collision, aligned Motor6Ds, matching root size and Animator;
+  five Hydra heads and eight Kraken tentacle limbs confirmed.
+  Parts/motors/welds: Hydra 4105/16/4088, Phoenix 1252/7/1244,
+  Kraken 2724/9/2714, Wyvern 1683/8/1674, Bone 4979/10/4968,
+  Behemoth 2420/7/2412. High-detail art prototypes need consolidation before
+  mass spawning; runtime movement/standing not tested.
+- Display continues after Cerberus at X=374.449,392.449,410.449,428.449,
+  446.449,464.449; Z approximately 2.319. Existing off-island convention kept.
+  Studio-owned objects outside Rojo: save place to persist them.
+- Files: `docs/studio/build-legendary-six.luau`, this handoff. Duplicate guards
+  prevent recipe reruns over existing models. No active implementation remains;
+  next user art feedback or geometry consolidation when requested.
+- Prior trio recipe and handoff were implemented/verified but their commit
+  was blocked by automatic approval review due to a usage limit. Preserved
+  unrelated untracked Kitsune reference recipe.
+  Last working commit before this session: 69e3996. Commit includes this
+  session plus the previously verified trio recipe/handoff; no push.
+
+### Previous session — Manticore, Chimera and Cerberus
+
+- Completed three standalone Studio art prototypes in the sculpted lineup style:
+  `Manticore_V1` (lion mane, membrane wings, armored scorpion tail),
+  `Chimera_V1` (lion/dragon/goat heads, horns, wings), `Cerberus_V1`
+  (three wolf heads, layered armor, ember cheek/flank marks, spiked collars).
+  No animations or gameplay integration; overall gameplay progress unchanged.
+- Individually inspected all three viewport screenshots. Shifted Manticore's
+  tail outward with a connecting base and checked the rear view; added ember
+  cheek marks to Cerberus and inspected the opposite side. Chimera head spacing
+  reads distinctly. Final Edit rig checks passed for all three.
+- Parts/Motor6Ds/welds: Manticore 2108/9/2098; Chimera 3331/11/3319;
+  Cerberus 3107/9/3097. All internally connected and unanchored, aligned joints,
+  matching root size, Animator, Torso-only collision. Runtime not tested.
+- Created after Basilisk at 15-stud intervals. Manticore was moved during
+  review, final observed pivot (808.252,2.885,2.314); preserved. Chimera
+  (341.449,2.882,2.319), Cerberus (356.449,2.882,2.319).
+- High part counts remain art-prototype limitations before mass spawning.
+  Studio objects outside Rojo; save the place to persist. Recipe guards
+  duplicate names. Files: `docs/studio/build-mythic-trio.luau`, this handoff.
+- In progress: none. Next: user art feedback or next requested model.
+  Preserved unrelated Kitsune reference recipe. Session commit
+  `art: add manticore chimera and cerberus prototypes`; no push.
+
+### Previous session — Higgsfield Blender kitsune export
 
 - Current feature: standalone reference-inspired ivory/red nine-tailed fox;
   exported editable `docs/art/Crimson-Ivory-Kitsune.blend` (4,645,535 bytes).
