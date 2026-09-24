@@ -6,7 +6,26 @@
 
 **Last Updated:** 2026-09-24
 
-### Latest session — Minotaur art prototype
+### Latest session — Basilisk art prototype
+
+- Completed `Workspace.Basilisk_V1` beside Minotaur in the same sculpted
+  lineup style: emerald coil, raised neck, layered hood, gold crown/spines,
+  pale belly armor, amber slit eyes, fangs and forked tongue. No animations
+  or gameplay integration. Overall gameplay progress unchanged.
+- Inspected two viewport views. Revised open hood gaps with connecting panels,
+  added neck scales and increased belly-plate overlap; reviewed the result.
+- PASS final Edit checks: 3333 parts, 5 Motor6Ds, 3327 welds; all parts
+  internally connected and unanchored, Torso-only collision, matching root,
+  aligned joint positions/orientations and Animator. Pivot (311.449, 1.795,
+  2.320). Runtime standing/movement not tested; off-island display remains.
+- Art prototype part count requires consolidation before mass spawning.
+  Studio model is outside Rojo; save the place for persistence. Files modified:
+  `docs/studio/build-basilisk.luau` and this handoff. Recipe guards duplicates.
+- No active Basilisk implementation remains. Next: user art feedback or next
+  requested pet. Prior working commit 3dc74cd; no push. Existing untracked
+  `docs/art/` and Kitsune reference recipe preserved and excluded from commit.
+
+### Previous session — Minotaur art prototype
 
 - Completed `Workspace.Minotaur_V1` in the established sculpted pet style;
   user explicitly requested not to use the supplied reference. Broad bull
