@@ -6,6 +6,29 @@
 
 **Last Updated:** 2026-09-24
 
+### Latest session — Higgsfield Blender kitsune export
+
+- Current feature: standalone reference-inspired ivory/red nine-tailed fox;
+  exported editable `docs/art/Crimson-Ivory-Kitsune.blend` (4,645,535 bytes).
+  Overall gameplay progress unchanged; no Studio or gameplay objects modified.
+- Higgsfield project: https://higgsfield.ai/3d-jutsu/bc8f76b4-08ad-48a0-9e8b-730ac2d3cfba
+  Final committed scene revision 2. Source/revision recipes in
+  `docs/art/kitsune-higgsfield.py` and `kitsune-higgsfield-refine.py`.
+- Verified 178 character meshes, 16 posing bones, nine tails, finite geometry,
+  all vertices weighted. Initial clean-transform check passed. Rendered and
+  visually inspected both three-quarter sides; refined blunt tail tips and
+  buried chest fur. Inspection renders saved beside the Blender file.
+- Limitations: simplified stylized interpretation, rigid posing weights;
+  not production animation skinning. No Roblox import/Studio visual validation
+  or runtime test performed for this standalone Blender deliverable.
+- In progress: none. Next: owner art feedback; further sculpting, animation
+  skinning and Roblox import/validation if requested. Architecture unchanged.
+- Session handoff: exported via Higgsfield 3D Jutsu; local file size matches
+  committed artifact. First build lacked a World; first refinement copied
+  internal entity IDs; both resolved before final export. Preserve unrelated
+  `docs/studio/build-kitsune-reference.luau`. Prior working commit 3dc74cd;
+  session commit includes only this handoff and docs/art artifacts, no push.
+
 ### Latest session — Basilisk art prototype
 
 - Completed `Workspace.Basilisk_V1` beside Minotaur in the same sculpted
