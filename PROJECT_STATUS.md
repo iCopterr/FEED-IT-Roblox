@@ -6,9 +6,29 @@
 
 **Last Updated:** 2026-09-24
 
+### Latest session — store pet templates outside Workspace
+
+- Moved the Studio-owned 30-model template library from `Workspace.PetsModel`
+  to `ReplicatedStorage.PetsModel`. Templates no longer occupy the live world,
+  while both server cloning and client ViewportFrame previews retain access.
+- Updated the shared `PetModels` resolver, Studio installer and placement/feed
+  documentation for the new location. The installer also migrates an existing
+  Workspace folder and refuses duplicate folders.
+- PASS: Rojo build; diff check; Studio syntax analysis (0 errors across 90
+  scripts); fresh uncached resolver audit of all 30 configured species, model
+  names and `SpeciesId` attributes. Confirmed no `Workspace.PetsModel` remains.
+- Studio's two-player launcher entered a stale running state before creating a
+  server/client, so the full gameplay suites were not rerun. The prior 542
+  assertions remain the latest full run; the changed lookup was verified with
+  a fresh cloned ModuleScript in Edit mode. No runtime lookup blocker found.
+- Work complete. Preserve the unrelated untracked
+  `docs/studio/build-kitsune-reference.luau`. Save the Studio place because the
+  model library remains Studio-owned and outside Rojo. Session commit:
+  `refactor: store pet templates in ReplicatedStorage`. No push.
+
 ### Latest session — install all 30 named gameplay pet models
 
-- Moved the 30 reviewed loose art rigs into `Workspace.PetsModel` and renamed
+- Moved the 30 reviewed loose art rigs into `ReplicatedStorage.PetsModel` and renamed
   each model to its final display name. Added authoritative `SpeciesId`, `EggId`
   and `TemplateName` attributes. Stored templates are anchored, non-colliding,
   non-queryable and script-free; all original rig joints and geometry remain.

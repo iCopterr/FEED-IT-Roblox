@@ -35,7 +35,7 @@ and rollback. A valid visual is prepared before placement is committed. Repeated
 requests are idempotent. UIService validates caller state and throttles requests;
 clients cannot supply a plot, slot, pet definition, or economy value.
 
-Workspace.PetsModel contains the 30 named, editable pet art models. The folder
+ReplicatedStorage.PetsModel contains the 30 named, editable pet art models. The folder
 is Studio-owned so Rojo does not overwrite high-detail art; the editor recipes
 under docs/studio are the repository reconstruction source. PetConfig maps each
 stable SpeciesId to its exact TemplateName. Placement clones those authored

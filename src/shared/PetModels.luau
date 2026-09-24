@@ -1,11 +1,13 @@
 --!strict
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local PetConfig = require(script.Parent.Config.PetConfig)
 local PlacementConfig = require(script.Parent.Config.PlacementConfig)
 
 local PetModels = {}
 
 function PetModels.GetFolder(): Folder?
-	local folder = workspace:FindFirstChild(PlacementConfig.TemplateFolderName)
+	local folder = ReplicatedStorage:FindFirstChild(PlacementConfig.TemplateFolderName)
 	return if folder and folder:IsA("Folder") then folder else nil
 end
 

@@ -1,7 +1,9 @@
--- Moves the 30 reviewed loose art rigs into the gameplay template folder.
--- Safe to rerun after installation: it accepts either the original art name or
--- the final display name, validates every model, then reapplies template state.
+-- Moves the 30 reviewed art rigs into ReplicatedStorage.PetsModel.
+-- Safe to rerun or use for migration: it accepts a legacy Workspace folder,
+-- original loose art names or final display names, then reapplies template state.
 assert(game:GetService("RunService"):IsEdit(), "Edit mode required")
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local mappings = {
 	{"Chicken_RigTest", "Chicken", "test_common", "prototype_egg"},
@@ -36,13 +38,17 @@ local mappings = {
 	{"WorldSerpent_V1", "World Serpent", "supreme_pet_6", "supreme_egg"},
 }
 
-local folder = workspace:FindFirstChild("PetsModel")
+local workspaceFolder = workspace:FindFirstChild("PetsModel")
+local replicatedFolder = ReplicatedStorage:FindFirstChild("PetsModel")
+assert(not (workspaceFolder and replicatedFolder), "Duplicate PetsModel folders")
+local folder = replicatedFolder or workspaceFolder
 if not folder then
 	folder = Instance.new("Folder")
 	folder.Name = "PetsModel"
-	folder.Parent = workspace
+	folder.Parent = ReplicatedStorage
 end
-assert(folder:IsA("Folder"), "Workspace.PetsModel must be a Folder")
+assert(folder:IsA("Folder"), "ReplicatedStorage.PetsModel must be a Folder")
+folder.Parent = ReplicatedStorage
 
 for _, row in mappings do
 	local sourceName, templateName, speciesId, eggId = table.unpack(row)
@@ -73,4 +79,4 @@ folder:SetAttribute("StudioOwned", true)
 folder:SetAttribute("TemplateCount", #mappings)
 assert(#folder:GetChildren() == #mappings, "PetsModel contains unexpected children")
 game:GetService("Selection"):Set({folder})
-print("Installed", #mappings, "pet models in Workspace.PetsModel")
+print("Installed", #mappings, "pet models in ReplicatedStorage.PetsModel")
