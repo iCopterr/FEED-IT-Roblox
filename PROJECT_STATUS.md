@@ -6,7 +6,32 @@
 
 **Last Updated:** 2026-09-24
 
-### Latest session — sculpted nine-tailed Kitsune
+### Latest session — Minotaur art prototype
+
+- Completed `Workspace.Minotaur_V1` in the established sculpted pet style;
+  user explicitly requested not to use the supplied reference. Broad bull
+  head, curved ivory horns, gold nose ring/cuffs, layered dark mane, heavy
+  arms, metal bracers, belt/loin guard and cloven hooves. No animation or
+  gameplay integration. Gameplay progress unchanged.
+- Created 15 studs beyond Kitsune. Studio was subsequently rearranged during
+  review; final observed pivot (298.449, 4.741, 2.320), preserved.
+- Reviewed two viewport screenshots; moved buried pectoral/abdominal details
+  forward and reviewed again. Studio surface styling changed during review;
+  preserved the current appearance. Recipe generates smooth sculpted surfaces.
+- PASS final Edit verification: 3105 parts, 7 Motor6Ds, 3097 welds;
+  internally connected, unanchored, Torso-only collision, aligned joint
+  positions/orientations, matching root and Animator. Runtime not tested.
+  High part count remains an art-prototype limitation before mass spawning.
+- Files modified: `docs/studio/build-minotaur.luau` and this handoff.
+  Next: user visual feedback / requested next model. No active Minotaur work.
+  Studio model is outside Rojo; save the place to persist it. Recipe guards
+  against duplicate creation. Prior working commit cb25635; no push.
+- Previous Kitsune revision was interrupted by the new Minotaur request.
+  V3 was created and initially viewed but not fully refined/verified. The
+  latest Studio scan found V2 back in Workspace and no V3. Preserved existing
+  untracked `docs/studio/build-kitsune-reference.luau`; excluded from this commit.
+
+### Previous session — sculpted nine-tailed Kitsune
 
 - Completed `Workspace.Kitsune_V2` at (283.45, 2.876, 74), beside the
   sculpted pet display row. Ivory tapered body, pointed ears, layered cheek
