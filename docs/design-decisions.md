@@ -41,13 +41,16 @@ Farm, Protection, currency and permanent-loss rules in GDD v0.5.
 
 ## Test data
 
-- DataConfig.MemoryOnly=true disables remote DataStore access in every environment.
-  Data lasts only within the running server; a new Play/server starts fresh.
-- Save/lease infrastructure is retained for later, not deleted. No remote data
-  was erased. Same-server reconnect uses its original recovery timestamp.
+- Published servers now use the production DataStore. Studio remains isolated
+  process memory by default, so a new ordinary Play session starts fresh and
+  cannot read or overwrite live player records. A separate Studio store exists
+  for explicit future persistent-data tests only.
+- Save/load uses versioned records, validated migrations, bounded retry/backoff,
+  autosave, shutdown saves and per-player session leases. Same-server reconnect
+  preserves its original recovery timestamp.
 - Schema v9 adds Foods for special servings; Food holds Basic servings. Old token
-  and farm fields are inactive compatibility data. Do not enable production saves
-  until the new economy and migration policy have been reviewed.
+  and farm fields are inactive compatibility data. The current migration policy
+  was reviewed before production persistence was enabled on 2026-09-25.
 
 ## Verification
 

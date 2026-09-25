@@ -24,8 +24,8 @@ Intentionally retained:
 - Schema v9 legacy fields and defaults: FarmLevel, FarmPower, FeedPlateLevel,
   Tokens and ProtectionTokens. They keep old data readable and have no active
   gameplay effect. Currency validation caps now live inside PlayerDataSchema.
-- DataService/DataStoreAdapter: current memory-mode transactions and save tests
-  depend on these, even while live DataStore use is disabled.
+- DataService/DataStoreAdapter: published servers use these for persistent player
+  records; ordinary Studio tests use their isolated in-process memory mode.
 - Plot capacity upgrades, food risk reductions, pedestal, timed Rescue,
   wandering, egg templates, and Studio art recipes are still used or retained
   project assets. No world art or player data was deleted.

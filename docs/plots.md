@@ -39,7 +39,8 @@ restores the appropriate appearance before placement validation.
 Pet/egg PenPosition coordinates use the original authored floor origin, not
 the shifting center of the resized floor. Old saves remain compatible and
 upgrades do not move existing placements. Bounds checks use the resized floor.
-MemoryOnly remains enabled: progress lasts only this server.
+Published servers persist plot capacity and player progress. Ordinary Studio
+playtests remain isolated in process memory.
 
 Static assets: PlayerPlots.rbxmx, PlotUpgradeSigns.rbxmx, SkyIsland.rbxmx.
 Export Studio edits back to these files before resync; Rojo is not reverse sync.

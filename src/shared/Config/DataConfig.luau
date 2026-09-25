@@ -1,8 +1,9 @@
 --!strict
 
 local DataConfig = {
-	-- Prototype playtests never read or write remote player data.
-	MemoryOnly = true,
+	-- Published servers persist player records. Studio remains memory-only by
+	-- default below, so ordinary playtests can never overwrite live data.
+	MemoryOnly = false,
 	ProductionDataStoreName = "FeedYourPet_PlayerData_v1",
 	StudioDataStoreName = "FeedYourPet_StudioPlayerData_v1",
 	PlayerKeyPrefix = "Player_",

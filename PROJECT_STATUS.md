@@ -6,6 +6,30 @@
 
 **Last Updated:** 2026-09-25
 
+### Latest session — enable production player persistence
+
+- Enabled the existing versioned DataService for published servers. Ordinary
+  Studio sessions remain isolated in process memory; the separate Studio store
+  stays opt-in and cannot address the production store name.
+- Current schema v9 persists Money, all Food types, plot capacity, merchant
+  purchase markers, unique pets and variants, locks, Feed levels, exact Pen
+  positions, incubating eggs/timers, collection/statistics/settings and pending
+  Rescue state. Retired Farm/Token/Protection fields remain compatibility-only.
+- Production writes use the existing atomic UpdateAsync record envelope with
+  migration/validation, bounded retry/backoff and jitter, per-player session
+  leases, stale-lock takeover, 60-second autosave, PlayerRemoving release and
+  concurrent BindToClose saves. Unknown release outcomes are idempotent.
+- Added opt-in DataPersistenceVerification coverage for environment isolation,
+  current payload validation, explicit saves, record/session metadata, currency,
+  typed food, capacity, settings/statistics round trips, copy isolation,
+  cancelled updates and DataStore serialization.
+- PASS: Rojo build, diff check, zero syntax errors across all 43 server scripts
+  and all 19 DataPersistenceVerification assertions. The Rojo Studio client had
+  disconnected, so the exact filesystem sources were mirrored through MCP only
+  for this test; reconnect Rojo before further source work. No live record was
+  touched. Published-server rejoin/cross-server lease testing remains a deployment
+  check because ordinary Studio tests intentionally use memory.
+
 ### Latest session — restore previous island and merchant
 
 - Reverted the `3fdff8f` island/merchant art pass at the owner's request.
@@ -1526,9 +1550,9 @@ are retired. Next: full manual core-loop playtesting and balance iteration.
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | ✅ Prototype Implemented | Modular data, pet, plot, egg, merchant, placement, money and Feed services are active. |
-| Player Data Schema | ✅ v8 Studio Verified | Versioned data preserves pet/egg/food/merchant state; retired fields remain compatibility-only. |
+| Player Data Schema | ✅ v9 Studio Verified | Versioned data preserves pet/egg/food/merchant state; retired fields remain compatibility-only. |
 | Mystery Merchant | ✅ Server Verified | Basic plus two weighted special foods every 5 minutes; Money purchases and personal stock limits verified. Basic allows five bundle purchases per restock. |
-| DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
+| DataService | ✅ Production Enabled | Versioned UpdateAsync persistence, retries, autosave, shutdown saves and session leases implemented; live published-server rejoin remains a deployment check. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each; floating owner badges. All 25 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ✅ Carry/Place Studio Verified | Buy/hold/click Pen starts timer; E hatch returns pet to player. 64 automated checks plus developer playtest. |
 | Egg Conveyor | ✅ Server Verified | Eggs replace direct pets; owner inventory slot, range/price validation, offer races/expiry tested. Existing static conveyor retained. |
@@ -1714,8 +1738,9 @@ retaining the separately committed realistic lighting pass.
 - Fresh Play-session verification of HUD startup and visible one-second payout
   updates after the latest UI recovery fix; no server economy changes this session.
 
-- Production DataStore persistence and cross-server session behavior still need
-  an end-to-end test in a published test server or Studio with API access enabled.
+- Production DataStore persistence is enabled. Rejoin and cross-server session
+  behavior still need an end-to-end test in a published test server or Studio
+  using the isolated Studio store with API access enabled.
 - Data schema migrations beyond v1 will be added only when the schema version changes.
 - PetService creation, unique IDs, snapshot isolation, lock/unlock and removal
   passed 15 real Studio server integration checks through MCP.
