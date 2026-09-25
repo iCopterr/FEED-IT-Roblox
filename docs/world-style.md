@@ -24,19 +24,3 @@ every capacity expansion from five through ten slots.
 
 Global light, shadow and post-processing settings are documented separately in
 `docs/lighting.md`.
-
-## Environment depth
-
-`Workspace.WorldDecor` is a separate Rojo-authored world asset. It adds the
-non-gameplay terrain silhouette without changing plot, conveyor or placement
-geometry:
-
-- three descending island-core layers and four darker cliff faces;
-- three underside rock masses and six distant floating rocks;
-- six perimeter tree clusters kept outside the player plots;
-- two merchant-side garden beds and four shrubs.
-
-The cliff and floating-rock shapes are decorative, while the outer tree trunks
-and garden beds are the only new collidable dressing. All foliage remains
-non-colliding. The decor uses authored Parts rather than a runtime map generator,
-so Rojo reconnects reproduce the same scene.

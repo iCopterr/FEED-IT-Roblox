@@ -19,17 +19,3 @@ restock ID, sequence and transaction lock. Per-restock purchase markers use the
 existing boolean save map, so no data-version migration is needed. Replays do
 not charge twice. FoodShopVerification covers all food definitions, Basic's
 five-purchase limit, special limits, feeding and client startup.
-
-## World presentation
-
-The merchant is an authored market landmark rather than the earlier box stall.
-Its 42-by-30-stud platform keeps the original `InteractionPoint` at
-`(0, 0.4, 147.5)`, so proximity, travel and purchase validation are unchanged.
-The structure includes a stepped purple-and-gold canopy, open counter, corner
-posts, display shelves, six colored food props and adjacent garden beds.
-
-`SellerRig` is a large R6-style NPC rig with a Humanoid, Animator, anchored
-HumanoidRootPart, six Motor6D body joints, apron and hat welds. It is ready for a
-future idle animation without converting the merchant into runtime-generated
-geometry. The existing merchant SurfaceGui hierarchy and screen UI assets were
-not changed during this world-art pass.
