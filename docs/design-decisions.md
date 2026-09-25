@@ -25,7 +25,7 @@ Farm, Protection, currency and permanent-loss rules in GDD v0.5.
 - Money is the only shop currency. Token drops, Token HUD and consumable
   Protection actions are removed from active gameplay. Legacy save fields remain
   readable; retired configs, modules and sign assets were deleted on 2026-09-23.
-- Restock every 30 minutes: Basic is always offered with five personal purchases;
+- Restock every 5 minutes: Basic is always offered with five personal purchases;
   two weighted distinct special offers are each purchasable once per player per
   restock. One player's purchases never empty another player's stock.
 - One serving per Feed. Standard relative-risk tiers are Basic 0%, Fresh 8%,

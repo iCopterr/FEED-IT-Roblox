@@ -41,6 +41,7 @@ local ok,failure=xpcall(function()
 	profile.Money=1e9
 	local restock=MerchantConfig.GetRestockId(os.time())
 	local stock=MerchantConfig.GetStock(restock)
+	check(MerchantConfig.RestockSeconds==5*60,"Merchant restocks every five minutes")
 	check(stock[1]=="basic" and stock[2]~=stock[3],"Basic plus two distinct special offers")
 	check(#Food.Order==7 and Food.Types.fresh.Reduction==.08 and Food.Types.fortified.Reduction==.22
 		and Food.Types.enchanted.Reduction==.38,"Seven ordered food types use configured risk tiers")

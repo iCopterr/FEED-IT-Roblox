@@ -1,7 +1,7 @@
 # Money food merchant
 
 Hold E at the merchant interaction pad to browse food. Stock refreshes on shared
-30-minute boundaries. Basic Food is always offered but is no longer infinite:
+5-minute boundaries. Basic Food is always offered but is no longer infinite:
 each player can buy its five-serving bundle at most five times per restock. Two
 distinct special food offers can each be purchased once per player per restock.
 

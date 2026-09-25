@@ -7,7 +7,7 @@ for id, food in Food.Types do
 		Price=food.Price, Weight=food.Weight, RewardType="Food", Amount=food.Amount, StockLimit=food.StockLimit})
 end
 local Config = {
-	RestockSeconds=30*60, StockSlots=3, RequestCooldown=.25, PurchaseDistance=14, SaveRetrySeconds=5,
+	RestockSeconds=5*60, StockSlots=3, RequestCooldown=.25, PurchaseDistance=14, SaveRetrySeconds=5,
 	ItemOrder=Food.Order,
 	Items=table.freeze(items),
 }

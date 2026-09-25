@@ -6,6 +6,16 @@
 
 **Last Updated:** 2026-09-25
 
+### Latest session — five-minute food restocks
+
+- Changed the Money food merchant from shared 30-minute restocks to shared
+  5-minute restocks. Offer selection, personal limits and prices are unchanged.
+- Added an explicit five-minute interval assertion to FoodShopVerification and
+  updated the current merchant/design documentation. No save migration is needed;
+  purchase markers already key themselves to the computed restock epoch.
+- PASS: Rojo build, `git diff --check`, synchronized Studio source, zero
+  diagnostics across 90 scripts and all 50 two-player FoodShop/UI assertions.
+
 ### Latest session — expanded merchant food stock
 
 - Expanded the standard FoodConfig lineup from four to seven configurable
@@ -14,7 +24,7 @@
   weighted merchant odds; special effects remain deliberately deferred.
 - Basic Food is no longer infinite. It remains the guaranteed first merchant
   offer, but each player may buy its five-serving bundle only five times per
-  30-minute restock (25 Basic servings maximum). The two rotating special offers
+  5-minute restock (25 Basic servings maximum). The two rotating special offers
   remain limited to one purchase each per player. Stock is personal, not global.
 - MerchantService authoritatively counts saved purchase markers, reports exact
   remaining stock, rejects a sixth Basic purchase and preserves request replay
@@ -1136,7 +1146,8 @@
   players/refunds; remote DataStore access disabled with DataConfig.MemoryOnly.
   Existing save infrastructure retained; no remote data deleted.
 - Implemented Money merchant: Basic always available; two distinct weighted
-  special offers every 30 minutes, one purchase per player/offer. FoodConfig owns
+  special offers originally every 30 minutes (superseded by 5 minutes on
+  2026-09-25), one purchase per player/offer. FoodConfig owns
   prices, quantities and 0/15/30/45% relative risk reductions; one serving per Feed.
 - Feed validates selected food server-side and multiplies its reduction with plate
   upgrades. Existing RNG order/critical cap unchanged. Old ProtectedFeed rejected.
@@ -1415,7 +1426,7 @@ are retired. Next: full manual core-loop playtesting and balance iteration.
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | ✅ Prototype Implemented | Modular data, pet, plot, egg, merchant, placement, money and Feed services are active. |
 | Player Data Schema | ✅ v8 Studio Verified | Versioned data preserves pet/egg/food/merchant state; retired fields remain compatibility-only. |
-| Mystery Merchant | ✅ Server Verified | Basic plus two weighted special foods every 30 minutes; Money purchases and personal stock limits verified. Basic allows five bundle purchases per restock. |
+| Mystery Merchant | ✅ Server Verified | Basic plus two weighted special foods every 5 minutes; Money purchases and personal stock limits verified. Basic allows five bundle purchases per restock. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ✅ Carry/Place Studio Verified | Buy/hold/click Pen starts timer; E hatch returns pet to player. 64 automated checks plus developer playtest. |
