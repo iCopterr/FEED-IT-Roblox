@@ -6,6 +6,26 @@
 
 **Last Updated:** 2026-09-25
 
+### Latest session — remote Equip Best
+
+- Added an authored `EQUIP BEST` button to the right-side Pets ScreenGui. The
+  existing side-panel tween/button styling is reused; the action is hidden in
+  the Growing Eggs view and does not create UI at runtime.
+- Added a server-authoritative Pen optimizer ranked by actual current pet income
+  (base x Feed x Variant). It fills only unlocked capacity, keeps winning placed
+  pets at their manually chosen positions, returns weaker pets to inventory and
+  uses free slot markers only for newly placed winners. Locked pets remain valid.
+- Carried and Feed-plate pets are excluded. New visuals are preflighted before
+  mutation, player-data shape is revalidated, failures roll back, and repeated
+  requests are idempotent without changing PetIds.
+- Added two-player Inventory verification coverage for ranking, exact capacity,
+  manual-position retention, lock behavior, carried/plate exclusions, map/data
+  synchronization and replay. Client coverage checks the authored ScreenGui
+  control. Rojo build, RBXMX parse and `git diff --check` pass.
+- Runtime verification and visual click review were not run because Roblox MCP
+  currently reports no connected Studio instance. Preserve the unrelated
+  untracked Kitsune reference recipe. Session commit: `feat: add remote equip best`.
+
 ### Latest session — lightweight carry physics and stronger growth
 
 - Held pet clones now remove their unused Humanoid and use one root
@@ -1366,7 +1386,7 @@ Developer Product fulfillment remains deferred until product IDs exist.
 | Egg System | ✅ Carry/Place Studio Verified | Buy/hold/click Pen starts timer; E hatch returns pet to player. 64 automated checks plus developer playtest. |
 | Egg Conveyor | ✅ Server Verified | Eggs replace direct pets; owner inventory slot, range/price validation, offer races/expiry tested. Existing static conveyor retained. |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
-| Inventory / Hotbar | ✅ Studio Verified | Authored pet/egg collection, previews/search/sort/lock/equip, six translucent quick slots. Two-player server/client checks pass; physical device comfort pending. |
+| Inventory / Hotbar | 🟦 Remote Equip Best Implemented | Authored collection/hotbar plus server-authoritative best-income Pen optimizer. New runtime suite awaits a connected Studio instance. |
 | HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
 | Number Formatting | ✅ Studio Verified | Shared K/M/B/T amounts across UI/world labels; 44 formatter/parser/sign checks pass. |
 | Pet Placement | 🟦 Free Position Implemented | Click/tap inside own Pen, exact local coordinates, five-pet cap and click pickup; build passes, Studio test pending. |
@@ -1393,11 +1413,14 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Authored inventory and translucent black hotbar
+**Current Feature:** Remote Pen management — Equip Best
 
-**Status:** Inventory/hotbar implemented and synchronized. Focused two-player server/client verification passes, including previews, public egg data, equip/lock and responsive layout. Manual device comfort remains. Merchant remains committed and verified.
+**Status:** Implemented in the authored side-panel ScreenGui and authoritative
+PlacementService. Rojo/static checks pass; the expanded two-player runtime suite
+and physical button review await a connected Studio instance.
 
-**Objective:** Make owned pets/eggs easy to inspect, find, hold and access through quick slots.
+**Objective:** Let players remotely fill their unlocked Pen with the strongest
+available income roster without moving active carry/Feed interactions.
 
 ## 4. Completed
 

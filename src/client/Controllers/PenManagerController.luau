@@ -21,9 +21,12 @@ function Controller.Start()
 	local revision=0
 	local refresh
 	local messages={Busy="Please wait…",Cooldown="Please try again.",NotReady="Egg is still growing.",
-		Unavailable="Already collected or unavailable.",CharacterUnavailable="Wait for your character."}
+		Unavailable="Already collected or unavailable.",CharacterUnavailable="Wait for your character.",
+		Loading="Your pen is still loading.",PlacementFailed="Could not update your pen.",
+		TemplateUnavailable="A pet model is unavailable."}
 	Motion.BindPopup(panel,{FromRight=true})
 	Motion.BindButton(panel.Close,panel)
+	Motion.BindButton(panel.EquipBest,panel)
 	for _,button in {gui.Dock.Eggs,gui.Dock.Pets} do Motion.BindButton(button,gui.Dock) end
 	local function render(snapshot)
 		local list={}
@@ -45,6 +48,9 @@ function Controller.Start()
 		end
 		table.sort(list,function(a,b) if a.Name==b.Name then return a.Id<b.Id end;return a.Name<b.Name end)
 		panel.Title.Text=if mode=="Eggs" then "GROWING EGGS • "..#list else string.format("PETS • %d / %d",snapshot.PlacedCount,snapshot.MaxPetSlots)
+		panel.EquipBest.Visible=mode=="Pets"
+		panel.EquipBest.Active=mode=="Pets" and not busy and not snapshot.Busy
+		panel.EquipBest.BackgroundColor3=if panel.EquipBest.Active then Color3.fromRGB(78,227,51) else Color3.fromRGB(90,94,108)
 		local shown={}
 		for index,entry in list do
 			local key=mode..":"..entry.Id;shown[key]=true
@@ -98,10 +104,27 @@ function Controller.Start()
 			end
 		end
 		panel.Title.Text=if mode=="Pets" then "PLACED PETS" else "GROWING EGGS"
+		panel.EquipBest.Visible=mode=="Pets"
 		panel.Status.Text="Loading…";panel.Visible=true;task.spawn(refresh)
 	end
 	gui.Dock.Eggs.Activated:Connect(function() open("Eggs") end)
 	gui.Dock.Pets.Activated:Connect(function() open("Pets") end)
+	panel.EquipBest.Activated:Connect(function()
+		if busy or mode~="Pets" or not panel.EquipBest.Active then return end
+		busy=true;revision+=1;panel.Status.Text="Finding your best pets…"
+		panel.EquipBest.Active=false
+		for _,row in rows do row.Action.Active=false end
+		local ok,result=pcall(function() return request:InvokeServer("EquipBest") end)
+		busy=false
+		if ok and result.Ok then
+			panel.Status.Text=if result.Code=="NoChange" then "Your best pets are already active"
+				elseif result.Code=="NoAvailablePets" then "No available pets to equip"
+				else "Best pets equipped"
+		else
+			panel.Status.Text=if ok then messages[result.Code] or "Unable to equip pets." else "Connection interrupted."
+		end
+		task.delay(.3,refresh)
+	end)
 	panel.Close.Activated:Connect(function() Motion.Close(panel) end)
 	for _,name in {"FeedYourPetUI","MerchantUI","ReviveUI","DebugUI"} do
 		task.spawn(function()

@@ -2,6 +2,7 @@
 local Players = game:GetService("Players")
 local Config = require(game:GetService("ReplicatedStorage").Shared.Config.PlacementConfig)
 local PetModels = require(game:GetService("ReplicatedStorage").Shared.PetModels)
+local PetIncome = require(game:GetService("ReplicatedStorage").Shared.PetIncome)
 local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
@@ -227,6 +228,124 @@ function PlacementService.PickupPet(player: Player, petId: string): (boolean, st
 	end
 	changed:Fire(player, petId, false)
 	return true, nil
+end
+
+-- Rebuild the active roster from authoritative income. Pets already selected
+-- keep their hand-placed positions; only newly selected pets use free slot
+-- markers. Transiently carried or staged pets are supplied as exclusions by
+-- UIService so this remote convenience action cannot steal them from the
+-- player's current interaction.
+function PlacementService.EquipBest(player: Player, excluded: {[string]: boolean}?): (boolean, string?, number?)
+	if require(script.Parent.FeedLocks).IsLocked(player) then return false, "Busy" end
+	if player.Parent ~= Players then return false, "Loading" end
+	local data = DataService.GetData(player)
+	local plot = PlotService.GetPlot(player)
+	if not data or not plot then return false, "Loading" end
+	if not Schema.Validate(data) then return false, "InvalidData" end
+
+	local candidates: {PetData} = {}
+	for id, pet in data.Inventory do
+		-- An already placed pet always remains eligible. This makes the operation
+		-- resilient if a transient exclusion changes immediately before the call.
+		if pet.Placed or not (excluded and excluded[id]) then table.insert(candidates, pet) end
+	end
+	if #candidates == 0 then return true, "NoAvailablePets", 0 end
+	table.sort(candidates, function(a, b)
+		local aIncome, bIncome = PetIncome(a), PetIncome(b)
+		if aIncome ~= bIncome then return aIncome > bIncome end
+		if a.FeedLevel ~= b.FeedLevel then return a.FeedLevel > b.FeedLevel end
+		if a.CreatedAt ~= b.CreatedAt then return a.CreatedAt < b.CreatedAt end
+		return a.PetId < b.PetId
+	end)
+
+	local winners: {[string]: boolean} = {}
+	local capacity = PlotService.GetSlotCapacity(player)
+	for index = 1, math.min(capacity, #candidates) do winners[candidates[index].PetId] = true end
+
+	local retainedSlots: {[number]: boolean} = {}
+	local added, removed = {}, {}
+	for id in data.PlacedPetIds do
+		if winners[id] then
+			local slot = data.Inventory[id].PlotSlot
+			if slot then retainedSlots[slot] = true end
+		else
+			table.insert(removed, id)
+		end
+	end
+	for id in winners do if not data.PlacedPetIds[id] then table.insert(added, id) end end
+	if #added == 0 and #removed == 0 then return true, "NoChange", 0 end
+
+	table.sort(added, function(a, b)
+		local aPet, bPet = data.Inventory[a], data.Inventory[b]
+		local aIncome, bIncome = PetIncome(aPet), PetIncome(bPet)
+		if aIncome ~= bIncome then return aIncome > bIncome end
+		return a < b
+	end)
+	local assigned: {[string]: number} = {}
+	local nextSlot = 1
+	for _, id in added do
+		while retainedSlots[nextSlot] do nextSlot += 1 end
+		if nextSlot > capacity then return false, "PenFull" end
+		assigned[id] = nextSlot
+		retainedSlots[nextSlot] = true
+	end
+
+	-- Prepare every new visual before touching player data. A missing template
+	-- therefore leaves the previous roster completely intact.
+	local prepared: {[string]: Model} = {}
+	for _, id in added do
+		local slot = PlotService.GetSlotCFrame(player, assigned[id])
+		if not slot then
+			for _, model in prepared do model:Destroy() end
+			return false, "InvalidSlot"
+		end
+		local model, reason = prepareVisual(player, data.Inventory[id], slot)
+		if not model then
+			for _, other in prepared do other:Destroy() end
+			return false, reason
+		end
+		prepared[id] = model
+	end
+
+	local beforePlaced = table.clone(data.PlacedPetIds)
+	local before: {[string]: {Placed: boolean, PlotSlot: number?, PenPosition: {X: number, Z: number}?}} = {}
+	for id, pet in data.Inventory do
+		before[id] = {Placed=pet.Placed, PlotSlot=pet.PlotSlot,
+			PenPosition=if pet.PenPosition then table.clone(pet.PenPosition) else nil}
+		if winners[id] then
+			if not pet.Placed then
+				pet.Placed, pet.PlotSlot, pet.PenPosition = true, assigned[id], nil
+			end
+			data.PlacedPetIds[id] = true
+		elseif pet.Placed then
+			pet.Placed, pet.PlotSlot, pet.PenPosition = false, nil, nil
+			data.PlacedPetIds[id] = nil
+		end
+	end
+
+	local function rollback()
+		data.PlacedPetIds = table.clone(beforePlaced)
+		for id, saved in before do
+			local pet = data.Inventory[id]
+			pet.Placed, pet.PlotSlot = saved.Placed, saved.PlotSlot
+			pet.PenPosition = if saved.PenPosition then table.clone(saved.PenPosition) else nil
+		end
+		for _, model in prepared do model:Destroy() end
+		PlacementService.Reconcile(player)
+	end
+	if not Schema.Validate(data) then rollback(); return false, "PlacementFailed" end
+
+	local installed = pcall(function()
+		local state = states[player]
+		for _, id in removed do
+			if state and state.Pets[id] then state.Pets[id]:Destroy(); state.Pets[id] = nil end
+		end
+		for _, id in added do install(player, plot, data.Inventory[id], prepared[id]) end
+	end)
+	if not installed then rollback(); return false, "PlacementFailed" end
+	for _, id in removed do changed:Fire(player, id, false) end
+	for _, id in added do changed:Fire(player, id, true) end
+	return true, "Equipped", #added
 end
 
 function PlacementService.Start()

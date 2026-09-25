@@ -20,6 +20,8 @@ local ok,failure=xpcall(function()
 	local manager=assert(game.Players.LocalPlayer.PlayerGui:WaitForChild("PenManagerUI",10),"Authored pen manager missing")
 	check(manager:IsA("ScreenGui") and manager.Dock.Eggs:IsA("GuiButton") and manager.Dock.Pets:IsA("GuiButton"),"Right-side ScreenGui buttons authored")
 	check(manager.Panel.List:IsA("ScrollingFrame") and manager.Panel.List.RowTemplate.Preview:IsA("ViewportFrame"),"Scrolling manager row and model preview authored")
+	check(manager.Panel.EquipBest:IsA("GuiButton") and manager.Panel.EquipBest.Label.Text=="EQUIP BEST"
+		and not manager.Panel.EquipBest.Selectable,"Authored remote Equip Best button uses the panel style")
 	local motion=require(script.Parent.UI.Motion)
 	local probe=manager.Panel:Clone();probe.Visible=false;probe.Parent=manager
 	local home=probe.Position

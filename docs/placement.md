@@ -14,6 +14,16 @@ Humanoid, so even a grown pet cannot alter player WalkSpeed or assembly mass.
 Locked pets support these actions. The developer's empty Studio memory profile
 receives one test pet; there is no production starter reward or hatch flow yet.
 
+The right-side Pets ScreenGui also has an **EQUIP BEST** convenience action.
+The server ranks the player's available pets by their real current income
+(base income, Feed multiplier and Variant multiplier), fills only the unlocked
+Pen capacity and returns weaker active pets to inventory. Winning pets already
+in the Pen retain their exact chosen position. Newly activated pets use free
+slot markers. A pet currently carried overhead or staged on the Feed plate is
+excluded, and repeating the action does not change identity or duplicate pets.
+All replacement visuals are prepared before the authoritative roster changes;
+validation or installation failure rolls the transaction back.
+
 CarryService keeps transient carry state separate from persisted placement.
 It prepares the carried model before removing a placed pet, checks server distance,
 ownership, life/character state and requested floor coordinates, and uses
@@ -86,3 +96,6 @@ validation/throttling, departure cleanup and plot reuse.
 
 Published DataStore rejoin/cross-server tests and actual button input on
 touch/gamepad remain separate checks. No production data is modified by tests.
+InventoryVerification additionally covers remote Equip Best income ordering,
+capacity, retained manual position, lock compatibility, transient carry/plate
+exclusions and idempotence.

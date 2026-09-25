@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(script.Parent.DataService)
 local PetService = require(script.Parent.PetService)
 local CarryService = require(script.Parent.CarryService)
+local PlacementService = require(script.Parent.PlacementService)
 local MoneyService = require(script.Parent.MoneyService)
 local PedestalService = require(script.Parent.PedestalService)
 local Config = require(ReplicatedStorage.Shared.Config.UIConfig)
@@ -31,6 +32,16 @@ function UIService.HandleRequest(player, action, petId, locked)
 		local ok = PetService.SetLocked(player, petId, locked)
 		return { Ok = ok, Code = if ok then "Updated" else "Rejected" }
 	elseif action ~= "Snapshot" then
+		if action == "EquipBest" then
+			if Locks.IsLocked(player) then return {Ok=false, Code="Busy"} end
+			local excluded = {}
+			local carriedId = CarryService.GetPetId(player)
+			local plateId = PedestalService.GetPetId(player)
+			if carriedId then excluded[carriedId] = true end
+			if plateId then excluded[plateId] = true end
+			local ok, code, equipped = PlacementService.EquipBest(player, excluded)
+			return {Ok=ok, Code=code, Equipped=equipped or 0}
+		end
 		if action=="PickupRemote" then
 			if type(petId)~="string" or #petId==0 or #petId>64 then return {Ok=false,Code="InvalidRequest"} end
 			if Locks.IsLocked(player) then return {Ok=false,Code="Busy"} end
@@ -38,7 +49,7 @@ function UIService.HandleRequest(player, action, petId, locked)
 			if not pet or not pet.Placed then return {Ok=false,Code="Unavailable"} end
 			local humanoid=player.Character and player.Character:FindFirstChildOfClass("Humanoid")
 			if not humanoid or humanoid.Health<=0 then return {Ok=false,Code="CharacterUnavailable"} end
-			local ok,code=require(script.Parent.PlacementService).PickupPet(player,petId)
+			local ok,code=PlacementService.PickupPet(player,petId)
 			return {Ok=ok,Code=if ok then "PickedUp" else code}
 		end
 		if action == "PlaceHeldPet" then

@@ -72,6 +72,40 @@ local ok,failure=xpcall(function()
 	check(action("PickupRemote",own.PetId).Ok and not profile.Inventory[own.PetId].Placed,"Remote pickup works away from pen")
 	task.wait(.3)
 	check(not action("PickupRemote",own.PetId).Ok,"Remote pickup replay cannot duplicate")
+	profile.Inventory[own.PetId].FeedLevel=0
+	profile.Inventory[own.PetId].BaseIncome=1
+	local ranked={}
+	for index=1,7 do
+		local pet=assert(pets.CreatePet(a,"test_common"))
+		pet.BaseIncome=index*10
+		ranked[index]=pet
+	end
+	ranked[6].Locked=true
+	assert(placement.PlacePet(a,ranked[1].PetId))
+	local floor=plots.GetPlot(a).Pen.Floor
+	local chosenPosition=floor.CFrame:PointToWorldSpace(Vector3.new(3,floor.Size.Y/2,-2))
+	assert(placement.PlacePet(a,ranked[2].PetId,chosenPosition))
+	local retainedSlot=ranked[2].PlotSlot
+	local retainedPosition=table.clone(ranked[2].PenPosition)
+	check(carry.Equip(a,ranked[7].PetId),"Highest pet can be held before remote optimization")
+	root.CFrame=CFrame.new(plots.GetPlot(a).FeedPlate.Dish.Position+Vector3.new(0,3,0))
+	check(carry.PlaceOnPlate(a,ranked[7].PetId),"Highest pet can be staged before remote optimization")
+	check(carry.Equip(a,own.PetId),"A second pet can remain carried during remote optimization")
+	task.wait(.3)
+	local optimized=action("EquipBest")
+	check(optimized.Ok and optimized.Code=="Equipped" and optimized.Equipped==4,"Equip Best fills and optimizes active capacity")
+	local activeCount=0
+	for id in profile.PlacedPetIds do activeCount+=1;check(profile.Inventory[id].Placed,"Active map and inventory stay synchronized") end
+	check(activeCount==profile.MaxPetSlots,"Equip Best fills only unlocked Pen capacity")
+	for index=2,6 do check(ranked[index].Placed,"Income rank "..index.." selected") end
+	check(not ranked[1].Placed,"Weaker placed pet returned to inventory")
+	check(not ranked[7].Placed and a:GetAttribute("FeedPlatePetId")==ranked[7].PetId,"Feed-plate pet is not moved remotely")
+	check(not profile.Inventory[own.PetId].Placed and carry.GetPetId(a)==own.PetId,"Carried pet is not moved remotely")
+	check(ranked[2].PlotSlot==retainedSlot and ranked[2].PenPosition.X==retainedPosition.X
+		and ranked[2].PenPosition.Z==retainedPosition.Z,"Winning placed pet preserves its chosen position")
+	check(ranked[6].Placed and ranked[6].Locked,"Locked high-income pet can remain active")
+	task.wait(.3)
+	check(action("EquipBest").Code=="NoChange","Repeated Equip Best is idempotent")
 	profile.Money=100000
 	waitFor(function() return not locks.IsLocked(a) end)
 	local bought=eggs.BuyFromConveyor(a,"prototype_egg")
