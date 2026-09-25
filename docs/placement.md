@@ -9,6 +9,8 @@ same ProximityPrompt hold interaction.
 The carry visual uses the same Feed-level growth factor as placed and feed-plate
 pets, relative to the smaller base carry scale. Grown pets therefore remain
 visibly larger while held, and their bounding boxes still clear the avatar's head.
+Held pets use one root attachment, massless non-colliding parts and no secondary
+Humanoid, so even a grown pet cannot alter player WalkSpeed or assembly mass.
 Locked pets support these actions. The developer's empty Studio memory profile
 receives one test pet; there is no production starter reward or hatch flow yet.
 
@@ -30,7 +32,7 @@ Input uses ViewportPointToRay to avoid GUI-inset offsets (see the
 CarryVerification runs with StudioTestService:ExecuteMultiplayerTestAsync(2,
 "CarryVerification") using memory data. It now exercises click positioning,
 pickup, above-head alignment and Feed growth, boundary checks, v1 migration,
-memory saving and coordinate isolation. All 36 checks pass.
+memory saving and coordinate isolation. All 38 checks pass.
 
 PlacementService owns placement mutations. Inventory records, PlacedPetIds,
 Placed and PlotSlot change together without yielding, with schema validation

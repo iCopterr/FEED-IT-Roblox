@@ -13,6 +13,14 @@ local ok,failure=xpcall(function()
   local i=0
   return function() i+=1;assert(values[i]~=nil,"Unexpected extra RNG roll");return values[i] end
  end
+ local previousScale=config.GetScale(0)
+ check(previousScale==1,"Feed level zero uses base visual scale")
+ for level=1,config.MaxConfiguredLevel do
+  local scale=config.GetScale(level)
+  check(scale>previousScale,"Visual growth increases at level "..level)
+  previousScale=scale
+ end
+ check(math.abs(previousScale-config.MaxVisualScale)<1e-5,"Level 40 reaches configured visual scale")
  for _,case in {{0,.1,"Normal",1},{0,.945,"Critical",2},{17,.995,"Mega",20},{38,.9995,"Insane",40},{39,.945,"Critical",40}} do
   local result=resolver.Roll(case[1],random({.99,case[2]}))
   check(result.Critical==case[3] and result.FeedLevel==case[4],"Critical outcome "..case[3].." at "..case[1])

@@ -70,7 +70,8 @@ local function equip(player, id, isEgg)
 	end
 	local model = template:Clone()
 	local prepared = pcall(function()
-		assert(model:FindFirstChildWhichIsA("BasePart", true), "Template has no parts")
+		local modelRoot = model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart", true)
+		assert(modelRoot, "Template has no parts")
 		model.Name = if isEgg then "HeldEgg" else "HeldPet"
 		model:SetAttribute(if isEgg then "EggUid" else "PetId", id)
 		model:SetAttribute("OwnerUserId", player.UserId)
@@ -82,14 +83,27 @@ local function equip(player, id, isEgg)
 			then attachment.CFrame * Config.HandOffset
 			else attachment.CFrame * CFrame.new(0, attachment.Size.Y / 2 + Config.PetHeadClearance + size.Y / 2, 0)
 		model:PivotTo(targetBounds * bounds:ToObjectSpace(model:GetPivot()))
+		if not isEgg then
+			local petHumanoid = model:FindFirstChildOfClass("Humanoid")
+			if petHumanoid then petHumanoid:Destroy() end
+		end
 		for _, part in model:GetDescendants() do
 			if part:IsA("BasePart") then
 				part.Anchored = false
 				part.CanCollide, part.CanTouch, part.CanQuery, part.Massless = false, false, false, true
-				local weld = Instance.new("WeldConstraint")
-				weld.Part0, weld.Part1 = attachment, part
-				weld.Parent = part
+				if isEgg then
+					local weld = Instance.new("WeldConstraint")
+					weld.Name = "CarryWeld"
+					weld.Part0, weld.Part1 = attachment, part
+					weld.Parent = part
+				end
 			end
+		end
+		if not isEgg then
+			local weld = Instance.new("WeldConstraint")
+			weld.Name = "CarryWeld"
+			weld.Part0, weld.Part1 = attachment, modelRoot
+			weld.Parent = modelRoot
 		end
 		model.Parent = character
 	end)

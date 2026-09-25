@@ -7,8 +7,8 @@ local FeedConfig = {
 	ExplosionResetLevel = 0,
 	CooldownSeconds = 0.5,
 	SaveRetrySeconds = 5,
-	GrowthPerLevel = 0.06,
-	MaxVisualScale = 3.4,
+	GrowthPerLevel = 0.10,
+	MaxVisualScale = 5,
 	MiracleSaveChance = 0.05,
 	CriticalResults = table.freeze({
 		table.freeze({Id="Normal", Chance=0.94, LevelGain=1}),
@@ -44,7 +44,7 @@ local FeedConfig = {
 	}),
 }
 
--- Conservative prototype size curve, keeping the plate and five-pet Pen usable.
+-- Every configured level remains visually distinct through level 40.
 function FeedConfig.GetScale(level: number): number
 	return math.min(FeedConfig.MaxVisualScale, 1 + math.max(0, level) * FeedConfig.GrowthPerLevel)
 end

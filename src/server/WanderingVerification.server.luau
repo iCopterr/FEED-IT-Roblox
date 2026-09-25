@@ -13,6 +13,7 @@ local ok, failure = xpcall(function()
 	local money = require(services.MoneyService)
 	local adapter = require(script.Parent.Data.DataStoreAdapter)
 	local petModels = require(game.ReplicatedStorage.Shared.PetModels)
+	local feedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 	assert(adapter.IsMemory(), "Memory-only verification")
 	local function check(value, name) assert(value, name); table.insert(checks, name) end
 	local function waitFor(predicate)
@@ -69,7 +70,7 @@ local ok, failure = xpcall(function()
 	for _, plot in workspace.PlayerPlots:GetChildren() do
 		if not plot:IsA("Model") then continue end
 		local testModel = assert(petModels.GetTemplate("test_common")):Clone()
-		testModel:ScaleTo(3.4)
+		testModel:ScaleTo(feedConfig.MaxVisualScale)
 		local bounds, size = testModel:GetBoundingBox()
 		local penFloor = plot.Pen.Floor
 		testModel:PivotTo(penFloor.CFrame * CFrame.new(0, penFloor.Size.Y/2 + size.Y/2 + .05, 0) * bounds:ToObjectSpace(testModel:GetPivot()))

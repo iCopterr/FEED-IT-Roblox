@@ -4,7 +4,33 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-24
+**Last Updated:** 2026-09-25
+
+### Latest session — lightweight carry physics and stronger growth
+
+- Held pet clones now remove their unused Humanoid and use one root
+  `CarryWeld` instead of welding every visible part directly to the avatar.
+  All parts remain massless, non-colliding, non-touching and non-queryable.
+  Eggs retain their existing multi-part hand attachment behavior.
+- Increased Feed visual growth from 6% to 10% of original size per level and
+  raised the maximum from 3.4x to 5x. The curve increases at every configured
+  level: level 0 is 1x, level 10 is 2x and level 40 is 5x. Pen, pedestal, Feed
+  effects and overhead carry all consume the same authoritative curve.
+- PASS on synchronized Studio source: Carry 38/38 (including unchanged player
+  WalkSpeed and assembly mass with a grown pet), Placement 28/28, Pedestal
+  28/28, Feed 48/48 and Wandering 21/21. Rojo build and diff check pass.
+- Added explicit Feed assertions that all 40 levels grow and updated Wandering
+  coverage to the new 5x maximum. These final test-only additions were not rerun:
+  the subsequent DebugVerification launch returned no result, left multiplayer
+  test processes open and disconnected the Edit MCP peer. Restart Studio before
+  the next test, then clear any `Codex*Test` DataModel attributes and rerun Feed,
+  Wandering and Debug verification. No game error was captured from the change.
+- Current visual limitation: the previous 1.6x grown-carry comparison was
+  inspected, but MCP disconnected before a fresh 2x/5x screenshot could be
+  captured. High-detail models still require geometry consolidation.
+- Files: FeedConfig, CarryService, Carry/Feed/Wandering verification, feed and
+  placement docs, this handoff. Preserve unrelated untracked Kitsune reference.
+  Session commit: `fix: keep grown pets from slowing players`. No push.
 
 ### Latest session — preserve grown pet size while carried
 

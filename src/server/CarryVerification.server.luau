@@ -36,16 +36,24 @@ local ok, failure = xpcall(function()
 	check(heldBottom >= headTop + require(game.ReplicatedStorage.Shared.Config.CarryConfig).PetHeadClearance - 0.05
 		and (Vector2.new(heldBounds.Position.X, heldBounds.Position.Z) - Vector2.new(head.Position.X, head.Position.Z)).Magnitude < 0.05,
 		"Held pet is centered above the player's head")
+	local carryWelds = 0
 	for _, part in model:GetDescendants() do
-		if part:IsA("BasePart") then assert(not part.Anchored and not part.CanCollide and part.Massless and part:FindFirstChildOfClass("WeldConstraint")) end
+		if part:IsA("BasePart") then assert(not part.Anchored and not part.CanCollide and part.Massless) end
+		if part:IsA("WeldConstraint") and part.Name == "CarryWeld" then carryWelds += 1 end
 	end
-	check(true, "Held model is welded, massless and noncolliding")
+	check(carryWelds == 1 and not model:FindFirstChildOfClass("Humanoid"),
+		"Held pet uses one lightweight weld without a pet Humanoid")
+	check(true, "Held model is massless and noncolliding")
 	check(carry.Equip(a, pet.PetId) and a.Character:FindFirstChild("HeldPet") == model, "Repeated equip does not duplicate visual")
 	local grown = assert(pets.CreatePet(a, "test_common"))
 	local grownLevel = 10
 	data.GetData(a).Inventory[grown.PetId].FeedLevel = grownLevel
 	carry.Unequip(a)
+	local playerHumanoid = a.Character:FindFirstChildOfClass("Humanoid")
+	local root = a.Character:FindFirstChild("HumanoidRootPart")
+	local walkSpeed, assemblyMass = playerHumanoid.WalkSpeed, root.AssemblyMass
 	assert(carry.Equip(a, grown.PetId))
+	task.wait()
 	local grownModel = a.Character:FindFirstChild("HeldPet")
 	local carryConfig = require(game.ReplicatedStorage.Shared.Config.CarryConfig)
 	local feedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
@@ -54,6 +62,8 @@ local ok, failure = xpcall(function()
 	local grownBounds, grownSize = grownModel:GetBoundingBox()
 	check(grownBounds.Position.Y - grownSize.Y / 2 >= headTop + carryConfig.PetHeadClearance - 0.05,
 		"Grown held pet remains clear above the player's head")
+	check(playerHumanoid.WalkSpeed == walkSpeed and math.abs(root.AssemblyMass - assemblyMass) < 0.01,
+		"Grown held pet does not change player speed or assembly mass")
 	carry.Unequip(a)
 	assert(pets.RemovePet(a, grown.PetId))
 	assert(carry.Equip(a, pet.PetId))
