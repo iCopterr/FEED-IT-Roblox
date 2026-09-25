@@ -90,6 +90,9 @@ local ok,failure=xpcall(function()
   check(result.Ok and profile.MaxPetSlots==level+1,"Capacity purchase "..(level+1))
   local depth=Config.RearDepthBySlots[level+1]
   check(plot.Ground.Size.Z==80+depth and plot.Pen.Floor.Size.Z==44+depth,"Milestone-only rear depth "..(level+1))
+  check(plot.Ground.FloorGrid.StudsPerTileU==32 and plot.Ground.FloorGrid.StudsPerTileV==32
+   and plot.Pen.Floor.FloorGrid.StudsPerTileU==32 and plot.Pen.Floor.FloorGrid.StudsPerTileV==32,
+   "Floor grid persists through resize "..(level+1))
   check(plot.OwnerDisplay.Position==plot.Ground.Position+Vector3.new(0,PlotConfig.OwnerDisplayHeight,0),"Owner badge remains above expanded plot "..(level+1))
   check((plot.Pen.Floor.CFrame*Vector3.new(0,0,plot.Pen.Floor.Size.Z/2)-originalFront).Magnitude<.001
    and plot.Pen.Fence.FrontLeft.CFrame==originalEntrance and plot.Spawn.CFrame==originalSpawn,"Front and spawn unchanged "..(level+1))

@@ -22,6 +22,14 @@ local ok, failure = xpcall(function()
 		assert(value, message)
 		table.insert(checks, message)
 	end
+	local function assertFloorStyle(part: BasePart)
+		local grid = part:FindFirstChild("FloorGrid")
+		assert(part.Color == Color3.fromRGB(124,255,31) and part.TopSurface == Enum.SurfaceType.Studs
+			and grid and grid:IsA("Texture") and grid.Face == Enum.NormalId.Top
+			and grid.Texture == "rbxasset://textures/grid16.png"
+			and grid.StudsPerTileU == 32 and grid.StudsPerTileV == 32,
+			"Floor must use the authored lime grid/stud style: " .. part:GetFullName())
+	end
 	waitFor(function() return #players:GetPlayers() == 2 end, "Two players did not join", 120)
 	local first, second = table.unpack(players:GetPlayers())
 	waitFor(function() return plots.GetPlot(first) and plots.GetPlot(second) and data.IsLoaded(first) and data.IsLoaded(second) end, "Plot/data assignment timed out")
@@ -37,11 +45,17 @@ local ok, failure = xpcall(function()
 		assert(math.abs(model.Ground.Position.X) == 66 and model.Ground.Size == Vector3.new(80,1,80), "Larger plots must preserve center lane")
 		assert(model.Pen.Floor.Size.X == 60 and model.Pen.Floor.Size.Z == 44, "Expanded Pen dimensions")
 		assert(model.FeedPlate.Base.PlateGui.Label.Text=="FEED PLATE","Feed plate uses title-only label")
+		assertFloorStyle(model.Ground)
+		assertFloorStyle(model.Pen.Floor)
+		assertFloorStyle(model.EntrancePath)
 		assert(model:FindFirstChild("OwnerSign")==nil and model.OwnerDisplay.Transparency==1
 			and not model.OwnerDisplay.CanCollide and model.OwnerDisplay.OwnerGui:IsA("BillboardGui")
 			and model.OwnerDisplay.OwnerGui.Size==UDim2.fromScale(7,7)
 			and model.OwnerDisplay.Position==model.Ground.Position+Vector3.new(0,Config.OwnerDisplayHeight,0),"Owner display floats above plot without a physical sign")
 	end
+	assertFloorStyle(workspace.SkyIsland.Meadow)
+	assertFloorStyle(workspace.SkyIsland.Promenade)
+	assertFloorStyle(workspace.MysteryMerchant.Base)
 	check(left == 3 and right == 3, "Three plots per side with center conveyor lane")
 	check(first.RespawnLocation == a.Spawn and second.RespawnLocation == b.Spawn, "Personal respawn locations")
 	check(#a.Pen.Slots:GetChildren() == 10 and #b.Pen.Slots:GetChildren() == 10, "Ten authored markers per Pen")

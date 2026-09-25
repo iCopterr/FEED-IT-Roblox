@@ -6,6 +6,26 @@
 
 **Last Updated:** 2026-09-25
 
+### Latest session — lime grid/stud world floors
+
+- Restyled all 21 current walkable authored floors to match the supplied bright
+  lime checker/stud reference: SkyIsland Meadow/Promenade, six plot Grounds, six
+  Pen Floors, six EntrancePaths and the Money merchant Base.
+- Each floor keeps its physical Studs top surface and adds a top-facing authored
+  `FloorGrid` Texture using the built-in `grid16.png`, 32-stud tiling and 55%
+  transparency. No runtime geometry or texture hierarchy is generated.
+- Foundations, trims, roofs, conveyor machinery and other non-floor structures
+  remain unchanged. Walls are explicitly deferred to the requested future pass.
+- Plot Ground/Pen textures tile automatically as their existing parts resize at
+  capacity milestones; existing tier tint behavior remains active.
+- PASS: full-map Studio visual review, exact 21-floor RBXMX audit, Rojo build,
+  diff check, zero diagnostics across 90 scripts, PlotVerification 25/25 and
+  PlotUpgradeVerification 110/110. The upgrade suite explicitly verifies both
+  Ground and Pen texture tiling through every 5→10 capacity resize.
+- Files: SkyIsland, PlayerPlots and MysteryMerchant world assets, Plot
+  verification, world-style docs and this handoff. Preserve the unrelated
+  untracked Kitsune recipe. No push.
+
 ### Latest session — floating plot-owner badges
 
 - Superseded the physical owner-board presentation from the prior session.
@@ -1501,14 +1521,14 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Floating plot-owner identity badges
+**Current Feature:** Lime grid/stud world floors
 
-**Status:** Implemented as six authored BillboardGuis over invisible anchors.
-Static build, hierarchy/position validation, zero-diagnostic compilation and
-fresh multiplayer regressions pass (25/25 plot, 105/105 plot-upgrade checks).
+**Status:** Implemented across all 21 current walkable authored floor parts.
+Static/visual Studio verification and fresh two-player plot regressions pass
+(25/25 ownership/layout, 110/110 capacity-upgrade checks).
 
-**Objective:** Remove physical owner boards and float a circular player portrait
-with the DisplayName underneath above each assigned plot.
+**Objective:** Give the island, plots, pens, paths and merchant platform the
+bright lime checker/stud floor language from the supplied reference.
 
 ## 4. Completed
 
