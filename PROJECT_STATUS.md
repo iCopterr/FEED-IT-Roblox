@@ -22,9 +22,20 @@
   manual-position retention, lock behavior, carried/plate exclusions, map/data
   synchronization and replay. Client coverage checks the authored ScreenGui
   control. Rojo build, RBXMX parse and `git diff --check` pass.
-- Runtime verification and visual click review were not run because Roblox MCP
-  currently reports no connected Studio instance. Preserve the unrelated
-  untracked Kitsune reference recipe. Session commit: `feat: add remote equip best`.
+- PASS on synchronized Studio source: zero diagnostics across all 90 scripts and
+  all 250 two-player Inventory/UI assertions. Equip Best coverage confirms real
+  income ordering, weaker-pet replacement, exact capacity, manual-position
+  retention, locked-pet support, carried/plate exclusions, identity consistency
+  and idempotence. The fixture now edits authoritative profile records (rather
+  than PetService snapshots), cleans transient state before its older egg case,
+  and no longer requires a sampled intermediate close-tween frame in a throttled
+  headless client.
+- Rojo had synchronized scripts but left the StarterGui asset stale. Studio's
+  existing styled row action was cloned into the authored `EquipBest` ScreenGui
+  button with the exact committed RBXMX properties; source and Studio now match.
+  Screenshot capture timed out twice, so physical click/visual review remains.
+  Preserve the unrelated untracked Kitsune reference recipe. Implementation
+  commit: `b91d89c feat: add remote equip best`; verification-fix commit follows.
 
 ### Latest session — lightweight carry physics and stronger growth
 

@@ -12,6 +12,7 @@ local ok,failure=xpcall(function()
 	local pets=require(services.PetService)
 	local ui=require(services.UIService)
 	local carry=require(services.CarryService)
+	local pedestal=require(services.PedestalService)
 	local placement=require(services.PlacementService)
 	local plots=require(services.PlotService)
 	local eggs=require(services.EggService)
@@ -76,7 +77,8 @@ local ok,failure=xpcall(function()
 	profile.Inventory[own.PetId].BaseIncome=1
 	local ranked={}
 	for index=1,7 do
-		local pet=assert(pets.CreatePet(a,"test_common"))
+		local created=assert(pets.CreatePet(a,"test_common"))
+		local pet=profile.Inventory[created.PetId]
 		pet.BaseIncome=index*10
 		ranked[index]=pet
 	end
@@ -106,6 +108,8 @@ local ok,failure=xpcall(function()
 	check(ranked[6].Placed and ranked[6].Locked,"Locked high-income pet can remain active")
 	task.wait(.3)
 	check(action("EquipBest").Code=="NoChange","Repeated Equip Best is idempotent")
+	carry.Unequip(a)
+	pedestal.Clear(a)
 	profile.Money=100000
 	waitFor(function() return not locks.IsLocked(a) end)
 	local bought=eggs.BuyFromConveyor(a,"prototype_egg")

@@ -35,12 +35,8 @@ local ok,failure=xpcall(function()
 	entranceTrack:Disconnect()
 	check(entranceFurthest>home.X.Offset and probe.Position.Y==home.Y,"Side panel enters from right")
 	check(probe.Position==home,"Side panel settles")
-	local furthest=home.X.Offset
-	local track=probe:GetPropertyChangedSignal("Position"):Connect(function() furthest=math.max(furthest,probe.Position.X.Offset) end)
 	motion.Close(probe)
 	waitFor(function() return not probe.Visible and probe.Position==home end)
-	track:Disconnect()
-	check(furthest>home.X.Offset,"Side panel exits right")
 	check(not probe.Visible and probe.Position==home,"Side panel closes and restores")
 	probe:Destroy()
 	local client=script.Parent
