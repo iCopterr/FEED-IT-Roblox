@@ -7,6 +7,17 @@ local FoodConfig=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 local Service={}
 local sessions,saving={},{}
 
+local function purchaseCount(data,restockId,slot,item)
+	if data.MerchantRestockId~=restockId then return 0 end
+	local key=tostring(slot)
+	if item.StockLimit==1 then return if data.MerchantPurchases[key] then 1 else 0 end
+	local count=0
+	for index=1,item.StockLimit do
+		if data.MerchantPurchases[key..":"..index] then count+=1 end
+	end
+	return count
+end
+
 local function queueSave(player,profile)
 	local token={};saving[player]=token
 	task.spawn(function()
@@ -36,8 +47,9 @@ local function snapshot(player,state)
 	local items={}
 	for slot,id in stock do
 		local item=Config.Items[id]
+		local purchased=purchaseCount(data,restockId,slot,item)
 		table.insert(items,{Slot=slot,ItemId=id,Name=item.DisplayName,Description=item.Description,Price=item.Price,
-			Purchased=id~="basic" and data.MerchantRestockId==restockId and data.MerchantPurchases[tostring(slot)]==true})
+			Purchased=purchased>=item.StockLimit,Remaining=item.StockLimit-purchased,StockLimit=item.StockLimit})
 	end
 	return {Ok=true,Money=data.Money,RestockId=restockId,
 		RestocksAt=(restockId+1)*Config.RestockSeconds,ServerNow=now,Items=items,NextSequence=state.Sequence+1,
@@ -70,7 +82,8 @@ function Service.HandleRequest(player,action,slot,expectedRestock,sequence)
 	if not aliveAndNear(player) then return {Ok=false,Code="TooFar"} end
 	local itemId=Config.GetStock(current)[slot];local item=itemId and Config.Items[itemId]
 	if not item then return {Ok=false,Code="Unavailable"} end
-	if itemId~="basic" and data.MerchantRestockId==current and data.MerchantPurchases[tostring(slot)] then return {Ok=false,Code="Sold"} end
+	local purchased=purchaseCount(data,current,slot,item)
+	if purchased>=item.StockLimit then return {Ok=false,Code="Sold"} end
 	if data.Money<item.Price then return {Ok=false,Code="NotEnoughMoney"} end
 	local oldMoney,oldFood,oldFoods=data.Money,data.Food,table.clone(data.Foods)
 	local oldRestock,oldPurchases=data.MerchantRestockId,table.clone(data.MerchantPurchases)
@@ -78,14 +91,16 @@ function Service.HandleRequest(player,action,slot,expectedRestock,sequence)
 	if data.MerchantRestockId~=current then data.MerchantRestockId=current;data.MerchantPurchases={} end
 	data.Money-=item.Price
 	FoodConfig.Add(data,itemId,item.Amount)
-	if itemId~="basic" then data.MerchantPurchases[tostring(slot)]=true end
+	local purchaseKey=if item.StockLimit==1 then tostring(slot) else tostring(slot)..":"..(purchased+1)
+	data.MerchantPurchases[purchaseKey]=true
 	if not Schema.Validate(data) then
 		data.Money,data.Food,data.Foods=oldMoney,oldFood,oldFoods
 		data.MerchantRestockId,data.MerchantPurchases=oldRestock,oldPurchases
 		Locks.Finish(player);return {Ok=false,Code="InvalidData"}
 	end
 	local result={Ok=true,Code="Purchased",Slot=slot,RestockId=current,ItemId=itemId,Name=item.DisplayName,
-		RewardType=item.RewardType,Amount=item.Amount,Money=data.Money,Food=FoodConfig.Total(data),NextSequence=sequence+1}
+		RewardType=item.RewardType,Amount=item.Amount,Remaining=item.StockLimit-purchased-1,
+		Money=data.Money,Food=FoodConfig.Total(data),NextSequence=sequence+1}
 	state.Sequence=sequence;state.Last=table.clone(result);queueSave(player,data)
 	return result
 end
@@ -94,7 +109,8 @@ function Service.Start()
 	assert(Config.StockSlots>0 and Config.StockSlots<=#Config.ItemOrder,"Invalid merchant slot count")
 	for _,id in Config.ItemOrder do
 		local item=assert(Config.Items[id],"Missing merchant item")
-		assert(item.Price>0 and item.Price%1==0 and item.Weight>=0 and item.Amount>0,"Invalid merchant item")
+		assert(item.Price>0 and item.Price%1==0 and item.Weight>=0 and item.Amount>0
+			and item.StockLimit>0 and item.StockLimit%1==0,"Invalid merchant item")
 		assert(item.RewardType=="Food","Invalid merchant reward")
 	end
 	local point=workspace:WaitForChild("MysteryMerchant"):WaitForChild("InteractionPoint")

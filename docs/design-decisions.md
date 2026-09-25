@@ -25,12 +25,13 @@ Farm, Protection, currency and permanent-loss rules in GDD v0.5.
 - Money is the only shop currency. Token drops, Token HUD and consumable
   Protection actions are removed from active gameplay. Legacy save fields remain
   readable; retired configs, modules and sign assets were deleted on 2026-09-23.
-- Restock every 30 minutes: Basic always available, two weighted distinct special
-  offers, each purchasable once per player per restock. One player's purchases
-  never empty another player's stock.
-- One serving per Feed. Basic: 5 for $100, no reduction. Hearty: 5 for $2.5K,
-  15% relative reduction. Gourmet: 3 for $25K, 30%. Royal: 2 for $250K, 45%.
-  All are prototype tuning values in FoodConfig, not final balance.
+- Restock every 30 minutes: Basic is always offered with five personal purchases;
+  two weighted distinct special offers are each purchasable once per player per
+  restock. One player's purchases never empty another player's stock.
+- One serving per Feed. Standard relative-risk tiers are Basic 0%, Fresh 8%,
+  Hearty 15%, Fortified 22%, Gourmet 30%, Enchanted 38% and Royal 45%. Basic's
+  purchase remains a five-serving $100 bundle. All are prototype tuning values
+  in FoodConfig, not final balance.
 - Final explosion risk = original risk × food multiplier. Plate upgrades were
   removed by user request on 2026-09-23; foods cannot make a positive base risk zero. Explosion,
   Miracle Save and Critical order is unchanged.
@@ -55,9 +56,10 @@ Farm, Protection, currency and permanent-loss rules in GDD v0.5.
 - Superseded farm/plate/Token-merchant tests were removed. FeedVerification now
   covers the current RNG and migrations; FoodShopVerification covers transactions.
 
-## Deferred ideas — 2026-09-23 (not implementation approval)
+## Deferred food effects — 2026-09-23 (not implementation approval)
 
-- User explicitly deferred additional food types and special gameplay effects.
+- Additional standard food tiers were later approved and implemented on
+  2026-09-25. The special gameplay effects below remain deferred.
 - Lucky Treat proposal: total Critical chance 6% -> 12%, conditional on survival;
   no food-based risk reduction. The later removal of plate upgrades also applies.
 - Growth Feast proposal: +1 additional level on successful Feed, capped at 40.

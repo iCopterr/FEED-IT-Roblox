@@ -4,6 +4,11 @@ FeedConfig contains explosion chances, Critical outcomes, income multipliers,
 growth and presentation timing. FoodConfig contains food prices, servings and
 risk reductions. Each accepted attempt consumes one selected serving.
 
+The seven standard foods reduce risk by 0%, 8%, 15%, 22%, 30%, 38% and 45%.
+They are Basic, Fresh, Hearty, Fortified, Gourmet, Enchanted and Royal. These are
+plain relative-risk tiers; rarity-specific bonuses, Critical bonuses and extra
+Feed-level gains remain deferred.
+
 Explosion chance uses the target level (current + 1); food applies a relative
 reduction to that chance. Explosion rolls first, followed by a 5% Miracle Save
 roll on failure. Survival rolls Critical: 94% +1, 5% +2, 0.9% +3, 0.1% +5.

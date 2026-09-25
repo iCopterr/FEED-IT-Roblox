@@ -6,6 +6,31 @@
 
 **Last Updated:** 2026-09-25
 
+### Latest session — expanded merchant food stock
+
+- Expanded the standard FoodConfig lineup from four to seven configurable
+  risk-reduction foods: Basic 0%, Fresh 8%, Hearty 15%, Fortified 22%, Gourmet
+  30%, Enchanted 38% and Royal 45%. Added prototype prices, bundle sizes and
+  weighted merchant odds; special effects remain deliberately deferred.
+- Basic Food is no longer infinite. It remains the guaranteed first merchant
+  offer, but each player may buy its five-serving bundle only five times per
+  30-minute restock (25 Basic servings maximum). The two rotating special offers
+  remain limited to one purchase each per player. Stock is personal, not global.
+- MerchantService authoritatively counts saved purchase markers, reports exact
+  remaining stock, rejects a sixth Basic purchase and preserves request replay
+  safety. Existing boolean MerchantPurchases data stores numbered Basic markers,
+  so the current schema needs no migration.
+- Added Fresh, Fortified and Enchanted cards to the authored Feed ScreenGui and
+  emoji previews; all seven cards use the existing scrolling food bar. No UI is
+  generated at runtime.
+- PASS: Rojo build, RBXMX parse, `git diff --check`, synchronized Studio source,
+  zero diagnostics across 90 scripts, and all 49 two-player FoodShop/UI checks.
+  Coverage includes deterministic special rotation, five Basic purchases,
+  sold-out/replay/restock/affordability validation, feeding and Rescue regression.
+- Files: FoodConfig, MerchantConfig/Service/Controller, food preview modules,
+  FeedYourPetUI, FoodShop verification, merchant/feed/design docs and this
+  handoff. Preserve unrelated untracked Kitsune reference recipe. No push.
+
 ### Latest session — remote Equip Best
 
 - Added an authored `EQUIP BEST` button to the right-side Pets ScreenGui. The
@@ -1372,15 +1397,14 @@
 
 ## 1. Current Goal
 
-Build a playable prototype that validates:
+Build a playable prototype that validates the current farming-game loop:
 
-**Hatch → Place → Earn → Farm → Feed → Grow → Risk → Explode / Survive**
+**Hatch → Place → Earn → Buy Food → Feed → Grow → Risk → Explode / Survive**
 
-The versioned data foundation and server-side pet foundation are implemented.
-Pet creation, plots, placement, income, active farming and Feed outcomes have
-Studio server verification. Next: visually playtest Feed tension and effects;
-Studio-only free Revive and token-based Feed Protection are implemented; paid
-Developer Product fulfillment remains deferred until product IDs exist.
+The versioned data foundation and server-authoritative pet loop are implemented.
+Pet creation, plots, placement, income, food purchases and Feed outcomes have
+Studio verification. AFK farms, Tokens, consumable Protection and plate upgrades
+are retired. Next: full manual core-loop playtesting and balance iteration.
 
 ## 2. Overall Progress
 
@@ -1389,32 +1413,32 @@ Developer Product fulfillment remains deferred until product IDs exist.
 | Project Setup | ✅ Complete / Verified | Filesystem layout, toolchain, build, and server launch verified. |
 | Git Setup | ✅ Complete / Verified | `main` tracks `origin/main`; initial commit pushed successfully. |
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
-| Base Architecture | 🟨 In Progress | DataService and PetService now exist; remaining gameplay services are pending. |
-| Player Data Schema | ✅ v8 Studio Verified | Adds merchant Tokens and purchased stock markers; preserves previous progress. |
-| Mystery Merchant | ✅ Server Verified | Three random offers every 30 minutes; Token purchases, private stock limits and memory persistence verified. Manual UI review pending. |
+| Base Architecture | ✅ Prototype Implemented | Modular data, pet, plot, egg, merchant, placement, money and Feed services are active. |
+| Player Data Schema | ✅ v8 Studio Verified | Versioned data preserves pet/egg/food/merchant state; retired fields remain compatibility-only. |
+| Mystery Merchant | ✅ Server Verified | Basic plus two weighted special foods every 30 minutes; Money purchases and personal stock limits verified. Basic allows five bundle purchases per restock. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ✅ Carry/Place Studio Verified | Buy/hold/click Pen starts timer; E hatch returns pet to player. 64 automated checks plus developer playtest. |
 | Egg Conveyor | ✅ Server Verified | Eggs replace direct pets; owner inventory slot, range/price validation, offer races/expiry tested. Existing static conveyor retained. |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
-| Inventory / Hotbar | 🟦 Remote Equip Best Implemented | Authored collection/hotbar plus server-authoritative best-income Pen optimizer. New runtime suite awaits a connected Studio instance. |
-| HUD | 🟦 Implemented / Needs Testing | Money/Food snapshots, responsive Stud layout, loading/empty states; Studio constructor verified, live test pending. |
+| Inventory / Hotbar | ✅ Remote Equip Best Verified | Authored collection/hotbar plus server-authoritative best-income Pen optimizer; 250 two-player assertions pass. |
+| HUD | ✅ Implemented / Verified | Money, hotbar and travel controls; retired Food and Token HUD rows remain removed. |
 | Number Formatting | ✅ Studio Verified | Shared K/M/B/T amounts across UI/world labels; 44 formatter/parser/sign checks pass. |
 | Pet Placement | 🟦 Free Position Implemented | Click/tap inside own Pen, exact local coordinates, five-pet cap and click pickup; build passes, Studio test pending. |
 | Pet Wandering | ✅ Server Verified | 21 Studio checks pass: walk/pause, live pickup, grown-pet bounds on six plots, cleanup and saved anchors. Manual feel pending. |
 | Money Generation | ✅ Server Verified | Placed pets pay BaseIncome x FeedMultiplier each second; 15 Studio checks pass. HUD rate included; published persistence remains separate. |
-| Farm | ✅ Upgrades Server Verified | Ten levels with preserved custom prices; Money purchase and active-only output. Manual sign input/feel pending. |
-| Feed Plate Upgrades | ✅ Studio Verified | Six authored signs, ten saved levels, farm-matched prices and up to 45% relative explosion-risk reduction; 58 multiplayer checks pass. |
-| Food | ✅ Server Verified | Active farming pays 2 Food/sec at level one; memory save verified and immediate HUD pushes implemented. |
+| Farm | ⬜ Retired | AFK food farming was removed from active gameplay; legacy save fields remain compatibility-only. |
+| Feed Plate Upgrades | ⬜ Retired | Upgrade signs and risk reduction were removed; the feeding pedestal itself remains active. |
+| Food | ✅ Server Verified | Seven Money-purchased tiers with 0–45% relative risk reduction; Basic is capped at five five-serving purchases per player/restock. |
 | Carry System | ✅ Overhead Carry Verified | Equip/unequip and centered above-head models; click placement and nearby hold-E pickup. All 34 checks pass. |
-| Feeding Pedestal | ✅ Staging Server Verified | Six feed plates; carry/click placement and hold-E pickup. 23 multiplayer checks pass; Feed UI/RNG deferred. |
-| Feed UI | 🟦 Protection UI Implemented | Normal/Protected Feed, token count, exact risks, pickup and outcome banners. Protection visual review pending. |
-| Feed Transaction | ✅ Studio Verified | Food/token atomic mutation, authoritative outcomes, replay/save locks; expanded 113-check suite passes. |
+| Feeding Pedestal | ✅ Staging Server Verified | Six feed plates; carry/click placement, Feed UI opening and remote pickup are active. |
+| Feed UI | ✅ Food Selection Verified | Authored scrolling seven-food sidebar, exact risks, rotating pet preview, pickup and outcome banners. |
+| Feed Transaction | ✅ Studio Verified | Selected Food is consumed atomically; outcomes, replay/save locks and Rescue regressions pass. |
 | Explosion RNG | ✅ Studio Verified | Explosion first, 5% Miracle Save, otherwise persisted quarantine. |
 | Critical Feed | ✅ Studio Verified | Configured odds; no skipped-level rolls; gains capped at 40. |
 | Pet Growth | 🟦 Implemented | Success scales plate/Pen models and income; manual visual review pending. |
 | Explosion Presentation | 🟦 Implemented | Float/spin, burst/fade and banners; six isolated effect checks pass. |
-| Protection | ✅ Token Prototype Verified | Single-attempt risk reduction with replay safety; merchant now supplies earned tokens. Paid sources deferred. |
+| Protection | ⬜ Retired | Tokens and consumable Protection were removed; food risk reduction is the active system. |
 | Revive / Keep Base | 🟦 Choice Flow Server Verified | 72 Feed and 22 legacy recovery checks pass with schema v5. Revised recovery UI physical testing pending. Paid recovery not implemented. |
 | Save / Load | 🟦 Implemented / Needs Testing | Memory-mode flow verified; production backend remains untested. |
 | Debug Tools | ✅ Studio Memory Verified | Currency grants, six-rarity spawn, pet/farm levels, one-use Feed outcomes. 47 multiplayer + 12 gate + 10 isolated UI checks pass. |
@@ -1424,14 +1448,13 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Remote Pen management — Equip Best
+**Current Feature:** Expanded food lineup and finite Basic stock
 
-**Status:** Implemented in the authored side-panel ScreenGui and authoritative
-PlacementService. Rojo/static checks pass; the expanded two-player runtime suite
-and physical button review await a connected Studio instance.
+**Status:** Implemented and verified in synchronized Studio source. All 49
+two-player FoodShop/UI assertions pass; zero Luau diagnostics across 90 scripts.
 
-**Objective:** Let players remotely fill their unlocked Pen with the strongest
-available income roster without moving active carry/Feed interactions.
+**Objective:** Give the Money merchant more meaningful food tiers while limiting
+the guaranteed Basic offer to five purchases per player every restock.
 
 ## 4. Completed
 
@@ -2860,19 +2883,23 @@ then verify live persistence separately. No production data was used.
 
 ### What Was Done
 
-Implemented `PetConfig` and `PetService` with six prototype species, locked base
-incomes, GUID identity, validated create/read/lock/remove operations, snapshots,
-rollback safety, and server-only events. Added PetService to server startup.
+The playable prototype now includes five egg tiers, 30 named pets, placement,
+income, plot capacity upgrades, the Money food merchant, seven food tiers, Feed
+risk/growth/failure/Rescue, authored inventory/hotbar and remote egg/pet panels.
+See the latest session entries above for current implementation and verification.
 
 ### What Is Currently Incomplete
 
-Interactive PetService mutation testing, pet placement/Pen ownership, simple
-wandering, and live DataStore/cross-server lease testing.
+The main remaining work is manual end-to-end core-loop and economy playtesting,
+live DataStore/cross-server lease verification, final balance tuning and pet-model
+geometry optimization. Platform Maximum Players still must be set to six.
 
 ### Next Agent Should
 
 1. Read `AGENTS.md`, this file, and relevant GDD sections.
 2. Run `git status` and `git diff`.
-3. Run PetService mutation checks through Roblox MCP; do not use Computer Use.
-4. Continue with PlotService and placement/pickup while preserving inventory and slot consistency.
-5. Do not point Studio at production data; use the isolated Studio store for backend tests.
+3. Preserve the unrelated untracked Kitsune reference recipe.
+4. Continue with the user's next requested prototype task; do not restore retired
+   farms, Tokens, consumable Protection or feed-plate upgrades.
+5. Keep Studio tests on isolated memory data unless live persistence is explicitly
+   being verified with the appropriate safe test store.

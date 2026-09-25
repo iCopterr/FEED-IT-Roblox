@@ -42,22 +42,41 @@ local ok,failure=xpcall(function()
 	local restock=MerchantConfig.GetRestockId(os.time())
 	local stock=MerchantConfig.GetStock(restock)
 	check(stock[1]=="basic" and stock[2]~=stock[3],"Basic plus two distinct special offers")
+	check(#Food.Order==7 and Food.Types.fresh.Reduction==.08 and Food.Types.fortified.Reduction==.22
+		and Food.Types.enchanted.Reduction==.38,"Seven ordered food types use configured risk tiers")
+	local seen={}
+	for id=restock,restock+500 do
+		local sample=MerchantConfig.GetStock(id)
+		for index=2,#sample do seen[sample[index]]=true end
+	end
+	for _,id in Food.Order do if id~="basic" then check(seen[id],id.." appears in deterministic restocks") end end
 	local purchase=Merchant.HandleRequest(a,"Purchase",1,restock,1)
-	check(purchase.Ok and profile.Food==5 and profile.Money==1e9-100,"Basic purchase uses Money and grants servings")
+	check(purchase.Ok and purchase.Remaining==4 and profile.Food==5 and profile.Money==1e9-100,"Basic purchase uses Money and grants servings")
 	check(Merchant.HandleRequest(a,"Purchase",1,restock,1).Ok and profile.Food==5,"Duplicate purchase never charges twice")
 	waitFor(function() return not Locks.IsLocked(a) end);task.wait(.3)
-	check(Merchant.HandleRequest(a,"Purchase",1,restock,2).Ok and profile.Food==10,"Basic remains available")
+	check(Merchant.HandleRequest(a,"Purchase",1,restock,2).Ok and profile.Food==10,"Basic remains available within stock")
+	for sequence=3,5 do
+		waitFor(function() return not Locks.IsLocked(a) end);task.wait(.3)
+		local more=Merchant.HandleRequest(a,"Purchase",1,restock,sequence)
+		check(more.Ok and more.Remaining==5-sequence and profile.Food==sequence*5,"Basic stock purchase "..sequence)
+	end
 	waitFor(function() return not Locks.IsLocked(a) end);task.wait(.3)
-	check(Merchant.HandleRequest(a,"Purchase",2,restock,3).Ok,"Special food purchase")
+	check(Merchant.HandleRequest(a,"Purchase",1,restock,6).Code=="Sold" and profile.Food==25,"Basic is limited to five purchases per restock")
+	waitFor(function() return not Locks.IsLocked(a) end);task.wait(.3)
+	local shop
+	waitFor(function() shop=Merchant.HandleRequest(a,"Snapshot");return shop.Ok end)
+	check(shop.Items[1].Purchased and shop.Items[1].Remaining==0 and shop.Items[1].StockLimit==5,"Basic sold-out state is public to its owner")
+	task.wait(.3)
+	check(Merchant.HandleRequest(a,"Purchase",2,restock,6).Ok,"Special food purchase")
 	local special=stock[2]
 	check(Food.Count(profile,special)==Food.Types[special].Amount,"Correct special food granted")
 	waitFor(function() return not Locks.IsLocked(a) end);task.wait(.3)
-	check(Merchant.HandleRequest(a,"Purchase",2,restock,4).Code=="Sold","Special offer has personal purchase limit")
+	check(Merchant.HandleRequest(a,"Purchase",2,restock,7).Code=="Sold","Special offer has personal purchase limit")
 	task.wait(.3)
-	check(Merchant.HandleRequest(a,"Purchase",1,restock-1,4).Code=="Restocked","Stale restock rejected")
+	check(Merchant.HandleRequest(a,"Purchase",1,restock-1,7).Code=="Restocked","Stale restock rejected")
 	task.wait(.3)
 	profile.Money=0
-	check(Merchant.HandleRequest(a,"Purchase",1,restock,4).Code=="NotEnoughMoney","Insufficient Money cannot grant food")
+	check(Merchant.HandleRequest(a,"Purchase",3,restock,7).Code=="NotEnoughMoney","Insufficient Money cannot grant food")
 	check(Data.GetData(b).Foods[special]==nil,"Another player's stock and food are untouched")
 	local dish=Plots.GetPlot(a).FeedPlate.Dish
 	root.CFrame=CFrame.new(dish.Position+Vector3.new(0,3,6))

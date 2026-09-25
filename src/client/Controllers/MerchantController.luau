@@ -19,7 +19,7 @@ function Controller.Start()
 	local remote=ReplicatedStorage:WaitForChild("PrototypeMerchant")
 	local state,receivedAt,busy=nil,0,false
 	local messages={TooFar="Move closer to the Mystery Merchant.",NotEnoughMoney="You need more Money.",
-		Sold="You already bought this offer. Wait for restock.",
+		Sold="This food is sold out for you. Wait for restock.",
 		Restocked="The merchant restocked. Refreshing…",Busy="Another purchase is saving.",
 		StaleRequest="Shop state changed. Refreshing…",Loading="Loading your Money…",Cooldown="Please wait."}
 	local function render()
@@ -29,8 +29,9 @@ function Controller.Start()
 		for i=1,3 do
 			local button=panel["Slot"..i];local item=state and state.Items[i]
 			if item then
-				button.Text=if item.Purchased then item.Name.."\n"..item.Description.."\nSOLD"
-					else string.format("%s\n%s\nBUY • $%s",item.Name,item.Description,NumberFormat.Compact(item.Price))
+				local stockText=if item.StockLimit>1 then string.format(" • %d/%d LEFT",item.Remaining,item.StockLimit) else ""
+				button.Text=if item.Purchased then item.Name.."\n"..item.Description.."\nSOLD OUT"
+					else string.format("%s\n%s%s\nBUY • $%s",item.Name,item.Description,stockText,NumberFormat.Compact(item.Price))
 				button.Active=not item.Purchased and not state.Busy and not busy
 				button.AutoButtonColor=button.Active
 				button.BackgroundColor3=if item.Purchased then Color3.fromRGB(67,70,83) else Color3.fromRGB(36,165,219)

@@ -20,6 +20,7 @@ local ok,failure=xpcall(function()
 	assert(merchant:FindFirstChild("TokenHUD")==nil and merchant:FindFirstChild("TokenPopup")==nil,"Old Token UI visible")
 	assert(merchant.Panel.Money.Text:find("YOUR MONEY",1,true),"Merchant binds Money label")
 	assert(merchant.Panel.Slot1.Text:find("Basic Food",1,true),"Basic Food rendered in shop: "..merchant.Panel.Status.Text.." / "..merchant.Panel.Slot1.Text)
+	assert(merchant.Panel.Slot1.Text:find("/5 LEFT",1,true) or merchant.Panel.Slot1.Text:find("SOLD OUT",1,true),"Basic stock limit is visible")
 	assert(main.FeedPanel:FindFirstChild("FoodCards") and not main.FeedPanel:FindFirstChild("FoodType"),"Food cards replace cycling selector")
 	local feedLayout=main.FeedPanel
 	for _,panel in {main.Inventory.Panel,feedLayout,feedLayout.FoodCards,merchant.Panel,rescue.Panel} do
@@ -34,15 +35,18 @@ local ok,failure=xpcall(function()
 	assert(not feedLayout.ClipsDescendants,"External sidebar is not clipped")
 	local previousOrder=0
 	assert(feedLayout.FoodCards.List:IsA("ScrollingFrame") and feedLayout.FoodCards.List.AutomaticCanvasSize==Enum.AutomaticSize.Y,"Food list grows automatically")
-	for _,id in {"basic","hearty","gourmet","royal"} do
+	local foods=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
+	assert(#foods.Order==7,"Expanded food config reaches client")
+	for _,id in foods.Order do
 		local card=feedLayout.FoodCards.List[id]
+		assert(card and card:IsA("GuiButton"),"Authored food card "..id)
 		assert(card.LayoutOrder>previousOrder,"Food cards form a vertical bar")
 		previousOrder=card.LayoutOrder
 	end
 	assert(main.Inventory.Panel.Layout:FindFirstChild("Food"),"Food inventory tab")
 	local model=require(script.Parent.UI.InventoryModel)
-	local entries=model.Entries({Inventory={},Foods={basic=5,royal=2}})
-	assert(#model.Filter(entries,"Food","","Newest")==2,"Owned foods appear in food tab")
+	local entries=model.Entries({Inventory={},Foods={basic=5,fresh=5,enchanted=2,royal=2}})
+	assert(#model.Filter(entries,"Food","","Newest")==4,"Owned expanded foods appear in food tab")
 	assert(#model.Filter(entries,"All","","Newest")==0,"Food excluded from pets/eggs All tab")
 	assert(not model.CanSlot(entries["food:basic"]),"Food cannot enter hotbar")
 	local view=main.Inventory.Panel.Layout.Pets.PetCardTemplate.Preview
