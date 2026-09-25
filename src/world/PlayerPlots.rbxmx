@@ -605,21 +605,21 @@
 </Properties>
 </Item>
 <Item class="Part"><Properties>
-<Vector3 name="Size"><X>10</X><Y>3</Y><Z>0.5</Z></Vector3>
-<CoordinateFrame name="CFrame"><X>-42.00000762939453</X><Y>3</Y><Z>-116</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
+<Vector3 name="Size"><X>1</X><Y>1</Y><Z>1</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-66</X><Y>19</Y><Z>-96</Z><R00>1</R00><R01>0</R01><R02>0</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>0</R20><R21>0</R21><R22>1</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 <token name="Material">256</token>
 <bool name="Anchored">true</bool>
-<bool name="CanCollide">true</bool>
-<bool name="CanTouch">true</bool>
-<bool name="CanQuery">true</bool>
-<bool name="CastShadow">true</bool>
+<bool name="CanCollide">false</bool>
+<bool name="CanTouch">false</bool>
+<bool name="CanQuery">false</bool>
+<bool name="CastShadow">false</bool>
 <token name="TopSurface">3</token>
 <token name="BottomSurface">3</token>
-<float name="Transparency">0</float>
+<float name="Transparency">1</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
-<string name="Name">OwnerSign</string>
+<string name="Name">OwnerDisplay</string>
 <bool name="Archivable">true</bool>
 
 <token name="LeftSurface">3</token>
@@ -630,25 +630,22 @@
 
 <token name="BackSurface">3</token>
 </Properties>
-<Item class="SurfaceGui"><Properties>
-<bool name="Active">true</bool>
-<bool name="AlwaysOnTop">false</bool>
-<Vector2 name="CanvasSize"><X>600</X><Y>180</Y></Vector2>
-<bool name="Enabled">true</bool>
-<token name="Face">2</token>
-<float name="LightInfluence">0</float>
-<token name="SizingMode">0</token>
-<float name="PixelsPerStud">50</float>
-<float name="MaxDistance">0</float>
-<bool name="ResetOnSpawn">true</bool>
-<string name="Name">SignGui</string>
+<Item class="BillboardGui"><Properties>
+<string name="Name">OwnerGui</string>
 <bool name="Archivable">true</bool>
+<bool name="AlwaysOnTop">true</bool>
+<float name="MaxDistance">140</float>
+<UDim2 name="Size"><XS>7</XS><XO>0</XO><YS>7</YS><YO>0</YO></UDim2>
+<Vector3 name="StudsOffset"><X>0</X><Y>0</Y><Z>0</Z></Vector3>
+<bool name="Enabled">true</bool>
+<float name="LightInfluence">0</float>
+<bool name="ResetOnSpawn">true</bool>
 </Properties>
 <Item class="ImageLabel"><Properties>
 <string name="Name">OwnerImage</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
-<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<UDim2 name="Size"><XS>0.55</XS><XO>0</XO><YS>0.55</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
 <float name="BackgroundTransparency">0</float>
@@ -660,13 +657,13 @@
 <token name="ScaleType">1</token>
 </Properties>
 <Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
-<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3><float name="Thickness">5</float><float name="Transparency">0</float></Properties></Item>
 </Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
+<UDim2 name="Size"><XS>0.92</XS><XO>0</XO><YS>0.25</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.04</XS><XO>0</XO><YS>0.62</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
@@ -678,8 +675,8 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">AVAILABLE</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
+<string name="Text"></string>
+<Color3 name="TextColor3"><R>1</R><G>0.9058823585510254</G><B>0.6745098233222961</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
@@ -688,8 +685,8 @@
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">0.15000000596046448</float>
-<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
+<float name="TextStrokeTransparency">0.05000000074505806</float>
+<Color3 name="TextStrokeColor3"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -2114,21 +2111,21 @@
 </Properties>
 </Item>
 <Item class="Part"><Properties>
-<Vector3 name="Size"><X>10</X><Y>3</Y><Z>0.5</Z></Vector3>
-<CoordinateFrame name="CFrame"><X>-42</X><Y>3</Y><Z>-20.000001907348633</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
+<Vector3 name="Size"><X>1</X><Y>1</Y><Z>1</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-66</X><Y>19</Y><Z>0</Z><R00>1</R00><R01>0</R01><R02>0</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>0</R20><R21>0</R21><R22>1</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 <token name="Material">256</token>
 <bool name="Anchored">true</bool>
-<bool name="CanCollide">true</bool>
-<bool name="CanTouch">true</bool>
-<bool name="CanQuery">true</bool>
-<bool name="CastShadow">true</bool>
+<bool name="CanCollide">false</bool>
+<bool name="CanTouch">false</bool>
+<bool name="CanQuery">false</bool>
+<bool name="CastShadow">false</bool>
 <token name="TopSurface">3</token>
 <token name="BottomSurface">3</token>
-<float name="Transparency">0</float>
+<float name="Transparency">1</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
-<string name="Name">OwnerSign</string>
+<string name="Name">OwnerDisplay</string>
 <bool name="Archivable">true</bool>
 
 <token name="LeftSurface">3</token>
@@ -2139,25 +2136,22 @@
 
 <token name="BackSurface">3</token>
 </Properties>
-<Item class="SurfaceGui"><Properties>
-<bool name="Active">true</bool>
-<bool name="AlwaysOnTop">false</bool>
-<Vector2 name="CanvasSize"><X>600</X><Y>180</Y></Vector2>
-<bool name="Enabled">true</bool>
-<token name="Face">2</token>
-<float name="LightInfluence">0</float>
-<token name="SizingMode">0</token>
-<float name="PixelsPerStud">50</float>
-<float name="MaxDistance">0</float>
-<bool name="ResetOnSpawn">true</bool>
-<string name="Name">SignGui</string>
+<Item class="BillboardGui"><Properties>
+<string name="Name">OwnerGui</string>
 <bool name="Archivable">true</bool>
+<bool name="AlwaysOnTop">true</bool>
+<float name="MaxDistance">140</float>
+<UDim2 name="Size"><XS>7</XS><XO>0</XO><YS>7</YS><YO>0</YO></UDim2>
+<Vector3 name="StudsOffset"><X>0</X><Y>0</Y><Z>0</Z></Vector3>
+<bool name="Enabled">true</bool>
+<float name="LightInfluence">0</float>
+<bool name="ResetOnSpawn">true</bool>
 </Properties>
 <Item class="ImageLabel"><Properties>
 <string name="Name">OwnerImage</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
-<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<UDim2 name="Size"><XS>0.55</XS><XO>0</XO><YS>0.55</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
 <float name="BackgroundTransparency">0</float>
@@ -2169,13 +2163,13 @@
 <token name="ScaleType">1</token>
 </Properties>
 <Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
-<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3><float name="Thickness">5</float><float name="Transparency">0</float></Properties></Item>
 </Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
+<UDim2 name="Size"><XS>0.92</XS><XO>0</XO><YS>0.25</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.04</XS><XO>0</XO><YS>0.62</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
@@ -2187,8 +2181,8 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">AVAILABLE</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
+<string name="Text"></string>
+<Color3 name="TextColor3"><R>1</R><G>0.9058823585510254</G><B>0.6745098233222961</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
@@ -2197,8 +2191,8 @@
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">0.15000000596046448</float>
-<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
+<float name="TextStrokeTransparency">0.05000000074505806</float>
+<Color3 name="TextStrokeColor3"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -3654,21 +3648,21 @@
 </Properties>
 </Item>
 <Item class="Part"><Properties>
-<Vector3 name="Size"><X>10</X><Y>3</Y><Z>0.5</Z></Vector3>
-<CoordinateFrame name="CFrame"><X>-41.99999237060547</X><Y>3</Y><Z>76</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>-1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
+<Vector3 name="Size"><X>1</X><Y>1</Y><Z>1</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>-66</X><Y>19</Y><Z>96</Z><R00>1</R00><R01>0</R01><R02>0</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>0</R20><R21>0</R21><R22>1</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 <token name="Material">256</token>
 <bool name="Anchored">true</bool>
-<bool name="CanCollide">true</bool>
-<bool name="CanTouch">true</bool>
-<bool name="CanQuery">true</bool>
-<bool name="CastShadow">true</bool>
+<bool name="CanCollide">false</bool>
+<bool name="CanTouch">false</bool>
+<bool name="CanQuery">false</bool>
+<bool name="CastShadow">false</bool>
 <token name="TopSurface">3</token>
 <token name="BottomSurface">3</token>
-<float name="Transparency">0</float>
+<float name="Transparency">1</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
-<string name="Name">OwnerSign</string>
+<string name="Name">OwnerDisplay</string>
 <bool name="Archivable">true</bool>
 
 <token name="LeftSurface">3</token>
@@ -3679,25 +3673,22 @@
 
 <token name="BackSurface">3</token>
 </Properties>
-<Item class="SurfaceGui"><Properties>
-<bool name="Active">true</bool>
-<bool name="AlwaysOnTop">false</bool>
-<Vector2 name="CanvasSize"><X>600</X><Y>180</Y></Vector2>
-<bool name="Enabled">true</bool>
-<token name="Face">2</token>
-<float name="LightInfluence">0</float>
-<token name="SizingMode">0</token>
-<float name="PixelsPerStud">50</float>
-<float name="MaxDistance">0</float>
-<bool name="ResetOnSpawn">true</bool>
-<string name="Name">SignGui</string>
+<Item class="BillboardGui"><Properties>
+<string name="Name">OwnerGui</string>
 <bool name="Archivable">true</bool>
+<bool name="AlwaysOnTop">true</bool>
+<float name="MaxDistance">140</float>
+<UDim2 name="Size"><XS>7</XS><XO>0</XO><YS>7</YS><YO>0</YO></UDim2>
+<Vector3 name="StudsOffset"><X>0</X><Y>0</Y><Z>0</Z></Vector3>
+<bool name="Enabled">true</bool>
+<float name="LightInfluence">0</float>
+<bool name="ResetOnSpawn">true</bool>
 </Properties>
 <Item class="ImageLabel"><Properties>
 <string name="Name">OwnerImage</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
-<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<UDim2 name="Size"><XS>0.55</XS><XO>0</XO><YS>0.55</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
 <float name="BackgroundTransparency">0</float>
@@ -3709,13 +3700,13 @@
 <token name="ScaleType">1</token>
 </Properties>
 <Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
-<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3><float name="Thickness">5</float><float name="Transparency">0</float></Properties></Item>
 </Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
+<UDim2 name="Size"><XS>0.92</XS><XO>0</XO><YS>0.25</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.04</XS><XO>0</XO><YS>0.62</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
@@ -3727,8 +3718,8 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">AVAILABLE</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
+<string name="Text"></string>
+<Color3 name="TextColor3"><R>1</R><G>0.9058823585510254</G><B>0.6745098233222961</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
@@ -3737,8 +3728,8 @@
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">0.15000000596046448</float>
-<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
+<float name="TextStrokeTransparency">0.05000000074505806</float>
+<Color3 name="TextStrokeColor3"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -5132,21 +5123,21 @@
 </Item>
 </Item>
 <Item class="Part"><Properties>
-<Vector3 name="Size"><X>10</X><Y>3</Y><Z>0.5</Z></Vector3>
-<CoordinateFrame name="CFrame"><X>42.00000762939453</X><Y>3</Y><Z>-76</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
+<Vector3 name="Size"><X>1</X><Y>1</Y><Z>1</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>66</X><Y>19</Y><Z>-96</Z><R00>1</R00><R01>0</R01><R02>0</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>0</R20><R21>0</R21><R22>1</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 <token name="Material">256</token>
 <bool name="Anchored">true</bool>
-<bool name="CanCollide">true</bool>
-<bool name="CanTouch">true</bool>
-<bool name="CanQuery">true</bool>
-<bool name="CastShadow">true</bool>
+<bool name="CanCollide">false</bool>
+<bool name="CanTouch">false</bool>
+<bool name="CanQuery">false</bool>
+<bool name="CastShadow">false</bool>
 <token name="TopSurface">3</token>
 <token name="BottomSurface">3</token>
-<float name="Transparency">0</float>
+<float name="Transparency">1</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
-<string name="Name">OwnerSign</string>
+<string name="Name">OwnerDisplay</string>
 <bool name="Archivable">true</bool>
 
 <token name="LeftSurface">3</token>
@@ -5157,25 +5148,22 @@
 
 <token name="BackSurface">3</token>
 </Properties>
-<Item class="SurfaceGui"><Properties>
-<bool name="Active">true</bool>
-<bool name="AlwaysOnTop">false</bool>
-<Vector2 name="CanvasSize"><X>600</X><Y>180</Y></Vector2>
-<bool name="Enabled">true</bool>
-<token name="Face">2</token>
-<float name="LightInfluence">0</float>
-<token name="SizingMode">0</token>
-<float name="PixelsPerStud">50</float>
-<float name="MaxDistance">0</float>
-<bool name="ResetOnSpawn">true</bool>
-<string name="Name">SignGui</string>
+<Item class="BillboardGui"><Properties>
+<string name="Name">OwnerGui</string>
 <bool name="Archivable">true</bool>
+<bool name="AlwaysOnTop">true</bool>
+<float name="MaxDistance">140</float>
+<UDim2 name="Size"><XS>7</XS><XO>0</XO><YS>7</YS><YO>0</YO></UDim2>
+<Vector3 name="StudsOffset"><X>0</X><Y>0</Y><Z>0</Z></Vector3>
+<bool name="Enabled">true</bool>
+<float name="LightInfluence">0</float>
+<bool name="ResetOnSpawn">true</bool>
 </Properties>
 <Item class="ImageLabel"><Properties>
 <string name="Name">OwnerImage</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
-<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<UDim2 name="Size"><XS>0.55</XS><XO>0</XO><YS>0.55</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
 <float name="BackgroundTransparency">0</float>
@@ -5187,13 +5175,13 @@
 <token name="ScaleType">1</token>
 </Properties>
 <Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
-<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3><float name="Thickness">5</float><float name="Transparency">0</float></Properties></Item>
 </Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
+<UDim2 name="Size"><XS>0.92</XS><XO>0</XO><YS>0.25</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.04</XS><XO>0</XO><YS>0.62</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
@@ -5205,8 +5193,8 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">AVAILABLE</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
+<string name="Text"></string>
+<Color3 name="TextColor3"><R>1</R><G>0.9058823585510254</G><B>0.6745098233222961</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
@@ -5215,8 +5203,8 @@
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">0.15000000596046448</float>
-<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
+<float name="TextStrokeTransparency">0.05000000074505806</float>
+<Color3 name="TextStrokeColor3"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -6645,21 +6633,21 @@
 </Properties>
 </Item>
 <Item class="Part"><Properties>
-<Vector3 name="Size"><X>10</X><Y>3</Y><Z>0.5</Z></Vector3>
-<CoordinateFrame name="CFrame"><X>42</X><Y>3</Y><Z>19.999998092651367</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
+<Vector3 name="Size"><X>1</X><Y>1</Y><Z>1</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>66</X><Y>19</Y><Z>0</Z><R00>1</R00><R01>0</R01><R02>0</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>0</R20><R21>0</R21><R22>1</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 <token name="Material">256</token>
 <bool name="Anchored">true</bool>
-<bool name="CanCollide">true</bool>
-<bool name="CanTouch">true</bool>
-<bool name="CanQuery">true</bool>
-<bool name="CastShadow">true</bool>
+<bool name="CanCollide">false</bool>
+<bool name="CanTouch">false</bool>
+<bool name="CanQuery">false</bool>
+<bool name="CastShadow">false</bool>
 <token name="TopSurface">3</token>
 <token name="BottomSurface">3</token>
-<float name="Transparency">0</float>
+<float name="Transparency">1</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
-<string name="Name">OwnerSign</string>
+<string name="Name">OwnerDisplay</string>
 <bool name="Archivable">true</bool>
 
 <token name="LeftSurface">3</token>
@@ -6670,25 +6658,22 @@
 
 <token name="BackSurface">3</token>
 </Properties>
-<Item class="SurfaceGui"><Properties>
-<bool name="Active">true</bool>
-<bool name="AlwaysOnTop">false</bool>
-<Vector2 name="CanvasSize"><X>600</X><Y>180</Y></Vector2>
-<bool name="Enabled">true</bool>
-<token name="Face">2</token>
-<float name="LightInfluence">0</float>
-<token name="SizingMode">0</token>
-<float name="PixelsPerStud">50</float>
-<float name="MaxDistance">0</float>
-<bool name="ResetOnSpawn">true</bool>
-<string name="Name">SignGui</string>
+<Item class="BillboardGui"><Properties>
+<string name="Name">OwnerGui</string>
 <bool name="Archivable">true</bool>
+<bool name="AlwaysOnTop">true</bool>
+<float name="MaxDistance">140</float>
+<UDim2 name="Size"><XS>7</XS><XO>0</XO><YS>7</YS><YO>0</YO></UDim2>
+<Vector3 name="StudsOffset"><X>0</X><Y>0</Y><Z>0</Z></Vector3>
+<bool name="Enabled">true</bool>
+<float name="LightInfluence">0</float>
+<bool name="ResetOnSpawn">true</bool>
 </Properties>
 <Item class="ImageLabel"><Properties>
 <string name="Name">OwnerImage</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
-<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<UDim2 name="Size"><XS>0.55</XS><XO>0</XO><YS>0.55</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
 <float name="BackgroundTransparency">0</float>
@@ -6700,13 +6685,13 @@
 <token name="ScaleType">1</token>
 </Properties>
 <Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
-<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3><float name="Thickness">5</float><float name="Transparency">0</float></Properties></Item>
 </Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
+<UDim2 name="Size"><XS>0.92</XS><XO>0</XO><YS>0.25</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.04</XS><XO>0</XO><YS>0.62</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
@@ -6718,8 +6703,8 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">AVAILABLE</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
+<string name="Text"></string>
+<Color3 name="TextColor3"><R>1</R><G>0.9058823585510254</G><B>0.6745098233222961</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
@@ -6728,8 +6713,8 @@
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">0.15000000596046448</float>
-<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
+<float name="TextStrokeTransparency">0.05000000074505806</float>
+<Color3 name="TextStrokeColor3"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -7550,21 +7535,21 @@
 <bool name="Archivable">true</bool>
 </Properties>
 <Item class="Part"><Properties>
-<Vector3 name="Size"><X>10</X><Y>3</Y><Z>0.5</Z></Vector3>
-<CoordinateFrame name="CFrame"><X>41.99999237060547</X><Y>3</Y><Z>116</Z><R00>-4.371138828673793e-08</R00><R01>0</R01><R02>-1</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>1</R20><R21>0</R21><R22>-4.371138828673793e-08</R22></CoordinateFrame>
+<Vector3 name="Size"><X>1</X><Y>1</Y><Z>1</Z></Vector3>
+<CoordinateFrame name="CFrame"><X>66</X><Y>19</Y><Z>96</Z><R00>1</R00><R01>0</R01><R02>0</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>0</R20><R21>0</R21><R22>1</R22></CoordinateFrame>
 <Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 <token name="Material">256</token>
 <bool name="Anchored">true</bool>
-<bool name="CanCollide">true</bool>
-<bool name="CanTouch">true</bool>
-<bool name="CanQuery">true</bool>
-<bool name="CastShadow">true</bool>
+<bool name="CanCollide">false</bool>
+<bool name="CanTouch">false</bool>
+<bool name="CanQuery">false</bool>
+<bool name="CastShadow">false</bool>
 <token name="TopSurface">3</token>
 <token name="BottomSurface">3</token>
-<float name="Transparency">0</float>
+<float name="Transparency">1</float>
 <float name="Reflectance">0</float>
 <token name="Shape">1</token>
-<string name="Name">OwnerSign</string>
+<string name="Name">OwnerDisplay</string>
 <bool name="Archivable">true</bool>
 
 <token name="LeftSurface">3</token>
@@ -7575,25 +7560,22 @@
 
 <token name="BackSurface">3</token>
 </Properties>
-<Item class="SurfaceGui"><Properties>
-<bool name="Active">true</bool>
-<bool name="AlwaysOnTop">false</bool>
-<Vector2 name="CanvasSize"><X>600</X><Y>180</Y></Vector2>
-<bool name="Enabled">true</bool>
-<token name="Face">2</token>
-<float name="LightInfluence">0</float>
-<token name="SizingMode">0</token>
-<float name="PixelsPerStud">50</float>
-<float name="MaxDistance">0</float>
-<bool name="ResetOnSpawn">true</bool>
-<string name="Name">SignGui</string>
+<Item class="BillboardGui"><Properties>
+<string name="Name">OwnerGui</string>
 <bool name="Archivable">true</bool>
+<bool name="AlwaysOnTop">true</bool>
+<float name="MaxDistance">140</float>
+<UDim2 name="Size"><XS>7</XS><XO>0</XO><YS>7</YS><YO>0</YO></UDim2>
+<Vector3 name="StudsOffset"><X>0</X><Y>0</Y><Z>0</Z></Vector3>
+<bool name="Enabled">true</bool>
+<float name="LightInfluence">0</float>
+<bool name="ResetOnSpawn">true</bool>
 </Properties>
 <Item class="ImageLabel"><Properties>
 <string name="Name">OwnerImage</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
-<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<UDim2 name="Size"><XS>0.55</XS><XO>0</XO><YS>0.55</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
 <float name="BackgroundTransparency">0</float>
@@ -7605,13 +7587,13 @@
 <token name="ScaleType">1</token>
 </Properties>
 <Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
-<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3><float name="Thickness">5</float><float name="Transparency">0</float></Properties></Item>
 </Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
+<UDim2 name="Size"><XS>0.92</XS><XO>0</XO><YS>0.25</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.04</XS><XO>0</XO><YS>0.62</YS><YO>0</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
@@ -7623,8 +7605,8 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">AVAILABLE</string>
-<Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
+<string name="Text"></string>
+<Color3 name="TextColor3"><R>1</R><G>0.9058823585510254</G><B>0.6745098233222961</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
@@ -7633,8 +7615,8 @@
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">0.15000000596046448</float>
-<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
+<float name="TextStrokeTransparency">0.05000000074505806</float>
+<Color3 name="TextStrokeColor3"><R>0.4313725531101227</R><G>0.30588236451148987</G><B>0.20392157137393951</B></Color3>
 </Properties>
 </Item>
 </Item>

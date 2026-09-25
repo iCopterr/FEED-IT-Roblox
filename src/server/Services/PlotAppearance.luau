@@ -1,5 +1,6 @@
 -- Resizes/recolors authored parts only; never generates replacement geometry.
 local Config=require(game.ReplicatedStorage.Shared.Config.PlotUpgradeConfig)
+local PlotConfig=require(game.ReplicatedStorage.Shared.Config.PlotConfig)
 local Appearance={}
 local states={}
 
@@ -44,6 +45,10 @@ function Appearance.Apply(model,capacity)
   part.CFrame=entry.CFrame-state.Base.ZVector*(entry.Shift*extra)
   part.Color=if accent and entry.Accent then accent
    else if accent and entry.Grass then entry.Color:Lerp(accent,.22) else entry.Color
+ end
+ local ownerDisplay=model:FindFirstChild("OwnerDisplay")
+ if ownerDisplay and ownerDisplay:IsA("BasePart") then
+  ownerDisplay.CFrame=CFrame.new(model.Ground.Position+Vector3.new(0,PlotConfig.OwnerDisplayHeight,0))
  end
  state.Tier=tier
  model:SetAttribute("ExpansionDepth",extra)

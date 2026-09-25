@@ -10,8 +10,8 @@ local owned: {[Player]: Plot} = {}
 local started = false
 local PlotService = {}
 
-local function sign(plot: Plot, text: string, userId: number?)
-	local gui = plot.Model.OwnerSign.SignGui
+local function setOwnerDisplay(plot: Plot, text: string, userId: number?)
+	local gui = plot.Model.OwnerDisplay.OwnerGui
 	local label = gui.OwnerText :: TextLabel
 	local image = gui.OwnerImage :: ImageLabel
 	label.Text = text
@@ -44,7 +44,7 @@ local function assign(player: Player)
 	plot.Model:SetAttribute("OwnerUserId", player.UserId)
 	player:SetAttribute("PlotId", plot.Model:GetAttribute("PlotId"))
 	player.RespawnLocation = plot.Spawn
-	sign(plot, player.DisplayName, player.UserId)
+	setOwnerDisplay(plot, player.DisplayName, player.UserId)
 	plot.Connection = player.CharacterAdded:Connect(function(character) moveCharacter(player, plot, character) end)
 	if player.Character then moveCharacter(player, plot, player.Character) end
 end
@@ -60,7 +60,7 @@ local function release(player: Player)
 	plot.Model:SetAttribute("OwnerUserId", 0)
 	plot.Model:SetAttribute("SlotCapacity", Config.StartingSlots)
 	Appearance.Apply(plot.Model, Config.StartingSlots)
-	sign(plot, "AVAILABLE", nil)
+	setOwnerDisplay(plot, "", nil)
 	-- Persistent placement belongs to player data, never to this reusable world plot.
 end
 
@@ -80,8 +80,10 @@ function PlotService.Start()
 			local slot = model.Pen.Slots:FindFirstChild(tostring(slotIndex))
 			assert(slot and slot:IsA("BasePart"), "Plot slot missing: " .. slotIndex)
 		end
-		assert(model:FindFirstChild("OwnerSign") and model.OwnerSign:FindFirstChild("SignGui")
-			and model.OwnerSign.SignGui:FindFirstChild("OwnerText") and model.OwnerSign.SignGui:FindFirstChild("OwnerImage"), "Plot owner sign missing")
+		assert(model:FindFirstChild("OwnerSign")==nil,"Legacy physical owner sign must be removed")
+		assert(model:FindFirstChild("OwnerDisplay") and model.OwnerDisplay:FindFirstChild("OwnerGui")
+			and model.OwnerDisplay.OwnerGui:IsA("BillboardGui") and model.OwnerDisplay.OwnerGui:FindFirstChild("OwnerText")
+			and model.OwnerDisplay.OwnerGui:FindFirstChild("OwnerImage"), "Floating plot owner display missing")
 	end
 	assert(#models == Config.PlayerCapacity, "Workspace must contain exactly six player plots")
 	if Players.MaxPlayers ~= Config.PlayerCapacity then
@@ -95,7 +97,7 @@ function PlotService.Start()
 		Appearance.Capture(model)
 		Appearance.Apply(model, Config.StartingSlots)
 		table.insert(plots, plot)
-		sign(plot, "AVAILABLE", nil)
+		setOwnerDisplay(plot, "", nil)
 	end
 	started = true
 	Players.PlayerAdded:Connect(assign)
@@ -131,7 +133,7 @@ function PlotService.RefreshSign(player: Player)
 	if not plot then return end
 	local capacity = PlotService.GetSlotCapacity(player)
 	plot.Model:SetAttribute("SlotCapacity", capacity)
-	sign(plot, player.DisplayName, player.UserId)
+	setOwnerDisplay(plot, player.DisplayName, player.UserId)
 end
 
 function PlotService.GetSlotCFrame(player: Player, slotIndex: number): CFrame?

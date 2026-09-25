@@ -48,9 +48,14 @@ clickable world buttons. Its visible copy is deliberately limited to
 `UPGRADE PEN`, `LEVEL X → LEVEL Y`, and a `BUY • $Money` button. No runtime UI
 layout/geometry builders.
 
-Every authored plot owner sign contains a circular `OwnerImage` above
-`OwnerText`. PlotService assigns the owner's Roblox headshot and DisplayName,
-clears the portrait on leave, and replaces both when that plot is reused.
+The old physical owner boards are removed. Every authored plot instead has an
+invisible, non-colliding `OwnerDisplay` anchor 19 studs above its center. Its
+always-on-top BillboardGui floats a circular `OwnerImage` with `OwnerText`
+directly underneath, matching the reference badge style. The BillboardGui uses
+world-space scale dimensions instead of fixed pixel offsets, so the badge gets
+smaller naturally with distance rather than appearing to grow against the plot.
+PlotService assigns the owner's Roblox headshot and DisplayName; empty plots
+show neither, and both update when a plot is reused.
 
 Set the place's Maximum Players to 6 in Creator Dashboard. The script's
 six-plot ownership limit is not the platform matchmaking setting.
@@ -61,8 +66,9 @@ Opt-in Studio multiplayer tests:
 
 - PlotUpgradeVerification: prices, ownership, distance, malformed requests,
   save/Feed locks, stale/repeated purchases, 5→10 placement capacity, maximum,
-  save/reload and unchanged other-player/Food state.
-- PlotVerification: ownership, spawn/respawn, departing player and plot reuse.
+  save/reload, owner-badge centering and unchanged other-player/Food state.
+- PlotVerification: ownership, floating owner identity, spawn/respawn, departing
+  player and plot reuse.
 - FoodShopVerification: food shop, Feed, Rescue and UI regression.
 
 Launch using StudioTestService:ExecuteMultiplayerTestAsync(2, testName) from

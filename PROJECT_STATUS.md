@@ -6,6 +6,29 @@
 
 **Last Updated:** 2026-09-25
 
+### Latest session — floating plot-owner badges
+
+- Superseded the physical owner-board presentation from the prior session.
+  Removed every visible `OwnerSign` board/post and replaced it with an invisible,
+  non-colliding authored `OwnerDisplay` centered 19 studs above each plot.
+- Each always-on-top BillboardGui matches the supplied reference: circular Roblox
+  headshot with a warm outline and the player's DisplayName directly underneath.
+  Empty plots show no badge or placeholder text; leave/reuse clears and replaces
+  the identity. No UI hierarchy is generated at runtime.
+- PlotAppearance keeps the badge centered over the current Ground after every
+  rear-expansion milestone, instead of leaving it over the original plot center.
+- Replaced fixed-pixel BillboardGui sizing with world-space scale sizing. The
+  badge now recedes with distance instead of staying the same screen size and
+  appearing larger relative to far-away plots.
+- PASS: Rojo build/RBXMX structural validation and synchronized Studio syntax
+  analysis. All six physical signs are absent; all six displays are invisible
+  anchors with world-scaled BillboardGuis 19 studs above their Grounds. Fresh
+  two-player regressions passed: PlotVerification 25/25 and
+  PlotUpgradeVerification 105/105.
+- Files: PlayerPlots asset, PlotService/PlotAppearance, Plot/PlotUpgrade tests,
+  plot docs and this handoff. Preserve the unrelated untracked Kitsune recipe.
+  No push.
+
 ### Latest session — simplified plot world signs
 
 - Reduced every authored FeedPlate BillboardGui to the single title
@@ -15,13 +38,12 @@
   status, expansion and instruction copy stays hidden. Max level uses
   `LEVEL 10 • MAX` and `MAX LEVEL`.
 - Added an authored circular owner portrait above the owner name on all six plot
-  signs. PlotService supplies the Roblox headshot and DisplayName, clears both
-  on release, and replaces them when another player receives the plot.
+  signs. This physical-board version was superseded by the floating BillboardGui
+  presentation in the next session.
 - PASS: Rojo build, RBXMX sync, `git diff --check`, Studio visual review of the
   simplified capacity board, zero diagnostics across 90 scripts and all 25
-  two-player Plot ownership/release/reuse assertions. The launched capacity
-  suite could not be polled after the MCP tool quota was reached; upgrade
-  transaction behavior itself was not changed in this presentation-only pass.
+  two-player Plot ownership/release/reuse assertions. The capacity suite later
+  completed 100/100; upgrade transaction behavior was not changed.
 - Files: PlayerPlots/PlotUpgradeSigns assets, PlotService, plot/sign presenters,
   Plot and FoodShop verification, plot/feed-plate docs and this handoff. Preserve
   the unrelated untracked Kitsune reference recipe. No push.
@@ -1448,7 +1470,7 @@ are retired. Next: full manual core-loop playtesting and balance iteration.
 | Player Data Schema | ✅ v8 Studio Verified | Versioned data preserves pet/egg/food/merchant state; retired fields remain compatibility-only. |
 | Mystery Merchant | ✅ Server Verified | Basic plus two weighted special foods every 5 minutes; Money purchases and personal stock limits verified. Basic allows five bundle purchases per restock. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
-| Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each. All 19 checks pass. Platform player limit still needs setting to 6. |
+| Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each; floating owner badges. All 25 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ✅ Carry/Place Studio Verified | Buy/hold/click Pen starts timer; E hatch returns pet to player. 64 automated checks plus developer playtest. |
 | Egg Conveyor | ✅ Server Verified | Eggs replace direct pets; owner inventory slot, range/price validation, offer races/expiry tested. Existing static conveyor retained. |
 | Pet Identity | ✅ Complete / Verified | Creation, unique GUIDs, lock/unlock and removal passed in Studio; live persistence remains pending. |
@@ -1479,14 +1501,14 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Simplified plot world signs and owner identity cards
+**Current Feature:** Floating plot-owner identity badges
 
-**Status:** Implemented in authored world assets and synchronized Studio source.
-Plot ownership/release/reuse passed 25 checks; static build, visual review and
-zero-diagnostic compilation pass. Capacity-suite result polling is pending.
+**Status:** Implemented as six authored BillboardGuis over invisible anchors.
+Static build, hierarchy/position validation, zero-diagnostic compilation and
+fresh multiplayer regressions pass (25/25 plot, 105/105 plot-upgrade checks).
 
-**Objective:** Remove noisy permanent instructions, keep the upgrade decision
-readable at a glance, and show the owner portrait/name on every assigned plot.
+**Objective:** Remove physical owner boards and float a circular player portrait
+with the DisplayName underneath above each assigned plot.
 
 ## 4. Completed
 
