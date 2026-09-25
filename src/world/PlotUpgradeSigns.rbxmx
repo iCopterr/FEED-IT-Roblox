@@ -63,7 +63,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">PET CAPACITY</string>
+<string name="Text">UPGRADE PEN</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8549019694328308</G><B>0.3921568691730499</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -93,7 +93,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 / 10 PET SLOTS</string>
+<string name="Text">LEVEL 5 → LEVEL 6</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -123,7 +123,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 → 6 ACTIVE PETS</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.7098039388656616</R><G>0.9411764740943909</G><B>0.729411780834198</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -138,7 +138,7 @@
 </Properties>
 </Item>
 <Item class="TextButton"><Properties>
-<string name="Text">+1 SLOT • $20K</string>
+<string name="Text">BUY • $20K</string>
 <Color3 name="TextColor3"><R>0.10980392247438431</R><G>0.22745098173618317</G><B>0.10980392247438431</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -188,7 +188,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Unlock room for another companion</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.8705882430076599</R><G>0.8941176533699036</G><B>0.8705882430076599</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -346,7 +346,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">PET CAPACITY</string>
+<string name="Text">UPGRADE PEN</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8549019694328308</G><B>0.3921568691730499</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -376,7 +376,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 / 10 PET SLOTS</string>
+<string name="Text">LEVEL 5 → LEVEL 6</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -406,7 +406,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 → 6 ACTIVE PETS</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.7098039388656616</R><G>0.9411764740943909</G><B>0.729411780834198</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -421,7 +421,7 @@
 </Properties>
 </Item>
 <Item class="TextButton"><Properties>
-<string name="Text">+1 SLOT • $20K</string>
+<string name="Text">BUY • $20K</string>
 <Color3 name="TextColor3"><R>0.10980392247438431</R><G>0.22745098173618317</G><B>0.10980392247438431</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -471,7 +471,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Unlock room for another companion</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.8705882430076599</R><G>0.8941176533699036</G><B>0.8705882430076599</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -656,7 +656,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">PET CAPACITY</string>
+<string name="Text">UPGRADE PEN</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8549019694328308</G><B>0.3921568691730499</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -686,7 +686,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 / 10 PET SLOTS</string>
+<string name="Text">LEVEL 5 → LEVEL 6</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -716,7 +716,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 → 6 ACTIVE PETS</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.7098039388656616</R><G>0.9411764740943909</G><B>0.729411780834198</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -731,7 +731,7 @@
 </Properties>
 </Item>
 <Item class="TextButton"><Properties>
-<string name="Text">+1 SLOT • $20K</string>
+<string name="Text">BUY • $20K</string>
 <Color3 name="TextColor3"><R>0.10980392247438431</R><G>0.22745098173618317</G><B>0.10980392247438431</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -781,7 +781,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Unlock room for another companion</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.8705882430076599</R><G>0.8941176533699036</G><B>0.8705882430076599</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -912,7 +912,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">PET CAPACITY</string>
+<string name="Text">UPGRADE PEN</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8549019694328308</G><B>0.3921568691730499</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -942,7 +942,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 / 10 PET SLOTS</string>
+<string name="Text">LEVEL 5 → LEVEL 6</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -972,7 +972,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 → 6 ACTIVE PETS</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.7098039388656616</R><G>0.9411764740943909</G><B>0.729411780834198</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -987,7 +987,7 @@
 </Properties>
 </Item>
 <Item class="TextButton"><Properties>
-<string name="Text">+1 SLOT • $20K</string>
+<string name="Text">BUY • $20K</string>
 <Color3 name="TextColor3"><R>0.10980392247438431</R><G>0.22745098173618317</G><B>0.10980392247438431</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1037,7 +1037,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Unlock room for another companion</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.8705882430076599</R><G>0.8941176533699036</G><B>0.8705882430076599</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1276,7 +1276,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">PET CAPACITY</string>
+<string name="Text">UPGRADE PEN</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8549019694328308</G><B>0.3921568691730499</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1306,7 +1306,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 / 10 PET SLOTS</string>
+<string name="Text">LEVEL 5 → LEVEL 6</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1336,7 +1336,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 → 6 ACTIVE PETS</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.7098039388656616</R><G>0.9411764740943909</G><B>0.729411780834198</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1351,7 +1351,7 @@
 </Properties>
 </Item>
 <Item class="TextButton"><Properties>
-<string name="Text">+1 SLOT • $20K</string>
+<string name="Text">BUY • $20K</string>
 <Color3 name="TextColor3"><R>0.10980392247438431</R><G>0.22745098173618317</G><B>0.10980392247438431</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1401,7 +1401,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Unlock room for another companion</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.8705882430076599</R><G>0.8941176533699036</G><B>0.8705882430076599</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1559,7 +1559,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">PET CAPACITY</string>
+<string name="Text">UPGRADE PEN</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8549019694328308</G><B>0.3921568691730499</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1589,7 +1589,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 / 10 PET SLOTS</string>
+<string name="Text">LEVEL 5 → LEVEL 6</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1619,7 +1619,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">5 → 6 ACTIVE PETS</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.7098039388656616</R><G>0.9411764740943909</G><B>0.729411780834198</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1634,7 +1634,7 @@
 </Properties>
 </Item>
 <Item class="TextButton"><Properties>
-<string name="Text">+1 SLOT • $20K</string>
+<string name="Text">BUY • $20K</string>
 <Color3 name="TextColor3"><R>0.10980392247438431</R><G>0.22745098173618317</G><B>0.10980392247438431</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
@@ -1684,7 +1684,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Unlock room for another companion</string>
+<string name="Text"></string>
 <Color3 name="TextColor3"><R>0.8705882430076599</R><G>0.8941176533699036</G><B>0.8705882430076599</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>

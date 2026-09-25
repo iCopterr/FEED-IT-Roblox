@@ -1,6 +1,8 @@
 # Feed plate (prototype staging)
 
 Each plot has one authored FeedPlate model, saved in PlayerPlots.rbxmx.
+Its world BillboardGui now shows only `FEED PLATE`; interaction instructions are
+kept out of the permanent world label.
 Equip a stored pet (or hold E to pick up a Pen pet), walk near your plate,
 then click/tap its surface. Hold E for one second near the staged pet to
 open Feed UI, then use Pick Up Pet to carry it again. Only one pet fits;

@@ -44,7 +44,13 @@ MemoryOnly remains enabled: progress lasts only this server.
 Static assets: PlayerPlots.rbxmx, PlotUpgradeSigns.rbxmx, SkyIsland.rbxmx.
 Export Studio edits back to these files before resync; Rojo is not reverse sync.
 The SurfaceGui sign is authored; its controller clones it into PlayerGui for
-clickable world buttons. No runtime UI layout/geometry builders.
+clickable world buttons. Its visible copy is deliberately limited to
+`UPGRADE PEN`, `LEVEL X → LEVEL Y`, and a `BUY • $Money` button. No runtime UI
+layout/geometry builders.
+
+Every authored plot owner sign contains a circular `OwnerImage` above
+`OwnerText`. PlotService assigns the owner's Roblox headshot and DisplayName,
+clears the portrait on leave, and replaces both when that plot is reused.
 
 Set the place's Maximum Players to 6 in Creator Dashboard. The script's
 six-plot ownership limit is not the platform matchmaking setting.

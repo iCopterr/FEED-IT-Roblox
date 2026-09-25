@@ -77,7 +77,10 @@ local ok,failure=xpcall(function()
 	for _,sign in workspace.PlotUpgradeSigns:GetChildren() do
 		local upgradeGui=assert(gui:WaitForChild("PlotUpgrade_"..sign.Name,5),"Plot upgrade controller did not bind")
 		assert(upgradeGui.Adornee==sign.Board and upgradeGui.Enabled,"Upgrade UI adorns authored world sign")
-		assert(upgradeGui.Title.Text=="PET CAPACITY","Correct upgrade title")
+		assert(upgradeGui.Title.Text=="UPGRADE PEN","Upgrade sign uses simplified title")
+		assert(upgradeGui.Level.Text:find("LEVEL",1,true) and upgradeGui.Level.Text:find("→",1,true),"Upgrade sign shows level transition")
+		assert(not upgradeGui.Rate.Visible and upgradeGui.Rate.Text=="" and not upgradeGui.Status.Visible and upgradeGui.Status.Text=="","Upgrade sign hides extra copy")
+		assert(upgradeGui.Buy.Text:find("$",1,true),"Upgrade button shows Money price")
 		assert(not upgradeGui.Buy.Selectable,"World upgrade button must not capture keyboard navigation")
 		signCount+=1
 	end

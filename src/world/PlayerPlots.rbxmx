@@ -506,9 +506,7 @@
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">FEED PLATE
-Hold a pet • click plate
-Hold E to open Feed UI</string>
+<string name="Text">FEED PLATE</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8823529481887817</G><B>0.47058823704719543</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">false</bool>
@@ -646,15 +644,33 @@ Hold E to open Feed UI</string>
 <string name="Name">SignGui</string>
 <bool name="Archivable">true</bool>
 </Properties>
+<Item class="ImageLabel"><Properties>
+<string name="Name">OwnerImage</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
+<Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
+<float name="BackgroundTransparency">0</float>
+<float name="BorderSizePixel">0</float>
+<float name="ZIndex">1</float>
+<bool name="Visible">false</bool>
+<Content name="Image"><url></url></Content>
+<float name="ImageTransparency">0</float>
+<token name="ScaleType">1</token>
+</Properties>
+<Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+</Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
+<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
+<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
+<float name="BorderSizePixel">0</float>
 <float name="ZIndex">1</float>
 <bool name="Visible">true</bool>
 <float name="LayoutOrder">0</float>
@@ -662,18 +678,18 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Available Plot • 5 slots</string>
+<string name="Text">AVAILABLE</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
-<token name="Font">19</token>
+<token name="Font">26</token>
 <float name="TextSize">8</float>
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">1</float>
-<Color3 name="TextStrokeColor3"><R>0</R><G>0</G><B>0</B></Color3>
+<float name="TextStrokeTransparency">0.15000000596046448</float>
+<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -1999,9 +2015,7 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">FEED PLATE
-Hold a pet • click plate
-Hold E to open Feed UI</string>
+<string name="Text">FEED PLATE</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8823529481887817</G><B>0.47058823704719543</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">false</bool>
@@ -2139,15 +2153,33 @@ Hold E to open Feed UI</string>
 <string name="Name">SignGui</string>
 <bool name="Archivable">true</bool>
 </Properties>
+<Item class="ImageLabel"><Properties>
+<string name="Name">OwnerImage</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
+<Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
+<float name="BackgroundTransparency">0</float>
+<float name="BorderSizePixel">0</float>
+<float name="ZIndex">1</float>
+<bool name="Visible">false</bool>
+<Content name="Image"><url></url></Content>
+<float name="ImageTransparency">0</float>
+<token name="ScaleType">1</token>
+</Properties>
+<Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+</Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
+<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
+<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
+<float name="BorderSizePixel">0</float>
 <float name="ZIndex">1</float>
 <bool name="Visible">true</bool>
 <float name="LayoutOrder">0</float>
@@ -2155,18 +2187,18 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Available Plot • 5 slots</string>
+<string name="Text">AVAILABLE</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
-<token name="Font">19</token>
+<token name="Font">26</token>
 <float name="TextSize">8</float>
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">1</float>
-<Color3 name="TextStrokeColor3"><R>0</R><G>0</G><B>0</B></Color3>
+<float name="TextStrokeTransparency">0.15000000596046448</float>
+<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -3573,9 +3605,7 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">FEED PLATE
-Hold a pet • click plate
-Hold E to open Feed UI</string>
+<string name="Text">FEED PLATE</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8823529481887817</G><B>0.47058823704719543</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">false</bool>
@@ -3663,15 +3693,33 @@ Hold E to open Feed UI</string>
 <string name="Name">SignGui</string>
 <bool name="Archivable">true</bool>
 </Properties>
+<Item class="ImageLabel"><Properties>
+<string name="Name">OwnerImage</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
+<Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
+<float name="BackgroundTransparency">0</float>
+<float name="BorderSizePixel">0</float>
+<float name="ZIndex">1</float>
+<bool name="Visible">false</bool>
+<Content name="Image"><url></url></Content>
+<float name="ImageTransparency">0</float>
+<token name="ScaleType">1</token>
+</Properties>
+<Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+</Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
+<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
+<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
+<float name="BorderSizePixel">0</float>
 <float name="ZIndex">1</float>
 <bool name="Visible">true</bool>
 <float name="LayoutOrder">0</float>
@@ -3679,18 +3727,18 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Available Plot • 5 slots</string>
+<string name="Text">AVAILABLE</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
-<token name="Font">19</token>
+<token name="Font">26</token>
 <float name="TextSize">8</float>
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">1</float>
-<Color3 name="TextStrokeColor3"><R>0</R><G>0</G><B>0</B></Color3>
+<float name="TextStrokeTransparency">0.15000000596046448</float>
+<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -5039,9 +5087,7 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">FEED PLATE
-Hold a pet • click plate
-Hold E to open Feed UI</string>
+<string name="Text">FEED PLATE</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8823529481887817</G><B>0.47058823704719543</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">false</bool>
@@ -5125,15 +5171,33 @@ Hold E to open Feed UI</string>
 <string name="Name">SignGui</string>
 <bool name="Archivable">true</bool>
 </Properties>
+<Item class="ImageLabel"><Properties>
+<string name="Name">OwnerImage</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
+<Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
+<float name="BackgroundTransparency">0</float>
+<float name="BorderSizePixel">0</float>
+<float name="ZIndex">1</float>
+<bool name="Visible">false</bool>
+<Content name="Image"><url></url></Content>
+<float name="ImageTransparency">0</float>
+<token name="ScaleType">1</token>
+</Properties>
+<Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+</Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
+<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
+<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
+<float name="BorderSizePixel">0</float>
 <float name="ZIndex">1</float>
 <bool name="Visible">true</bool>
 <float name="LayoutOrder">0</float>
@@ -5141,18 +5205,18 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Available Plot • 5 slots</string>
+<string name="Text">AVAILABLE</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
-<token name="Font">19</token>
+<token name="Font">26</token>
 <float name="TextSize">8</float>
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">1</float>
-<Color3 name="TextStrokeColor3"><R>0</R><G>0</G><B>0</B></Color3>
+<float name="TextStrokeTransparency">0.15000000596046448</float>
+<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -6478,9 +6542,7 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">FEED PLATE
-Hold a pet • click plate
-Hold E to open Feed UI</string>
+<string name="Text">FEED PLATE</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8823529481887817</G><B>0.47058823704719543</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">false</bool>
@@ -6622,15 +6684,33 @@ Hold E to open Feed UI</string>
 <string name="Name">SignGui</string>
 <bool name="Archivable">true</bool>
 </Properties>
+<Item class="ImageLabel"><Properties>
+<string name="Name">OwnerImage</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
+<Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
+<float name="BackgroundTransparency">0</float>
+<float name="BorderSizePixel">0</float>
+<float name="ZIndex">1</float>
+<bool name="Visible">false</bool>
+<Content name="Image"><url></url></Content>
+<float name="ImageTransparency">0</float>
+<token name="ScaleType">1</token>
+</Properties>
+<Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+</Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
+<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
+<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
+<float name="BorderSizePixel">0</float>
 <float name="ZIndex">1</float>
 <bool name="Visible">true</bool>
 <float name="LayoutOrder">0</float>
@@ -6638,18 +6718,18 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Available Plot • 5 slots</string>
+<string name="Text">AVAILABLE</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
-<token name="Font">19</token>
+<token name="Font">26</token>
 <float name="TextSize">8</float>
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">1</float>
-<Color3 name="TextStrokeColor3"><R>0</R><G>0</G><B>0</B></Color3>
+<float name="TextStrokeTransparency">0.15000000596046448</float>
+<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -7509,15 +7589,33 @@ Hold E to open Feed UI</string>
 <string name="Name">SignGui</string>
 <bool name="Archivable">true</bool>
 </Properties>
+<Item class="ImageLabel"><Properties>
+<string name="Name">OwnerImage</string>
+<bool name="Archivable">true</bool>
+<UDim2 name="Size"><XS>0</XS><XO>95</XO><YS>0</YS><YO>95</YO></UDim2>
+<UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0</YS><YO>8</YO></UDim2>
+<Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
+<Color3 name="BackgroundColor3"><R>0.9372549057006836</R><G>0.7686274647712708</G><B>0.3529411852359772</B></Color3>
+<float name="BackgroundTransparency">0</float>
+<float name="BorderSizePixel">0</float>
+<float name="ZIndex">1</float>
+<bool name="Visible">false</bool>
+<Content name="Image"><url></url></Content>
+<float name="ImageTransparency">0</float>
+<token name="ScaleType">1</token>
+</Properties>
+<Item class="UICorner"><Properties><string name="Name">UICorner</string><bool name="Archivable">true</bool><UDim name="CornerRadius"><S>1</S><O>0</O></UDim></Properties></Item>
+<Item class="UIStroke"><Properties><string name="Name">Stroke</string><bool name="Archivable">true</bool><Color3 name="Color"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3><float name="Thickness">6</float><float name="Transparency">0</float></Properties></Item>
+</Item>
 <Item class="TextLabel"><Properties>
 <string name="Name">OwnerText</string>
 <bool name="Archivable">true</bool>
-<UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
+<UDim2 name="Size"><XS>1</XS><XO>-40</XO><YS>0</YS><YO>58</YO></UDim2>
+<UDim2 name="Position"><XS>0</XS><XO>20</XO><YS>0</YS><YO>112</YO></UDim2>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6392157077789307</R><G>0.6352941393852234</G><B>0.6470588445663452</B></Color3>
 <float name="BackgroundTransparency">1</float>
-<float name="BorderSizePixel">1</float>
+<float name="BorderSizePixel">0</float>
 <float name="ZIndex">1</float>
 <bool name="Visible">true</bool>
 <float name="LayoutOrder">0</float>
@@ -7525,18 +7623,18 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">Available Plot • 5 slots</string>
+<string name="Text">AVAILABLE</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">true</bool>
 <bool name="TextWrapped">true</bool>
-<token name="Font">19</token>
+<token name="Font">26</token>
 <float name="TextSize">8</float>
 <token name="TextXAlignment">2</token>
 <token name="TextYAlignment">1</token>
 <bool name="RichText">false</bool>
-<float name="TextStrokeTransparency">1</float>
-<Color3 name="TextStrokeColor3"><R>0</R><G>0</G><B>0</B></Color3>
+<float name="TextStrokeTransparency">0.15000000596046448</float>
+<Color3 name="TextStrokeColor3"><R>0.10196078568696976</R><G>0.05882352963089943</G><B>0.13725490868091583</B></Color3>
 </Properties>
 </Item>
 </Item>
@@ -8074,9 +8172,7 @@ Hold E to open Feed UI</string>
 <bool name="Active">false</bool>
 <bool name="Selectable">false</bool>
 <token name="AutomaticSize">0</token>
-<string name="Text">FEED PLATE
-Hold a pet • click plate
-Hold E to open Feed UI</string>
+<string name="Text">FEED PLATE</string>
 <Color3 name="TextColor3"><R>1</R><G>0.8823529481887817</G><B>0.47058823704719543</B></Color3>
 <float name="TextTransparency">0</float>
 <bool name="TextScaled">false</bool>

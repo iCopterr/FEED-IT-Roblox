@@ -27,12 +27,15 @@ local ok, failure = xpcall(function()
 	local a, b = plots.GetPlot(first), plots.GetPlot(second)
 	check(a ~= b, "Distinct plots for two players")
 	check(a:GetAttribute("OwnerUserId") == first.UserId and b:GetAttribute("OwnerUserId") == second.UserId, "Server ownership matches players")
+	check(a.OwnerSign.SignGui.OwnerText.Text==first.DisplayName and a.OwnerSign.SignGui.OwnerImage.Visible
+		and a.OwnerSign.SignGui.OwnerImage.Image:find(tostring(first.UserId),1,true),"Owned plot shows player picture and name")
 	check(#workspace.PlayerPlots:GetChildren() == 6, "Exactly six static plots")
 	local left, right = 0, 0
 	for _, model in workspace.PlayerPlots:GetChildren() do
 		if model.Ground.Position.X < 0 then left += 1 else right += 1 end
 		assert(math.abs(model.Ground.Position.X) == 66 and model.Ground.Size == Vector3.new(80,1,80), "Larger plots must preserve center lane")
 		assert(model.Pen.Floor.Size.X == 60 and model.Pen.Floor.Size.Z == 44, "Expanded Pen dimensions")
+		assert(model.FeedPlate.Base.PlateGui.Label.Text=="FEED PLATE","Feed plate uses title-only label")
 	end
 	check(left == 3 and right == 3, "Three plots per side with center conveyor lane")
 	check(first.RespawnLocation == a.Spawn and second.RespawnLocation == b.Spawn, "Personal respawn locations")
@@ -60,6 +63,8 @@ local ok, failure = xpcall(function()
 	check(b.Ground.Size.Z==120 and b.Pen.Fence.Back.Color~=baseFence,"Loaded capacity applies rear expansion and color")
 	second:Kick("Plot verification: testing plot release")
 	waitFor(function() return plots.GetPlot(second) == nil and b:GetAttribute("OwnerUserId") == 0 end, "Departing plot was not released")
+	check(b.OwnerSign.SignGui.OwnerText.Text=="AVAILABLE" and not b.OwnerSign.SignGui.OwnerImage.Visible
+		and b.OwnerSign.SignGui.OwnerImage.Image=="","Released plot clears owner portrait")
 	check(plots.GetPlot(first) == a, "Leaving frees only departing player's plot")
 	check(b.Ground.Size.Z==80 and b.Pen.Floor.Size.Z==44 and b.Pen.Fence.Back.Color==baseFence,"Leaving resets plot size and fence color")
 	testing:AddPlayers(1)
@@ -72,6 +77,8 @@ local ok, failure = xpcall(function()
 	end, "Replacement player did not join", 120)
 	check(plots.GetPlot(replacement) == b, "Next player reuses freed plot")
 	check(b:GetAttribute("OwnerUserId") == replacement.UserId, "Reused plot has new owner")
+	check(b.OwnerSign.SignGui.OwnerText.Text==replacement.DisplayName and b.OwnerSign.SignGui.OwnerImage.Visible
+		and b.OwnerSign.SignGui.OwnerImage.Image:find(tostring(replacement.UserId),1,true),"Reused plot shows replacement owner")
 	waitFor(function() return data.IsLoaded(replacement) end,"Replacement data not loaded")
 	plots.GetPlot(replacement)
 	check(b.Ground.Size.Z==80 and plots.GetSlotCapacity(replacement)==5,"New owner does not inherit old expansion")

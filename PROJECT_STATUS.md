@@ -6,6 +6,26 @@
 
 **Last Updated:** 2026-09-25
 
+### Latest session — simplified plot world signs
+
+- Reduced every authored FeedPlate BillboardGui to the single title
+  `FEED PLATE`; permanent placement/interaction instructions were removed.
+- Simplified each authored capacity board and its client renderer to exactly
+  `UPGRADE PEN`, `LEVEL X → LEVEL Y`, and `BUY • $Money`. Secondary slot/rate,
+  status, expansion and instruction copy stays hidden. Max level uses
+  `LEVEL 10 • MAX` and `MAX LEVEL`.
+- Added an authored circular owner portrait above the owner name on all six plot
+  signs. PlotService supplies the Roblox headshot and DisplayName, clears both
+  on release, and replaces them when another player receives the plot.
+- PASS: Rojo build, RBXMX sync, `git diff --check`, Studio visual review of the
+  simplified capacity board, zero diagnostics across 90 scripts and all 25
+  two-player Plot ownership/release/reuse assertions. The launched capacity
+  suite could not be polled after the MCP tool quota was reached; upgrade
+  transaction behavior itself was not changed in this presentation-only pass.
+- Files: PlayerPlots/PlotUpgradeSigns assets, PlotService, plot/sign presenters,
+  Plot and FoodShop verification, plot/feed-plate docs and this handoff. Preserve
+  the unrelated untracked Kitsune reference recipe. No push.
+
 ### Latest session — five-minute food restocks
 
 - Changed the Money food merchant from shared 30-minute restocks to shared
@@ -1459,13 +1479,14 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Expanded food lineup and finite Basic stock
+**Current Feature:** Simplified plot world signs and owner identity cards
 
-**Status:** Implemented and verified in synchronized Studio source. All 49
-two-player FoodShop/UI assertions pass; zero Luau diagnostics across 90 scripts.
+**Status:** Implemented in authored world assets and synchronized Studio source.
+Plot ownership/release/reuse passed 25 checks; static build, visual review and
+zero-diagnostic compilation pass. Capacity-suite result polling is pending.
 
-**Objective:** Give the Money merchant more meaningful food tiers while limiting
-the guaranteed Basic offer to five purchases per player every restock.
+**Objective:** Remove noisy permanent instructions, keep the upgrade decision
+readable at a glance, and show the owner portrait/name on every assigned plot.
 
 ## 4. Completed
 
