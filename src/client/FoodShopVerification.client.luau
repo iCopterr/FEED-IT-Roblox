@@ -6,9 +6,10 @@ local ok,failure=xpcall(function()
 	local main=assert(gui:WaitForChild("FeedYourPetUI",10),"Main UI missing")
 	local merchant=assert(gui:WaitForChild("MerchantUI",10),"Merchant UI missing")
 	local rescue=assert(gui:WaitForChild("ReviveUI",10),"Rescue UI missing")
+	local foods=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 	local deadline=os.clock()+20
 	repeat
-		if merchant.Panel.Slot1.Text:find("Basic Food",1,true) then break end
+		if merchant.Panel.Offers.Slot1.ItemName.Text:find("Basic Food",1,true) then break end
 		task.wait(.25)
 	until os.clock()>deadline
 	for _,entry in game.LogService:GetLogHistory() do
@@ -18,9 +19,26 @@ local ok,failure=xpcall(function()
 		end
 	end
 	assert(merchant:FindFirstChild("TokenHUD")==nil and merchant:FindFirstChild("TokenPopup")==nil,"Old Token UI visible")
-	assert(merchant.Panel.Money.Text:find("YOUR MONEY",1,true),"Merchant binds Money label")
-	assert(merchant.Panel.Slot1.Text:find("Basic Food",1,true),"Basic Food rendered in shop: "..merchant.Panel.Status.Text.." / "..merchant.Panel.Slot1.Text)
-	assert(merchant.Panel.Slot1.Text:find("/5 LEFT",1,true) or merchant.Panel.Slot1.Text:find("SOLD OUT",1,true),"Basic stock limit is visible")
+	assert(merchant.Panel.Money.Text:find("$",1,true),"Merchant binds compact Money label")
+	assert(merchant.Panel.Offers:IsA("ScrollingFrame") and merchant.Panel.Offers.AutomaticCanvasSize==Enum.AutomaticSize.Y,
+		"Merchant offers use an authored scrolling list")
+	local previousFoodOrder=0
+	local foodOrder={};for index,id in foods.Order do foodOrder[id]=index end
+	for index=1,3 do
+		local row=merchant.Panel.Offers["Slot"..index]
+		assert(row:IsA("GuiButton") and not row.Selectable,"Merchant row is an authored mouse/touch card")
+		assert(row.Art.Picture:IsA("ImageLabel") and row.Art.Emoji:IsA("TextLabel"),"Merchant row supports emoji and future image art")
+		assert(row.ItemName.Text~="" and row.Stock.Text~="" and row.Price.Text:find("$",1,true),"Merchant row separates name, stock and price")
+		assert(row.Effect.Text:find("RISK",1,true),"Merchant row shows feed-risk effect")
+		local matchedId
+		for id,definition in foods.Types do
+			if definition.Name==row.ItemName.Text then matchedId=id;break end
+		end
+		assert(matchedId and foodOrder[matchedId]>previousFoodOrder,"Visible merchant food follows progression order")
+		previousFoodOrder=foodOrder[matchedId]
+	end
+	assert(merchant.Panel.Offers.Slot1.ItemName.Text=="Basic Food","Basic Food rendered first in shop")
+	assert(merchant.Panel.Offers.Slot1.Stock.Text:find("/5 STOCK",1,true) or merchant.Panel.Offers.Slot1.Stock.Text=="SOLD OUT","Basic stock limit is visible")
 	assert(main.FeedPanel:FindFirstChild("FoodCards") and not main.FeedPanel:FindFirstChild("FoodType"),"Food cards replace cycling selector")
 	local feedLayout=main.FeedPanel
 	for _,panel in {main.Inventory.Panel,feedLayout,feedLayout.FoodCards,merchant.Panel,rescue.Panel} do
@@ -35,7 +53,6 @@ local ok,failure=xpcall(function()
 	assert(not feedLayout.ClipsDescendants,"External sidebar is not clipped")
 	local previousOrder=0
 	assert(feedLayout.FoodCards.List:IsA("ScrollingFrame") and feedLayout.FoodCards.List.AutomaticCanvasSize==Enum.AutomaticSize.Y,"Food list grows automatically")
-	local foods=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 	assert(#foods.Order==7,"Expanded food config reaches client")
 	for _,id in foods.Order do
 		local card=feedLayout.FoodCards.List[id]
@@ -97,7 +114,8 @@ if not ok then
 	local diagnostics={}
 	for _,entry in game.LogService:GetLogHistory() do table.insert(diagnostics,entry.message) end
 	local gui=game.Players.LocalPlayer.PlayerGui.MerchantUI
-	table.insert(diagnostics,"Shop timer: "..gui.Panel.Restock.Text.."; Money: "..gui.Panel.Money.Text)
+	table.insert(diagnostics,"Shop timer: "..gui.Panel.Restock.Text.."; Money: "..gui.Panel.Money.Text
+		.."; First offer: "..gui.Panel.Offers.Slot1.ItemName.Text)
 	task.spawn(function()
 		local reply=game.ReplicatedStorage.PrototypeMerchant:InvokeServer("Snapshot")
 		report:FireServer({Passed=false,Failure=table.concat(diagnostics,"\n").."\nDirect snapshot OK: "..tostring(reply.Ok).."\n"..tostring(failure)})

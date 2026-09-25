@@ -19,3 +19,13 @@ restock ID, sequence and transaction lock. Per-restock purchase markers use the
 existing boolean save map, so no data-version migration is needed. Replays do
 not charge twice. FoodShopVerification covers all food definitions, Basic's
 five-purchase limit, special limits, feeding and client startup.
+
+## Shop presentation
+
+`StarterGui.MerchantUI` owns the complete authored shop hierarchy. The compact
+scrolling list follows the configured food progression order even when the two
+special offers were randomly selected in a different order. Each row keeps its
+original server stock slot for purchase validation and shows image-ready art
+(emoji fallback), food name, bundle/remaining stock, formatted Money price and
+Feed-risk reduction. Sold-out rows remain visible but disabled. No shop UI is
+constructed at runtime.

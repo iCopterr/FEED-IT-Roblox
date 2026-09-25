@@ -1,11 +1,10 @@
 local Foods=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 local numberText=require(game.ReplicatedStorage.Shared.NumberFormat).Compact
 local View={}
-local emoji={basic="🍗",fresh="🍎",hearty="🥩",fortified="🥘",gourmet="🍱",enchanted="🔮",royal="🍰"}
 function View.Paint(card,id,quantity,selected)
 	local food=Foods.Types[id]
 	-- Set the authored ImageLabel.Image later to replace the emoji placeholder.
-	card.Art.Emoji.Text=emoji[id] or "🍗"
+	card.Art.Emoji.Text=food.Icon
 	card.Art.Emoji.Visible=card.Art.Image==""
 	card.ItemName.Text=food.Name
 	card.Quantity.Text="×"..numberText(quantity)

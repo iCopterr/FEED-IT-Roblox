@@ -1,12 +1,12 @@
 local Eggs=require(game.ReplicatedStorage.Shared.Config.EggConfig)
 local PetModels=require(game.ReplicatedStorage.Shared.PetModels)
 local Preview={}
-local foodEmoji={basic="🍗",fresh="🍎",hearty="🥩",fortified="🥘",gourmet="🍱",enchanted="🔮",royal="🍰"}
+local Foods=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 function Preview.Set(view,entry)
 	local art=view:FindFirstChild("FoodArt")
 	if art then
 		art.Visible=entry~=nil and entry.Kind=="Food"
-		if art.Visible then art.Emoji.Text=foodEmoji[entry.Id] or "🍗";art.Emoji.Visible=art.Image=="" end
+		if art.Visible then art.Emoji.Text=(Foods.Types[entry.Id] and Foods.Types[entry.Id].Icon) or "🍗";art.Emoji.Visible=art.Image=="" end
 	end
 	if entry and entry.Kind=="Food" then
 		view.World:ClearAllChildren();view:SetAttribute("PreviewKey",nil);return

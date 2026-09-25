@@ -6,6 +6,27 @@
 
 **Last Updated:** 2026-09-25
 
+### Latest session — ordered merchant food cards
+
+- Rebuilt the authored `StarterGui.MerchantUI` shop body as a compact scrolling
+  food list based on the supplied seed-shop reference. Each card now separates
+  image-ready art/emoji, food name, bundle and personal stock, green formatted
+  price and a right-side risk-reduction badge.
+- Visible offers are sorted by `FoodConfig.Order` (Basic through Royal), while
+  each card preserves the authoritative original stock slot when purchasing.
+  Random restocks, prices, limits, save behavior and economy are unchanged.
+- Centralized each food's emoji fallback in FoodConfig so Merchant, Feed and
+  Inventory presentation share the same temporary art. Sold-out cards remain
+  visible, disabled and clearly labeled. The authored list supports scrolling
+  for future stock expansion and creates no runtime UI hierarchy.
+- PASS: Rojo build/RBXMX parse, diff check, Studio hierarchy audit, syntax checks
+  for all changed client modules and visual inspection of the full 540x510 panel
+  in the game viewport. The result is readable without overlap at native scale.
+  FoodShopVerification was updated for the new hierarchy and ordering, but its
+  multiplayer run remains blocked by Studio's previously stuck automated test
+  session; restart Studio before rerunning it. Rojo was still disconnected, so
+  exact filesystem scripts and the authored ScreenGui were mirrored through MCP.
+
 ### Latest session — enable production player persistence
 
 - Enabled the existing versioned DataService for published servers. Ordinary

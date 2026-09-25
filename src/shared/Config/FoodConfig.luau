@@ -3,13 +3,13 @@ local Config = {
 	ServingsPerFeed = 1,
 	Order = table.freeze({"basic", "fresh", "hearty", "fortified", "gourmet", "enchanted", "royal"}),
 	Types = table.freeze({
-		basic = table.freeze({Name="Basic Food", Reduction=0, Price=100, Amount=5, Weight=0, StockLimit=5}),
-		fresh = table.freeze({Name="Fresh Food", Reduction=.08, Price=600, Amount=5, Weight=80, StockLimit=1}),
-		hearty = table.freeze({Name="Hearty Food", Reduction=.15, Price=2500, Amount=5, Weight=60, StockLimit=1}),
-		fortified = table.freeze({Name="Fortified Food", Reduction=.22, Price=8000, Amount=4, Weight=45, StockLimit=1}),
-		gourmet = table.freeze({Name="Gourmet Food", Reduction=.30, Price=25000, Amount=3, Weight=30, StockLimit=1}),
-		enchanted = table.freeze({Name="Enchanted Food", Reduction=.38, Price=90000, Amount=2, Weight=18, StockLimit=1}),
-		royal = table.freeze({Name="Royal Food", Reduction=.45, Price=250000, Amount=2, Weight=10, StockLimit=1}),
+		basic = table.freeze({Name="Basic Food", Icon="🍗", Reduction=0, Price=100, Amount=5, Weight=0, StockLimit=5}),
+		fresh = table.freeze({Name="Fresh Food", Icon="🍎", Reduction=.08, Price=600, Amount=5, Weight=80, StockLimit=1}),
+		hearty = table.freeze({Name="Hearty Food", Icon="🥩", Reduction=.15, Price=2500, Amount=5, Weight=60, StockLimit=1}),
+		fortified = table.freeze({Name="Fortified Food", Icon="🥘", Reduction=.22, Price=8000, Amount=4, Weight=45, StockLimit=1}),
+		gourmet = table.freeze({Name="Gourmet Food", Icon="🍱", Reduction=.30, Price=25000, Amount=3, Weight=30, StockLimit=1}),
+		enchanted = table.freeze({Name="Enchanted Food", Icon="🔮", Reduction=.38, Price=90000, Amount=2, Weight=18, StockLimit=1}),
+		royal = table.freeze({Name="Royal Food", Icon="🍰", Reduction=.45, Price=250000, Amount=2, Weight=10, StockLimit=1}),
 	}),
 }
 
