@@ -6,6 +6,35 @@
 
 **Last Updated:** 2026-09-25
 
+### Latest session — island environment and rigged merchant landmark
+
+- Rebuilt the sparse merchant box into a 42-by-30-stud authored market landmark
+  with foundation, open walls, four structural posts, layered purple/gold roof,
+  counter trim, display shelves and six colored food props. The existing Sign,
+  SurfaceGui content and all ScreenGui assets remain unchanged.
+- Replaced the four loose merchant body blocks with `SellerRig`: a visible
+  oversized R6-style rig with Humanoid, Animator, anchored HumanoidRootPart, six
+  connected Motor6Ds, face, apron weld and hat weld. The seller is positioned
+  beside the sign with a clear counter sightline and is ready for a later idle
+  animation; no runtime model generator was added.
+- Added Rojo-authored `Workspace.WorldDecor`: four cliff faces, three descending
+  island layers, three underside masses, six floating rocks, six perimeter tree
+  clusters, two merchant garden beds and four shrubs. Dressing stays outside
+  plot/pen/conveyor gameplay space and uses non-colliding foliage.
+- Preserved the authoritative merchant `InteractionPoint` exactly at
+  `(0, 0.4, 147.5)`, retained the lime grid/stud merchant floor, and left every
+  client/server economy path unchanged. Travel and Merchant services continue to
+  resolve the same root and recursive interaction anchor.
+- PASS: two-angle Studio visual review (full island and gameplay-height merchant),
+  exact XML rig/reference/anchor audit, Rojo build, diff check, zero diagnostics
+  across 90 scripts, and one-player Play smoke with no captured errors. Rojo was
+  serving but the Studio Rojo plugin was not connected; an equivalent authored
+  preview was placed directly in Edit mode for visual inspection. Source remains
+  the committed authority and will replace that preview on the next Rojo connect.
+- Files: default project mapping, MysteryMerchant and new WorldDecor assets,
+  merchant/world-style docs and this handoff. No UI source changed. Preserve the
+  unrelated untracked Kitsune recipe. No push.
+
 ### Latest session — realistic light and shadow pass
 
 - Added a Rojo-managed `Lighting` asset so the map look survives Studio/Rojo
@@ -1512,7 +1541,7 @@ are retired. Next: full manual core-loop playtesting and balance iteration.
 | Rojo Setup | ✅ Complete / Verified | Live Studio sync and server/client bootstrap verified. |
 | Base Architecture | ✅ Prototype Implemented | Modular data, pet, plot, egg, merchant, placement, money and Feed services are active. |
 | Player Data Schema | ✅ v8 Studio Verified | Versioned data preserves pet/egg/food/merchant state; retired fields remain compatibility-only. |
-| Mystery Merchant | ✅ Server Verified | Basic plus two weighted special foods every 5 minutes; Money purchases and personal stock limits verified. Basic allows five bundle purchases per restock. |
+| Mystery Merchant | ✅ Server / World Verified | Basic plus two weighted special foods every 5 minutes; Money purchases and personal stock limits verified. Authored landmark now includes shelves, food props and a rigged seller. |
 | DataService | 🟦 Implemented / Needs Testing | Studio runtime verified; live DataStore rejoin test remains. |
 | Plot System | ✅ Layout / Ownership Verified | Six static plots, three facing three; five pet slots each; floating owner badges. All 25 checks pass. Platform player limit still needs setting to 6. |
 | Egg System | ✅ Carry/Place Studio Verified | Buy/hold/click Pen starts timer; E hatch returns pet to player. 64 automated checks plus developer playtest. |
@@ -1545,13 +1574,13 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Realistic light and shadow pass
+**Current Feature:** Island environment and rigged merchant landmark
 
-**Status:** Implemented as a Rojo-managed Lighting service with six authored
-children. Visual, structural, sync and edit-context property verification pass.
+**Status:** Implemented as Rojo-authored static world assets. Visual, structural,
+build and Edit-context verification pass; no UI or gameplay logic changed.
 
-**Objective:** Add readable, realistic directional shadows and atmosphere while
-preserving the bright simulator palette and clear gameplay presentation.
+**Objective:** Give the floating island readable depth and landscaping, and make
+the food merchant a recognizable destination with an animation-ready seller rig.
 
 ## 4. Completed
 

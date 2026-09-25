@@ -10,6 +10,9 @@
       "SkyIsland": {
         "$path": "src/world/SkyIsland.rbxmx"
       },
+      "WorldDecor": {
+        "$path": "src/world/WorldDecor.rbxmx"
+      },
       "PlotUpgradeSigns": {
         "$path": "src/world/PlotUpgradeSigns.rbxmx"
       },
