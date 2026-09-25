@@ -21,3 +21,6 @@ through capacity-expansion milestones.
 Verification: `PlotVerification` checks the authored style on all current floor
 categories, while `PlotUpgradeVerification` confirms Ground/Pen tiling survives
 every capacity expansion from five through ten slots.
+
+Global light, shadow and post-processing settings are documented separately in
+`docs/lighting.md`.

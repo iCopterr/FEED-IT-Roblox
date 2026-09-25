@@ -3,6 +3,9 @@
   "servePort": 34872,
   "tree": {
     "$className": "DataModel",
+    "Lighting": {
+      "$path": "src/lighting/Lighting.rbxmx"
+    },
     "Workspace": {
       "SkyIsland": {
         "$path": "src/world/SkyIsland.rbxmx"

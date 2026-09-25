@@ -1,0 +1,83 @@
+<roblox version="4">
+<Item class="Lighting"><Properties>
+<Color3 name="Ambient"><R>0.18823529411764706</R><G>0.20784313725490197</G><B>0.25098039215686274</B></Color3>
+<float name="Brightness">2.05</float>
+<float name="ClockTime">15.2</float>
+<Color3 name="ColorShift_Bottom"><R>0.00392156862745098</R><G>0.011764705882352941</G><B>0.03137254901960784</B></Color3>
+<Color3 name="ColorShift_Top"><R>0.0392156862745098</R><G>0.023529411764705882</G><B>0.00784313725490196</B></Color3>
+<float name="EnvironmentDiffuseScale">0.5</float>
+<float name="EnvironmentSpecularScale">0.55</float>
+<float name="ExposureCompensation">-0.08</float>
+<Color3 name="FogColor"><R>0.7607843137254902</R><G>0.8274509803921568</G><B>0.9215686274509803</B></Color3>
+<float name="FogEnd">100000</float>
+<float name="FogStart">0</float>
+<float name="GeographicLatitude">32</float>
+<bool name="GlobalShadows">true</bool>
+<token name="LightingStyle">0</token>
+<Color3 name="OutdoorAmbient"><R>0.3764705882352941</R><G>0.41568627450980394</G><B>0.47843137254901963</B></Color3>
+<float name="ShadowSoftness">0.35</float>
+<string name="Name">Lighting</string>
+<bool name="Archivable">true</bool>
+</Properties>
+<Item class="Atmosphere"><Properties>
+<Color3 name="Color"><R>0.8235294117647058</R><G>0.8627450980392157</G><B>0.9333333333333333</B></Color3>
+<Color3 name="Decay"><R>0.5411764705882353</R><G>0.4549019607843137</G><B>0.33725490196078434</B></Color3>
+<float name="Density">0.07</float>
+<float name="Glare">0.06</float>
+<float name="Haze">0.3</float>
+<float name="Offset">0</float>
+<string name="Name">Atmosphere</string>
+<bool name="Archivable">true</bool>
+</Properties></Item>
+<Item class="BloomEffect"><Properties>
+<bool name="Enabled">true</bool>
+<float name="Intensity">0.18</float>
+<float name="Size">24</float>
+<float name="Threshold">1.25</float>
+<string name="Name">Bloom</string>
+<bool name="Archivable">true</bool>
+</Properties></Item>
+<Item class="ColorCorrectionEffect"><Properties>
+<bool name="Enabled">true</bool>
+<float name="Brightness">0.01</float>
+<float name="Contrast">0.1</float>
+<float name="Saturation">0.07</float>
+<Color3 name="TintColor"><R>1</R><G>0.9647058823529412</G><B>0.9098039215686274</B></Color3>
+<string name="Name">ColorCorrection</string>
+<bool name="Archivable">true</bool>
+</Properties></Item>
+<Item class="DepthOfFieldEffect"><Properties>
+<bool name="Enabled">false</bool>
+<float name="FarIntensity">0.1</float>
+<float name="FocusDistance">0.05</float>
+<float name="InFocusRadius">30</float>
+<float name="NearIntensity">0.75</float>
+<string name="Name">DepthOfField</string>
+<bool name="Archivable">true</bool>
+</Properties></Item>
+<Item class="Sky"><Properties>
+<bool name="CelestialBodiesShown">false</bool>
+<float name="MoonAngularSize">11</float>
+<Content name="MoonTextureId"><url>rbxasset://sky/moon.jpg</url></Content>
+<Vector3 name="SkyboxOrientation"><X>0</X><Y>0</Y><Z>0</Z></Vector3>
+<Content name="SkyboxBk"><url>rbxassetid://600830446</url></Content>
+<Content name="SkyboxDn"><url>rbxassetid://600831635</url></Content>
+<Content name="SkyboxFt"><url>rbxassetid://600832720</url></Content>
+<Content name="SkyboxLf"><url>rbxassetid://600886090</url></Content>
+<Content name="SkyboxRt"><url>rbxassetid://600833862</url></Content>
+<Content name="SkyboxUp"><url>rbxassetid://600835177</url></Content>
+<int name="StarCount">3000</int>
+<float name="SunAngularSize">21</float>
+<Content name="SunTextureId"><url>rbxasset://sky/sun.jpg</url></Content>
+<string name="Name">Sky</string>
+<bool name="Archivable">true</bool>
+</Properties></Item>
+<Item class="SunRaysEffect"><Properties>
+<bool name="Enabled">true</bool>
+<float name="Intensity">0.04</float>
+<float name="Spread">0.72</float>
+<string name="Name">SunRays</string>
+<bool name="Archivable">true</bool>
+</Properties></Item>
+</Item>
+</roblox>

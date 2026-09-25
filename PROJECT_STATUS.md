@@ -6,6 +6,30 @@
 
 **Last Updated:** 2026-09-25
 
+### Latest session — realistic light and shadow pass
+
+- Added a Rojo-managed `Lighting` asset so the map look survives Studio/Rojo
+  reconnects. It owns the Sky, Atmosphere, Bloom, SunRays, ColorCorrection and
+  disabled DepthOfField settings; Lighting is no longer an unversioned place-only
+  configuration.
+- Enabled Realistic lighting with global shadows, a 3:12 PM sun angle, moderate
+  0.35 shadow softness, darker ambient/contact shading and balanced outdoor fill.
+  Fences, signs, shrubs, merchant and conveyor now cast readable directional
+  shadows without making the lime floor muddy.
+- Reduced the previous overexposed bloom and dense haze. The new restrained
+  bloom/rays, mild warm grade and light Atmosphere preserve the cloud sky and
+  keep gameplay/UI sharp; DepthOfField remains disabled.
+- Removed four legacy post-processing objects from Workspace in the active Studio
+  place. Clean Rojo builds contain only the six correctly parented Lighting
+  children. No runtime script generates or changes the global look.
+- PASS: visual inspection from island overview and gameplay-height angles after
+  Rojo sync; exact Studio property/legacy-effect audit; Rojo build; diff check;
+  zero diagnostics across 90 scripts. A one-player Play launched with no captured
+  errors, but the live-client property probe timed out when the MCP play peer
+  disconnected, so no separate runtime-visual claim is made.
+- Files: default project mapping, authored Lighting asset, lighting/world-style
+  docs and this handoff. Preserve the unrelated untracked Kitsune recipe. No push.
+
 ### Latest session — lime grid/stud world floors
 
 - Restyled all 21 current walkable authored floors to match the supplied bright
@@ -1521,14 +1545,13 @@ Status legend: ⬜ Not Started · 🟨 In Progress · 🟦 Implemented / Needs T
 
 ## 3. Current Feature
 
-**Current Feature:** Lime grid/stud world floors
+**Current Feature:** Realistic light and shadow pass
 
-**Status:** Implemented across all 21 current walkable authored floor parts.
-Static/visual Studio verification and fresh two-player plot regressions pass
-(25/25 ownership/layout, 110/110 capacity-upgrade checks).
+**Status:** Implemented as a Rojo-managed Lighting service with six authored
+children. Visual, structural, sync and edit-context property verification pass.
 
-**Objective:** Give the island, plots, pens, paths and merchant platform the
-bright lime checker/stud floor language from the supplied reference.
+**Objective:** Add readable, realistic directional shadows and atmosphere while
+preserving the bright simulator palette and clear gameplay presentation.
 
 ## 4. Completed
 
