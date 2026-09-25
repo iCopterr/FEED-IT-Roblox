@@ -4,7 +4,7 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-25
+**Last Updated:** 2026-09-26
 
 ### Latest session — ordered merchant food cards
 
@@ -23,9 +23,15 @@
   for all changed client modules and visual inspection of the full 540x510 panel
   in the game viewport. The result is readable without overlap at native scale.
   FoodShopVerification was updated for the new hierarchy and ordering, but its
-  multiplayer run remains blocked by Studio's previously stuck automated test
-  session; restart Studio before rerunning it. Rojo was still disconnected, so
-  exact filesystem scripts and the authored ScreenGui were mirrored through MCP.
+  multiplayer run remains blocked by an inconsistent StudioTestService state.
+  After independently restarting Studio and the MCP bridge, Studio reports
+  `EditModeActive=true`, stopped RunService and nil test args, while both
+  `ExecuteMultiplayerTestAsync` and the solo API still reject the launch as a
+  previous test in progress. The correct future launcher is
+  `ExecuteMultiplayerTestAsync(2, "FoodShopVerification")`; do not pass a player
+  count to `ExecutePlayModeAsync`, because that API only starts a solo client.
+  Rojo was still disconnected, so exact filesystem scripts and the authored
+  ScreenGui were mirrored through MCP.
 
 ### Latest session — enable production player persistence
 
