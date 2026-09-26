@@ -16,7 +16,9 @@ suppressed for tutorial profiles (its explicitly named verification still works)
 5. Reach **at least** 100 Money, then click the Merchant teleport button.
 6. Open the merchant with E and buy Basic Food once. The existing 100-Money,
    five-serving bundle and normal restock/personal stock rules are unchanged.
-7. Click Base, hold E to pick up the placed pet, and click the feed plate.
+7. Close the food shop with X, then click Base, hold E to pick up the placed pet,
+   and click the feed plate. If another control already closed the shop (or its
+   ScreenGui is disabled), the close hint is skipped automatically.
 8. Hold E to open Feed UI, select Basic Food, and Feed. An accepted normal Feed
    completes the tutorial; no result override or additional reward is granted.
 
@@ -74,6 +76,9 @@ Existing published saves will not show this tutorial. Use a fresh account/profil
 for live testing; do not delete or reset existing saves without owner permission.
 Actual published-server rejoin and touch/controller feel still need playtesting.
 
-Latest results: TutorialVerification passed all 43 server/client-report checks;
+Before the close-shop follow-up, TutorialVerification passed all 43 server/client-report checks;
 FoodShopVerification passed all 53 regression checks. Authored trail and button
 focus were visually inspected in Studio. Rojo build and syntax/diff checks pass.
+The follow-up adds three reports (46 expected total), checking X guidance before
+Base plus skipping when another control hides the shop or disables its ScreenGui.
+Its Rojo build/diff checks pass; the expanded runtime suite awaits connected Studio.

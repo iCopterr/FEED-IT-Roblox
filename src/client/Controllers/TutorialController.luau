@@ -77,6 +77,11 @@ function Controller.Resolve(player,playerGui)
 		local merchant=workspace:FindFirstChild("MysteryMerchant")
 		return "Go to the merchant and hold E to open the food shop.",merchant and merchant.InteractionPoint.Position
 	elseif step=="BaseTeleport" then
+		local shop=playerGui:FindFirstChild("MerchantUI")
+		-- Follow current visibility, not a click flag: other controls can close it too.
+		if shop and shop.Enabled and shop.Panel.Visible then
+			return "Food bought! Close the food shop with X.",nil,shop.Panel.Close
+		end
 		return "Food bought! Click BASE to return to your plot.",nil,main.HUD.Travel.Base
 	elseif step=="Feed" then
 		local active=plot and plot.Pen:FindFirstChild("ActivePets")

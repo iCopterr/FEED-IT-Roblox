@@ -9,6 +9,21 @@ report.OnClientEvent:Connect(function(key)
 		local merchant=player.PlayerGui:WaitForChild("MerchantUI",20)
 		local controller=require(script.Parent.Controllers.TutorialController)
 		if key=="BuyFood" then merchant.Panel.Visible=true end
+		if key=="CloseShop" then merchant.Panel.Visible=true end
+		if key=="BaseTeleport" then
+			-- Same close animation used by the merchant's X button.
+			require(script.Parent.UI.Motion).Close(merchant.Panel)
+			local closeUntil=os.clock()+5
+			repeat task.wait() until not merchant.Panel.Visible or os.clock()>closeUntil
+			assert(not merchant.Panel.Visible,"Shop close animation finishes")
+		end
+		if key=="BaseAfterOtherClose" then
+			merchant.Panel.Visible=true
+			merchant.Panel.Visible=false -- Other modal controls close it this way.
+		end
+		if key=="BaseWithDisabledShop" then
+			merchant.Panel.Visible=true;merchant.Enabled=false
+		end
 		if key=="PickupPet" then merchant.Panel.Visible=false end
 		if key=="Feed" then main.FeedPanel.Visible=true end
 		local readyUntil=os.clock()+15
@@ -24,7 +39,9 @@ report.OnClientEvent:Connect(function(key)
 			error("Tutorial hint is visible; client diagnostics: "..table.concat(errors," | "))
 		end
 		if key=="MerchantTeleport" then assert(button==main.HUD.Travel.Merchant,"Merchant button highlighted")
-		elseif key=="BaseTeleport" then assert(button==main.HUD.Travel.Base,"Base button highlighted")
+		elseif key=="CloseShop" then assert(button==merchant.Panel.Close,"Shop close button highlighted before Base")
+		elseif key=="BaseTeleport" or key=="BaseAfterOtherClose" or key=="BaseWithDisabledShop" then
+			assert(button==main.HUD.Travel.Base,"Closed shop skips directly to Base button")
 		elseif key=="BuyFood" then assert(button==merchant.Panel.Offers.Slot1,"Basic Food card highlighted")
 		elseif key=="Feed" then assert(button==main.FeedPanel.Feed or button==main.FeedPanel.FoodCards.List.basic,"Feed or Basic selection highlighted")
 		elseif key~="Done" then assert(typeof(world)=="Vector3" or button~=nil,"World or equip target is available") end
@@ -47,6 +64,7 @@ report.OnClientEvent:Connect(function(key)
 			task.wait(3.2)
 			assert(not gui.Hint.Visible and not gui.Focus.Visible and #arrows:GetChildren()==0,"Completed guide removes all presentation")
 		end
+		if key=="BaseWithDisabledShop" then merchant.Panel.Visible=false;merchant.Enabled=true end
 	end,debug.traceback)
 	report:FireServer(key,{Passed=ok,Failure=if ok then nil else tostring(failure)})
 end)

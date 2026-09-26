@@ -6,6 +6,25 @@
 
 **Last Updated:** 2026-09-26
 
+### Latest session — close merchant before tutorial Base teleport
+
+- Current Feature / Overall Progress: implemented the tutorial follow-up. After
+  Basic Food purchase, highlight the merchant X while the shop is open, then
+  highlight Base. A shop hidden by another control or disabled ScreenGui skips
+  the close instruction automatically; no specific close click is required.
+- Architecture: contextual client guidance within the existing BaseTeleport
+  milestone; no new saved step, remote, economy change or UI hierarchy changes.
+- Files Modified: TutorialController; client/server TutorialVerification;
+  docs/tutorial.md; this handoff. Added cases for open-shop X guidance, animated
+  close, alternative close and disabled shop.
+- Verification: Rojo build and git diff --check PASS. Runtime checks for this
+  follow-up are NOT yet run: MCP returned zero connected instances twice.
+  Previous tutorial/merchant test passes below predate this follow-up.
+- In Progress / Next Task: reconnect Studio and run TutorialVerification from
+  idle edit mode (now 46 expected report checks), then playtest purchase -> X ->
+  Base. No published data was changed. Last Working Commit: 2fba990 before this
+  change. Preserve unrelated docs/studio/build-kitsune-reference.luau.
+
 ### Latest session — first-time tutorial and starting Money
 
 - Current Feature / Overall Progress: implemented the owner's first-time
