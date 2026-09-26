@@ -25,5 +25,6 @@ function Presentation.Update(model,pet)
  model:SetAttribute("SpeciesId",pet.SpeciesId);model:SetAttribute("Rarity",pet.Rarity)
  model:SetAttribute("Variant",pet.Variant);model:SetAttribute("FeedLevel",pet.FeedLevel)
  model:SetAttribute("IncomePerSecond",income)
+ game:GetService("CollectionService"):AddTag(model,"PetVisual")
 end
 return Presentation

@@ -6,6 +6,23 @@
 
 **Last Updated:** 2026-09-26
 
+### Latest session — gameplay and premium-pet VFX
+
+- Completed requested item 2: client-only placement/feed bursts and subtle
+  Legendary/Mythic/Shiny/Rainbow/Celestial sparkles. Rainbow cycles color.
+  Tagged real pet visuals only; hidden feed-plate models suppress their aura.
+  Distance culling, nearest 18 aura budget, eight burst budget and cleanup;
+  one attachment/emitter per pet, not per model part. Explosion debris capped
+  at 24 tweens instead of potentially thousands; no economy/RNG changes.
+- Tests: VFXVerification PASS 21 client checks for premium qualification,
+  nonduplication, hiding, distance culling, burst budget and cleanup. Rojo build
+  and diff checks pass. Edit-mode camera review performed; static screenshots
+  do not reliably capture transient particles, so final motion feel needs play review.
+- Files: VFXConfig/Controller, client startup, PetPresentation tag,
+  PedestalService visibility attribute, FeedEffects, VFX verification pair.
+- Last working commit 700d6d4 (labels). Next: item 3, hatch animation with
+  authoritative saved results; test and commit separately. No push.
+
 ### Latest session — world pet and egg labels
 
 - Completed requested item 1: authored PetLabel billboard cloned onto held,

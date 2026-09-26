@@ -102,6 +102,7 @@ end
 function PedestalService.BeginPresentation(player)
 	local state = assert(states[player], "No staged pet")
 	state.Animating = true
+	state.Model:SetAttribute("Presenting",true)
 	state.Transparencies = {}
 	for _, part in state.Model:GetDescendants() do
 		if part:IsA("BasePart") then state.Transparencies[part]=part.Transparency; part.Transparency=1 end
@@ -116,6 +117,7 @@ function PedestalService.EndPresentation(player, id, returnToInventory)
 	local state = states[player]
 	if not state or state.Id ~= id then return end
 	state.Animating = nil
+	state.Model:SetAttribute("Presenting",false)
 	local data = DataService.GetData(player)
 	local pet = data and data.Inventory[id]
 	if returnToInventory or not pet then PedestalService.Clear(player); return end

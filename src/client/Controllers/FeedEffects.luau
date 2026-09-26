@@ -5,6 +5,7 @@ local P = Config.Presentation
 local FeedEffects = {}
 local numberText = require(game.ReplicatedStorage.Shared.NumberFormat).Compact
 local PetModels = require(game.ReplicatedStorage.Shared.PetModels)
+local VFX = require(script.Parent.VFXController)
 local seen = {}
 local bannerToken = 0
 
@@ -79,13 +80,16 @@ function FeedEffects.Play(result, gui)
 				model:PivotTo(raised*CFrame.Angles(0,math.rad(degrees),0))
 			end)
 			banner(gui,result)
+			VFX.Burst(raised.Position,result.Code)
 			if result.Code == "Explosion" then
 				for i, entry in parts do
 					local part = entry.Part
+					-- Multipart pets can contain thousands of blocks: cap debris tweens.
+					if i > 24 then part.Transparency=1; continue end
 					local angle = i*math.pi*2/#parts
 					part.Color=Color3.fromRGB(255,132,46); part.Material=Enum.Material.Neon
 					TweenService:Create(part,TweenInfo.new(P.Explosion.BurstSeconds+P.Explosion.FadeSeconds),{
-						CFrame=part.CFrame+Vector3.new(math.cos(angle)*8,3+i,math.sin(angle)*8),Transparency=1}):Play()
+						CFrame=part.CFrame+Vector3.new(math.cos(angle)*8,3+(i%4),math.sin(angle)*8),Transparency=1}):Play()
 				end
 				task.wait(P.Explosion.BurstSeconds+P.Explosion.FadeSeconds)
 			else
