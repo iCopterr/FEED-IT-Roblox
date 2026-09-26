@@ -9,12 +9,18 @@ local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local Variants = require(game.ReplicatedStorage.Shared.Config.VariantConfig)
 local sessions = {}
 local Service = {}
-local presentation = FeedConfig.Presentation
-local presentationSeconds = math.ceil(presentation.FloatSeconds + presentation.SpinSeconds
-	+ math.max(presentation.Success.ReturnSeconds,presentation.MiracleSave.ReturnSeconds,
-		presentation.Explosion.BurstSeconds+presentation.Explosion.FadeSeconds))
 local function expiresAt(record)
-	return record.ExplodedAt + presentationSeconds + Config.WindowSeconds
+	return record.ExplodedAt + Config.WindowSeconds
+end
+
+local function nearMachine(player)
+	local machine=workspace:FindFirstChild("ReviveMachine")
+	local point=machine and machine:FindFirstChild("InteractionPoint")
+	local character=player.Character
+	local root=character and character:FindFirstChild("HumanoidRootPart")
+	local humanoid=character and character:FindFirstChildOfClass("Humanoid")
+	return point~=nil and root~=nil and humanoid~=nil and humanoid.Health>0
+		and (root.Position-point.Position).Magnitude<=Config.MachineDistance
 end
 
 function Service.HandleRequest(player, action, petId, attemptId)
@@ -34,7 +40,7 @@ function Service.HandleRequest(player, action, petId, attemptId)
 		for id, record in data.PendingRecovery do
 			local pet = record.Pet
 			local definition = PetConfig.Species[pet.SpeciesId]
-			table.insert(records, {PetId=id, AttemptId=record.AttemptId,
+			table.insert(records, {PetId=id, AttemptId=record.AttemptId, SpeciesId=pet.SpeciesId, Variant=pet.Variant,
 				PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant),
 				Rarity=pet.Rarity, FeedLevel=pet.FeedLevel, Income=MoneyService.GetPetRate(pet),
 				ExplodedAt=record.ExplodedAt, ExpiresAt=expiresAt(record), FoodSpent=record.FoodSpent})
@@ -44,6 +50,7 @@ function Service.HandleRequest(player, action, petId, attemptId)
 			return a.PetId < b.PetId
 		end)
 		return {Ok=true, Records=records, CanRevive=data.ReviveCharges>0, ReviveCharges=data.ReviveCharges,
+			NearMachine=nearMachine(player), RobuxEnabled=false,
 			ServerNow=os.time(), ResetLevel=FeedConfig.ExplosionResetLevel, Busy=Locks.IsLocked(player)}
 	end
 	if type(petId) ~= "string" or #petId == 0 or #petId > 64
@@ -57,6 +64,8 @@ function Service.HandleRequest(player, action, petId, attemptId)
 	if record.AttemptId ~= attemptId then return {Ok=false, Code="PetChanged"} end
 	local expired = os.time() >= expiresAt(record)
 	if expired then action = "KeepBase" end
+	-- Expired pets return to base without travel; restoring growth requires the machine.
+	if not expired and not nearMachine(player) then return {Ok=false,Code="TooFar"} end
 	if not Locks.Begin(player, petId) then return {Ok=false, Code="Busy"} end
 	if action=="Revive" and data.ReviveCharges<1 then
 		Locks.Finish(player);return {Ok=false,Code="NoRevive"}
@@ -93,6 +102,9 @@ function Service.HandleRequest(player, action, petId, attemptId)
 end
 
 function Service.Start()
+	local point=workspace:WaitForChild("ReviveMachine"):WaitForChild("InteractionPoint")
+	local prompt=point:WaitForChild("OpenReviveMachine")
+	prompt.MaxActivationDistance=Config.PromptDistance
 	local remote = Instance.new("RemoteFunction")
 	remote.Name = "PrototypeRevive"
 	remote.OnServerInvoke = Service.HandleRequest

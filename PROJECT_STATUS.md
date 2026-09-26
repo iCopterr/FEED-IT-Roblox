@@ -6,6 +6,34 @@
 
 **Last Updated:** 2026-09-26
 
+### Latest session — Revive Machine; queued presentation work
+
+- Completed: authored ReviveMachine beside merchant at (22, 0, 156), prompt,
+  authored ReviveUI with scrollable broken-pet list, one selected 3D preview,
+  original rarity/level/income and HH:MM:SS deadline, Charm button and adjacent
+  disabled Robux button. No automatic recovery popup. Server requires nearby
+  living character for unexpired recovery; expiry returns the pet at level 0.
+- Recovery lasts exactly 24 hours from persisted ExplodedAt, including offline
+  time. Rejoin cannot restart it. Identity, food-spent and charm/save safeguards
+  retained. Existing pending records use their original time; no reset/grants.
+- Owner confirmed there is no Developer Product yet. Robux stays SOON/disabled;
+  no purchase prompt or receipt handler. Do not enable without product setup and
+  durable idempotent receipt implementation.
+- Tests: ReviveVerification PASS 26 checks including client list/selection/
+  preview/cleanup and machine distance; FoodShopVerification PASS 78 checks
+  (expiry tested by aging an isolated memory record, not waiting a real day).
+  Rojo build and syntax pass. Machine and authored page visually reviewed in
+  Studio; preview data cleared. No production DataStore changes.
+- Files: ReviveConfig/Service/Controller, ReviveUI, ReviveMachine asset/project
+  mapping, Revive/FoodShop verification and new client verification, FeedEffects
+  direction copy, docs/revive.md, handoff. Previous commit: d75d9b1.
+- Next requested work, sequential with tests and separate commits: (1) pet name,
+  rarity, income/s labels and conveyor egg name/price in HUD font/stroke;
+  (2) gameplay VFX and premium pet particles (Legendary/Mythic + rare variants);
+  (3) hatch animation. Not yet implemented in this machine commit.
+- Handoff: use authored instances/Rojo sources; retain unrelated untracked
+  docs/studio/build-kitsune-reference.luau. No push requested.
+
 ### Latest session — single-serving food, rare Blessed Food and Revive Charms
 
 - Current Feature / Overall Progress: all shop purchases now grant one item.

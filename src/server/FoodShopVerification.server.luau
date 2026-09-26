@@ -133,6 +133,7 @@ local ok,failure=xpcall(function()
 	check(profile.PendingRecovery[pet.PetId] and not profile.Inventory[pet.PetId],"Pending choice quarantines the only pet identity")
 	waitFor(function() return not Locks.IsLocked(a) end)
 	check(not Rescue.HandleRequest(b,"Revive",pet.PetId,result.AttemptId).Ok,"Foreign Rescue rejected")
+	root.CFrame=workspace.ReviveMachine.InteractionPoint.CFrame+Vector3.new(0,3,0)
 	profile.ReviveCharges=0
 	check(Rescue.HandleRequest(a,"Revive",pet.PetId,result.AttemptId).Code=="NoRevive" and profile.PendingRecovery[pet.PetId]~=nil,"No charm cannot restore or consume recovery")
 	task.wait(.3);profile.ReviveCharges=1
@@ -142,6 +143,7 @@ local ok,failure=xpcall(function()
 	check(profile.Inventory[pet.PetId].Locked and Food.Count(profile,special)==oldCount-1,"Rescue preserves lock and does not refund food")
 	waitFor(function() return not Locks.IsLocked(a) end);task.wait(.3)
 	check(not Rescue.HandleRequest(a,"Revive",pet.PetId,result.AttemptId).Ok,"Consumed Rescue cannot replay")
+	root.CFrame=CFrame.new(dish.Position+Vector3.new(0,3,6))
 	assert(Plate.Place(a,pet.PetId));assert(Overrides.Arm(a,pet.PetId,"Explosion"))
 	local expired=Feed.HandleRequest(a,"Feed",pet.PetId,2,"basic")
 	profile.ReviveCharges=1
@@ -149,6 +151,8 @@ local ok,failure=xpcall(function()
 	local recordedTime=profile.PendingRecovery[pet.PetId].ExplodedAt
 	local copy=assert(Schema.Migrate(profile))
 	check(copy.PendingRecovery[pet.PetId].ExplodedAt==recordedTime,"Snapshot preserves original expiry anchor")
+	-- Isolated memory fixture advances the deadline; never wait 24 real hours.
+	profile.PendingRecovery[pet.PetId].ExplodedAt=os.time()-86401
 	waitFor(function() return profile.PendingRecovery[pet.PetId]==nil end,30)
 	check(profile.Inventory[pet.PetId].FeedLevel==0 and profile.Inventory[pet.PetId].PetId==pet.PetId,"Automatic timeout returns original pet at level zero")
 	check(profile.Inventory[pet.PetId].Variant=="Rainbow","Base-level reset preserves rare variant")

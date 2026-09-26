@@ -7,6 +7,9 @@
       "$path": "src/lighting/Lighting.rbxmx"
     },
     "Workspace": {
+      "ReviveMachine": {
+        "$path": "src/world/ReviveMachine.rbxmx"
+      },
       "SkyIsland": {
         "$path": "src/world/SkyIsland.rbxmx"
       },

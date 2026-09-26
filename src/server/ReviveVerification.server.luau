@@ -32,6 +32,9 @@ local ok, failure = xpcall(function()
 	root.CFrame = CFrame.new(plots.GetPlot(a).FeedPlate.Dish.Position + Vector3.new(0,3,6))
 	local pet = assert(pets.CreatePet(a,"test_rare"))
 	local profile = data.GetData(a)
+	local report=Instance.new("RemoteEvent");report.Name="ReviveMachineVerificationReport";report.Parent=game.ReplicatedStorage
+	local clientReply
+	report.OnServerEvent:Connect(function(who,result) if who==a then clientReply=result end end)
 	profile.Inventory[pet.PetId].FeedLevel = 20
 	assert(pets.SetLocked(a,pet.PetId,true))
 	local original = pets.GetPet(a,pet.PetId)
@@ -51,6 +54,9 @@ local ok, failure = xpcall(function()
 		return record
 	end
 	local outcome = legacyRecovery()
+	check(revive.HandleRequest(a,"Revive",pet.PetId,outcome.AttemptId).Code=="TooFar","Cannot revive away from machine")
+	task.wait(.3)
+	root.CFrame=workspace.ReviveMachine.InteractionPoint.CFrame+Vector3.new(0,3,0)
 	local attempt = outcome.AttemptId
 	check(profile.PendingRecovery[pet.PetId] ~= nil and profile.Inventory[pet.PetId] == nil, "Legacy broken recovery remains supported")
 	check(not carry.Equip(a,pet.PetId) and not placement.PlacePet(a,pet.PetId), "Broken pet cannot equip or place")
@@ -63,6 +69,11 @@ local ok, failure = xpcall(function()
 	check(food < beforeFood, "Failed Food consumed")
 	local own = revive.HandleRequest(a,"Snapshot")
 	check(own.Ok and own.CanRevive and own.ReviveCharges==2 and #own.Records == 1 and own.Records[1].FeedLevel == 20, "Owner sees previous level and charm eligibility")
+	check(own.Records[1].ExpiresAt==outcome.ExplodedAt+86400 and own.NearMachine and not own.RobuxEnabled,"24-hour deadline and machine-only disabled Robux snapshot")
+	check(own.Records[1].SpeciesId==original.SpeciesId,"Selected pet preview receives species")
+	report:FireClient(a,outcome.AttemptId)
+	waitFor(function() return clientReply~=nil end)
+	check(clientReply.Passed,"Revive Machine client: "..tostring(clientReply.Failure or ""))
 	own.Records[1].FeedLevel = 1
 	check(profile.PendingRecovery[pet.PetId].Pet.FeedLevel == 20, "Snapshot cannot mutate recovery")
 	check(#revive.HandleRequest(b,"Snapshot").Records == 0, "Recovery is private to owner")

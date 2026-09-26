@@ -1,115 +1,106 @@
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Config = require(ReplicatedStorage.Shared.Config.ReviveConfig)
-local Controller = {}
-local numberText = require(ReplicatedStorage.Shared.NumberFormat).Compact
-
-function Controller.Start()
-	local player = Players.LocalPlayer
-	local playerGui = player:WaitForChild("PlayerGui")
-	local gui = assert(playerGui:WaitForChild("ReviveUI",30),"ReviveUI missing; check Rojo")
-	local panel = gui:WaitForChild("Panel")
-	local remote = ReplicatedStorage:WaitForChild("PrototypeRevive")
-	local receivedAt = 0
-	local records, seen, index, busy, snapshot = {}, {}, 1, false, nil
-	local messages = {Busy="Feed or recovery is still animating/saving. Please wait.",
-		Cooldown="Please wait a moment.", NoRevive="You need a Revive Charm from the merchant.",
-		Unavailable="This recovery is no longer available. Refreshing…",
-		PetChanged="This pet has a newer recovery. Refreshing…", Loading="Loading player data…"}
-	local function render()
-		index = math.clamp(index, 1, math.max(1, #records))
-		local record = records[index]
-		gui.Open.Visible = false
-		gui.Open.Text = string.format("PET RECOVERY (%d)", #records)
-		local remaining = record and snapshot and math.max(0, math.ceil(record.ExpiresAt-snapshot.ServerNow-(os.clock()-receivedAt))) or 0
-		panel.Title.Text = string.format("RESCUE • %ds",remaining)
-		panel.PetName.Text = if record then record.PetName else "No pending recovery"
-		panel.Details.Text = if record then string.format("%s • LEVEL %d • %s MONEY/SEC BEFORE BREAKING\n%s Food remains spent",
-			record.Rarity, record.FeedLevel, numberText(record.Income), numberText(record.FoodSpent)) else "Recovered pets are in MY PETS. Equip and place them again."
-		local enabled = record ~= nil and snapshot and snapshot.CanRevive and remaining > 0 and not snapshot.Busy and not busy
-		panel.Revive.Active = enabled == true
-		panel.Revive.AutoButtonColor = enabled == true
-		panel.Revive.BackgroundColor3 = if enabled then Color3.fromRGB(78,227,51) else Color3.fromRGB(100,100,110)
-		panel.Revive.Text = if snapshot and snapshot.CanRevive then "USE 1 CHARM  •  "..numberText(snapshot.ReviveCharges).." OWNED" else "NO REVIVE CHARM"
-		local canKeep = record ~= nil and snapshot ~= nil and not snapshot.Busy and not busy
-		panel.Later.Text = if record then string.format("KEEP AT LEVEL %d",snapshot and snapshot.ResetLevel or 0) else "CLOSE"
-		panel.Later.Active = canKeep or (record == nil and not busy)
-		panel.Later.AutoButtonColor = panel.Later.Active
-	end
-	local function show()
-		local debugGui = playerGui:FindFirstChild("DebugUI")
-		if debugGui then debugGui.Panel.Visible = false end
-		local main = playerGui:FindFirstChild("FeedYourPetUI")
-		if main then main.Inventory.Visible = false; main.FeedPanel.Visible = false end
-		panel.Visible = true
-	end
-	panel:GetPropertyChangedSignal("Visible"):Connect(function()
-		player:SetAttribute("RevivePanelOpen", panel.Visible)
-	end)
-	local function refresh()
-		if busy then return end
-		busy = true
-		local ok, result = pcall(function() return remote:InvokeServer("Snapshot") end)
-		busy = false
-		if not ok or not result.Ok then
-			snapshot = nil; render()
-			if panel.Visible then panel.Status.Text = if ok then messages[result.Code] or "Unable to load recovery." else "Connection error. Retrying…" end
-			return
-		end
-		local selected = records[index]
-		records, snapshot = result.Records, result
-		receivedAt = os.clock()
-		if #records == 0 then panel.Visible = false end
-		local unseen = false
-		for i, record in records do
-			if selected and selected.AttemptId == record.AttemptId then index = i end
-			if not seen[record.AttemptId] then unseen = true end
-		end
-		-- Wait until the explosion presentation/save has ended before prompting.
-		if unseen and not result.Busy then
-			for _, record in records do seen[record.AttemptId] = true end
-			panel.Status.Text = string.format("Timeout → Level %d",result.ResetLevel)
-			show()
-		end
-		render()
-	end
-	gui.Open.Activated:Connect(function() show(); task.spawn(refresh) end)
-	panel.Previous.Activated:Connect(function() if not busy then index = math.max(1,index-1); render() end end)
-	panel.Next.Activated:Connect(function() if not busy then index = math.min(#records,index+1); render() end end)
-	local function decide(action)
-		local record = records[index]
-		if busy or not record or not snapshot or snapshot.Busy then return end
-		if action=="Revive" and not snapshot.CanRevive then return end
-		busy = true; render(); panel.Status.Text = "Saving your choice…"
-		local ok, result = pcall(function() return remote:InvokeServer(action,record.PetId,record.AttemptId) end)
-		busy = false
-		panel.Status.Text = if ok and result.Ok then string.format("Pet returned to MY PETS at level %d. Food was not refunded.",result.FeedLevel)
-			else if ok then messages[result.Code] or "Unable to revive. Refreshing…" else "Connection interrupted. Refreshing recovery state…"
-		if ok and result.Ok then
-			-- Remove only the confirmed offer, even if the immediate snapshot is
-			-- throttled. Never leave a consumed choice clickable in stale UI.
-			for i=#records,1,-1 do
-				if records[i].PetId==record.PetId and records[i].AttemptId==record.AttemptId then table.remove(records,i) end
-			end
-		end
-		-- Always re-read state after an ambiguous response; never choose a new
-		-- recovery automatically or retry against a different explosion.
-		refresh()
-		if ok and result.Ok and #records==0 then panel.Visible=false end
-	end
-	panel.Revive.Activated:Connect(function() decide("Revive") end)
-	-- Closing hides the prompt; it does not spend or resolve the timed offer.
-	panel.Close.Activated:Connect(function() if not busy then require(script.Parent.Parent.UI.Motion).Close(panel) end end)
-	panel.Later.Activated:Connect(function()
-		if not busy and #records==0 then panel.Visible=false else decide("KeepBase") end
-	end)
-	local function resize()
-		panel.UIScale.Scale = math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/480,(gui.AbsoluteSize.Y-24)/410))
-	end
-	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
-	resize(); render()
-	task.spawn(function() while gui.Parent do refresh(); task.wait(Config.RefreshSeconds) end end)
-	return gui
+local Players=game:GetService("Players")
+local Storage=game:GetService("ReplicatedStorage")
+local Config=require(Storage.Shared.Config.ReviveConfig)
+local Preview=require(script.Parent.Parent.UI.ItemPreview)
+local Motion=require(script.Parent.Parent.UI.Motion)
+local Compact=require(Storage.Shared.NumberFormat).Compact
+local Controller={}
+local function clockText(seconds)
+ seconds=math.max(0,math.floor(seconds))
+ return string.format("%02d:%02d:%02d",math.floor(seconds/3600),math.floor(seconds/60)%60,seconds%60)
 end
-
+function Controller.Start()
+ local player=Players.LocalPlayer
+ local gui=player:WaitForChild("PlayerGui"):WaitForChild("ReviveUI",30)
+ local panel=gui.Panel
+ local remote=Storage:WaitForChild("PrototypeRevive")
+ local snapshot,selected,receivedAt=nil,nil,0
+ local requesting,acting=false,false
+ local cards={}
+ local messages={TooFar="Visit the Revive Machine near the merchant.",NoRevive="Buy a Revive Charm from the merchant.",
+  Busy="An action is saving. Please wait.",Unavailable="This pet is no longer awaiting revival.",
+  PetChanged="This recovery has changed. Refreshing…",Cooldown="Please wait.",Loading="Loading your pets…"}
+ local function remaining(r) return math.max(0,r.ExpiresAt-(snapshot.ServerNow+os.clock()-receivedAt)) end
+ local function selectedRecord()
+  if snapshot then for _,r in snapshot.Records do if r.AttemptId==selected then return r end end end
+ end
+ local render
+ render=function()
+  local seen={}
+  for index,r in snapshot and snapshot.Records or {} do
+   local key=r.AttemptId;seen[key]=true
+   local card=cards[key]
+   if not card then
+    card=panel.Pets.PetTemplate:Clone();card.Name=key;card.Parent=panel.Pets;cards[key]=card
+    card.Activated:Connect(function() if not acting then selected=key;render() end end)
+   end
+   card.Visible=true;card.LayoutOrder=index
+   card.Text=r.PetName.."\nLv. "..r.FeedLevel.." • "..clockText(remaining(r))
+   card.BackgroundColor3=if selected==key then Color3.fromRGB(45,145,115) else Color3.fromRGB(50,65,88)
+  end
+  for key,card in cards do if not seen[key] then card:Destroy();cards[key]=nil end end
+  panel.Empty.Visible=not snapshot or #snapshot.Records==0
+  local r=selectedRecord()
+  Preview.Set(panel.PetPreview,if panel.Visible and r then {Kind="Pet",SpeciesId=r.SpeciesId} else nil)
+  panel.PetName.Text=if r then r.PetName else "SELECT A BROKEN PET"
+  panel.Details.Text=if r then string.format("%s • LEVEL %d • $%s/s\n%s remaining",r.Rarity,r.FeedLevel,Compact(r.Income),clockText(remaining(r))) else ""
+  panel.Notice.Text=if r then "Expiry → Level 0 • Failed food stays spent" else "Broken pets remain here for 24 hours"
+  local enabled=r~=nil and remaining(r)>0 and snapshot.NearMachine and snapshot.CanRevive and not snapshot.Busy and not acting
+  panel.Revive.Active=enabled==true;panel.Revive.AutoButtonColor=enabled==true
+  panel.Revive.BackgroundColor3=if enabled then Color3.fromRGB(70,190,110) else Color3.fromRGB(90,95,105)
+  panel.Revive.Text="USE 1 REVIVE • "..Compact(snapshot and snapshot.ReviveCharges or 0)
+  panel.Robux.Active=false;panel.Robux.AutoButtonColor=false;panel.Robux.Text="ROBUX • SOON"
+ end
+ local function refresh()
+  if requesting or acting or not panel.Visible then return end
+  requesting=true
+  local ok,result=pcall(function() return remote:InvokeServer("Snapshot") end)
+  requesting=false
+  if ok and result.Ok then
+   snapshot=result;receivedAt=os.clock()
+   if not result.NearMachine then panel.Visible=false end
+   if selected and not selectedRecord() then selected=nil end
+  elseif not ok or result.Code~="Cooldown" then
+   snapshot=nil;panel.Status.Text=if ok then messages[result.Code] or "Unable to load pets." else "Connection interrupted. Retrying…"
+  end
+  render()
+ end
+ function Controller.Open()
+  local point=workspace:FindFirstChild("ReviveMachine") and workspace.ReviveMachine:FindFirstChild("InteractionPoint")
+  local root=player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+  if not point or not root or (root.Position-point.Position).Magnitude>Config.MachineDistance then return false end
+  for _,name in {"MerchantUI","DebugUI","IndexUI","PenManagerUI","ConveyorUI"} do
+   local other=player.PlayerGui:FindFirstChild(name);if other and other:FindFirstChild("Panel") then other.Panel.Visible=false end
+  end
+  local main=player.PlayerGui:FindFirstChild("FeedYourPetUI")
+  if main then main.Inventory.Visible=false;main.FeedPanel.Visible=false end
+  panel.Status.Text="";panel.Visible=true;task.spawn(refresh);return true
+ end
+ function Controller.Select(attemptId)
+  if not acting then selected=attemptId;render() end
+ end
+ game:GetService("ProximityPromptService").PromptTriggered:Connect(function(prompt,who)
+  if who and who~=player then return end
+  local machine=workspace:FindFirstChild("ReviveMachine")
+  if machine and prompt.Name=="OpenReviveMachine" and prompt:IsDescendantOf(machine) then Controller.Open() end
+ end)
+ panel.Revive.Activated:Connect(function()
+  local r=selectedRecord()
+  if acting or not r or not panel.Revive.Active then return end
+  acting=true;render();panel.Status.Text="Restoring…"
+  local ok,result=pcall(function() return remote:InvokeServer("Revive",r.PetId,r.AttemptId) end)
+  acting=false
+  panel.Status.Text=if ok and result.Ok then "Pet returned to your inventory." else if ok then messages[result.Code] or "Unable to restore." else "Reply lost. Checking recovery…"
+  selected=nil;snapshot=nil;render();task.spawn(refresh)
+ end)
+ panel.Close.Activated:Connect(function() Motion.Close(panel) end)
+ panel:GetPropertyChangedSignal("Visible"):Connect(function()
+  player:SetAttribute("RevivePanelOpen",panel.Visible)
+  if not panel.Visible then Preview.Set(panel.PetPreview,nil) end
+ end)
+ local function resize() panel.UIScale.Scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/800,(gui.AbsoluteSize.Y-24)/500)) end
+ gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize();render()
+ task.spawn(function() while gui.Parent do refresh();task.wait(Config.RefreshSeconds) end end)
+ return gui
+end
 return Controller
