@@ -5,6 +5,7 @@ local PetIncome=require(Shared.PetIncome)
 local Config=require(Shared.Config.InventoryConfig)
 local Model={}
 local Foods=require(Shared.Config.FoodConfig)
+local Revive=require(Shared.Config.ReviveConfig).Shop
 
 function Model.Entries(snapshot)
 	local entries={}
@@ -29,6 +30,12 @@ function Model.Entries(snapshot)
 		local food=Foods.Types[id]
 		if amount>0 then entries["food:"..id]={Key="food:"..id,Id=id,Kind="Food",Name=food.Name,
 			Rarity="Food",Quantity=amount,Reduction=food.Reduction,Level=0,Income=0,CreatedAt=0,State="FOOD"} end
+	end
+	-- Recovery items share the consumables tab, but never enter the feed selector.
+	if (snapshot.ReviveCharges or 0)>0 then
+		entries["item:revive"]={Key="item:revive",Id="revive",Kind="Food",Name=Revive.DisplayName,
+			Rarity="Item",Quantity=snapshot.ReviveCharges,Reduction=0,Icon=Revive.Icon,
+			Effect="Timed Rescue",Description=Revive.Description,Level=0,Income=0,CreatedAt=0,State="CHARM"}
 	end
 	return entries
 end

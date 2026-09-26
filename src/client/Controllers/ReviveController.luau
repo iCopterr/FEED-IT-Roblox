@@ -13,7 +13,7 @@ function Controller.Start()
 	local receivedAt = 0
 	local records, seen, index, busy, snapshot = {}, {}, 1, false, nil
 	local messages = {Busy="Feed or recovery is still animating/saving. Please wait.",
-		Cooldown="Please wait a moment.", StudioOnly="Free Revive is available in Studio only.",
+		Cooldown="Please wait a moment.", NoRevive="You need a Revive Charm from the merchant.",
 		Unavailable="This recovery is no longer available. Refreshing…",
 		PetChanged="This pet has a newer recovery. Refreshing…", Loading="Loading player data…"}
 	local function render()
@@ -30,7 +30,7 @@ function Controller.Start()
 		panel.Revive.Active = enabled == true
 		panel.Revive.AutoButtonColor = enabled == true
 		panel.Revive.BackgroundColor3 = if enabled then Color3.fromRGB(78,227,51) else Color3.fromRGB(100,100,110)
-		panel.Revive.Text = if snapshot and not snapshot.CanRevive then "RESCUE: STUDIO TEST ONLY" else "RESTORE GROWTH (FREE TEST)"
+		panel.Revive.Text = if snapshot and snapshot.CanRevive then "USE 1 CHARM  •  "..numberText(snapshot.ReviveCharges).." OWNED" else "NO REVIVE CHARM"
 		local canKeep = record ~= nil and snapshot ~= nil and not snapshot.Busy and not busy
 		panel.Later.Text = if record then string.format("KEEP AT LEVEL %d",snapshot and snapshot.ResetLevel or 0) else "CLOSE"
 		panel.Later.Active = canKeep or (record == nil and not busy)

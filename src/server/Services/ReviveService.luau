@@ -1,5 +1,4 @@
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local DataService = require(script.Parent.DataService)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
 local Locks = require(script.Parent.FeedLocks)
@@ -44,12 +43,9 @@ function Service.HandleRequest(player, action, petId, attemptId)
 			if a.ExplodedAt ~= b.ExplodedAt then return a.ExplodedAt > b.ExplodedAt end
 			return a.PetId < b.PetId
 		end)
-		return {Ok=true, Records=records, CanRevive=RunService:IsStudio(),
+		return {Ok=true, Records=records, CanRevive=data.ReviveCharges>0, ReviveCharges=data.ReviveCharges,
 			ServerNow=os.time(), ResetLevel=FeedConfig.ExplosionResetLevel, Busy=Locks.IsLocked(player)}
 	end
-	-- The server gate is unconditional. A client flag/config cannot enable free
-	-- recovery in a published game; paid receipts are deliberately out of scope.
-	if action == "Revive" and not RunService:IsStudio() then return {Ok=false, Code="StudioOnly"} end
 	if type(petId) ~= "string" or #petId == 0 or #petId > 64
 		or type(attemptId) ~= "string" or #attemptId == 0 or #attemptId > 64 then
 		return {Ok=false, Code="InvalidRequest"}
@@ -62,6 +58,11 @@ function Service.HandleRequest(player, action, petId, attemptId)
 	local expired = os.time() >= expiresAt(record)
 	if expired then action = "KeepBase" end
 	if not Locks.Begin(player, petId) then return {Ok=false, Code="Busy"} end
+	if action=="Revive" and data.ReviveCharges<1 then
+		Locks.Finish(player);return {Ok=false,Code="NoRevive"}
+	end
+	local oldCharges=data.ReviveCharges
+	if action=="Revive" then data.ReviveCharges-=1 end
 	local restored = table.clone(record.Pet)
 	restored.Traits = table.clone(record.Pet.Traits)
 	if record.Pet.PenPosition then restored.PenPosition = table.clone(record.Pet.PenPosition) end
@@ -71,6 +72,7 @@ function Service.HandleRequest(player, action, petId, attemptId)
 	if not Schema.Validate(data) then
 		data.Inventory[petId] = nil
 		data.PendingRecovery[petId] = record
+		data.ReviveCharges = oldCharges
 		Locks.Finish(player)
 		return {Ok=false, Code="InvalidData"}
 	end

@@ -43,6 +43,7 @@ function FeedController.Start()
 		if state.Food then panel.Food.Text = string.format("FOOD  %s   •   COST  %s", numberText(state.Food), if state.Cost then numberText(state.Cost) else "—") end
 		panel.Feed.Text = if state.MaxLevel then "MAX LEVEL 40" else if state.Cost then "FEED  •  "..numberText(state.Cost).." FOOD" else "FEED"
 		panel.Notice.Text = if state.MaxLevel then "MAX LEVEL"
+			elseif state.FoodId and Foods.Types[state.FoodId].GuaranteedSuccess then "GUARANTEED SUCCESS\nNormal critical chances"
 			else string.format("EXPLOSION: %s%%\nFailure → Rescue or Lv.%d",
 				numberText((state.Risk or 0)*100),Config.ExplosionResetLevel)
 		local canFeed = state.Ok and state.Cost and not state.MaxLevel and not state.Busy

@@ -3,8 +3,8 @@
 New profiles start with exactly 5,000 Money and `Settings.TutorialStep=BuyEgg`.
 The initial DataStore record contains both values; no repeatable claim remote
 or balance top-up exists. Older saves keep their Money and Settings unchanged
-and are not automatically enrolled. This uses the existing version-9 Settings
-map, so no schema version bump is needed. The old developer-only Studio pet is
+and are not automatically enrolled. This uses the existing Settings map
+(current schema v10 adds ReviveCharges separately). The old developer-only Studio pet is
 suppressed for tutorial profiles (its explicitly named verification still works).
 
 ## Guided flow
@@ -14,8 +14,7 @@ suppressed for tutorial profiles (its explicitly named verification still works)
 3. Wait the normal hatch time and press E beside the ready egg.
 4. Hold the hatched pet and place it in the pen to earn Money.
 5. Reach **at least** 100 Money, then click the Merchant teleport button.
-6. Open the merchant with E and buy Basic Food once. The existing 100-Money,
-   five-serving bundle and normal restock/personal stock rules are unchanged.
+6. Open the merchant with E and buy one Basic Food serving for 100 Money.
 7. Close the food shop with X, then click Base, hold E to pick up the placed pet,
    and click the feed plate. If another control already closed the shop (or its
    ScreenGui is disabled), the close hint is skipped automatically.
@@ -76,9 +75,8 @@ Existing published saves will not show this tutorial. Use a fresh account/profil
 for live testing; do not delete or reset existing saves without owner permission.
 Actual published-server rejoin and touch/controller feel still need playtesting.
 
-Before the close-shop follow-up, TutorialVerification passed all 43 server/client-report checks;
-FoodShopVerification passed all 53 regression checks. Authored trail and button
-focus were visually inspected in Studio. Rojo build and syntax/diff checks pass.
-The follow-up adds three reports (46 expected total), checking X guidance before
-Base plus skipping when another control hides the shop or disables its ScreenGui.
-Its Rojo build/diff checks pass; the expanded runtime suite awaits connected Studio.
+TutorialVerification passed all 46 server/client-report checks after the one-serving
+purchase change, including X guidance before Base and skipping when another control
+hides the shop or disables its ScreenGui. FoodShopVerification passed 78 checks.
+Rojo build and syntax/diff checks pass. Published persistence and mobile feel are
+still separate deployment/playtest checks.

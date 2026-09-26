@@ -38,7 +38,11 @@ local ok,failure=xpcall(function()
  end
  for id,definition in food.Types do
   local risk=config.ExplosionChance[21]*(1-definition.Reduction)
-  check(resolver.Roll(20,random({risk-.001,.5}),risk).Code=="Explosion","Food risk below boundary "..id)
+  if risk>0 then
+   check(resolver.Roll(20,random({risk-.001,.5}),risk).Code=="Explosion","Food risk below boundary "..id)
+  else
+   check(resolver.Roll(20,random({0,.1}),risk).Code=="Success","Zero risk always survives valid RNG "..id)
+  end
   check(resolver.Roll(20,random({risk,.1}),risk).Code=="Success","Food risk at boundary "..id)
  end
  for _,version in {2,6,8} do

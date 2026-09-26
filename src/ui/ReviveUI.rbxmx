@@ -280,7 +280,7 @@
 <float name="BorderSizePixel">0</float>
 <bool name="Visible">true</bool>
 <bool name="Active">true</bool>
-<string name="Text">RESTORE GROWTH (FREE TEST)</string>
+<string name="Text">USE 1 REVIVE CHARM</string>
 <Color3 name="TextColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <bool name="TextScaled">false</bool>
 <float name="TextSize">20</float>

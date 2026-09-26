@@ -88,6 +88,7 @@ function UIService.HandleRequest(player, action, petId, locked)
 	end
 	return {
 		Foods = require(game.ReplicatedStorage.Shared.Config.FoodConfig).Inventory(data),
+		ReviveCharges = data.ReviveCharges,
 		Ok = true, Money = data.Money, Food = require(game.ReplicatedStorage.Shared.Config.FoodConfig).Total(data),
 		MaxPetSlots = data.MaxPetSlots, PlacedCount = placedCount,
 		Inventory = PetService.GetInventory(player),

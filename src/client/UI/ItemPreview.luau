@@ -6,7 +6,7 @@ function Preview.Set(view,entry)
 	local art=view:FindFirstChild("FoodArt")
 	if art then
 		art.Visible=entry~=nil and entry.Kind=="Food"
-		if art.Visible then art.Emoji.Text=(Foods.Types[entry.Id] and Foods.Types[entry.Id].Icon) or "🍗";art.Emoji.Visible=art.Image=="" end
+		if art.Visible then art.Emoji.Text=entry.Icon or (Foods.Types[entry.Id] and Foods.Types[entry.Id].Icon) or "🍗";art.Emoji.Visible=art.Image=="" end
 	end
 	if entry and entry.Kind=="Food" then
 		entry=nil

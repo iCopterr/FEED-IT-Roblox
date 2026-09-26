@@ -7,6 +7,7 @@ local ok,failure=xpcall(function()
 	local merchant=assert(gui:WaitForChild("MerchantUI",10),"Merchant UI missing")
 	local rescue=assert(gui:WaitForChild("ReviveUI",10),"Rescue UI missing")
 	local foods=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
+	local shop=require(game.ReplicatedStorage.Shared.Config.MerchantConfig)
 	local deadline=os.clock()+20
 	repeat
 		if merchant.Panel.Offers.Slot1.ItemName.Text=="Basic Food"
@@ -24,18 +25,18 @@ local ok,failure=xpcall(function()
 	assert(merchant.Panel.Offers:IsA("ScrollingFrame") and merchant.Panel.Offers.AutomaticCanvasSize==Enum.AutomaticSize.Y,
 		"Merchant offers use an authored scrolling list")
 	local previousFoodOrder=0
-	local foodOrder={};for index,id in foods.Order do foodOrder[id]=index end
+	local foodOrder={};for index,id in shop.ItemOrder do foodOrder[id]=index end
 	for index=1,3 do
 		local row=merchant.Panel.Offers["Slot"..index]
 		assert(row:IsA("GuiButton") and not row.Selectable,"Merchant row is an authored mouse/touch card")
 		assert(row.Art.Picture:IsA("ImageLabel") and row.Art.Emoji:IsA("TextLabel"),"Merchant row supports emoji and future image art")
 		assert(row.ItemName.Text~="" and row.Stock.Text~="" and row.Price.Text:find("$",1,true),"Merchant row separates name, stock and price")
-		assert(row.Effect.Text:find("RISK",1,true),"Merchant row shows feed-risk effect")
 		local matchedId
-		for id,definition in foods.Types do
-			if definition.Name==row.ItemName.Text then matchedId=id;break end
+		for id,definition in shop.Items do
+			if definition.DisplayName==row.ItemName.Text then matchedId=id;break end
 		end
 		assert(matchedId and foodOrder[matchedId]>previousFoodOrder,"Visible merchant food follows progression order")
+		assert(row.Effect.Text==shop.Items[matchedId].Effect,"Merchant row shows correct item effect")
 		previousFoodOrder=foodOrder[matchedId]
 	end
 	assert(merchant.Panel.Offers.Slot1.ItemName.Text=="Basic Food","Basic Food rendered first in shop")
@@ -54,7 +55,7 @@ local ok,failure=xpcall(function()
 	assert(not feedLayout.ClipsDescendants,"External sidebar is not clipped")
 	local previousOrder=0
 	assert(feedLayout.FoodCards.List:IsA("ScrollingFrame") and feedLayout.FoodCards.List.AutomaticCanvasSize==Enum.AutomaticSize.Y,"Food list grows automatically")
-	assert(#foods.Order==7,"Expanded food config reaches client")
+	assert(#foods.Order==8,"Expanded food config reaches client")
 	for _,id in foods.Order do
 		local card=feedLayout.FoodCards.List[id]
 		assert(card and card:IsA("GuiButton"),"Authored food card "..id)
@@ -67,6 +68,10 @@ local ok,failure=xpcall(function()
 	assert(#model.Filter(entries,"Food","","Newest")==4,"Owned expanded foods appear in food tab")
 	assert(#model.Filter(entries,"All","","Newest")==0,"Food excluded from pets/eggs All tab")
 	assert(not model.CanSlot(entries["food:basic"]),"Food cannot enter hotbar")
+	local consumables=model.Entries({Inventory={},Foods={blessed=1},ReviveCharges=2})
+	assert(consumables["item:revive"].Quantity==2 and not model.CanSlot(consumables["item:revive"]),"Charm is a non-equip consumable")
+	assert(#model.Filter(consumables,"Food","","Newest")==2,"Blessed food and charm appear in consumables tab")
+	assert(not main.FeedPanel.FoodCards.List:FindFirstChild("revive"),"Charm cannot be selected as feed")
 	local view=main.Inventory.Panel.Layout.Pets.PetCardTemplate.Preview
 	require(script.Parent.UI.ItemPreview).Set(view,entries["food:basic"])
 	assert(view.FoodArt.Visible and view.FoodArt.Emoji.Visible,"Food placeholder supports future image")
@@ -88,7 +93,7 @@ local ok,failure=xpcall(function()
 			local current=panel.PetPreview.World:FindFirstChildOfClass("Model")
 			spun=panel.Visible and current~=nil and before~=current:GetPivot()
 		until spun or os.clock()>spinDeadline
-		assert(spun,"Pet preview spins while feeding UI open")
+		assert(spun,"Pet preview spins while feeding UI open; visible="..tostring(panel.Visible).." enabled="..tostring(main.Enabled).." plate="..tostring(game.Players.LocalPlayer:GetAttribute("FeedPlatePetId")))
 		local feed=require(script.Parent.Controllers.FeedController)
 		-- Snapshot refreshes briefly disable selection. Exercise it when available,
 		-- just as a player would, instead of racing the polling coroutine.

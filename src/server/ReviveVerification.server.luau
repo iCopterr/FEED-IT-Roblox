@@ -36,6 +36,7 @@ local ok, failure = xpcall(function()
 	assert(pets.SetLocked(a,pet.PetId,true))
 	local original = pets.GetPet(a,pet.PetId)
 	profile.Food = 1e12
+	profile.ReviveCharges = 2
 	local beforeFood, beforeMoney = profile.Food, profile.Money
 	local function legacyRecovery()
 		-- Fixture for a record saved under the previous broken-pet rule.
@@ -61,7 +62,7 @@ local ok, failure = xpcall(function()
 	local food = profile.Food
 	check(food < beforeFood, "Failed Food consumed")
 	local own = revive.HandleRequest(a,"Snapshot")
-	check(own.Ok and own.CanRevive and #own.Records == 1 and own.Records[1].FeedLevel == 20, "Owner sees previous level and Studio eligibility")
+	check(own.Ok and own.CanRevive and own.ReviveCharges==2 and #own.Records == 1 and own.Records[1].FeedLevel == 20, "Owner sees previous level and charm eligibility")
 	own.Records[1].FeedLevel = 1
 	check(profile.PendingRecovery[pet.PetId].Pet.FeedLevel == 20, "Snapshot cannot mutate recovery")
 	check(#revive.HandleRequest(b,"Snapshot").Records == 0, "Recovery is private to owner")
@@ -71,7 +72,7 @@ local ok, failure = xpcall(function()
 	check(revive.HandleRequest(a,"Revive",pet.PetId,"wrong-attempt").Code == "PetChanged", "Wrong explosion ID rejected")
 	task.wait(.3)
 	local result = revive.HandleRequest(a,"Revive",pet.PetId,attempt)
-	check(result.Ok and result.FeedLevel == 20, "Free Studio Revive restores previous level, not level one")
+	check(result.Ok and result.FeedLevel == 20 and profile.ReviveCharges==1, "One charm restores previous level, not level one")
 	check(profile.PendingRecovery[pet.PetId] == nil and profile.Inventory[pet.PetId].PetId == pet.PetId, "Recovery consumed and original identity restored")
 	local restored = profile.Inventory[pet.PetId]
 	check(restored.Locked and restored.CreatedAt == original.CreatedAt and restored.SpeciesId == original.SpeciesId

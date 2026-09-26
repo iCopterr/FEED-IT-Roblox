@@ -49,7 +49,8 @@ local function snapshot(player,state)
 		local item=Config.Items[id]
 		local purchased=purchaseCount(data,restockId,slot,item)
 		table.insert(items,{Slot=slot,ItemId=id,Name=item.DisplayName,Description=item.Description,Price=item.Price,
-			Amount=item.Amount,Purchased=purchased>=item.StockLimit,Remaining=item.StockLimit-purchased,StockLimit=item.StockLimit})
+			Amount=item.Amount,RewardType=item.RewardType,Owned=if item.RewardType=="Revive" then data.ReviveCharges else FoodConfig.Count(data,id),
+			Purchased=purchased>=item.StockLimit,Remaining=item.StockLimit-purchased,StockLimit=item.StockLimit})
 	end
 	return {Ok=true,Money=data.Money,RestockId=restockId,
 		RestocksAt=(restockId+1)*Config.RestockSeconds,ServerNow=now,Items=items,NextSequence=state.Sequence+1,
@@ -89,15 +90,17 @@ function Service.HandleRequest(player,action,slot,expectedRestock,sequence)
 	if purchased>=item.StockLimit then return {Ok=false,Code="Sold"} end
 	if data.Money<item.Price then return {Ok=false,Code="NotEnoughMoney"} end
 	local oldMoney,oldFood,oldFoods=data.Money,data.Food,table.clone(data.Foods)
+	local oldRevives=data.ReviveCharges
 	local oldRestock,oldPurchases=data.MerchantRestockId,table.clone(data.MerchantPurchases)
 	assert(Locks.Begin(player,"MerchantPurchase"))
 	if data.MerchantRestockId~=current then data.MerchantRestockId=current;data.MerchantPurchases={} end
 	data.Money-=item.Price
-	FoodConfig.Add(data,itemId,item.Amount)
+	if item.RewardType=="Revive" then data.ReviveCharges+=item.Amount else FoodConfig.Add(data,itemId,item.Amount) end
 	local purchaseKey=if item.StockLimit==1 then tostring(slot) else tostring(slot)..":"..(purchased+1)
 	data.MerchantPurchases[purchaseKey]=true
 	if not Schema.Validate(data) then
 		data.Money,data.Food,data.Foods=oldMoney,oldFood,oldFoods
+		data.ReviveCharges=oldRevives
 		data.MerchantRestockId,data.MerchantPurchases=oldRestock,oldPurchases
 		Locks.Finish(player);return {Ok=false,Code="InvalidData"}
 	end
@@ -115,7 +118,7 @@ function Service.Start()
 		local item=assert(Config.Items[id],"Missing merchant item")
 		assert(item.Price>0 and item.Price%1==0 and item.Weight>=0 and item.Amount>0
 			and item.StockLimit>0 and item.StockLimit%1==0,"Invalid merchant item")
-		assert(item.RewardType=="Food","Invalid merchant reward")
+		assert(item.RewardType=="Food" or item.RewardType=="Revive","Invalid merchant reward")
 	end
 	local point=workspace:WaitForChild("MysteryMerchant"):WaitForChild("InteractionPoint")
 	local prompt=point:FindFirstChild("OpenMysteryMerchant") or Instance.new("ProximityPrompt")

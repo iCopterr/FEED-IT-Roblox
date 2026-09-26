@@ -96,7 +96,9 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	-- profile save. A failed/ambiguous save NEVER rolls back or rerolls.
 	assert(Locks.Begin(player, petId))
 	FoodConfig.Add(data,result.FoodId,-result.Cost)
-	local forced = DebugOverrides.Resolve(player, petId, pet.FeedLevel)
+	-- A purchased guarantee also wins over Studio failure overrides.
+	local guaranteed = FoodConfig.Types[result.FoodId].GuaranteedSuccess == true
+	local forced = if guaranteed then nil else DebugOverrides.Resolve(player, petId, pet.FeedLevel)
 	local appliedRisk = result.Risk
 	local outcome = forced or Resolver.Roll(pet.FeedLevel, function() return rng:NextNumber() end, appliedRisk)
 	local attemptId = HttpService:GenerateGUID(false)
@@ -115,7 +117,7 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 		Locks.Finish(player)
 		return {Ok=false, Code="InvalidData"}
 	end
-	if forced then DebugOverrides.Consume(player, petId) end
+	if forced or guaranteed then DebugOverrides.Consume(player, petId) end
 	require(script.Parent.TutorialProgress).Record(data,"Fed",petId)
 	result.Origin = PedestalService.BeginPresentation(player)
 	result.SpeciesId, result.OwnerUserId = pet.SpeciesId, player.UserId

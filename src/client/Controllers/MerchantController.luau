@@ -2,10 +2,10 @@ local Players=game:GetService("Players")
 local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local Prompts=game:GetService("ProximityPromptService")
 local NumberFormat=require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("NumberFormat"))
-local Foods=require(ReplicatedStorage.Shared.Config.FoodConfig)
+local Shop=require(ReplicatedStorage.Shared.Config.MerchantConfig)
 local Controller={}
 local foodOrder={}
-for index,id in Foods.Order do foodOrder[id]=index end
+for index,id in Shop.ItemOrder do foodOrder[id]=index end
 
 local function clockText(seconds)
 	seconds=math.max(0,math.ceil(seconds))
@@ -41,13 +41,13 @@ function Controller.Start()
 			local button=panel.Offers["Slot"..i];local item=items[i]
 			displayed[i]=item
 			if item then
-				local food=Foods.Types[item.ItemId]
+				local definition=Shop.Items[item.ItemId]
 				button.ItemName.Text=item.Name
 				button.Stock.Text=if item.Purchased then "SOLD OUT"
-					else string.format("×%d FOOD  •  %d/%d STOCK",item.Amount,item.Remaining,item.StockLimit)
+					else string.format("×%d %s  •  %d/%d STOCK",item.Amount,if item.RewardType=="Revive" then "CHARM" else "FOOD",item.Remaining,item.StockLimit)
 				button.Price.Text="$"..NumberFormat.Compact(item.Price)
-				button.Effect.Text=string.format("-%d%% RISK",math.round(food.Reduction*100))
-				button.Art.Emoji.Text=food.Icon
+				button.Effect.Text=definition.Effect
+				button.Art.Emoji.Text=definition.Icon
 				button.Art.Emoji.Visible=button.Art.Picture.Image==""
 				button.Active=not item.Purchased and not state.Busy and not busy
 				button.AutoButtonColor=button.Active

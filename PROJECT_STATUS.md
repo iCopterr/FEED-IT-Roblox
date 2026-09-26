@@ -6,6 +6,46 @@
 
 **Last Updated:** 2026-09-26
 
+### Latest session — single-serving food, rare Blessed Food and Revive Charms
+
+- Current Feature / Overall Progress: all shop purchases now grant one item.
+  Basic retains five personal purchases per five-minute restock (five servings,
+  no longer 25); other offers remain one purchase. Owned food is not reduced.
+- Completed: Blessed Food ($10M, stock weight 0.25) guarantees one successful
+  Feed with ordinary critical odds and level-40 cap. Revive Charm ($5M, weight
+  0.5) replaces free Studio Rescue, consuming one saved charm only on valid
+  restoration inside the existing timed window, in Studio and published games.
+  Decline/expiry still returns the same pet at level 0 without spending a charm;
+  failed food remains spent. No new currency or Robux products.
+- Stock: still Basic plus two weighted distinct specials. In a deterministic
+  100,000-restock sample, Blessed appeared in 0.22%, Revive in 0.504% (sampled
+  frequencies, not exact probabilities). All balance lives in FoodConfig and
+  ReviveConfig.Shop. Charms are listed in the inventory Food/consumables tab,
+  never in the feed selector; authored Blessed card extends the scrolling bar.
+- Architecture: schema v10 adds ReviveCharges; v9 migration initializes zero
+  and preserves balances, food, pets, pending deadlines and tutorial state.
+  Purchase/recovery deductions share profile saves and existing transaction
+  locks. Replays cannot double-grant/spend; missing charms leave offers intact.
+- Verification: 78-check FoodShopVerification PASS, 46-check TutorialVerification
+  PASS (including the prior X-before-Base follow-up), 22-check ReviveVerification
+  PASS; FeedVerification PASS, 98 RNG/growth/migration checks. Isolated
+  actual-source rare merchant harness PASS, 18 checks for both
+  items' grants, costs, affordability, replay, rollback, save lock and stock.
+  One initial UI regression run failed its pet-preview spin observation; the
+  rerun passed without gameplay changes (diagnostic detail added to assertion).
+  Rojo build/diff check and compile of 98 descendant scripts pass. Authored
+  merchant preview visually checked with both rare items; temporary labels and
+  visibility restored. Published backend rejoin/mobile feel are not claimed tested.
+- Files Modified: Food/Merchant/Revive/Game configs; schema; Merchant/Feed/
+  Revive/UI services; merchant/feed/revive/inventory controllers and item views;
+  authored FeedYourPetUI/ReviveUI; FoodShop, Tutorial, Feed and Revive verification;
+  docs/studio/verify-rare-merchant.luau; merchant/revive/tutorial/design docs; handoff.
+- In Progress: none. Next Task: owner playtest of single-serving scarcity and
+  rare-item prices. Last Working Commit before this
+  session: 4ae59ab. Session Handoff: Rojo synchronized source/assets; no live saves
+  reset, no runtime UI layout constructors, no world/model changes. Preserve
+  unrelated untracked docs/studio/build-kitsune-reference.luau; do not push.
+
 ### Latest session — close merchant before tutorial Base teleport
 
 - Current Feature / Overall Progress: implemented the tutorial follow-up. After
