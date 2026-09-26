@@ -8,6 +8,27 @@
 
 ### Latest session — ordered merchant food cards
 
+- Follow-up 2026-09-26: found and fixed the missing `Amount` field in merchant
+  snapshots. The new stock label formats this field, so its omission could
+  throw during live card rendering. Added serving-quantity regression assertions.
+- Rojo is connected again and synchronized the fix. Inspected the authored
+  shop visually in Studio; restored Panel.Visible=false after previewing.
+- The deferred multiplayer launcher in docs/merchant.md now runs successfully.
+  Earlier claims that restarts proved a Studio defect were not established;
+  the underlying launch-error cause remains unconfirmed. No further restart
+  loop is needed. The running suite exposed client-test timing assumptions
+  (snapshot loading and preview rendering) and an outdated assumption that all
+  six plot signs belong to players. Corrected those checks without changing
+  feeding or upgrade gameplay.
+- PASS: all 53 assertions in the two-player FoodShopVerification, including both
+  clients' authored shop/food UI checks, serving quantities, purchases/replays,
+  personal stock limits, feeding, Rescue restoration and timeout. Also passed
+  Rojo build, synchronized script syntax checks and git diff --check.
+- Files: MerchantService, server/client FoodShopVerification, docs/merchant.md
+  and this handoff. UI layout remains the authored asset from aa302b8. Next:
+  owner playtest of the merchant interaction and purchase feel. Published data
+  tests remain separate; this session used isolated memory only.
+
 - Rebuilt the authored `StarterGui.MerchantUI` shop body as a compact scrolling
   food list based on the supplied seed-shop reference. Each card now separates
   image-ready art/emoji, food name, bundle and personal stock, green formatted
@@ -22,12 +43,12 @@
 - PASS: Rojo build/RBXMX parse, diff check, Studio hierarchy audit, syntax checks
   for all changed client modules and visual inspection of the full 540x510 panel
   in the game viewport. The result is readable without overlap at native scale.
-  FoodShopVerification was updated for the new hierarchy and ordering, but its
-  multiplayer run remains blocked by an inconsistent StudioTestService state.
+  FoodShopVerification was updated for the new hierarchy and ordering. Its
+  multiplayer launch was initially blocked by an inconsistent test-service state.
   After independently restarting Studio and the MCP bridge, Studio reports
   `EditModeActive=true`, stopped RunService and nil test args, while both
   `ExecuteMultiplayerTestAsync` and the solo API still reject the launch as a
-  previous test in progress. The correct future launcher is
+  previous test in progress. The correct multiplayer launcher is
   `ExecuteMultiplayerTestAsync(2, "FoodShopVerification")`; do not pass a player
   count to `ExecutePlayModeAsync`, because that API only starts a solo client.
   Rojo was still disconnected, so exact filesystem scripts and the authored

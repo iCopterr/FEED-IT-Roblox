@@ -67,6 +67,9 @@ local ok,failure=xpcall(function()
 	local shop
 	waitFor(function() shop=Merchant.HandleRequest(a,"Snapshot");return shop.Ok end)
 	check(shop.Items[1].Purchased and shop.Items[1].Remaining==0 and shop.Items[1].StockLimit==5,"Basic sold-out state is public to its owner")
+	for _,offer in shop.Items do
+		check(offer.Amount==Food.Types[offer.ItemId].Amount,"Shop publishes configured serving quantity: "..offer.ItemId)
+	end
 	task.wait(.3)
 	check(Merchant.HandleRequest(a,"Purchase",2,restock,6).Ok,"Special food purchase")
 	local special=stock[2]

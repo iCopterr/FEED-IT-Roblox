@@ -49,7 +49,7 @@ local function snapshot(player,state)
 		local item=Config.Items[id]
 		local purchased=purchaseCount(data,restockId,slot,item)
 		table.insert(items,{Slot=slot,ItemId=id,Name=item.DisplayName,Description=item.Description,Price=item.Price,
-			Purchased=purchased>=item.StockLimit,Remaining=item.StockLimit-purchased,StockLimit=item.StockLimit})
+			Amount=item.Amount,Purchased=purchased>=item.StockLimit,Remaining=item.StockLimit-purchased,StockLimit=item.StockLimit})
 	end
 	return {Ok=true,Money=data.Money,RestockId=restockId,
 		RestocksAt=(restockId+1)*Config.RestockSeconds,ServerNow=now,Items=items,NextSequence=state.Sequence+1,

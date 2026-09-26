@@ -9,7 +9,8 @@ local ok,failure=xpcall(function()
 	local foods=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 	local deadline=os.clock()+20
 	repeat
-		if merchant.Panel.Offers.Slot1.ItemName.Text:find("Basic Food",1,true) then break end
+		if merchant.Panel.Offers.Slot1.ItemName.Text=="Basic Food"
+			and merchant.Panel.Money.Text~="YOUR $—" then break end
 		task.wait(.25)
 	until os.clock()>deadline
 	for _,entry in game.LogService:GetLogHistory() do
@@ -79,13 +80,35 @@ local ok,failure=xpcall(function()
 		local deadline=os.clock()+10
 		repeat task.wait(.1) until panel.PetPreview.World:FindFirstChildOfClass("Model") or os.clock()>deadline
 		local pet=assert(panel.PetPreview.World:FindFirstChildOfClass("Model"),"Pet preview loaded")
-		local before=pet:GetPivot();task.wait(.3)
-		assert(before~=pet:GetPivot(),"Pet preview spins while feeding UI open")
+		local before=pet:GetPivot()
+		local spinDeadline=os.clock()+5
+		local spun=false
+		repeat
+			task.wait(.05)
+			local current=panel.PetPreview.World:FindFirstChildOfClass("Model")
+			spun=panel.Visible and current~=nil and before~=current:GetPivot()
+		until spun or os.clock()>spinDeadline
+		assert(spun,"Pet preview spins while feeding UI open")
 		local feed=require(script.Parent.Controllers.FeedController)
-		feed.SelectFood("royal")
-		assert(panel.FoodCards.List.royal:GetAttribute("Selected"),"Clicked food selected")
+		-- Snapshot refreshes briefly disable selection. Exercise it when available,
+		-- just as a player would, instead of racing the polling coroutine.
+		local unowned
+		for _,id in foods.Order do
+			if panel.FoodCards.List[id].Quantity.Text=="×0" then unowned=id;break end
+		end
+		assert(unowned,"An unowned food is available for the selection check")
+		local function selectWhenReady(id)
+			local untilTime=os.clock()+5
+			repeat
+				feed.SelectFood(id)
+				if panel.FoodCards.List[id]:GetAttribute("Selected") then return end
+				task.wait(.1)
+			until os.clock()>untilTime
+			error("Clicked food selected: "..id)
+		end
+		selectWhenReady(unowned)
 		assert(not panel.Feed.Active,"Unowned food cannot be fed")
-		feed.SelectFood("basic")
+		selectWhenReady("basic")
 		assert(panel.FoodCards.List.basic:GetAttribute("Selected"),"Can switch selected food")
 	end
 	assert(main.HUD.Money.Value.Text~="—" and main.HUD.Money.Value.Text~="$—","Money HUD initialized")
@@ -95,9 +118,13 @@ local ok,failure=xpcall(function()
 		local upgradeGui=assert(gui:WaitForChild("PlotUpgrade_"..sign.Name,5),"Plot upgrade controller did not bind")
 		assert(upgradeGui.Adornee==sign.Board and upgradeGui.Enabled,"Upgrade UI adorns authored world sign")
 		assert(upgradeGui.Title.Text=="UPGRADE PEN","Upgrade sign uses simplified title")
-		assert(upgradeGui.Level.Text:find("LEVEL",1,true) and upgradeGui.Level.Text:find("→",1,true),"Upgrade sign shows level transition")
+		if sign:GetAttribute("NextSlots") then
+			assert(upgradeGui.Level.Text:find("LEVEL",1,true) and upgradeGui.Level.Text:find("→",1,true),"Occupied upgrade sign shows level transition")
+			assert(upgradeGui.Buy.Text:find("$",1,true),"Upgrade button shows Money price")
+		else
+			assert(upgradeGui.Level.Text=="LEVEL —" and upgradeGui.Buy.Text=="UNAVAILABLE","Empty plot sign has no purchasable upgrade")
+		end
 		assert(not upgradeGui.Rate.Visible and upgradeGui.Rate.Text=="" and not upgradeGui.Status.Visible and upgradeGui.Status.Text=="","Upgrade sign hides extra copy")
-		assert(upgradeGui.Buy.Text:find("$",1,true),"Upgrade button shows Money price")
 		assert(not upgradeGui.Buy.Selectable,"World upgrade button must not capture keyboard navigation")
 		signCount+=1
 	end

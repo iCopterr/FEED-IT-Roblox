@@ -29,3 +29,23 @@ original server stock slot for purchase validation and shows image-ready art
 (emoji fallback), food name, bundle/remaining stock, formatted Money price and
 Feed-risk reduction. Sold-out rows remain visible but disabled. No shop UI is
 constructed at runtime.
+
+## Studio verification
+
+Run the two-client suite from an idle Studio MCP edit context. Schedule the
+yielding test outside the command callback, then poll the result attribute from
+a later command. Studio data stays in memory with the default DataConfig.
+
+```lua
+game:SetAttribute("MerchantReviewResult", nil)
+task.defer(function()
+	local ok, result = pcall(function()
+		return game:GetService("StudioTestService"):ExecuteMultiplayerTestAsync(2, "FoodShopVerification")
+	end)
+	game:SetAttribute("MerchantReviewResult", game:GetService("HttpService"):JSONEncode({ok=ok, result=result}))
+end)
+```
+
+Read with `print(game:GetAttribute("MerchantReviewResult"))`. A non-nil result
+means the run ended; inspect both `ok` and `result.passed`. The snapshot contract
+includes `Amount` so cards can show servings without inferring purchase rewards.
