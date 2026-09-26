@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-09-26
 
+### Deferred by owner — pet image thumbnails (2026-09-26)
+
+- Decision: use pet images for repeated UI previews, but do this later. Do not
+  start replacing previews or preparing/uploading assets until the owner resumes.
+- Planned scope: reuse one transparent image per species across Index,
+  inventory, hotbar and remote pet menu; tint the same image black for locked
+  Index silhouettes. Keep UI hierarchy authored in ScreenGui assets.
+- Resume requirements: prepare consistently framed transparent PNGs (suggested
+  512x512), upload to Roblox, and map image asset IDs to species. The owner will
+  provide the images/IDs; Codex can then wire the UI. Current 3D previews remain
+  unchanged for now. Mesh optimization is a separate recommendation, not started.
+- Documentation-only session: updated this handoff; no gameplay/UI changes or
+  runtime tests needed. Last implementation commit: 03bf273. Next task is the
+  owner's next priority, not automatically thumbnail work.
+
 ### Latest session — Pet Index and UI preview overhead
 
 - Current Feature / Overall Progress: authored Pet Index implemented for all
