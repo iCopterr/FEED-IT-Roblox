@@ -13,10 +13,11 @@ local Locks = require(script.Parent.FeedLocks)
 local UIService = {}
 local lastRequest = {}
 local lastSnapshot = {}
+local lastIndexSnapshot = {}
 
 function UIService.HandleRequest(player, action, petId, locked)
 	local now = os.clock()
-	local throttle = if action == "Snapshot" then lastSnapshot else lastRequest
+	local throttle = if action == "Snapshot" then lastSnapshot elseif action == "IndexSnapshot" then lastIndexSnapshot else lastRequest
 	if now - (throttle[player] or -math.huge) < Config.RequestCooldown then
 		return { Ok = false, Code = "Cooldown" }
 	end
@@ -24,6 +25,11 @@ function UIService.HandleRequest(player, action, petId, locked)
 	local data = DataService.GetData(player)
 	if not data then
 		return { Ok = false, Code = "Loading" }
+	end
+	if action == "IndexSnapshot" then
+		-- Discovery is permanent save data, independent of bag/pen membership.
+		-- Never send reserved hatch results or accept client unlock claims.
+		return { Ok = true, PetIndex = table.clone(data.PetIndex) }
 	end
 	if action == "SetLocked" then
 		if type(petId) ~= "string" or #petId > 64 or type(locked) ~= "boolean" then
@@ -106,6 +112,7 @@ function UIService.Start()
 	Players.PlayerRemoving:Connect(function(player)
 		lastRequest[player] = nil
 		lastSnapshot[player] = nil
+		lastIndexSnapshot[player] = nil
 	end)
 end
 

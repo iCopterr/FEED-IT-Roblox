@@ -96,7 +96,7 @@ function Controller.Start()
 		if panel.Visible and mode==nextMode then Motion.Close(panel);return end
 		revision+=1;mode=nextMode
 		for key,row in rows do row:Destroy();rows[key]=nil end
-		for _,name in {"FeedYourPetUI","MerchantUI","ReviveUI","DebugUI"} do
+		for _,name in {"FeedYourPetUI","MerchantUI","ReviveUI","DebugUI","IndexUI"} do
 			local other=gui.Parent:FindFirstChild(name)
 			if other then
 				if name=="FeedYourPetUI" then other.Inventory.Visible=false;other.FeedPanel.Visible=false
@@ -126,7 +126,7 @@ function Controller.Start()
 		task.delay(.3,refresh)
 	end)
 	panel.Close.Activated:Connect(function() Motion.Close(panel) end)
-	for _,name in {"FeedYourPetUI","MerchantUI","ReviveUI","DebugUI"} do
+	for _,name in {"FeedYourPetUI","MerchantUI","ReviveUI","DebugUI","IndexUI"} do
 		task.spawn(function()
 			local other=gui.Parent:WaitForChild(name,30)
 			if not other then return end

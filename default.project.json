@@ -27,6 +27,9 @@
       }
     },
     "StarterGui": {
+      "IndexUI": {
+        "$path": "src/ui/IndexUI.rbxmx"
+      },
       "PenManagerUI": {
         "$path": "src/ui/PenManagerUI.rbxmx"
       },

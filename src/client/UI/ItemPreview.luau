@@ -9,19 +9,25 @@ function Preview.Set(view,entry)
 		if art.Visible then art.Emoji.Text=(Foods.Types[entry.Id] and Foods.Types[entry.Id].Icon) or "🍗";art.Emoji.Visible=art.Image=="" end
 	end
 	if entry and entry.Kind=="Food" then
-		view.World:ClearAllChildren();view:SetAttribute("PreviewKey",nil);return
+		entry=nil
+	end
+	if not entry then
+		view.World:ClearAllChildren();view:SetAttribute("PreviewKey",nil)
+		view.CurrentCamera=nil
+		local camera=view:FindFirstChild("PreviewCamera")
+		if camera then camera:Destroy() end
+		return
 	end
 	-- Cameras are client-local render helpers, not UI layout. StarterGui cameras
 	-- are not replicated reliably; bind a local camera to the authored viewport.
 	local camera=view:FindFirstChild("PreviewCamera")
 	if not camera then camera=Instance.new("Camera");camera.Name="PreviewCamera";camera.Parent=view end
 	view.CurrentCamera=camera
-	local signature=entry and (entry.Kind..":"..(entry.SpeciesId or entry.EggId)) or ""
+	local signature=entry.Kind..":"..(entry.SpeciesId or entry.EggId)
 	if view:GetAttribute("PreviewKey")==signature then return end
 	view:SetAttribute("PreviewKey",signature)
 	local world=view.World
 	world:ClearAllChildren()
-	if not entry then return end
 	local definition=entry.EggId and Eggs.Definitions[entry.EggId]
 	local name=entry.SpeciesId or (definition and definition.TemplateName) or entry.EggId
 	local folder=if entry.Kind=="Egg" then workspace:FindFirstChild("EggTemplates") else nil
@@ -29,8 +35,14 @@ function Preview.Set(view,entry)
 	if not template or not template:IsA("Model") then view:SetAttribute("PreviewKey",nil);return end
 	local model=template:Clone()
 	for _,child in model:GetDescendants() do
-		if child:IsA("LuaSourceContainer") or child:IsA("LayerCollector") or child:IsA("ProximityPrompt") then child:Destroy()
-		elseif child:IsA("BasePart") then child.Anchored=true;child.CanCollide=false end
+		-- Static UI copies need geometry, not thousands of rig joints or gameplay
+		-- helpers. Preserve all visible parts, mesh bones, textures and transforms.
+		if child:IsA("LuaSourceContainer") or child:IsA("LayerCollector") or child:IsA("ProximityPrompt")
+			or child:IsA("JointInstance") or child:IsA("WeldConstraint") or child:IsA("Constraint")
+			or child:IsA("Humanoid") or child:IsA("AnimationController") then child:Destroy()
+		elseif child:IsA("BasePart") then
+			child.Anchored=true;child.CanCollide=false;child.CanTouch=false;child.CanQuery=false
+		end
 	end
 	model.Parent=world
 	model:PivotTo(CFrame.new())

@@ -25,7 +25,7 @@ function Controller.Start()
 			end)
 			if ok and result.Ok then
 				gui.Inventory.Visible=false;gui.FeedPanel.Visible=false
-				for _,name in {"MerchantUI","ReviveUI","DebugUI"} do
+				for _,name in {"MerchantUI","ReviveUI","DebugUI","IndexUI"} do
 					local other=playerGui:FindFirstChild(name)
 					if other then other.Panel.Visible=false end
 				end

@@ -8,7 +8,7 @@ function CarryController.Start()
 	local eggRemote = game.ReplicatedStorage:WaitForChild("PrototypeEgg")
 	local busy = false
 	local function click(screenPosition)
-		if player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") or player:GetAttribute("MerchantPanelOpen") then return end
+		if player:GetAttribute("IndexPanelOpen") or player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") or player:GetAttribute("MerchantPanelOpen") then return end
 		local gui = player.PlayerGui:FindFirstChild("FeedYourPetUI")
 		if busy or (gui and (gui.Inventory.Visible or (gui:FindFirstChild("FeedPanel") and gui.FeedPanel.Visible))) then return end
 		local camera = workspace.CurrentCamera
@@ -79,6 +79,7 @@ function CarryController.Start()
 						and not player:GetAttribute("RevivePanelOpen")
 						and not player:GetAttribute("DebugPanelOpen")
 						and not player:GetAttribute("MerchantPanelOpen")
+						and not player:GetAttribute("IndexPanelOpen")
 						and not (prompt.Name=="OpenFeedUI" and player:GetAttribute("FeedBusy"))
 						and not (gui and (gui.Inventory.Visible or (gui:FindFirstChild("FeedPanel") and gui.FeedPanel.Visible)))
 				end

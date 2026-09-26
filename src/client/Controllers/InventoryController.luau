@@ -62,12 +62,12 @@ function Controller.Start(gui,onSnapshot)
 		layout.Status.Text=text;noticeUntil=os.clock()+4
 	end
 	local function otherModal()
-		return gui.FeedPanel.Visible or player:GetAttribute("RevivePanelOpen")
+		return player:GetAttribute("IndexPanelOpen") or gui.FeedPanel.Visible or player:GetAttribute("RevivePanelOpen")
 			or player:GetAttribute("MerchantPanelOpen") or player:GetAttribute("DebugPanelOpen")
 	end
 	local function show()
 		gui.FeedPanel.Visible=false
-		for _,name in {"ReviveUI","MerchantUI","DebugUI"} do
+		for _,name in {"ReviveUI","MerchantUI","DebugUI","IndexUI"} do
 			local other=player.PlayerGui:FindFirstChild(name)
 			if other then other.Panel.Visible=false end
 		end

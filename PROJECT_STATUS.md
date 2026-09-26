@@ -6,6 +6,58 @@
 
 **Last Updated:** 2026-09-26
 
+### Latest session — Pet Index and UI preview overhead
+
+- Current Feature / Overall Progress: authored Pet Index implemented for all
+  five egg categories and thirty configured species. Prototype gameplay and
+  economy are unchanged. The blue book/INDEX button is at left-middle opposite
+  the right-side egg/pen controls, using the existing stud/font/border style.
+- Completed: category discovery counts, pet selection, unlocked model/name/
+  rarity/normal level-0 income, black silhouettes and hidden details for locked
+  species, responsive layout, popup/button motion and modal coordination.
+  The saved PetIndex flags are server-owned; a separately throttled read-only
+  IndexSnapshot sends only copied discovery flags, not reserved hatch results.
+- Performance: current-category previews only, unchanged models reused across
+  refreshes, and Index models/cameras released on close. Shared ItemPreview
+  now removes joints/constraints/Humanoids/animation controllers from UI-only
+  copies and disables collision/touch/query. World models and rigs are untouched.
+  Bone Dragon measured 9,959 source descendants -> 4,979 preview descendants,
+  preserving all 4,979 BaseParts. This is NOT a polygon/FPS reduction claim.
+- Verification: two-player IndexVerification PASS (18 server/report checks,
+  with both clients checking all thirty previews, category/selection behavior,
+  silhouette tint, labels/income, static-preview safety, cleanup and modal
+  behavior). Actual purchase/hatch, private discovery, save validation and
+  no-discovery-on-purchase are covered in isolated memory. Rojo build and
+  diff check pass; all client UI/controller modules compile. Visually inspected
+  Basic and detailed Supreme pages in Studio; restored hidden, empty previews.
+  Shared-preview FoodShopVerification regression PASS: all 53 checks, including
+  both clients' inventory/feed/merchant UI. An earlier launch timed out waiting
+  for two test players; the subsequent independent idle-context run passed.
+- Test diagnosis: Studio had duplicate IndexVerification server/client scripts
+  and duplicate IndexController/IndexView modules from earlier manual mirroring
+  plus Rojo. Two server tests were resetting each other's test discoveries.
+  Removed duplicate copies from the active hierarchy and cleaned the temporary
+  duplicate backup (canonical filesystem sources retained), then tests passed. This
+  was test setup interference, not evidence of a discovery/save gameplay bug.
+- Files Modified: default.project.json; authored src/ui/IndexUI.rbxmx;
+  IndexController, IndexView, server/client IndexVerification; ItemPreview;
+  UIService; client bootstrap; Carry/Conveyor/HUD/Inventory/PenManager/
+  PlotUpgrade modal integration; docs/index.md; this handoff.
+- Known Issues / Next Task: detailed pets still contain thousands of visible
+  parts (Hydra 4,105; Bone Dragon 4,979). Six cards plus a detail can be expensive.
+  Recommend uploaded static thumbnails for cards/categories/hotbar, with only
+  selected detail rendered in 3D, followed by optimized MeshPart assets for
+  world/held pets. This pipeline is documented but NOT implemented; there are
+  no thumbnail assets or measured FPS improvement yet. Do not blindly union or
+  delete model detail. Published persistence tests remain a deployment check.
+- In Progress: none for this feature; thumbnail/mesh optimization remains a
+  proposed next task. Last Working Commit before
+  this feature: 31815fb. Session Handoff: use the existing authored IndexUI and
+  filesystem source; do not recreate it or manually mirror scripts while Rojo
+  is connected. Use separate deferred Studio test launches from an idle edit
+  context; a nil test result is not a pass. Preserve the unrelated untracked
+  docs/studio/build-kitsune-reference.luau file.
+
 ### Latest session — ordered merchant food cards
 
 - Follow-up 2026-09-26: found and fixed the missing `Amount` field in merchant
