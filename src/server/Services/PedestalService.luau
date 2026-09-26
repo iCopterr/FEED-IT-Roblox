@@ -91,6 +91,7 @@ function PedestalService.Place(player, id)
 		prompt.RequiresLineOfSight = false
 		prompt.Parent = body
 		model.Parent = plate
+		require(script.Parent.PetPresentation).Update(model,pet)
 	end)
 	if not ok then model:Destroy(); return false, "TemplateUnavailable" end
 	states[player] = {Id=id, Model=model, Plate=plate, Prompt=prompt, Character=character}
@@ -106,6 +107,8 @@ function PedestalService.BeginPresentation(player)
 		if part:IsA("BasePart") then state.Transparencies[part]=part.Transparency; part.Transparency=1 end
 	end
 	state.Prompt.Enabled = false
+	local label=state.Model:FindFirstChild("PetLabel",true)
+	if label then label.Enabled=false end
 	return state.Model:GetPivot()
 end
 
@@ -125,6 +128,9 @@ function PedestalService.EndPresentation(player, id, returnToInventory)
 		if part.Parent then part.Transparency = transparency end
 	end
 	state.Prompt.Enabled = true
+	require(script.Parent.PetPresentation).Update(state.Model,pet)
+	local label=state.Model:FindFirstChild("PetLabel",true)
+	if label then label.Enabled=true end
 end
 
 function PedestalService.Reconcile(player)

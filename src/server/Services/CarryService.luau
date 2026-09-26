@@ -106,6 +106,7 @@ local function equip(player, id, isEgg)
 			weld.Parent = modelRoot
 		end
 		model.Parent = character
+		if not isEgg then require(script.Parent.PetPresentation).Update(model,pet) end
 	end)
 	if not prepared then model:Destroy(); return false, "TemplateUnavailable" end
 	-- All potentially failing visual preparation precedes the persisted mutation.

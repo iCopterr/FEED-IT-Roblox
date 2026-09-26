@@ -35,6 +35,8 @@ function Visuals.Prepare(player,egg,position)
 		local label=game.ReplicatedStorage.ConveyorPetLabel:Clone()
 		label.NameLabel.Text=definition and definition.DisplayName or egg.EggId
 		label.Price.Text="Press E when ready"
+		local liveBounds,liveSize=model:GetBoundingBox()
+		label.StudsOffsetWorldSpace=liveBounds.Position+Vector3.new(0,liveSize.Y/2+1,0)-body.Position
 		label.Adornee=body;label.Parent=body
 		model:SetAttribute("OwnerUserId",player.UserId)
 	end)

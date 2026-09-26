@@ -110,6 +110,7 @@ local function install(player: Player, plot: Model, pet: PetData, model: Model)
 	local state = visualState(player, plot)
 	local previous = state.Pets[pet.PetId]
 	model:SetAttribute("PlotSlot", pet.PlotSlot)
+	require(script.Parent.PetPresentation).Update(model,pet)
 	local carryConfig = require(game.ReplicatedStorage.Shared.Config.CarryConfig)
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.Name = carryConfig.PickupPromptName

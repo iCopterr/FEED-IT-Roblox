@@ -56,6 +56,9 @@
       }
     },
     "ReplicatedStorage": {
+      "PetLabel": {
+        "$path": "src/ui/PetLabel.rbxmx"
+      },
       "TutorialArrow": {
         "$path": "src/ui/TutorialArrow.rbxmx"
       },

@@ -6,6 +6,25 @@
 
 **Last Updated:** 2026-09-26
 
+### Latest session — world pet and egg labels
+
+- Completed requested item 1: authored PetLabel billboard cloned onto held,
+  placed and feed-plate pets; rarity color, variant-aware name, server-calculated
+  compact $income/s. Anchor follows current model height; label hides during feed
+  presentation and refreshes after growth. Conveyor shows only egg name/price;
+  placed eggs retain countdown/instruction rows. All use FredokaOne, purple
+  outline and transparent background matching the existing UI typography.
+- Verification: LabelVerification PASS 24 memory-server checks covering carry,
+  placement, plate, growth, label height/income/style and conveyor text. Rojo
+  build/diff pass; live authored label visually checked; review clone removed.
+  New PetLabel mapping was authored into Studio through instance tools because
+  running Rojo did not add the new mapped root. Source remains the RBXMX asset.
+- Files: PetPresentation, PetLabel/ConveyorPetLabel, project mapping,
+  Carry/Placement/Pedestal/Conveyor services, EggVisuals, LabelVerification, handoff.
+- Previous commit 344becc. Next: requested item 2, gameplay and premium pet VFX,
+  then item 3 hatch animation; each tested and committed separately. Existing
+  unrelated untracked Kitsune reference file preserved. No push.
+
 ### Latest session — Revive Machine; queued presentation work
 
 - Completed: authored ReviveMachine beside merchant at (22, 0, 156), prompt,

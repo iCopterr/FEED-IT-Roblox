@@ -69,9 +69,13 @@ function Service.SpawnOffer(testRoll)
 		model:SetAttribute("StartedAt",started)
 		local label=game.ReplicatedStorage.ConveyorPetLabel:Clone()
 		label.NameLabel.Text=egg.DisplayName
-		label.Rarity.Text=string.format("%ds TO HATCH",egg.HatchSeconds)
-		label.Rarity.TextColor3=definition.Color
-		label.Price.Text=numberText(egg.Price).." MONEY"
+		label.Rarity.Visible=false
+		label.Price.Position=UDim2.fromOffset(0,28)
+		label.Size=UDim2.fromOffset(240,56)
+		label.Price.Text="$"..numberText(egg.Price)
+		label.Price.TextColor3=Color3.fromRGB(110,255,100)
+		local liveBounds,liveSize=model:GetBoundingBox()
+		label.StudsOffsetWorldSpace=liveBounds.Position+Vector3.new(0,liveSize.Y/2+1,0)-body.Position
 		label.Adornee=body;label.Parent=body
 		local prompt=Instance.new("ProximityPrompt")
 		prompt.Name="BuyConveyorEgg"
