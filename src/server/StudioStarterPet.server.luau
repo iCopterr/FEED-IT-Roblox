@@ -22,6 +22,8 @@ local function grant(player)
 	end
 	local data = DataService.GetData(player)
 	if not data then return end
+	-- Fresh profiles now learn the real egg flow; keep the old test isolated.
+	if data.Settings.TutorialStep and not verifying then return end
 	-- Do not top up an existing inventory or duplicate pets on respawn/rejoin.
 	if next(data.Inventory) == nil then
 		local pet, reason = PetService.CreatePet(player, "test_common")

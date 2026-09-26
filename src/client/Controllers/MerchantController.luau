@@ -22,7 +22,7 @@ function Controller.Start()
 	local remote=ReplicatedStorage:WaitForChild("PrototypeMerchant")
 	local state,receivedAt,busy=nil,0,false
 	local displayed={}
-	local messages={TooFar="Move closer to the Mystery Merchant.",NotEnoughMoney="You need more Money.",
+	local messages={TutorialBuyEgg="Buy your first Basic Egg before buying food.",TooFar="Move closer to the Mystery Merchant.",NotEnoughMoney="You need more Money.",
 		Sold="This food is sold out for you. Wait for restock.",
 		Restocked="The merchant restocked. Refreshing…",Busy="Another purchase is saving.",
 		StaleRequest="Shop state changed. Refreshing…",Loading="Loading your Money…",Cooldown="Please wait."}

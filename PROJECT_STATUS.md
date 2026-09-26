@@ -6,6 +6,58 @@
 
 **Last Updated:** 2026-09-26
 
+### Latest session — first-time tutorial and starting Money
+
+- Current Feature / Overall Progress: implemented the owner's first-time
+  onboarding loop. New profiles receive exactly 5,000 starting Money, buy a
+  Basic Egg, place and hatch it, place the pet to earn at least 100 Money,
+  click Merchant teleport, buy Basic Food once, click Base, pick up the pet,
+  place it on the feed plate and Feed. No new egg/food prices or RNG overrides.
+  One Basic Food purchase remains the configured five-serving bundle for 100.
+- Completed: authored TutorialUI ScreenGui hint/focus/pointer and two-wedge
+  TutorialArrow asset; client-local animated pink-to-yellow direction trail
+  capped at 24 arrows/48 non-interactive parts. UI steps highlight the actual
+  teleport/shop/food/feed/hotbar buttons. Context-specific guidance handles
+  carrying, placed eggs/pets, inventory selection and transient plate state.
+- Architecture: tutorial progress and exact EggUid/PetId live in the existing
+  persisted Settings map (schema v9 unchanged). Successful authoritative egg,
+  merchant, travel and feed actions advance it. Initial grant is part of a new
+  record, never an additive claim. Existing saves remain untouched and are not
+  enrolled. Display attributes cannot mutate authoritative tutorial progress.
+  The initial 5,000 is protected against premature food spending. Progress
+  saves on transitions with retry backoff; item transaction saves include their
+  matching progress. No tutorial completion reward or public advance remote.
+- Studio starter behavior: tutorial profiles no longer get the old developer
+  pet; normal Studio memory Play starts the real tutorial. Existing published
+  accounts need a fresh profile/account to test; no saves were reset or deleted.
+- Verification: final 43-check two-player TutorialVerification PASS
+  through the real timed hatch, travel, normal hold-E pickup and Feed; legacy
+  non-enrollment, replay, copied-save resume and player isolation included.
+  FoodShopVerification regression PASS, all 53 checks. Final run includes
+  negative progress assertions, arrow-pivot and target-overlap checks. A prior
+  client check failed on its fixed startup delay; replaced that assumption with
+  an explicit guide-ready wait and error diagnostics, then the rerun passed.
+  Rojo build/diff check and tutorial-module syntax pass. Visually reviewed the
+  authored arrow trail and Merchant focus pointer in Studio; corrected the
+  inferred rotated model pivot and restored hidden UI. Temporary review clones
+  were removed; authored assets remain. No pet models or deferred thumbnails
+  were changed. Live published-backend rejoin and mobile physical feel remain
+  deployment/playtest checks, not claimed verified by memory tests.
+- Files Modified: TutorialConfig, TutorialProgress/Service/Controller,
+  server/client TutorialVerification, authored TutorialUI/TutorialArrow,
+  default.project.json, GameConfig, PlayerDataSchema defaults, server/client
+  bootstrap, StudioStarterPet, successful-action hooks in Egg/Merchant/Travel/
+  Feed services, Inventory hotbar target metadata, merchant error text,
+  FoodShopVerification existing-player fixture, docs/tutorial.md and handoff.
+- In Progress: none for this tutorial implementation. Next Task: owner playtest of a fresh
+  Studio session, then real persistence and full-server performance tests.
+  Last implementation commit before this session: 03bf273; deferral note 9e1b18f.
+  Session Handoff: all UI is authored; no runtime UI constructors. Source changes
+  sync via Rojo. New project-mapped assets were imported exactly from their
+  RBXMX into Studio because the running serve did not add those mappings.
+  Never manually duplicate Rojo scripts. Preserve unrelated untracked
+  docs/studio/build-kitsune-reference.luau. Pet thumbnails remain deferred.
+
 ### Deferred by owner — pet image thumbnails (2026-09-26)
 
 - Decision: use pet images for repeated UI previews, but do this later. Do not

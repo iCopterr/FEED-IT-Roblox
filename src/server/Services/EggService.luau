@@ -56,6 +56,7 @@ function Service.BuyFromConveyor(player,eggId)
 		profile.Money=oldMoney;profile.IncubatingEggs[id]=nil;Locks.Finish(player)
 		return {Ok=false,Code="InvalidData"}
 	end
+	require(script.Parent.TutorialProgress).Record(profile,"BoughtEgg",id,eggId)
 	save(player,profile)
 	if not Carry.GetPetId(player) and not Carry.GetEggId(player) then Carry.EquipEgg(player,id) end
 	return {Ok=true,Code="Bought",EggUid=id,EggId=eggId,ReadyAt=egg.ReadyAt,Money=profile.Money}
@@ -141,6 +142,7 @@ function Service.HandleRequest(player,action,id,position)
 	local result={Ok=true,Code="Hatched",EggUid=id,PetId=pet.PetId,Rarity=pet.Rarity,
 		Variant=pet.Variant,PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant)}
 	state.LastHatch=table.clone(result)
+	require(script.Parent.TutorialProgress).Record(profile,"Hatched",id,pet.PetId)
 	Visuals.Reconcile(player,profile)
 	save(player,profile,function()
 		-- Inventory is authoritative even if the character is absent or hands are busy.

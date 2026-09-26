@@ -393,7 +393,9 @@ function PlayerDataSchema.CreateDefault(): PlayerData
 		PlacedPetIds = {},
 		PetIndex = {},
 		Statistics = {},
-		Settings = {},
+		-- Only genuinely new profiles enroll. Migration preserves older settings
+		-- and balances, so reconnects/legacy players never receive another grant.
+		Settings = {TutorialStep="BuyEgg"},
 	}
 end
 

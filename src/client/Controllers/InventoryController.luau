@@ -172,6 +172,7 @@ function Controller.Start(gui,onSnapshot)
 		end
 		for i,button in buttons do
 			local entry=entries[slots[i]]
+			button:SetAttribute("ItemKey",entry and entry.Key)
 			button.Visible=entry~=nil
 			button.Key.Text=tostring(i%10)
 			local held=entry and stateOf(entry)=="HELD"

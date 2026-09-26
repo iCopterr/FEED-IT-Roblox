@@ -35,6 +35,8 @@ local ok,failure=xpcall(function()
 		and a.Character and a.Character:FindFirstChild("HumanoidRootPart")
 		and game.ReplicatedStorage:FindFirstChild("PrototypeRevive") end)
 	local profile=Data.GetData(a)
+	-- This regression exercises an existing player, not first-time onboarding.
+	profile.Settings.TutorialStep=nil
 	local root=a.Character.HumanoidRootPart
 	root:SetNetworkOwner(nil);root.Anchored=true
 	root.CFrame=workspace.MysteryMerchant.InteractionPoint.CFrame+Vector3.new(0,3,0)

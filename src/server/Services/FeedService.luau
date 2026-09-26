@@ -116,6 +116,7 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 		return {Ok=false, Code="InvalidData"}
 	end
 	if forced then DebugOverrides.Consume(player, petId) end
+	require(script.Parent.TutorialProgress).Record(data,"Fed",petId)
 	result.Origin = PedestalService.BeginPresentation(player)
 	result.SpeciesId, result.OwnerUserId = pet.SpeciesId, player.UserId
 	result.AttemptId, result.OldLevel = attemptId, before.FeedLevel

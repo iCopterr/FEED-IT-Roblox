@@ -78,6 +78,9 @@ function Service.HandleRequest(player,action,slot,expectedRestock,sequence)
 	local data=Data.GetData(player)
 	if not data or not Schema.Validate(data) then return {Ok=false,Code="Loading"} end
 	local current=Config.GetRestockId(os.time())
+	-- Reserve the one-time starting balance for the first egg; spending it on
+	-- food before owning an income-producing pet would strand a fresh account.
+	if data.Settings.TutorialStep=="BuyEgg" then return {Ok=false,Code="TutorialBuyEgg"} end
 	if expectedRestock~=current then return {Ok=false,Code="Restocked"} end
 	if not aliveAndNear(player) then return {Ok=false,Code="TooFar"} end
 	local itemId=Config.GetStock(current)[slot];local item=itemId and Config.Items[itemId]
@@ -101,6 +104,7 @@ function Service.HandleRequest(player,action,slot,expectedRestock,sequence)
 	local result={Ok=true,Code="Purchased",Slot=slot,RestockId=current,ItemId=itemId,Name=item.DisplayName,
 		RewardType=item.RewardType,Amount=item.Amount,Remaining=item.StockLimit-purchased-1,
 		Money=data.Money,Food=FoodConfig.Total(data),NextSequence=sequence+1}
+	require(script.Parent.TutorialProgress).Record(data,"BoughtFood",nil,itemId)
 	state.Sequence=sequence;state.Last=table.clone(result);queueSave(player,data)
 	return result
 end

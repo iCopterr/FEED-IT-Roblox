@@ -4,7 +4,7 @@ local GameConfig = {
 	PlayerDataVersion = 9,
 	PetDataVersion = 2,
 
-	StartingMoney = 0,
+	StartingMoney = require(script.Parent.TutorialConfig).StartingMoney,
 	StartingFood = 0,
 	StartingMaxPetSlots = 5,
 	-- Legacy save defaults only: these retired systems have no gameplay effect.

@@ -33,6 +33,7 @@ function Service.HandleRequest(player,destination)
 	character:PivotTo(target.CFrame+Vector3.new(0,target.Size.Y/2+Config.Clearance,0))
 	root.AssemblyLinearVelocity=Vector3.zero
 	root.AssemblyAngularVelocity=Vector3.zero
+	require(script.Parent.TutorialProgress).Record(Data.GetData(player),"Travel",destination)
 	return {Ok=true}
 end
 

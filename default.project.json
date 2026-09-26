@@ -27,6 +27,9 @@
       }
     },
     "StarterGui": {
+      "TutorialUI": {
+        "$path": "src/ui/TutorialUI.rbxmx"
+      },
       "IndexUI": {
         "$path": "src/ui/IndexUI.rbxmx"
       },
@@ -50,6 +53,9 @@
       }
     },
     "ReplicatedStorage": {
+      "TutorialArrow": {
+        "$path": "src/ui/TutorialArrow.rbxmx"
+      },
       "ConveyorPetLabel": {
         "$path": "src/ui/ConveyorPetLabel.rbxmx"
       },
