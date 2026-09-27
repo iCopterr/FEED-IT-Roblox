@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-09-27
 
+### Latest session — manual modeling references only
+
+- Owner rejected the Bone Dragon Blender draft, stopped further remodeling,
+  and now plans to build models manually. Do not resume model construction
+  without a new request. Existing originals remain unchanged.
+- Generated four Roblox-style low-poly concept sheets for all 24 Advanced,
+  Elite, Master and Supreme pets. Basic excluded by latest user instruction.
+  Saved PNGs and exact prompt set under docs/art-references/pets using the
+  built-in image generator. Visually checked names and broad silhouettes;
+  references are not topology/anatomy/instance-count guarantees.
+- Files changed: references, prompt README, this handoff only. Prior commit
+  b2f9432. No models, gameplay or UI changed; unrelated Kitsune file preserved.
+  Next: owner models from references; inspect/import only when requested.
+
 ### Current session — Higgsfield Blender remodeling pilot
 
 - Owner explicitly requested Blender via Higgsfield, improved designs, only
