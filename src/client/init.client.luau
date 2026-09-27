@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ProjectInfo = require(ReplicatedStorage.Shared.ProjectInfo)
+task.spawn(function() require(script.Controllers.PageFocusController).Start() end)
 task.spawn(function() require(script.Controllers.HatchController).Start() end)
 task.spawn(function() require(script.Controllers.PenManagerController).Start() end)
 task.spawn(function() require(script.Controllers.UIMotionController).Start() end)

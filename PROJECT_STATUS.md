@@ -6,6 +6,27 @@
 
 **Last Updated:** 2026-09-27
 
+### Latest session — shared page zoom, blur and walk-away closing
+
+- Added client PageFocusController: all current UI pages (inventory, feed,
+  merchant, revive, index, remote pen/eggs, debug, hatch reveal) smoothly narrow
+  camera FOV by 10 degrees and add background blur. HUD/toasts are excluded.
+  Original FOV returns after the last page closes. Page switching, disabled
+  ScreenGuis, camera replacement and rapid toggle baseline restoration handled.
+- Merchant/feed/revive pages close within 0.1 seconds after leaving the same
+  configured distance used by their server transactions. Death/character loss
+  closes pages. Portable inventory/index/remote panels remain usable anywhere.
+  Existing authored UI untouched; one local post-processing effect, no generated
+  UI hierarchy and no server/economy changes.
+- Verification: Rojo build, source syntax and diff checks pass; PageFocusVerification
+  PASS 11 client checks (zoom/blur, switching, restoration, rapid toggles, disabled
+  screens, merchant near/far, distant feed/revive, portable inventory and cleanup).
+  Test waits for TweenService completion rather than assuming wall
+  time equals rendered tween time in background Studio test clients.
+- Files: PageFocusController, client startup, PageFocusVerification server/client,
+  this handoff. Prior commit 88919fd. Next: owner playtest for zoom/blur strength.
+  Unrelated Kitsune reference preserved; no push.
+
 ### Latest session — raised pet/egg labels
 
 - Raised pet, conveyor egg and placed egg labels by 1.5 studs. Their fixed
