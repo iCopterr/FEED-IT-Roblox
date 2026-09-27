@@ -15,6 +15,7 @@ local PlacementConfig=require(game.ReplicatedStorage.Shared.Config.PlacementConf
 local Service={}
 local saving,sessions={},{}
 local rng=Random.new()
+local hatchOutcome
 
 local function save(player,profile,afterSave)
 	local token={};saving[player]=token
@@ -139,12 +140,14 @@ function Service.HandleRequest(player,action,id,position)
 		return {Ok=false,Code="InvalidData"}
 	end
 	local definition=PetConfig.Species[pet.SpeciesId]
-	local result={Ok=true,Code="Hatched",EggUid=id,PetId=pet.PetId,Rarity=pet.Rarity,
+	local result={Ok=true,Code="Hatched",EggUid=id,EggId=egg.EggId,SpeciesId=pet.SpeciesId,PetId=pet.PetId,Rarity=pet.Rarity,
 		Variant=pet.Variant,PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant)}
 	state.LastHatch=table.clone(result)
 	require(script.Parent.TutorialProgress).Record(profile,"Hatched",id,pet.PetId)
 	Visuals.Reconcile(player,profile)
 	save(player,profile,function()
+		-- Cosmetic reveal only after persistence; never disclose reserved results early.
+		if hatchOutcome then hatchOutcome:FireClient(player,result) end
 		-- Inventory is authoritative even if the character is absent or hands are busy.
 		if not Carry.GetPetId(player) and not Carry.GetEggId(player) then Carry.Equip(player,pet.PetId) end
 	end)
@@ -152,6 +155,7 @@ function Service.HandleRequest(player,action,id,position)
 end
 
 function Service.Start()
+	hatchOutcome=Instance.new("RemoteEvent");hatchOutcome.Name="HatchOutcome";hatchOutcome.Parent=game.ReplicatedStorage
 	Visuals.OnHatch=function(player,id) return Service.HandleRequest(player,"Hatch",id) end
 	for id,definition in Config.Definitions do
 		assert(type(id)=="string" and definition.Price>=0 and definition.Price<math.huge,"Invalid egg price")

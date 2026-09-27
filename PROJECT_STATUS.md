@@ -4,7 +4,34 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-26
+**Last Updated:** 2026-09-27
+
+### Latest session — hatch shake and pet reveal
+
+- Completed requested item 3: authored HatchUI ScreenGui, egg shake, brief flash,
+  rotating pet reveal with name/rarity/variant, responsive scale and Skip button.
+  One preview at a time; old geometry/camera freed; bounded eight-entry queue.
+  Uses existing authored egg/pet models and matching outlined FredokaOne text.
+- EggService emits owner-only HatchOutcome after successful saving, for both
+  manual E and remote hatching. Client cannot roll or grant results. Duplicate
+  requests reuse the existing result without another event or pet. Skipping or
+  dropping a cosmetic queue entry never loses the already-granted pet.
+- Tests: HatchVerification PASS 15 server/integration checks, with client
+  assertions covering egg/pet stages, correct result, deduplication, Skip and
+  geometry/camera cleanup. Both routes return the original pet to inventory/hands.
+  Rojo build, source syntax and diff checks pass; reveal layout inspected in Studio.
+- Broader two-client EggVerification regression PASS (157 checks): all five egg tiers,
+  weighted pools, variants, prices/timers, manual/remote hatching, replay safety,
+  save/load, two-buyer race and expired conveyor offer cleanup.
+- Files: EggService, HatchController, HatchUI asset/project mapping, client
+  startup, server/client HatchVerification and this handoff.
+- Last working commit 4d2453f (VFX); prior 700d6d4 labels, 344becc Revive Machine.
+  All three requested presentation features are implemented. Next: owner playtest
+  for timing/particle taste; real Robux revival remains disabled pending product.
+  Existing unrelated Kitsune reference preserved; no push.
+- Continuation 2026-09-27: final hatch commit had been interrupted by the
+  approval service usage limit, not a test failure. Reviewed the unchanged
+  implementation and rebuilt successfully before retrying the scoped commit.
 
 ### Latest session — gameplay and premium-pet VFX
 
