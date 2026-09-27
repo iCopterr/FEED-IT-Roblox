@@ -6,6 +6,29 @@
 
 **Last Updated:** 2026-09-27
 
+### Current session — Higgsfield Blender remodeling pilot
+
+- Owner explicitly requested Blender via Higgsfield, improved designs, only
+  high-part-count pets. Queue: 24 templates with 740–4,979 parts; leave six Basic
+  pets with 35–71 parts unchanged. Started Bone Dragon; remaining 23 NOT rebuilt.
+- Created private Higgsfield project
+  https://higgsfield.ai/3d-jutsu/8eb244c9-3fbf-4bfc-86d4-dd5f2f29e4f7
+  revision 1, operation build-bone-dragon-remodel-v2. Editable Blender and GLB
+  downloaded to assets/pets/bone-dragon; repeatable builder in docs/blender.
+- Pilot: 5,012 triangles, 2,744 vertices, one Blender mesh, 10 rigid bones,
+  five material primitives. Finite geometry, all vertices weighted, rest pose,
+  unit scale and major joint overlap assertions passed. Does not establish FPS.
+- Used Blender Assembly skill for explicit connections, directional geometry
+  and applied-transform checks. Render produced but image tools could not open
+  its signed URL. Visual quality remains unverified; interactive preview shown
+  for owner review. No Studio import/rig/gameplay validation, no replacement.
+- BLOCKER/next: owner imports assets/pets/bone-dragon/BoneDragon.glb through
+  Studio's 3D Importer as a separate review model (or FBX via supplied Blend).
+  Available MCP has no local-file importer and owner disallows computer use.
+  Verify shape, colors, rig, scaling, carry/place/feed before continuing queue.
+- Original templates and unrelated Kitsune file preserved. No game published.
+  Prior commit 010d3c9. New files: builder, Blend/GLB, asset README, handoff.
+
 ### Current session — pet optimization, Bone Dragon trial (not installed)
 
 - Follow-up on port 58742: connected successfully. The API beta blocker is
