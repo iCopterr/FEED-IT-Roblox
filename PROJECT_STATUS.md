@@ -8,6 +8,25 @@
 
 ### Latest session — hatch shake and pet reveal
 
+### Latest follow-up — fixed on-screen pet/egg labels
+
+- Owner clarified identical on-screen size near/far (not world-sized labels).
+  Retained offset-only billboard dimensions; disabled automatic text scaling,
+  fixed text at 24px with existing FredokaOne/stroke. Pet growth refreshes the
+  label from the authored template so descendant scaling cannot enlarge it.
+  Conveyor and incubating eggs share the fixed-text template.
+- Verification: LabelVerification PASS 35 checks, including a client measuring
+  both templates at 12 and 48 studs (240x84 pixels at both distances), growth,
+  carried/placed/plate pets and 240x56 conveyor labels. Rojo build/diff pass.
+  Initial test fixture used a Terrain attachment that rendered zero-size;
+  corrected to a BasePart attachment matching real pet labels. Stale Studio
+  PetLabel asset aligned to source; no gameplay or save changes.
+- Files: PetLabel/ConveyorPetLabel assets, PetPresentation, LabelVerification,
+  new client FixedLabelVerification, handoff. Prior commit a752bfa. Next: owner
+  playtest. Unrelated Kitsune reference preserved; no push.
+
+### Hatch shake and pet reveal (previous session)
+
 - Completed requested item 3: authored HatchUI ScreenGui, egg shake, brief flash,
   rotating pet reveal with name/rarity/variant, responsive scale and Skip button.
   One preview at a time; old geometry/camera freed; bounded eight-entry queue.

@@ -13,12 +13,17 @@ local ok,failure=xpcall(function()
  check(require(script.Parent.Data.DataStoreAdapter).IsMemory(),"Memory-only test")
  local player;waitFor(function() player=game.Players:GetPlayers()[1];return player and Data.IsLoaded(player) and Plots.GetPlot(player) and player.Character and player.Character:FindFirstChild("HumanoidRootPart") end)
  local root=player.Character.HumanoidRootPart;root.Anchored=true
+ local report=Instance.new("RemoteEvent");report.Name="FixedLabelReport";report.Parent=game.ReplicatedStorage
+ local clientResult
+ report.OnServerEvent:Connect(function(actor,result) if actor==player then clientResult=result end end)
  local plot=Plots.GetPlot(player);local pet=assert(Pets.CreatePet(player,"test_common"))
  local function inspect(model)
   local label=assert(model:FindFirstChild("PetLabel",true),"Pet label missing")
   check(label.Rarity.Text==pet.Rarity and label.NameLabel.Text~="","Pet name and rarity")
   check(label.Income.Text=="$"..Compact(Income(pet)).."/s","Correct server income")
   check(label.NameLabel.Font==Enum.Font.FredokaOne and label.NameLabel.TextOutline.Thickness==3,"Shared font and outlined text")
+  check(label.Size==UDim2.fromOffset(240,84),"Fixed pixel pet label before/after growth")
+  check(not label.NameLabel.TextScaled and label.NameLabel.TextSize==24,"Pet text never auto-resizes")
   local bounds,size=model:GetBoundingBox()
   check(label.Adornee.WorldPosition.Y>=bounds.Position.Y+size.Y/2+.7,"Label sits above scaled model")
  end
@@ -43,5 +48,10 @@ local ok,failure=xpcall(function()
  local label=offer:FindFirstChild("ConveyorPetLabel",true)
  check(label and label.NameLabel.Text~="" and label.Price.Text:sub(1,1)=="$" and not label.Rarity.Visible,"Conveyor shows egg name and price only")
  check(label.NameLabel.Font==Enum.Font.FredokaOne and label.Price:FindFirstChild("TextOutline"),"Egg label shares font and stroke")
+ check(label.Size==UDim2.fromOffset(240,56) and not label.NameLabel.TextScaled and label.NameLabel.TextSize==24,"Conveyor label and text use fixed pixels")
+ local eggTemplate=game.ReplicatedStorage.ConveyorPetLabel
+ check(eggTemplate.Size==UDim2.fromOffset(240,84) and not eggTemplate.Rarity.TextScaled,"Incubating egg template uses fixed pixels")
+ waitFor(function() return clientResult~=nil end)
+ check(clientResult.Passed,clientResult.Failure or "Client confirms identical near/far pixel dimensions for pets and eggs")
 end,debug.traceback)
 testing:EndTest({passed=ok,checks=checks,failure=if ok then nil else tostring(failure)})
