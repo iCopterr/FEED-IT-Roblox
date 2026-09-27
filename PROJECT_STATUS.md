@@ -6,6 +6,31 @@
 
 **Last Updated:** 2026-09-27
 
+### Current session — pet optimization, Bone Dragon trial (not installed)
+
+- Owner requested one-by-one pet optimization. Started with Bone Dragon, the
+  heaviest of 30 templates (4,979 parts; all templates total 59,775). Original
+  ReplicatedStorage.PetsModel template remains unchanged; no gameplay changes.
+- Rejected CSG trial: 76 parts but increased triangles/serialized size. New
+  thin-wedge mesh trial has 35 parts, 24 welds, all 10 original Motor6Ds and
+  4,954 double-sided mesh triangles. Preserves silhouette/colors; removes
+  primitive Studs surface texture. Front/oblique visual review, rig offsets,
+  collision flags and 2x growth scaling checked. No FPS claim or runtime pass.
+- BLOCKER: EditableMesh content did not survive SerializationService reload.
+  Owner approved Roblox mesh uploads. First upload attempt failed before any
+  asset was created: "CreateAssetAsync and CreateAssetVersionAsync are not
+  available yet". Owner must enable Studio's CreateAssetAsync Luau API beta,
+  restart/reconnect MCP. Do not install session-only meshes. Need asset upload,
+  reload/visual verification,
+  durable repository mapping, then carry/place/feed tests before replacement.
+- Files: experimental docs/studio/mesh-pet-candidate.luau, optimization report
+  docs/pet-model-optimization.md and this handoff. No production asset change.
+  Last working game commit db2e5b2. Unrelated Kitsune reference preserved.
+- Session handoff: original backup and experimental review clones are stored
+  under ServerStorage for this Studio session; editable mesh trials must be
+  regenerated from the recipe if Studio restarts. Camera restored. Next pet is
+  Hydra only after Bone Dragon is durably installed and verified. No push.
+
 ### Latest session — more space between plots and conveyor
 
 - Moved both authored plot rows 24 studs outward (centers X ±66 → ±90),
