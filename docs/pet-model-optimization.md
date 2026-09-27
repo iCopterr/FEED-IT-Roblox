@@ -6,6 +6,21 @@ carry/place/feed behavior have passed verification. No runtime mesh generation.
 
 ## Bone Dragon (first trial, not installed)
 
+### Upload follow-up (port 58742)
+
+All 10 authorized uploads succeeded; the old API-beta restriction is resolved.
+However, loading every uploaded ID returns an identical 768-face, 1x1x1
+checkerboard cube. Expected section face counts range from 122 to 2,884.
+The saved URI references survive reload, but that does **not** establish that
+the correct geometry survived. Visual verification failed. Original template
+remains installed and unchanged. Asset metadata confirms the expected names
+and owner for the sampled torso/skull, not approval or geometry correctness.
+
+Run `docs/studio/audit-bone-dragon-meshes.luau` in edit mode for a read-only
+recheck; it records the existing IDs so no duplicate uploads are needed.
+Check asset moderation/processing status in Creator Dashboard. The cause is
+not confirmed; do not assume it is merely an upload delay or install cubes.
+
 | Metric | Original | Thin-wedge mesh trial |
 | --- | ---: | ---: |
 | BaseParts | 4,979 | 35 |

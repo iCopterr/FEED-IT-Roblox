@@ -8,6 +8,19 @@
 
 ### Current session — pet optimization, Bone Dragon trial (not installed)
 
+- Follow-up on port 58742: connected successfully. The API beta blocker is
+  resolved; all 10 owner-approved mesh uploads succeeded in the preceding retry.
+  IDs are preserved in docs/studio/audit-bone-dragon-meshes.luau. No reuploads.
+  Asset-backed URI references survive serialization, but GEOMETRY FAILS:
+  all 10 assets load as the same 768-face, 1x1x1 checkerboard cube rather than
+  their expected 122–2,884 faces. Front-view screenshot confirms placeholders.
+  Torso/skull metadata confirms correct asset names and owner iCopter0.
+  Moderation/processing status is not exposed by this check; cause unconfirmed.
+  Owner should inspect mesh status in Creator Dashboard before another attempt.
+  Original installed model remains 4,979 parts. Runtime testing and installation
+  are deferred until geometry is correct. Review folder returned to ServerStorage
+  and camera restored. Prior tooling commit 959a408; no game publication.
+
 - Owner requested one-by-one pet optimization. Started with Bone Dragon, the
   heaviest of 30 templates (4,979 parts; all templates total 59,775). Original
   ReplicatedStorage.PetsModel template remains unchanged; no gameplay changes.
@@ -16,7 +29,7 @@
   4,954 double-sided mesh triangles. Preserves silhouette/colors; removes
   primitive Studs surface texture. Front/oblique visual review, rig offsets,
   collision flags and 2x growth scaling checked. No FPS claim or runtime pass.
-- BLOCKER: EditableMesh content did not survive SerializationService reload.
+- Historical blocker (superseded by checkerboard-asset issue above): EditableMesh content did not survive SerializationService reload.
   Owner approved Roblox mesh uploads. First upload attempt failed before any
   asset was created: "CreateAssetAsync and CreateAssetVersionAsync are not
   available yet". Owner must enable Studio's CreateAssetAsync Luau API beta,
