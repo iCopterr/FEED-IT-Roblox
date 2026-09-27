@@ -60,7 +60,7 @@ local ok, failure = xpcall(function()
 	check(not carry.PlaceOnPlate(a,two.PetId) and carry.GetPetId(a)==two.PetId,"Occupied plate preserves second held pet")
 	local model=plots.GetPlot(a).FeedPlate.PlatePet
 	local prompt=model:FindFirstChildWhichIsA("ProximityPrompt",true)
-	check(prompt and prompt.HoldDuration==1 and prompt.Name=="OpenFeedUI" and prompt.ActionText=="Open Feed UI","Plate hold-E prompt opens UI")
+	check(prompt and prompt.HoldDuration==require(game.ReplicatedStorage.Shared.Config.CarryConfig).PickupHoldSeconds and prompt.Name=="OpenFeedUI" and prompt.ActionText=="Open Feed UI","Plate hold-E prompt opens UI")
 	check(not carry.BeginPickup(b,prompt),"Other player cannot pick up plate pet")
 	check(not carry.BeginPickup(a,prompt) and not carry.FinishPickup(a,prompt),"Plate prompt cannot pick pet up")
 	local feed=require(script.Parent.Services.FeedService)

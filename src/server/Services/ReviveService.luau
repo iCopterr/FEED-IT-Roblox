@@ -105,6 +105,7 @@ function Service.Start()
 	local point=workspace:WaitForChild("ReviveMachine"):WaitForChild("InteractionPoint")
 	local prompt=point:WaitForChild("OpenReviveMachine")
 	prompt.MaxActivationDistance=Config.PromptDistance
+	prompt.HoldDuration=Config.PromptHoldSeconds
 	local remote = Instance.new("RemoteFunction")
 	remote.Name = "PrototypeRevive"
 	remote.OnServerInvoke = Service.HandleRequest

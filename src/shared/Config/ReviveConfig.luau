@@ -5,6 +5,7 @@ return table.freeze({
 	WindowSeconds = 24*60*60,
 	MachineDistance = 16,
 	PromptDistance = 12,
+	PromptHoldSeconds = .125,
 	RequestCooldown = 0.25,
 	SnapshotCooldown = 0.25,
 	SaveRetrySeconds = 5,

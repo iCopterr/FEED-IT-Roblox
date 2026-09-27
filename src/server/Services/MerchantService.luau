@@ -124,7 +124,7 @@ function Service.Start()
 	local prompt=point:FindFirstChild("OpenMysteryMerchant") or Instance.new("ProximityPrompt")
 	prompt.Name="OpenMysteryMerchant";prompt.ActionText="Browse";prompt.ObjectText="Food Merchant"
 	prompt.KeyboardKeyCode=Enum.KeyCode.E;prompt.GamepadKeyCode=Enum.KeyCode.ButtonX
-	prompt.HoldDuration=.25;prompt.MaxActivationDistance=Config.PurchaseDistance;prompt.RequiresLineOfSight=false;prompt.Parent=point
+	prompt.HoldDuration=Config.OpenHoldSeconds;prompt.MaxActivationDistance=Config.PurchaseDistance;prompt.RequiresLineOfSight=false;prompt.Parent=point
 	local remote=Instance.new("RemoteFunction");remote.Name="PrototypeMerchant";remote.OnServerInvoke=Service.HandleRequest;remote.Parent=game.ReplicatedStorage
 	Players.PlayerRemoving:Connect(function(player) sessions[player],saving[player]=nil,nil end)
 end

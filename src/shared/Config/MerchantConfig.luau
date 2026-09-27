@@ -13,6 +13,7 @@ for id, food in Food.Types do
 end
 items[Revive.Id] = Revive
 local Config = {
+	OpenHoldSeconds=.125,
 	RestockSeconds=5*60, StockSlots=3, RequestCooldown=.25, PurchaseDistance=14, SaveRetrySeconds=5,
 	ItemOrder=table.freeze(order),
 	Items=table.freeze(items),

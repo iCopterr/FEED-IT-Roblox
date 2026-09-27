@@ -6,6 +6,22 @@
 
 **Last Updated:** 2026-09-27
 
+### Latest session — faster proximity interactions
+
+- Halved all nonzero prompt holds: pet pickup/feed menu 1s → 0.5s,
+  conveyor purchase 0.5s → 0.25s, merchant/revive 0.25s → 0.125s.
+  Ready-egg hatching remains instant. Server pickup timing still consumes the
+  same CarryConfig value; ownership/distance/hold checks are not bypassed.
+- Merchant and revive durations now live in their configs; authored revive
+  prompt matches the configured value. Existing carry/pedestal tests read the
+  configured duration instead of assuming one second.
+- Files: Carry/Conveyor/Merchant/Revive configs, Merchant/Revive services,
+  ReviveMachine asset, Carry/Pedestal verification, new PromptVerification,
+  handoff. Build/diff checks pass; PromptVerification PASS 11 runtime checks,
+  including real pickup timing, rejection of instant pickup and all prompt types.
+- Prior commit a9fa944. Next: owner interaction-feel playtest; no push.
+  Unrelated Kitsune reference file preserved.
+
 ### Latest session — shared page zoom, blur and walk-away closing
 
 - Owner follow-up: egg and pen remote side panels (both PenManagerUI modes)
