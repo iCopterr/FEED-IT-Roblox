@@ -8,8 +8,14 @@
 
 ### Latest session — shared page zoom, blur and walk-away closing
 
+- Owner follow-up: egg and pen remote side panels (both PenManagerUI modes)
+  are excluded from zoom/blur. Other pages, including hatch reveal, keep focus
+  effects. Remote actions remain available anywhere. Verification extended to
+  remote-only and mixed regular/remote pages; PASS 14 checks, build/diff pass. Prior commit
+  ef1021d. Changed PageFocusController and its client verification only, plus handoff.
+
 - Added client PageFocusController: all current UI pages (inventory, feed,
-  merchant, revive, index, remote pen/eggs, debug, hatch reveal) smoothly narrow
+  merchant, revive, index, debug, hatch reveal) smoothly narrow
   camera FOV by 10 degrees and add background blur. HUD/toasts are excluded.
   Original FOV returns after the last page closes. Page switching, disabled
   ScreenGuis, camera replacement and rapid toggle baseline restoration handled.

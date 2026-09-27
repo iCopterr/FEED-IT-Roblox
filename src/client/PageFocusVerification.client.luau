@@ -53,6 +53,14 @@ local ok,failure=xpcall(function()
 	check(inventory.Visible,"Portable inventory stays open while moving")
 	inventory.Visible=false;settle(false)
 	check(blur.Size<.1 and math.abs(camera.FieldOfView-baseline)<.1,"Final focus cleanup")
+	local remotePanel=gui:WaitForChild("PenManagerUI").Panel
+	remotePanel.Visible=true;task.wait(.5)
+	check(remotePanel.Visible and blur.Size<.1 and math.abs(camera.FieldOfView-baseline)<.1,"Egg/pen remote panel does not zoom or blur")
+	hatch.Visible=true;settle(true)
+	check(blur.Size>17,"A regular page still activates focus alongside a remote panel")
+	hatch.Visible=false;settle(false)
+	check(remotePanel.Visible and blur.Size<.1,"Remaining remote panel does not retain background effects")
+	remotePanel.Visible=false
 end,debug.traceback)
 local errors={}
 if not ok then for _,entry in game:GetService("LogService"):GetLogHistory() do if entry.messageType==Enum.MessageType.MessageError then table.insert(errors,entry.message) end end end
