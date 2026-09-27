@@ -6,6 +6,22 @@
 
 **Last Updated:** 2026-09-27
 
+### Latest session — more space between plots and conveyor
+
+- Moved both authored plot rows 24 studs outward (centers X ±66 → ±90),
+  including fences, spawn points, feed plates and matching upgrade signs.
+  Still three plots per side; conveyor and merchant/revive positions unchanged.
+  Widened promenade 46 → 94 studs and island 320 → 368 studs, including rock
+  layers/edge trim, preserving rear expansion room. Saved local pet coordinates
+  remain relative to the moved plots; no data migration or runtime builder.
+- Verification: six row/sign positions checked in Studio; every plot at maximum
+  expansion fits within island width. Overhead layout visually reviewed. Rojo
+  build/diff pass. Two-player PlotUpgradeVerification PASS 110 checks, covering
+  capacity purchases, ownership, placement, save/load and expansion/restoration.
+- Files: PlayerPlots, PlotUpgradeSigns, SkyIsland assets; Plot/PlotUpgrade
+  verification expectations; docs/plots.md and handoff. Previous commit 79a99fa.
+  Existing untracked Kitsune reference preserved. No push.
+
 ### Latest session — faster proximity interactions
 
 - Halved all nonzero prompt holds: pet pickup/feed menu 1s → 0.5s,

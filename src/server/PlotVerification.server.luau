@@ -42,7 +42,7 @@ local ok, failure = xpcall(function()
 	local left, right = 0, 0
 	for _, model in workspace.PlayerPlots:GetChildren() do
 		if model.Ground.Position.X < 0 then left += 1 else right += 1 end
-		assert(math.abs(model.Ground.Position.X) == 66 and model.Ground.Size == Vector3.new(80,1,80), "Larger plots must preserve center lane")
+		assert(math.abs(model.Ground.Position.X) == 90 and model.Ground.Size == Vector3.new(80,1,80), "Larger plots must preserve wider center lane")
 		assert(model.Pen.Floor.Size.X == 60 and model.Pen.Floor.Size.Z == 44, "Expanded Pen dimensions")
 		assert(model.FeedPlate.Base.PlateGui.Label.Text=="FEED PLATE","Feed plate uses title-only label")
 		assertFloorStyle(model.Ground)

@@ -40,7 +40,7 @@ local ok,failure=xpcall(function()
   return Upgrade.HandleRequest(a,name or plot.Name,expected or profile.MaxPetSlots)
  end
  check(#workspace.PlayerPlots:GetChildren()==6 and #workspace.PlotUpgradeSigns:GetChildren()==6,"Six plots and six authored signs")
- check(workspace:FindFirstChild("Baseplate")==nil and workspace.SkyIsland.Meadow.Size==Vector3.new(320,4,420),"Expanded floating island replaces Baseplate")
+ check(workspace:FindFirstChild("Baseplate")==nil and workspace.SkyIsland.Meadow.Size==Vector3.new(368,4,420),"Expanded floating island replaces Baseplate")
  for _,p in workspace.PlayerPlots:GetChildren() do
   check(p.Ground.Size==Vector3.new(80,1,80) and #p.Pen.Slots:GetChildren()==10,"Expanded geometry "..p.Name)
  end
@@ -135,7 +135,7 @@ local ok,failure=xpcall(function()
   for _,part in model:GetDescendants() do
    if part:IsA("BasePart") and part.Name~="HumanoidRootPart" then
     local localPoint=workspace.SkyIsland.Meadow.CFrame:PointToObjectSpace(part.Position)
-    assert(math.abs(localPoint.X)<160 and math.abs(localPoint.Z)<210,"Expansion exceeded island")
+    assert(math.abs(localPoint.X)<184 and math.abs(localPoint.Z)<210,"Expansion exceeded island")
    end
   end
   check(#model:GetDescendants()==count,"No generated geometry "..model.Name)

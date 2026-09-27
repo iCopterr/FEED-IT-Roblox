@@ -2,11 +2,13 @@
 
 Six authored plots remain arranged three per side of the central egg conveyor.
 Each ground is 80x80 studs (previously 60x60); each fenced pen is 60x44
-(previously 45x33). Centers: X=-66/+66 and Z=-96/0/96.
+(previously 45x33). Centers: X=-90/+90 and Z=-96/0/96.
+Both rows moved 24 studs outward to provide more space around the conveyor.
+The central promenade is 94 studs wide; matching upgrade signs move with plots.
 Open wood rails, capped posts, stone foundations, entrance paths and shrubs
 are editable Workspace instances, not generated at runtime.
 
-SkyIsland.rbxmx provides a 320x420-stud grass platform with two smaller rock
+SkyIsland.rbxmx provides a 368x420-stud grass platform with two smaller rock
 layers beneath it and a central promenade. The old 2048x2048 Baseplate is
 removed from Workspace (retained in Studio ServerStorage for recovery).
 The island floats over the empty sky/void.
