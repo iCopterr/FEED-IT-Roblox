@@ -75,7 +75,7 @@ function Service.SpawnOffer(testRoll)
 		label.Price.Text="$"..numberText(egg.Price)
 		label.Price.TextColor3=Color3.fromRGB(110,255,100)
 		local liveBounds,liveSize=model:GetBoundingBox()
-		label.StudsOffsetWorldSpace=liveBounds.Position+Vector3.new(0,liveSize.Y/2+1,0)-body.Position
+		label.StudsOffsetWorldSpace=liveBounds.Position+Vector3.new(0,liveSize.Y/2+2.5,0)-body.Position
 		label.Adornee=body;label.Parent=body
 		local prompt=Instance.new("ProximityPrompt")
 		prompt.Name="BuyConveyorEgg"

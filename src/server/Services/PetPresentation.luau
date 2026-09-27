@@ -15,7 +15,7 @@ function Presentation.Update(model,pet)
  local anchor=body:FindFirstChild("PetLabelAnchor")
  if not anchor then anchor=Instance.new("Attachment");anchor.Name="PetLabelAnchor";anchor.Parent=body end
  local bounds,size=model:GetBoundingBox()
- anchor.Position=body.CFrame:PointToObjectSpace(bounds.Position+Vector3.new(0,size.Y/2+.8,0))
+ anchor.Position=body.CFrame:PointToObjectSpace(bounds.Position+Vector3.new(0,size.Y/2+2.3,0))
  -- Model growth can scale descendant UI properties. Reapply the authored pixel
  -- dimensions instead of retaining a label inherited from the old model scale.
  if label then label:Destroy() end

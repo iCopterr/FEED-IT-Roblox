@@ -6,7 +6,16 @@
 
 **Last Updated:** 2026-09-27
 
-### Latest session — hatch shake and pet reveal
+### Latest session — raised pet/egg labels
+
+- Raised pet, conveyor egg and placed egg labels by 1.5 studs. Their fixed
+  on-screen pixel size and typography remain unchanged. Placed eggs now show
+  only name and countdown/ready status; removed the extra E instruction row
+  and collapsed that unused space. Actual E hatch proximity interaction remains.
+- Files: PetPresentation, ConveyorService, EggVisuals, LabelVerification and
+  handoff. Rojo build/diff checks pass; LabelVerification PASS 38 checks,
+  including raised anchors, removed instruction and unchanged near/far sizes.
+- Prior commit fab23f4. No unrelated edits or push; next: owner visual review.
 
 ### Latest follow-up — fixed on-screen pet/egg labels
 
