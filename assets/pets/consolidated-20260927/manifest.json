@@ -1,0 +1,242 @@
+[
+  {
+    "path": "originals/Ancient-Wyvern.rbxm",
+    "bytes": 151881,
+    "sha256": "A4253767B9D7EA70C8D6D37782AA0F628B02EB5FB1FA4CF6AB3E0C227E4AEAB1"
+  },
+  {
+    "path": "originals/Astral-Kitsune.rbxm",
+    "bytes": 268482,
+    "sha256": "230C919E55767505721DB2BB9A26FA4BF2E66987C055446A6909E74D82EDE225"
+  },
+  {
+    "path": "originals/Basilisk.rbxm",
+    "bytes": 274756,
+    "sha256": "3B3CB6DAB0B158AE34B5ED647095AFFD965E852189871A5DEB508D05C245CA07"
+  },
+  {
+    "path": "originals/Behemoth.rbxm",
+    "bytes": 180924,
+    "sha256": "85B31D80C0F6536727276AF96560C85CED77595BE9A58F985B69A5ED0E6E7284"
+  },
+  {
+    "path": "originals/Bone-Dragon.rbxm",
+    "bytes": 367617,
+    "sha256": "2A3917021426588576F632B9D189E40DE03290501030C581A4C0905AA0A0949D"
+  },
+  {
+    "path": "originals/Celestial-Dragon.rbxm",
+    "bytes": 181740,
+    "sha256": "D2D34AB02E5098DDE9A2B80C11A61E11C755B31894AB2FCA7D813D6D89E60DD2"
+  },
+  {
+    "path": "originals/Cerberus.rbxm",
+    "bytes": 240095,
+    "sha256": "5E5B726FDD0C861B5DA2C7DDC23EB09EDA01326D3323F2CAC870F93BBEB0FE78"
+  },
+  {
+    "path": "originals/Chimera.rbxm",
+    "bytes": 282501,
+    "sha256": "588A29563B7FB310A16FC7059619FA1665C944140141863BF27B300AF61B1255"
+  },
+  {
+    "path": "originals/Eclipse-Griffin.rbxm",
+    "bytes": 139925,
+    "sha256": "AE390B56CBEAF15530980D74640F256EC203B75D86BA2447700CE8050FDFA7FB"
+  },
+  {
+    "path": "originals/Ember-Drake.rbxm",
+    "bytes": 170351,
+    "sha256": "CB925F71B1CB561B28152883C6986414D4FD0F688D3FE5A6E49C5E5CCB080A46"
+  },
+  {
+    "path": "originals/Frost-Wolf.rbxm",
+    "bytes": 144343,
+    "sha256": "F6E2029BD7309BA1F1E8C934170242D6E38FF6A965A89820CC3667C68F447154"
+  },
+  {
+    "path": "originals/Hydra.rbxm",
+    "bytes": 287284,
+    "sha256": "ED6E00B0499798102E68CB236D6406B09C4D52820F6A129F391FD0F95B9E98A6"
+  },
+  {
+    "path": "originals/Ice-Dragon.rbxm",
+    "bytes": 148142,
+    "sha256": "8FF471CAB71C9D75020FB1EF2E2A8862CC35CC1BDF7003B8D3D58FD46DE814E7"
+  },
+  {
+    "path": "originals/Kitsune.rbxm",
+    "bytes": 277482,
+    "sha256": "E27DBE89F91B802346ECFCF88F7DF7C63E8BF0D6D27F95F77B2C8FF6863397B5"
+  },
+  {
+    "path": "originals/Kraken.rbxm",
+    "bytes": 222381,
+    "sha256": "7A2A402449C3123CFF444D13672F90D5CD32CFCDC56C2B246C11B96A6855850B"
+  },
+  {
+    "path": "originals/Lava-Golem.rbxm",
+    "bytes": 110313,
+    "sha256": "F2700EF5E3479BD1A781C0E098868755A220A6156884BFB6C6108CBB15E5504E"
+  },
+  {
+    "path": "originals/Manticore.rbxm",
+    "bytes": 175443,
+    "sha256": "C91005349615990CEB4B192B612B43B7EC06C10FA3C7085E4F5C978E494C1A39"
+  },
+  {
+    "path": "originals/Minotaur.rbxm",
+    "bytes": 255187,
+    "sha256": "CEABA6FAB4A3C38360D64E6798B96E90F05D52E5CBA573DF52243B8A4A7A41DC"
+  },
+  {
+    "path": "originals/Phoenix.rbxm",
+    "bytes": 112057,
+    "sha256": "2539A601E92948975B20859FCF13E958AB06524AAA73C8DBEB756364780F0172"
+  },
+  {
+    "path": "originals/Seraph-Beast.rbxm",
+    "bytes": 229814,
+    "sha256": "18E1F8D75EC8AD0015660852E93AD80B7D19841E70A404423B7623D83F3B2522"
+  },
+  {
+    "path": "originals/Storm-Griffin.rbxm",
+    "bytes": 141214,
+    "sha256": "13B66A47041EA30FB2F18D86A09D39578D56C8CAAD34BCEBDAD3167B701A38E0"
+  },
+  {
+    "path": "originals/Thunder-Serpent.rbxm",
+    "bytes": 97791,
+    "sha256": "FEDDABD384AFE38D4D095AAD53EDEC546692994FE89432E5BF1DC5AF464BEC53"
+  },
+  {
+    "path": "originals/Void-Leviathan.rbxm",
+    "bytes": 73432,
+    "sha256": "11EC46C771600314AE77CAFFAD55DCEE2C946224B1B1406712F66CCB1439C370"
+  },
+  {
+    "path": "originals/World-Serpent.rbxm",
+    "bytes": 217420,
+    "sha256": "8D0CF8028A3BF9B5613220C77B7289580305D02130E175DCC9EAE206CBD45D2B"
+  },
+  {
+    "path": "optimized/Ancient-Wyvern.rbxm",
+    "bytes": 1036337,
+    "sha256": "379A5F33AA7967873E3AB9FF398425814F6EB33461667691FDDB0F72340C9466"
+  },
+  {
+    "path": "optimized/Astral-Kitsune.rbxm",
+    "bytes": 2108604,
+    "sha256": "74A192F53E9554536EFC5D51F6EE9112F531DF5DB9E1BEA294E37A4F9D5B48DA"
+  },
+  {
+    "path": "optimized/Basilisk.rbxm",
+    "bytes": 1878855,
+    "sha256": "A847F0FFB208BF02CD19433031B3D230A7D0E0AB21EF198ABCFE245799B8BFB0"
+  },
+  {
+    "path": "optimized/Behemoth.rbxm",
+    "bytes": 1294384,
+    "sha256": "90AB70A7AF5F088DE2D0C4208022B0C6EA0803CC5C203848CD54CF99AF044002"
+  },
+  {
+    "path": "optimized/Bone-Dragon.rbxm",
+    "bytes": 2227278,
+    "sha256": "EA55F01986AE7030874AE19F1415A50EB44E710DEF693F0679F019977708E11F"
+  },
+  {
+    "path": "optimized/Celestial-Dragon.rbxm",
+    "bytes": 1412406,
+    "sha256": "C9C0E079A976A5699EF3F2B077F7A9899055ADC8CCEF9AB6015F734600F2BF08"
+  },
+  {
+    "path": "optimized/Cerberus.rbxm",
+    "bytes": 1776711,
+    "sha256": "60452DCE9647974130B8ED1A4A56F482F12A750EDF7E7D722F147D1BD9FCB02F"
+  },
+  {
+    "path": "optimized/Chimera.rbxm",
+    "bytes": 1906040,
+    "sha256": "7A47BD98557435FC4CEDB4652CC3ACC35004BD67E9A4FD5B429541C24B6A5959"
+  },
+  {
+    "path": "optimized/Eclipse-Griffin.rbxm",
+    "bytes": 1074391,
+    "sha256": "1F26D039988F9725EC130798E348CB8034FA501DCF25A3586B6156930AE46B7B"
+  },
+  {
+    "path": "optimized/Ember-Drake.rbxm",
+    "bytes": 1204843,
+    "sha256": "29AA359035A5BB1A3F0B38473A37A88FD148165320C95C280CA578D87E035B47"
+  },
+  {
+    "path": "optimized/Frost-Wolf.rbxm",
+    "bytes": 1039118,
+    "sha256": "D69FBC328D737F838377B9C75C6368EECB0FAB6FE815F963DE84AB59C5B76748"
+  },
+  {
+    "path": "optimized/Hydra.rbxm",
+    "bytes": 2373903,
+    "sha256": "D5A9C607E7CC4AC6CF383AE495C958994063D0C1E624E66965622A28C87F9A16"
+  },
+  {
+    "path": "optimized/Ice-Dragon.rbxm",
+    "bytes": 983227,
+    "sha256": "CF03823506931B788D1F59652D78CB016CB68404CC509A0F24035ACDC454B752"
+  },
+  {
+    "path": "optimized/Kitsune.rbxm",
+    "bytes": 1911426,
+    "sha256": "BBC78C879256913219AB07634F524EC83C281DD5D6D5C9BE21196EAB5CF74F33"
+  },
+  {
+    "path": "optimized/Kraken.rbxm",
+    "bytes": 1832853,
+    "sha256": "9BE9F8CE86B2A97062EA42883275F0DA9B8502499CFA97F6E6610D9F7C65A853"
+  },
+  {
+    "path": "optimized/Lava-Golem.rbxm",
+    "bytes": 804725,
+    "sha256": "F826B8B2A714114EC4B9BD8EC023ACA718A34EB8F0793F7849EE9E6016D03244"
+  },
+  {
+    "path": "optimized/Manticore.rbxm",
+    "bytes": 1289309,
+    "sha256": "0378D83DB7011543422A986196C08E5B9D795E8073833D1DB7D41E25149A7B02"
+  },
+  {
+    "path": "optimized/Minotaur.rbxm",
+    "bytes": 1656680,
+    "sha256": "FC1160007F55BC6B223AB6F05DF1D50A7FE9ADDB0108E5D5D0E8B88473AE9D31"
+  },
+  {
+    "path": "optimized/Phoenix.rbxm",
+    "bytes": 792621,
+    "sha256": "B71C3F8EAFB4CF81D718CBD7BE7E6FB5B99167462F415218B626B1D64CF3A27A"
+  },
+  {
+    "path": "optimized/Seraph-Beast.rbxm",
+    "bytes": 1906494,
+    "sha256": "A9C8A85741A1B9690652BDCF00E1BF3B557F0E25F534D4D99FCADA0BC049ACF7"
+  },
+  {
+    "path": "optimized/Storm-Griffin.rbxm",
+    "bytes": 967533,
+    "sha256": "077CE8E3670D333553C78E7272E592D0BADE44D65E27FC6C8C343F2D41FF8CBE"
+  },
+  {
+    "path": "optimized/Thunder-Serpent.rbxm",
+    "bytes": 578913,
+    "sha256": "9BA3439C32FFA404FBCE100FF96804570CE3624D103960A45FAF9E974C5C6ABD"
+  },
+  {
+    "path": "optimized/Void-Leviathan.rbxm",
+    "bytes": 508997,
+    "sha256": "2F336AAA9B76813054C0C3F68D97E1366DDC8DDE0903EFFA73C1288980FA5A0A"
+  },
+  {
+    "path": "optimized/World-Serpent.rbxm",
+    "bytes": 1495806,
+    "sha256": "5214D232E04BD664B2B4A14C70765AE83C6D0ED98C43C0F6E50F4340A13BEB50"
+  }
+]

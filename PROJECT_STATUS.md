@@ -6,7 +6,60 @@
 
 **Last Updated:** 2026-09-27
 
-### Latest session — manual modeling references only
+### Latest session — consolidate the 24 existing non-Basic pet templates
+
+- Current Feature / Completed: owner explicitly requested keeping the old designs
+  and rigs, reducing parts, and backing up every original. All 24 Advanced,
+  Elite, Master and Supreme templates were consolidated and installed under the
+  same names in `ReplicatedStorage.PetsModel`. Six Basic templates are untouched.
+- Result: 59,458 -> 691 BaseParts total (98.8% reduction), 14–50 per model,
+  including invisible anchors. Initial budget was <=100 per model. Geometry is
+  native, durable UnionOperation CSG per rig anchor, in bounded input batches;
+  no session-only EditableMesh assets or newly uploaded mesh dependencies.
+- Original instances were moved intact into
+  `ServerStorage.PetModelBackups_20260927`. Local original and consolidated RBXM
+  copies, counts, file hashes, and visual-review images are under
+  `assets/pets/consolidated-20260927`. Restore by moving an optimized template
+  aside and returning its same-named original from the backup folder.
+- Verification: all 24 checked structurally against their originals: attributes,
+  primary parts, connected rig graph, motor counts/endpoints/offsets, actual
+  wedge extents, pivots and retained-part physics. Native serialize/deserialize
+  roundtrips retained geometry counts and bounds; 2x growth scale checked.
+  Side-by-side front and rear three-quarter screenshots inspected for each pet.
+  Brief blank-viewport interruption was resolved by the owner restoring Studio.
+- Geometry format remains the original anchored display-template convention.
+  Gameplay source, species IDs and animations were not changed. No Play test,
+  full Studio close/reopen, or FPS improvement is claimed.
+- Known limits: CSG has 976,120 union triangles total (excluding remaining
+  primitives), and saved assets grew to approximately 34 MB versus 4.75 MB for
+  the originals. Low instance count is not proof of cheaper rendering.
+  Legacy stud finish renders more prominently at distance on CSG; Ice Dragon's
+  tiled wing texture uses the consolidated panels' projection. Silhouettes,
+  palettes and rigs are retained, but rendering is not pixel-identical.
+- Files modified: this handoff; AGENTS.md standing low-part rule; consolidation,
+  verification, installation and export tooling in `docs/studio`; new asset
+  directory with originals, optimized files, reports and review evidence.
+- Overall Progress: prototype gameplay unchanged. This art consolidation batch
+  is complete. In Progress: none. Next Task: owner review and, if needed,
+  gameplay placement/carry and renderer profiling of the native CSG templates.
+- Session Handoff: local MCP port 58741. Originals remain recoverable in Studio
+  and on disk. Prior working commit 8711f6b. The earlier Git staging block from
+  automatic review's usage limit was resolved on continuation. This handoff and
+  verified consolidation assets form the local session commit; no push.
+  Rejected reference Ember files and unrelated Kitsune recipe remain untracked
+  and are excluded from this change.
+
+### Superseded attempt — reference Ember Drake
+
+- Owner rejected the separately built EmberDrake_Reference appearance and asked
+  to optimize the existing models instead. Do not treat it as accepted art.
+- Retained untracked source/artifacts: `assets/pets/ember-drake`,
+  `docs/studio/build-ember-reference.luau`, and
+  `docs/studio/verify-ember-reference.luau`. It was a 25-part native CSG draft,
+  not a replacement for the installed old Ember Drake. Its earlier structural
+  verification does not override the owner's rejection.
+
+### Previous session — manual modeling references only
 
 - Owner rejected the Bone Dragon Blender draft, stopped further remodeling,
   and now plans to build models manually. Do not resume model construction

@@ -1,0 +1,218 @@
+[
+  {
+    "before": 1683,
+    "name": "Ancient Wyvern",
+    "serializedBytes": 1036337,
+    "after": 23,
+    "unionTriangles": 28362,
+    "unions": 14,
+    "motors": 8
+  },
+  {
+    "before": 3665,
+    "name": "Astral Kitsune",
+    "serializedBytes": 2108604,
+    "after": 45,
+    "unionTriangles": 59250,
+    "unions": 29,
+    "motors": 15
+  },
+  {
+    "before": 3333,
+    "name": "Basilisk",
+    "serializedBytes": 1878855,
+    "after": 25,
+    "unionTriangles": 55926,
+    "unions": 19,
+    "motors": 5
+  },
+  {
+    "before": 2420,
+    "name": "Behemoth",
+    "serializedBytes": 1294384,
+    "after": 25,
+    "unionTriangles": 37250,
+    "unions": 17,
+    "motors": 7
+  },
+  {
+    "before": 4979,
+    "name": "Bone Dragon",
+    "serializedBytes": 2227278,
+    "after": 43,
+    "unionTriangles": 65536,
+    "unions": 32,
+    "motors": 10
+  },
+  {
+    "before": 2265,
+    "name": "Celestial Dragon",
+    "serializedBytes": 1412406,
+    "after": 28,
+    "unionTriangles": 39344,
+    "unions": 17,
+    "motors": 10
+  },
+  {
+    "before": 3107,
+    "name": "Cerberus",
+    "serializedBytes": 1776711,
+    "after": 32,
+    "unionTriangles": 49812,
+    "unions": 22,
+    "motors": 9
+  },
+  {
+    "before": 3331,
+    "name": "Chimera",
+    "serializedBytes": 1906040,
+    "after": 36,
+    "unionTriangles": 53220,
+    "unions": 24,
+    "motors": 11
+  },
+  {
+    "before": 1770,
+    "name": "Eclipse Griffin",
+    "serializedBytes": 1074391,
+    "after": 24,
+    "unionTriangles": 29830,
+    "unions": 14,
+    "motors": 9
+  },
+  {
+    "before": 2116,
+    "name": "Ember Drake",
+    "serializedBytes": 1204843,
+    "after": 27,
+    "unionTriangles": 33958,
+    "unions": 17,
+    "motors": 9
+  },
+  {
+    "before": 1729,
+    "name": "Frost Wolf",
+    "serializedBytes": 1039197,
+    "after": 26,
+    "unionTriangles": 29150,
+    "unions": 16,
+    "motors": 9
+  },
+  {
+    "before": 4105,
+    "name": "Hydra",
+    "serializedBytes": 2373903,
+    "after": 48,
+    "unionTriangles": 68052,
+    "unions": 31,
+    "motors": 16
+  },
+  {
+    "before": 1870,
+    "name": "Ice Dragon",
+    "serializedBytes": 983227,
+    "after": 35,
+    "unionTriangles": 27402,
+    "unions": 23,
+    "motors": 9
+  },
+  {
+    "before": 3395,
+    "name": "Kitsune",
+    "serializedBytes": 1911426,
+    "after": 50,
+    "unionTriangles": 55768,
+    "unions": 32,
+    "motors": 17
+  },
+  {
+    "before": 2724,
+    "name": "Kraken",
+    "serializedBytes": 1832853,
+    "after": 29,
+    "unionTriangles": 58344,
+    "unions": 19,
+    "motors": 9
+  },
+  {
+    "before": 1508,
+    "name": "Lava Golem",
+    "serializedBytes": 804725,
+    "after": 18,
+    "unionTriangles": 24194,
+    "unions": 11,
+    "motors": 6
+  },
+  {
+    "before": 2108,
+    "name": "Manticore",
+    "serializedBytes": 1289309,
+    "after": 27,
+    "unionTriangles": 35006,
+    "unions": 17,
+    "motors": 9
+  },
+  {
+    "before": 3105,
+    "name": "Minotaur",
+    "serializedBytes": 1656680,
+    "after": 26,
+    "unionTriangles": 47088,
+    "unions": 18,
+    "motors": 7
+  },
+  {
+    "before": 1252,
+    "name": "Phoenix",
+    "serializedBytes": 792621,
+    "after": 17,
+    "unionTriangles": 21524,
+    "unions": 9,
+    "motors": 7
+  },
+  {
+    "before": 2884,
+    "name": "Seraph Beast",
+    "serializedBytes": 1906494,
+    "after": 34,
+    "unionTriangles": 53578,
+    "unions": 20,
+    "motors": 13
+  },
+  {
+    "before": 1678,
+    "name": "Storm Griffin",
+    "serializedBytes": 967533,
+    "after": 22,
+    "unionTriangles": 27806,
+    "unions": 12,
+    "motors": 9
+  },
+  {
+    "before": 1018,
+    "name": "Thunder Serpent",
+    "serializedBytes": 578913,
+    "after": 14,
+    "unionTriangles": 16374,
+    "unions": 8,
+    "motors": 5
+  },
+  {
+    "before": 740,
+    "name": "Void Leviathan",
+    "serializedBytes": 508997,
+    "after": 17,
+    "unionTriangles": 14220,
+    "unions": 9,
+    "motors": 5
+  },
+  {
+    "before": 2673,
+    "name": "World Serpent",
+    "serializedBytes": 1495804,
+    "after": 20,
+    "unionTriangles": 45126,
+    "unions": 15,
+    "motors": 4
+  }
+]

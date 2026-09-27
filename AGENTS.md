@@ -759,6 +759,12 @@ and remodel/recheck visible issues until the model looks cohesive and readable.
 Do not declare a model complete from structural checks alone. If visual
 verification is blocked, report that limitation explicitly.
 
+Owner preference (2026-09-27): Use as few parts as practical for every pet
+model. Do not deliver models built from thousands of individual parts.
+Prefer reusable meshes or consolidated geometry, report final BasePart counts,
+and verify the saved geometry and rig. Set a low part budget before building;
+do not equate low instance count with low triangle count or proven runtime FPS.
+
 The purpose of this Prototype is not to prove how much content can be built.
 
 The purpose is to prove that this decision is fun:
