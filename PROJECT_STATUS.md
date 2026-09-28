@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — feed panel edges and spacious food cards
+
+- Completed: inset header/background textures by 4px with matching rounded
+  corners on feed panel and food sidebar, removing square texture overhang.
+  Sidebar widened to 300px with 20px side padding, 24px bottom margin and
+  16px card gaps. Cards are 128px tall; 76px food images centered vertically.
+  Names/quantity/risk use 24/22/18px text with 2.5px outlines.
+- Updated FeedController responsive width/centering for the wider sidebar.
+  Saved ScreenGui remains the layout source; no runtime GUI creation.
+- Verified: Rojo build, diff check, MCP geometry checks for both panel art layers
+  and all eight cards; visually inspected Studio screenshot at 0.8 scale.
+  Temporary preview visibility/position/scale restored. Full Play not run.
+- Files: FeedYourPetUI.rbxmx, FeedController, food-card formatting recipe,
+  this handoff. No economy changes. Next: player review at their screen size.
+
 ### Latest session — quiet busy states and queued merchant purchases
 
 - Completed: removed player-facing Please Wait/cooldown/save-busy messages across

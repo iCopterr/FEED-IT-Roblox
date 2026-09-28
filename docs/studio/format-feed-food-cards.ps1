@@ -14,31 +14,50 @@ function Rect($item,$name,$xs,$xo,$ys,$yo) {
 function Child($item,$name) { $item.SelectSingleNode("Item[Properties/string[@name='Name']='$name']") }
 $panel=$doc.SelectSingleNode("//Item[Properties/string[@name='Name']='FeedPanel']")
 $sidebar=Child $panel 'FoodCards'
+Rect $sidebar 'Position' 0 584 0 0
+Rect $sidebar 'Size' 0 300 0 620
+foreach ($surface in @($panel,$sidebar)) {
+    foreach ($layerName in @('PageTexture','PageHeader')) {
+        $layer=Child $surface $layerName
+        Rect $layer 'Position' 0 4 0 4
+        if ($layerName -eq 'PageTexture') { Rect $layer 'Size' 1 -8 1 -8 }
+        else { Rect $layer 'Size' 1 -8 0 54 }
+        $corner=$layer.SelectSingleNode("Item[@class='UICorner']")
+        if (!$corner) {
+            $corner=$doc.CreateElement('Item');$corner.SetAttribute('class','UICorner')
+            $corner.InnerXml='<Properties><string name="Name">ArtCorner</string><UDim name="CornerRadius"><S>0</S><O>11</O></UDim></Properties>'
+            [void]$layer.AppendChild($corner)
+        } else { $corner.SelectSingleNode('Properties/UDim[@name="CornerRadius"]').InnerXml='<S>0</S><O>11</O>' }
+    }
+}
 $list=Child $sidebar 'List'
-Rect $list 'Position' 0 12 0 76
-Rect $list 'Size' 1 -24 1 -90
+Rect $list 'Position' 0 20 0 80
+Rect $list 'Size' 1 -40 1 -104
+$layout=$list.SelectSingleNode("Item[@class='UIListLayout']")
+$layout.SelectSingleNode('Properties/UDim[@name="Padding"]').InnerXml='<S>0</S><O>16</O>'
 Prop $list 'float' 'ScrollBarThickness' 4
 foreach ($card in $list.SelectNodes("Item[@class='TextButton']")) {
-    Rect $card 'Size' 1 -10 0 108
+    Rect $card 'Size' 1 -12 0 128
     $art=Child $card 'Art'
-    Rect $art 'Position' 0 8 0 12
-    Rect $art 'Size' 0 60 0 60
+    Rect $art 'Position' 0 12 0.5 -38
+    Rect $art 'Size' 0 76 0 76
     $name=Child $card 'ItemName'
-    Rect $name 'Position' 0 76 0 12
-    Rect $name 'Size' 1 -82 0 42
-    Prop $name 'float' 'TextSize' 20
+    Rect $name 'Position' 0 100 0 14
+    Rect $name 'Size' 1 -112 0 48
+    Prop $name 'float' 'TextSize' 24
     Prop $name 'token' 'TextXAlignment' 0
     $quantity=Child $card 'Quantity'
-    Rect $quantity 'Position' 0 76 0 55
-    Rect $quantity 'Size' 1 -82 0 24
-    Prop $quantity 'float' 'TextSize' 18
+    Rect $quantity 'Position' 0 100 0 64
+    Rect $quantity 'Size' 1 -112 0 24
+    Prop $quantity 'float' 'TextSize' 22
     Prop $quantity 'token' 'TextXAlignment' 0
     $risk=Child $card 'Risk'
-    Rect $risk 'Position' 0 12 1 -27
-    Rect $risk 'Size' 1 -24 0 22
-    Prop $risk 'float' 'TextSize' 16
+    Rect $risk 'Position' 0 100 0 94
+    Rect $risk 'Size' 1 -112 0 22
+    Prop $risk 'float' 'TextSize' 18
+    Prop $risk 'token' 'TextXAlignment' 0
     foreach ($label in @($name,$quantity,$risk)) {
-        foreach ($stroke in $label.SelectNodes("Item[@class='UIStroke']")) { Prop $stroke 'float' 'Thickness' 1.5 }
+        foreach ($stroke in $label.SelectNodes("Item[@class='UIStroke']")) { Prop $stroke 'float' 'Thickness' 2.5 }
     }
     foreach ($stroke in @($card.SelectNodes("Item[@class='UIStroke']"))) {
         $strokeName=$stroke.SelectSingleNode("Properties/string[@name='Name']").InnerText

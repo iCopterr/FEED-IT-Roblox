@@ -160,10 +160,10 @@ function FeedController.Start()
 		if model then angle=(angle+dt*.65)%(math.pi*2);model:PivotTo(CFrame.Angles(0,angle,0)) end
 	end)
 	local function resize()
-		local scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/816,(gui.AbsoluteSize.Y-48)/620))
+		local scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/884,(gui.AbsoluteSize.Y-48)/620))
 		panel.UIScale.Scale=scale
 		-- Include the attached sidebar when centering/scaling the whole group.
-		panel.Position=UDim2.new(.5,-128*scale,.5,0)
+		panel.Position=UDim2.new(.5,-162*scale,.5,0)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
 	player:GetAttributeChangedSignal("FeedPlatePetId"):Connect(plateChanged)
