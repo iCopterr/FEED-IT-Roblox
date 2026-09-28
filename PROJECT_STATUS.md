@@ -6,6 +6,28 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — six distinct rectangular egg models
+
+- Current Feature / Completed: owner requested original rectangular egg designs
+  inspired by the supplied blocky references. Replaced all six round templates
+  with stepped studded shells: sprout Basic, crystal Advanced, horned Elite,
+  fossil Master, winged/halo Supreme, and square-orbit cosmic Ultimate.
+- Budget under 40 parts each; actual Basic/Advanced/Elite/Master/Supreme/Ultimate
+  counts are 12/14/15/19/24/18. Static props, stable Shell PrimaryParts, no external
+  mesh assets. Existing carry implementation welds every cloned part to the hand.
+- Backups: assets/eggs/rectangular-v1/backups/EggTemplates-original.rbxmx and
+  ServerStorage.EggModelBackups.OriginalRoundEggs. IDs, economy and hatch rules
+  unchanged. Rojo owns src/world/EggTemplates.rbxmx, built by the Python recipe.
+- Verified: Rojo build, diff checks, live six-template shape/part/anchor/pivot
+  checks and clone/ScaleTo(.65) checks. Studio overview, two close views and rear
+  inspected; orbital frame gaps and crystal joins refined and rechecked.
+- Files Modified: EggTemplates.rbxmx; docs/studio/build-rectangular-eggs.py and
+  review-rectangular-eggs.luau; assets/eggs/rectangular-v1 evidence/backups; handoff.
+- Overall Progress: authored and visually verified. Limitation / Next Task:
+  fresh Play hatch/conveyor/carry smoke test after clearing the previously stuck
+  StudioTestService state. No runtime result claimed. Review clones remain in
+  Workspace.RectangularEggReview; unrelated pet/reference work preserved. No push.
+
 ### Latest session — inventory, remote and merchant edge cleanup
 
 - Inventory previews use 0.72 camera distance (larger pets in cards/details only,
