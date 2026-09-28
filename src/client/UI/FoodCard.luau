@@ -11,7 +11,7 @@ function View.Paint(card,id,quantity,selected)
 	card.Quantity.Text="×"..numberText(quantity)
 	card.Risk.Text=if food.GuaranteedSuccess then "100% success" else "-"..numberText(food.Reduction*100).."% risk"
 	card.Stroke.Color=if selected then Color3.new(1,1,1) else card.BackgroundColor3:Lerp(Color3.new(),.65)
-	card.Stroke.Thickness=5
+	card.Stroke.Thickness=if selected then 3 else 2
 	card:SetAttribute("Selected",selected==true)
 end
 return View

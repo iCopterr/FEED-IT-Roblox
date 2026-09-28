@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — food sidebar visual balance
+
+- Completed: food cards use consistent image/name/quantity alignment, larger
+  20px names, 18px quantities and 16px risk text. Reduced text strokes from 5px
+  to 1.5px; removed duplicate card borders; selection uses 3px versus 2px borders.
+  Scrolling list now fills available sidebar height instead of a fixed 460px area.
+- Files: FeedYourPetUI.rbxmx, FoodCard.luau and reusable authored-asset migration
+  docs/studio/format-feed-food-cards.ps1. No runtime UI construction.
+- Verified: Rojo build, Studio synchronization and 25 layout assertions.
+  Screenshot capture timed out; final visual/playtest review remains outstanding.
+  Inspection panel restored hidden. Economy prices/risks intentionally unchanged:
+  interpreted owner request for balance as visual balance of attached UI screenshot.
+- Next: review in Play at user's viewport size, then adjust if needed.
+
 ### Latest session — Feed UI reopen prompt fix
 
 - Completed: FeedController now accepts Attachment-based OpenFeedUI prompts and
