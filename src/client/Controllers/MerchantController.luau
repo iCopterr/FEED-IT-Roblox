@@ -24,10 +24,11 @@ function Controller.Start()
 	local remote=ReplicatedStorage:WaitForChild("PrototypeMerchant")
 	local state,receivedAt,busy=nil,0,false
 	local displayed={}
+	local pending={}
+	local processing=false
 	local messages={TutorialBuyEgg="Buy your first Basic Egg before buying food.",TooFar="Move closer to the Mystery Merchant.",NotEnoughMoney="You need more Money.",
 		Sold="This food is sold out for you. Wait for restock.",
-		Restocked="The merchant restocked. Refreshing…",Busy="Another purchase is saving.",
-		StaleRequest="Shop state changed. Refreshing…",Loading="Loading your Money…",Cooldown="Please wait."}
+		Restocked="",Busy="",StaleRequest="",Loading="",Cooldown=""}
 	local function render()
 		local remaining=state and state.RestocksAt-(state.ServerNow+os.clock()-receivedAt) or 0
 		panel.Money.Text="YOUR $"..(state and NumberFormat.Compact(state.Money) or "—")
@@ -51,13 +52,13 @@ function Controller.Start()
 				button.Effect.Text=definition.Effect
 				button.Art.Emoji.Text=definition.Icon
 				Art.Set(button.Art.Picture,button.Art.Emoji,Images[item.ItemId] or Images.empty)
-				button.Active=not item.Purchased and not state.Busy and not busy
+				button.Active=not item.Purchased
 				button.AutoButtonColor=button.Active
 				button.BackgroundColor3=if item.Purchased then Color3.fromRGB(62,65,73) else Color3.fromRGB(77,49,37)
 				button.Price.TextColor3=if item.Purchased then Color3.fromRGB(175,175,185) else Color3.fromRGB(86,255,74)
 				button.Effect.BackgroundColor3=if item.Purchased then Color3.fromRGB(100,100,108) else Color3.fromRGB(74,132,211)
 			else
-				button.ItemName.Text="RESTOCKING…";button.Stock.Text="Please wait"
+				button.ItemName.Text="RESTOCKING…";button.Stock.Text=""
 				button.Price.Text="—";button.Effect.Text="FOOD";button.Art.Emoji.Text="🍽️"
 				Art.Set(button.Art.Picture,button.Art.Emoji,Images.empty)
 				button.Active=false;button.BackgroundColor3=Color3.fromRGB(62,65,73)
@@ -70,8 +71,41 @@ function Controller.Start()
 		local ok,result=pcall(function() return remote:InvokeServer("Snapshot") end)
 		busy=false
 		if ok and result.Ok then state=result;receivedAt=os.clock()
-		elseif not ok or result.Code~="Cooldown" then state=nil;panel.Status.Text=if ok then messages[result.Code] or "Unable to load merchant." else "Connection interrupted." end
+		elseif not ok or result.Code~="Cooldown" then panel.Status.Text=if ok then messages[result.Code] or "Unable to load merchant." else "Connection interrupted." end
 		render()
+	end
+	-- One worker serializes clicks; the server remains authoritative for stock,
+	-- sequences, affordability and durable-save locks. Never retry a lost reply.
+	local function drain()
+		if processing then return end
+		processing=true
+		while #pending>0 and panel.Visible and gui.Parent do
+			local request=pending[1]
+			if os.clock()>request.Expires then table.remove(pending,1);continue end
+			if busy then task.wait(.1);continue end
+			local current=state
+			if not current or current.Busy then refresh();task.wait(.3);continue end
+			local item
+			for _,offer in current.Items do if offer.Slot==request.Slot then item=offer;break end end
+			if current.RestockId~=request.RestockId or not item or item.ItemId~=request.ItemId or item.Purchased then
+				table.remove(pending,1);continue
+			end
+			busy=true
+			local ok,result=pcall(function() return remote:InvokeServer("Purchase",item.Slot,current.RestockId,current.NextSequence) end)
+			busy=false
+			if not ok then
+				table.clear(pending);panel.Status.Text="Connection interrupted. Check your inventory.";refresh();break
+			elseif result.Ok then
+				if pending[1]==request then table.remove(pending,1) end
+				current.NextSequence=result.NextSequence;current.Money=result.Money
+				item.Remaining=result.Remaining;item.Purchased=result.Remaining<=0
+				current.Busy=true;panel.Status.Text="";render()
+			elseif result.Code~="Busy" and result.Code~="Cooldown" then
+				table.clear(pending);panel.Status.Text=messages[result.Code] or "Purchase unavailable."
+			end
+			task.wait(Shop.RequestCooldown+.05);refresh()
+		end
+		table.clear(pending);processing=false
 	end
 	local function closeOthers()
 		local main=playerGui:FindFirstChild("FeedYourPetUI")
@@ -88,16 +122,19 @@ function Controller.Start()
 	for i=1,3 do
 		panel.Offers["Slot"..i].Activated:Connect(function()
 			local current=state;local item=displayed[i]
-			if busy or not item or item.Purchased or current.Busy then return end
-			busy=true;render();panel.Status.Text="Buying…"
-			local ok,result=pcall(function() return remote:InvokeServer("Purchase",item.Slot,current.RestockId,current.NextSequence) end)
-			busy=false
-			if ok and result.Ok then panel.Status.Text="Bought "..result.Name.."!" else panel.Status.Text=if ok then messages[result.Code] or "Purchase rejected." else "Reply lost. Refreshing before retry." end
-			state=nil;refresh()
+			if not current or not item or item.Purchased or not panel.Visible or #pending>=20 then return end
+			local count=0
+			for _,request in pending do if request.Slot==item.Slot then count+=1 end end
+			if count>=item.Remaining then return end
+			table.insert(pending,{Slot=item.Slot,ItemId=item.ItemId,RestockId=current.RestockId,Expires=os.clock()+15})
+			task.spawn(drain)
 		end)
 	end
 	panel.Close.Activated:Connect(function() require(script.Parent.Parent.UI.Motion).Close(panel) end)
-	panel:GetPropertyChangedSignal("Visible"):Connect(function() player:SetAttribute("MerchantPanelOpen",panel.Visible) end)
+	panel:GetPropertyChangedSignal("Visible"):Connect(function()
+		player:SetAttribute("MerchantPanelOpen",panel.Visible)
+		if not panel.Visible then table.clear(pending) end
+	end)
 	local function resize()
 		local size=gui.AbsoluteSize
 		panel.UIScale.Scale=math.max(.1,math.min(1,(size.X-24)/540,(size.Y-24)/510))

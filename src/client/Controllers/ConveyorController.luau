@@ -13,9 +13,7 @@ function Controller.Start()
 	local busy=false
 	local messageToken=0
 	local messages={NotEnoughMoney="Not enough Money for this egg.",Unavailable="That egg was bought or reached the end.",
-		TooFar="Move closer to the egg.",Saving="Your previous purchase is saving. Please wait.",
-		Busy="Another transaction is saving. Please wait.",
-		Loading="Your inventory is still loading.",Cooldown="Please wait a moment."}
+		TooFar="Move closer to the egg.",Saving="",Busy="",Loading="",Cooldown=""}
 	game:GetService("ProximityPromptService").PromptTriggered:Connect(function(prompt,triggeringPlayer)
 		if triggeringPlayer and triggeringPlayer~=player then return end
 		if busy or prompt.Name~="BuyConveyorEgg" then return end
@@ -28,7 +26,7 @@ function Controller.Start()
 		gui.Message.Text=if ok and result.Ok then "Egg bought! It is in your inventory."
 			else if ok then messages[result.Code] or "Purchase rejected. No egg bought."
 			else "Connection interrupted. Check your inventory before trying again."
-		gui.Message.Visible=true
+		gui.Message.Visible=gui.Message.Text~=""
 		task.delay(3,function() if token==messageToken then gui.Message.Visible=false end end)
 	end)
 	local treads={}

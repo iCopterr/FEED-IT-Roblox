@@ -10,7 +10,7 @@ function Controller.Start()
 	local bindings={}
 	local messages={NotOwner="This is not your plot.",TooFar="Move closer to the sign.",
 		NotEnoughMoney="Not enough Money — let your pets earn!",LevelChanged="Pet capacity updated. Check the new price.",
-		Cooldown="Please wait a moment.",Busy="Feed/Revive is animating or saving.",Saving="Saving your upgrade…",MaxLevel="Maximum plot level reached!",
+		Cooldown="",Busy="",Saving="",MaxLevel="Maximum plot level reached!",
 		Loading="Loading plot data…",Unavailable="Upgrade unavailable right now."}
 	local function bind(sign)
 		if bindings[sign] then return end

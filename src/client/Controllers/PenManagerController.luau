@@ -20,7 +20,7 @@ function Controller.Start()
 	local refreshing=false
 	local revision=0
 	local refresh
-	local messages={Busy="Please wait…",Cooldown="Please try again.",NotReady="Egg is still growing.",
+	local messages={Busy="",Cooldown="",NotReady="Egg is still growing.",
 		Unavailable="Already collected or unavailable.",CharacterUnavailable="Wait for your character.",
 		Loading="Your pen is still loading.",PlacementFailed="Could not update your pen.",
 		TemplateUnavailable="A pet model is unavailable."}
@@ -61,7 +61,7 @@ function Controller.Start()
 				local actionMode=mode
 				row.Action.Activated:Connect(function()
 					if busy or not row.Action.Active then return end
-					busy=true;revision+=1;panel.Status.Text="Please wait…"
+					busy=true;revision+=1;panel.Status.Text=""
 					for _,r in rows do r.Action.Active=false end
 					local ok,result=pcall(function()
 						if actionMode=="Eggs" then return eggs:InvokeServer("HatchRemote",entry.Id) end

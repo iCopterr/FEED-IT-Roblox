@@ -6,6 +6,23 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — quiet busy states and queued merchant purchases
+
+- Completed: removed player-facing Please Wait/cooldown/save-busy messages across
+  feed, merchant, conveyor, inventory, pen, upgrades and revive (debug cooldown too).
+  Useful affordability, distance and sold-out errors remain. Merchant no longer
+  blanks stock during a cooldown refresh or disables every row during a purchase.
+- Rapid merchant clicks now enter one serial worker, bounded by displayed stock
+  and 20 queued clicks. Requests expire after 15 seconds and queued work cancels
+  on close, restock/item change or an error. Busy/cooldown retries are quiet;
+  ambiguous network errors clear work and refresh, never replaying a lost purchase.
+- Server stock/sequence validation, save locks, prices and persistence unchanged.
+  Conveyor retains its single in-flight guard and server protection; no egg queue.
+- Verified: Rojo build, diff check, MCP syntax analysis of all 18 controllers.
+  Full rapid-click/runtime persistence stress test remains pending; no claim of
+  zero bugs or measured throughput. Next: Play-test rapid merchant clicks, closing,
+  stock exhaustion and disconnects. Files: eight client controllers and handoff.
+
 ### Latest session — food sidebar visual balance
 
 - Completed: food cards use consistent image/name/quantity alignment, larger

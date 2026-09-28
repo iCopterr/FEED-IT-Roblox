@@ -18,8 +18,8 @@ function Controller.Start()
  local requesting,acting=false,false
  local cards={}
  local messages={TooFar="Visit the Revive Machine near the merchant.",NoRevive="Buy a Revive Charm from the merchant.",
-  Busy="An action is saving. Please wait.",Unavailable="This pet is no longer awaiting revival.",
-  PetChanged="This recovery has changed. Refreshing…",Cooldown="Please wait.",Loading="Loading your pets…"}
+  Busy="",Unavailable="This pet is no longer awaiting revival.",
+  PetChanged="This recovery has changed. Refreshing…",Cooldown="",Loading="Loading your pets…"}
  local function remaining(r) return math.max(0,r.ExpiresAt-(snapshot.ServerNow+os.clock()-receivedAt)) end
  local function selectedRecord()
   if snapshot then for _,r in snapshot.Records do if r.AttemptId==selected then return r end end end

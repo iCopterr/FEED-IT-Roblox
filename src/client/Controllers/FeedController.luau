@@ -30,9 +30,9 @@ function FeedController.Start()
 	local messages = {
 		NoPet="Place a pet on your feed plate first.", TooFar="Move closer to your feed plate.",
 		NotEnoughFood="Not enough Food. Visit the food merchant!", PetChanged="The pet changed. Please try again.",
-		AlreadyProcessed="That request was already processed. Refreshing…", Cooldown="Please wait a moment.",
+		AlreadyProcessed="", Cooldown="",
 		Loading="Loading player data…", Unavailable="Feeding is unavailable right now.",
-		Busy="Feed is animating or saving. Please wait.", MaxLevel="Maximum Feed level reached (40).",
+		Busy="", MaxLevel="Maximum Feed level reached (40).",
 		InvalidFood="Choose a food type from the selector.",
 	}
 	local function render(state)

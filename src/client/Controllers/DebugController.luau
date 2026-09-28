@@ -29,7 +29,7 @@ function Controller.Start()
 	local messages={Disabled="Disabled: Studio memory data only.",Busy="Feed/Revive is animating or saving.",
 		PickupFirst="Pick up this pet before setting its level.",InvalidAmount="Enter a positive whole amount (max 1000T; balance cap 4000T). K/M/B/T accepted.",
 		InvalidLevel="Pet levels: 0–40. Whole numbers only.",NotOwned="Select a pet you own.",
-		Cooldown="Please wait a moment.",StaleRequest="State changed. Refreshing before another command.",
+		Cooldown="",StaleRequest="State changed. Refreshing before another command.",
 		InventoryLimit="Debug spawn limit: 200 inventory pets.",Loading="Loading player data…"}
 	local function render()
 		panel.Species.Text=species[speciesIndex].Name.." • "..species[speciesIndex].Rarity.." • "
