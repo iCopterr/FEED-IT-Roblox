@@ -6,6 +6,23 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — emoji replacement image assets (upload blocked)
+
+- Current Feature / Completed: audited saved configs and ScreenGuis; generated
+  14 separate transparent PNG icons in assets/ui/emoji-icons-v1 using image_gen.
+  Includes eight foods, Revive Charm, Money, Egg, Pets, Index and empty-food fallback.
+- Verification: all 14 images visually inspected; manifest filenames, square PNG
+  dimensions and transparent corner pixels checked. No gameplay or UI changed.
+- Files Modified: this handoff and the icon directory (PNGs, README, prompt manifest).
+- In Progress / Blocker: Roblox upload_decal rejected the first upload because MCP
+  has no upload authentication. No Roblox assets uploaded; all manifest IDs null.
+  Live Studio audit timed out. Existing emoji fallbacks remain working unchanged.
+- Next Task: configure upload credentials locally, upload icons, record verified
+  asset IDs, then integrate authored ScreenGui images when requested and test UI.
+- Session Handoff: upload permission already granted by user; never request secrets
+  in chat. Preserve concurrent species-sizing/model edits from the other session.
+  Overall Progress: image assets ready; upload/in-game verification outstanding.
+
 ### Latest session — progressively richer Epic-to-Celestial pet effects
 
 - Current Feature / Completed: owner requested premium particle/light effects
