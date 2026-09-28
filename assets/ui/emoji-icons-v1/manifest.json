@@ -2,7 +2,8 @@
   "generator": "built-in image_gen",
   "uploadStatus": "owner_uploaded_ids_provided",
   "assetIdSource": "Owner Asset Manager screenshot, 2026-09-28; runtime loading not yet verified",
-  "uiChanged": false,
+  "uiChanged": true,
+  "verificationNote": "Studio HUD and food art checked. Hearty ID corrected from owner text. Dynamic art retains emoji while loading.",
   "icons": [
     {
       "name": "basic-food",
@@ -22,7 +23,7 @@
       "name": "hearty-food",
       "emoji": "🥩",
       "file": "hearty-food.png",
-      "robloxAssetId": "9139249015097",
+      "robloxAssetId": "91392940915097",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one thick red steak with cream fat edge"
     },
     {

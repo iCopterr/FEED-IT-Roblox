@@ -1,11 +1,12 @@
 local Foods=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 local numberText=require(game.ReplicatedStorage.Shared.NumberFormat).Compact
 local View={}
+local Images=require(script.Parent.IconImages)
+local Art=require(script.Parent.ImageArt)
 function View.Paint(card,id,quantity,selected)
 	local food=Foods.Types[id]
-	-- Set the authored ImageLabel.Image later to replace the emoji placeholder.
 	card.Art.Emoji.Text=food.Icon
-	card.Art.Emoji.Visible=card.Art.Image==""
+	Art.Set(card.Art,card.Art.Emoji,Images[id] or Images.empty)
 	card.ItemName.Text=food.Name
 	card.Quantity.Text="×"..numberText(quantity)
 	card.Risk.Text=if food.GuaranteedSuccess then "100% success" else "-"..numberText(food.Reduction*100).."% risk"

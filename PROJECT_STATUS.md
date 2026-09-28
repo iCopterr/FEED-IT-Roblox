@@ -6,7 +6,33 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — uploaded icons integrated into existing UI
+
+- Completed: replaced Money, Egg/Pet remote and Index emojis with authored
+  ImageLabels in saved ScreenGuis. Food selection, inventory previews and merchant
+  offers bind the uploaded food/Revive images through IconImages and ImageArt.
+  Existing layout/style retained; no runtime GUI creation or gameplay changes.
+- Corrected Hearty Food ID from owner text: 91392940915097. Dynamic images retain
+  emoji fallbacks only while loading or if an asset fails to load.
+- Verified: Rojo build, diff check, 26 Studio edit-mode image binding assertions;
+  all eight food images and four HUD images reported IsLoaded true. Visually
+  inspected HUD, food sidebar and merchant (including Revive/Blessed) screenshots.
+  Inspection panels restored hidden. No full Play session started during concurrent
+  pet-model work; gameplay interactions still need normal playtesting.
+- Files Modified: four src/ui ScreenGuis; client IconImages/ImageArt/FoodCard/
+  ItemPreview, MerchantController, FoodShopVerification; asset manifest/README;
+  docs/studio/apply-ui-icon-images.ps1 and this handoff.
+- Overall Progress: image replacement implemented and edit-mode verified.
+  Next Task: normal UI playtest; preserve concurrent pet sizing/model changes.
+  Previous icon-ID commit: 8e88af8. No economy/data changes and no push.
+
 ### Latest session — emoji replacement image assets (upload blocked)
+
+- Follow-up 2026-09-28: owner supplied Asset Manager screenshot with all 14 uploaded
+  Image IDs. Recorded matching IDs in the icon manifest; no duplicate upload needed.
+  README updated. All IDs present/unique; in-game loading still unverified and UI
+  unchanged. Next: integrate authored image controls when requested, then test.
+  Earlier upload blocker below is historical. Previous asset commit: e98ebb9.
 
 - Current Feature / Completed: audited saved configs and ScreenGuis; generated
   14 separate transparent PNG icons in assets/ui/emoji-icons-v1 using image_gen.

@@ -4,6 +4,8 @@ local Prompts=game:GetService("ProximityPromptService")
 local NumberFormat=require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("NumberFormat"))
 local Shop=require(ReplicatedStorage.Shared.Config.MerchantConfig)
 local Controller={}
+local Images=require(script.Parent.Parent.UI.IconImages)
+local Art=require(script.Parent.Parent.UI.ImageArt)
 local foodOrder={}
 for index,id in Shop.ItemOrder do foodOrder[id]=index end
 
@@ -48,7 +50,7 @@ function Controller.Start()
 				button.Price.Text="$"..NumberFormat.Compact(item.Price)
 				button.Effect.Text=definition.Effect
 				button.Art.Emoji.Text=definition.Icon
-				button.Art.Emoji.Visible=button.Art.Picture.Image==""
+				Art.Set(button.Art.Picture,button.Art.Emoji,Images[item.ItemId] or Images.empty)
 				button.Active=not item.Purchased and not state.Busy and not busy
 				button.AutoButtonColor=button.Active
 				button.BackgroundColor3=if item.Purchased then Color3.fromRGB(62,65,73) else Color3.fromRGB(77,49,37)
@@ -57,6 +59,7 @@ function Controller.Start()
 			else
 				button.ItemName.Text="RESTOCKING…";button.Stock.Text="Please wait"
 				button.Price.Text="—";button.Effect.Text="FOOD";button.Art.Emoji.Text="🍽️"
+				Art.Set(button.Art.Picture,button.Art.Emoji,Images.empty)
 				button.Active=false;button.BackgroundColor3=Color3.fromRGB(62,65,73)
 			end
 		end

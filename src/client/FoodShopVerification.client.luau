@@ -74,7 +74,8 @@ local ok,failure=xpcall(function()
 	assert(not main.FeedPanel.FoodCards.List:FindFirstChild("revive"),"Charm cannot be selected as feed")
 	local view=main.Inventory.Panel.Layout.Pets.PetCardTemplate.Preview
 	require(script.Parent.UI.ItemPreview).Set(view,entries["food:basic"])
-	assert(view.FoodArt.Visible and view.FoodArt.Emoji.Visible,"Food placeholder supports future image")
+	assert(view.FoodArt.Visible and view.FoodArt.Emoji.Visible==not view.FoodArt.IsLoaded
+		and view.FoodArt.Image==require(script.Parent.UI.IconImages).basic,"Food uses uploaded image")
 	local deadline=os.clock()+15
 	repeat
 		if game.Players.LocalPlayer:GetAttribute("FeedPlatePetId") then break end

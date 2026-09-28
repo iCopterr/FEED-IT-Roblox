@@ -34,7 +34,10 @@ IDs were transcribed from the screenshot and checked for completeness/uniqueness
 Roblox loading, moderation and experience permissions have not been verified.
 The previous agent upload attempt failed due to missing MCP authentication.
 
-No production UI, config, scripts or models changed. After asset loading
-verification, set authored ImageLabels and hide emoji fallbacks; preserve saved
-ScreenGui ownership. Icons were visually inspected, but small-size UI rendering
-still needs Studio verification. Original emoji behavior remains intact.
+Integrated into saved ScreenGuis for Money, Egg/Pet remote buttons and Index;
+food cards, inventory food/charm previews and merchant offers use IconImages.
+Existing layout preserved; no runtime UI construction. ImageArt hides authored
+emoji fallbacks once images load, and keeps them readable if loading fails.
+Studio screenshots verified HUD, food cards and merchant charm/blessed art.
+Hearty ID corrected to 91392940915097 from the owner's copied text ID.
+Rojo build and edit-mode binding checks passed; full Play test still pending.
