@@ -177,7 +177,7 @@ local ok,failure=xpcall(function()
 	loaded=assert(schema.Migrate(record.Data))
 	check(read and loaded.Inventory[petId]~=nil and loaded.IncubatingEggs[uid]==nil,"Claimed egg cannot reappear after reload")
 	-- New tiers exercise the same paid conveyor -> carry -> place -> hatch path.
-	for _,tier in {{Id="advanced_egg",Roll=.8},{Id="elite_egg",Roll=.96},{Id="master_egg",Roll=.985},{Id="supreme_egg",Roll=.999}} do
+	for _,tier in {{Id="advanced_egg",Roll=.8},{Id="elite_egg",Roll=.96},{Id="master_egg",Roll=.985},{Id="supreme_egg",Roll=.998},{Id="ultimate_egg",Roll=.9995}} do
 		local definition=config.Definitions[tier.Id]
 		local total=0;for _,entry in definition.Results do total+=entry.Weight end
 		local cursor=0

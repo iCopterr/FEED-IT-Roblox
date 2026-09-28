@@ -4,11 +4,7 @@ local Pets = require(Shared.Config.PetConfig)
 local Number = require(Shared.NumberFormat).Compact
 local Preview = require(script.Parent.ItemPreview)
 local View = {}
-local rarityColors = {
-	Common=Color3.fromRGB(164,174,190), Uncommon=Color3.fromRGB(97,222,103),
-	Rare=Color3.fromRGB(69,169,255), Epic=Color3.fromRGB(204,104,255),
-	Legendary=Color3.fromRGB(255,206,69), Mythic=Color3.fromRGB(255,102,155),
-}
+local rarityColors = require(Shared.Config.InventoryConfig).RarityColors
 
 function View.Count(discovered, eggId)
 	local count = 0

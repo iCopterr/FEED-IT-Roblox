@@ -46,7 +46,7 @@ local ok,failure=xpcall(function()
 		end
 		assert(panel.Detail.Preview.ImageColor3==Color3.new(0,0,0),"Locked detail is also a silhouette")
 	end
-	assert(covered==30 and #eggs.Order==5,"All thirty pets and five eggs covered")
+	assert(covered==36 and #eggs.Order==6,"All thirty-six pets and six eggs covered")
 	view.Clear(panel)
 	controller.Open()
 	controller.SelectEgg("advanced_egg")
@@ -54,7 +54,7 @@ local ok,failure=xpcall(function()
 	controller.SelectPet(eggs.Definitions.advanced_egg.Results[6].SpeciesId)
 	assert(panel.Pets.Pet6:GetAttribute("Selected"),"Pet selection works")
 	local deadline=os.clock()+10
-	repeat task.wait(.1) until panel.Status.Text=="" and panel.Progress.Text~="DISCOVERED  0 / 30" or os.clock()>deadline
+	repeat task.wait(.1) until panel.Status.Text=="" and panel.Progress.Text~="DISCOVERED  0 / 36" or os.clock()>deadline
 	assert(player:GetAttribute("IndexPanelOpen"),"Index signals modal state")
 	local main=player.PlayerGui.FeedYourPetUI
 	main.Inventory.Visible=true;task.wait(.1)

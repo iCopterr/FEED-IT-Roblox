@@ -13,7 +13,7 @@ local ok,failure=xpcall(function()
 	model:SetAttribute("Rarity","Common");model:SetAttribute("Variant","Normal")
 	game.CollectionService:AddTag(model,"PetVisual");VFX.Refresh()
 	check(not part:FindFirstChild("PremiumPetVFX"),"Normal common has no aura")
-	for _,kind in {"Legendary","Mythic"} do model:SetAttribute("Rarity",kind);check(VFX.PremiumColor(model)~=nil,kind.." aura") end
+	for _,kind in {"Legendary","Mythic","Fabled","Divine","Celestial"} do model:SetAttribute("Rarity",kind);check(VFX.PremiumColor(model)~=nil,kind.." aura") end
 	model:SetAttribute("Rarity","Common")
 	for _,kind in {"Shiny","Rainbow","Celestial"} do model:SetAttribute("Variant",kind);check(VFX.PremiumColor(model)~=nil,kind.." aura") end
 	VFX.Refresh();check(part:FindFirstChild("PremiumPetVFX")~=nil,"One emitter attached")

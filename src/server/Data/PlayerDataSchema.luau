@@ -63,6 +63,40 @@ local PlayerDataSchema = {
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
 
+migrations[10] = function(source)
+	local definitions = require(ReplicatedStorage.Shared.Config.PetConfig).Species
+	local function updatePet(pet)
+		if type(pet) ~= "table" then return nil end
+		local copy = table.clone(pet)
+		local definition = definitions[copy.SpeciesId]
+		if definition then
+			copy.Rarity = definition.Rarity
+			copy.BaseIncome = definition.BaseIncome
+		end
+		-- EggId records acquisition provenance. Purchased eggs retain their result,
+		-- original price and timer even when that species moves to another pool.
+		return copy
+	end
+	local result = table.clone(source)
+	for _,field in {"Inventory", "PendingRecovery", "IncubatingEggs"} do
+		if type(source[field]) ~= "table" then return nil, "Invalid roster migration collection: " .. field end
+		local entries = {}
+		for id,entry in source[field] do
+			if type(entry) ~= "table" then return nil, "Invalid roster migration entry" end
+			if field == "Inventory" then
+				entries[id] = updatePet(entry)
+			else
+				local copy = table.clone(entry)
+				copy.Pet = updatePet(entry.Pet)
+				if not copy.Pet then return nil, "Invalid roster migration nested pet" end
+				entries[id] = copy
+			end
+		end
+		result[field] = entries
+	end
+	return result, nil
+end
+
 migrations[9] = function(source)
 	local result = table.clone(source)
 	result.ReviveCharges = 0

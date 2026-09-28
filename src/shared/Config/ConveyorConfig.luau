@@ -9,11 +9,12 @@ local Config = {
 	RequestCooldown=.25,
 	SaveRetrySeconds=5,
 	Offers=table.freeze({
-		table.freeze({EggId="prototype_egg",Weight=68,Color=Color3.fromRGB(255,235,180)}),
+		table.freeze({EggId="prototype_egg",Weight=67.9,Color=Color3.fromRGB(255,235,180)}),
 		table.freeze({EggId="advanced_egg",Weight=25,Color=Color3.fromRGB(120,220,255)}),
 		table.freeze({EggId="elite_egg",Weight=5,Color=Color3.fromRGB(210,140,255)}),
 		table.freeze({EggId="master_egg",Weight=1.5,Color=Color3.fromRGB(255,170,75)}),
 		table.freeze({EggId="supreme_egg",Weight=.5,Color=Color3.fromRGB(255,225,90)}),
+		table.freeze({EggId="ultimate_egg",Weight=.1,Color=Color3.fromRGB(155,115,255)}),
 	}),
 }
 function Config.Pick(roll: number)

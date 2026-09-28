@@ -4,7 +4,68 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-27
+**Last Updated:** 2026-09-28
+
+### Latest session — revised six-egg roster and six Divine/Cosmic pets
+
+- Current Feature: owner explicitly authorized the new 36-pet table, new Ultimate
+  Egg, new Fabled/Divine/Celestial rarities, autonomous balance choices, and six
+  new models in the established style with minimal parts.
+- Completed: all six pools and nine rarities configured. Supreme now contains
+  Divine Phoenix, Heavenly Kirin, Seraph Beast, Godly Behemoth, Celestial Dragon,
+  World Serpent. Astral Kitsune/Eclipse Griffin/Void Leviathan moved to Ultimate,
+  alongside Galaxy Dragon/Cosmic Hydra/World Eater. Requested lower-tier rarity
+  changes applied; stable species IDs and all existing models retained.
+- Balance: Ultimate 500B Money, 2700-second incubation, 0.1% conveyor offers.
+  Basic availability 67.9%; other existing tier availability/prices/timers stay.
+  Supreme and Ultimate odds: 45/28/18/7/1.8/0.2%. Base incomes and reasoning,
+  including illustrative level-15 pen progression, are documented in
+  `docs/balance/six-egg-roster-20260927.md`. Earlier tier incomes retained.
+- Persistence: player schema v11 migrates existing inventory, pending recovery
+  and incubating pets to their new rarity/income. Original EggId is acquisition
+  provenance. Paid eggs retain their reserved result/price/timer; no rerolls.
+  Pet IDs, feed levels, variant, traits, locks, placement and currencies survive.
+- UI: Ultimate egg asset and sixth Index category added; compact tabs fit their
+  previews/counts. Shared rarity colors support Inventory/Index; premium VFX
+  colors include the new rarities. Celestial rarity remains distinct from variant.
+- Art complete: six native CSG templates installed in ReplicatedStorage.PetsModel
+  and displayed in Workspace.DivineCosmicShowcase. Part counts: Divine Phoenix
+  17, Heavenly Kirin 19, Godly Behemoth 24, Galaxy Dragon 32, Cosmic Hydra 48,
+  World Eater 15 (155 total). Budget was <=100 each. Total union triangles
+  204,198; low part counts are not a proven renderer/FPS optimization.
+- New source drafts archived under ServerStorage.DivineCosmicSources_20260927;
+  final/source RBXM files, hashes, geometry reports, prior metadata and reviewed
+  front/rear screenshots saved in `assets/pets/divine-cosmic-20260927`.
+  Existing original-model backups remain intact. Failed/first-pass drafts are
+  archived outside gameplay. One orphan duplicate Ultimate egg from live Rojo
+  synchronization was moved to ServerStorage; source and active pool contain six.
+- PASS: six model rig graphs/motor offsets, native save roundtrips, geometry
+  bounds and 2x growth; individual front/rear visual review, with refinements to
+  Phoenix/Kirin/Galaxy. Edit-mode roster and migration regression assertions
+  passed; all six Index pools rendered with 36 templates and fitting tab bounds.
+  Rojo build and git diff checks passed. Verification evidence is in the asset dir.
+- Continuation 2026-09-28: owner saved/restarted Studio and reconnected MCP.
+  The stalled test-service state is resolved. PASS: RosterVerification (184),
+  two-player ConveyorVerification (177), two-player IndexVerification (18 server
+  checks plus both all-36-pet client reports), VFXVerification (24). Ultimate
+  purchase/placement/incubation/hatch/carry/save-load and purchase races passed.
+  All six installed models retained exact counts after restart. Final Ultimate
+  Index screenshot visually inspected; six categories and rarity/income labels
+  fit cleanly. Raw Play reports and final screenshot are saved with the assets.
+- Known limits: tests use isolated Studio memory, not production DataStores.
+  No published-server or FPS improvement claim. In Progress: none.
+- Next Task: owner art/balance playtesting; profile the CSG templates if needed.
+  Balance is initial tuning awaiting actual player progression data.
+- Files Modified: Pet/Egg/Conveyor/Game/Inventory/VFX configs; PlayerDataSchema;
+  IndexView; Index/VFX/Conveyor verification; new RosterVerification; IndexUI and
+  EggTemplates; new build/install/review/show tooling, balance docs and assets.
+- Architecture: filesystem/Rojo remains script/config/UI source of truth. Pet
+  art is separately saved RBXM, following existing manual-template workflow.
+  Session handoff: MCP localhost:58741, 36 installed templates. No old models
+  deleted, no publication or push. Previous working commit 605efe2. Unrelated
+  Ember/Kitsune reference scripts and Ember art remain untouched/untracked.
+- Overall Progress: roster/model implementation and the relevant Studio Play
+  regressions are complete; changes saved in the local session commit, no push.
 
 ### Latest session — consolidate the 24 existing non-Basic pet templates
 

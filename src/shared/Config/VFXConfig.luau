@@ -4,6 +4,7 @@ return table.freeze({
 	Texture = "rbxasset://textures/particles/sparkles_main.dds",
 	Colors = {
 		Legendary = Color3.fromRGB(255, 195, 55), Mythic = Color3.fromRGB(232, 100, 255),
+		Fabled = Color3.fromRGB(255,112,55), Divine = Color3.fromRGB(100,235,220),
 		Shiny = Color3.fromRGB(255, 243, 145), Rainbow = Color3.fromRGB(120, 255, 240),
 		Celestial = Color3.fromRGB(165, 185, 255),
 		Success = Color3.fromRGB(135, 255, 100), Explosion = Color3.fromRGB(255, 110, 45),
