@@ -9,6 +9,7 @@ function Prop($item,$tag,$name,$value) {
 }
 function Rect($item,$name,$xs,$xo,$ys,$yo) {
     $node=$item.SelectSingleNode("Properties/UDim2[@name='$name']")
+    if (!$node) { $node=$doc.CreateElement('UDim2');$node.SetAttribute('name',$name);[void]$item.Properties.AppendChild($node) }
     $node.InnerXml="<XS>$xs</XS><XO>$xo</XO><YS>$ys</YS><YO>$yo</YO>"
 }
 function Child($item,$name) { $item.SelectSingleNode("Item[Properties/string[@name='Name']='$name']") }
@@ -36,8 +37,32 @@ Rect $list 'Size' 1 -40 1 -104
 $layout=$list.SelectSingleNode("Item[@class='UIListLayout']")
 $layout.SelectSingleNode('Properties/UDim[@name="Padding"]').InnerXml='<S>0</S><O>16</O>'
 Prop $list 'float' 'ScrollBarThickness' 4
+$padding=$list.SelectSingleNode("Item[@class='UIPadding']")
+if (!$padding) {
+    $padding=$doc.CreateElement('Item');$padding.SetAttribute('class','UIPadding')
+    $padding.InnerXml='<Properties><string name="Name">BorderClearance</string></Properties>'
+    [void]$list.AppendChild($padding)
+}
+foreach ($side in @('Top','Bottom','Left','Right')) {
+    $property='Padding'+$side
+    $node=$padding.SelectSingleNode("Properties/UDim[@name='$property']")
+    if (!$node) { $node=$doc.CreateElement('UDim');$node.SetAttribute('name',$property);[void]$padding.Properties.AppendChild($node) }
+    $gap=if ($side -eq 'Right') { 16 } else { 6 }
+    $node.InnerXml="<S>0</S><O>$gap</O>"
+}
 foreach ($card in $list.SelectNodes("Item[@class='TextButton']")) {
-    Rect $card 'Size' 1 -12 0 128
+    Rect $card 'Size' 1 0 0 128
+    $texture=Child $card 'ButtonTexture'
+    if ($texture) {
+        Rect $texture 'Position' 0 2 0 2
+        Rect $texture 'Size' 1 -4 1 -4
+        $corner=$texture.SelectSingleNode("Item[@class='UICorner']")
+        if (!$corner) {
+            $corner=$doc.CreateElement('Item');$corner.SetAttribute('class','UICorner')
+            $corner.InnerXml='<Properties><string name="Name">ArtCorner</string><UDim name="CornerRadius"><S>0</S><O>12</O></UDim></Properties>'
+            [void]$texture.AppendChild($corner)
+        }
+    }
     $art=Child $card 'Art'
     Rect $art 'Position' 0 12 0.5 -38
     Rect $art 'Size' 0 76 0 76
@@ -49,12 +74,12 @@ foreach ($card in $list.SelectNodes("Item[@class='TextButton']")) {
     $quantity=Child $card 'Quantity'
     Rect $quantity 'Position' 0 100 0 64
     Rect $quantity 'Size' 1 -112 0 24
-    Prop $quantity 'float' 'TextSize' 22
+    Prop $quantity 'float' 'TextSize' 24
     Prop $quantity 'token' 'TextXAlignment' 0
     $risk=Child $card 'Risk'
     Rect $risk 'Position' 0 100 0 94
-    Rect $risk 'Size' 1 -112 0 22
-    Prop $risk 'float' 'TextSize' 18
+    Rect $risk 'Size' 1 -112 0 26
+    Prop $risk 'float' 'TextSize' 20
     Prop $risk 'token' 'TextXAlignment' 0
     foreach ($label in @($name,$quantity,$risk)) {
         foreach ($stroke in $label.SelectNodes("Item[@class='UIStroke']")) { Prop $stroke 'float' 'Thickness' 2.5 }

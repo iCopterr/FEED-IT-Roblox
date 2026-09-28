@@ -6,6 +6,16 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — unclipped food selection border
+
+- Added authored UIPadding inside the food scrolling list: 6px top/bottom/left
+  and 16px right, so selection outlines have room before the clipping boundary
+  and scrollbar. Inset/rounded card textures too. Quantity/risk text now 24/20px.
+- Verified: Rojo build; Studio screenshot with first card selected at 0.8 scale
+  shows complete white rounded outline. Actual pixel clearance assertions passed.
+  Preview hidden/restored afterward. Full Play test not run; economy unchanged.
+- Files: FeedYourPetUI.rbxmx, formatting recipe and handoff. Next: user review.
+
 ### Latest session — feed panel edges and spacious food cards
 
 - Completed: inset header/background textures by 4px with matching rounded
