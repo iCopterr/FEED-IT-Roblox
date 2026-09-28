@@ -1,5 +1,8 @@
 # Species base sizes — 2026-09-28
 
+Historical first pass, superseded by `../creature-scale-20260928/README.md`.
+The 40-stud shared cap described below is no longer active.
+
 World size is derived from each species' `BaseFootprint`: the horizontal bounding-box diagonal in studs at Feed Level 0. Chicken keeps its original authored size at a 6.3-stud footprint and 4.85-stud height. The roster grows from that baseline to 18-stud Hydra and 22-stud World Eater footprints.
 
 Feed growth still uses `FeedConfig.GetScale`. Growth is capped only when a model reaches a 40-stud footprint, leaving clearance inside the pen's 44-stud narrow dimension. Small pets can therefore use the full 5x growth curve while already-large monsters stop growing when they fill the pen safely.

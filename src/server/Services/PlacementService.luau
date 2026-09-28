@@ -30,6 +30,15 @@ function PlacementService.PauseWandering(player: Player, petId: string, seconds:
 	if model then WanderingService.Pause(model, seconds) end
 end
 
+function PlacementService.GetPickupCFrame(player: Player, pet: PetData): CFrame?
+	local state = states[player]
+	local model = state and state.Pets[pet.PetId]
+	if PlacementService.GetLivePetCFrame(player, pet) and model then
+		return PetModels.GetPickupCFrame(model)
+	end
+	return nil
+end
+
 function PlacementService.ResolvePosition(player: Player, position: Vector3): CFrame?
 	if typeof(position) ~= "Vector3" then return nil end
 	for _, n in {position.X, position.Y, position.Z} do
@@ -120,7 +129,12 @@ local function install(player: Player, plot: Model, pet: PetData, model: Model)
 	prompt.HoldDuration = carryConfig.PickupHoldSeconds
 	prompt.MaxActivationDistance = carryConfig.PickupDistance
 	prompt.RequiresLineOfSight = false
-	prompt.Parent = model:FindFirstChildWhichIsA("BasePart", true)
+	local body = assert(model:FindFirstChildWhichIsA("BasePart", true))
+	local pickupAnchor = Instance.new("Attachment")
+	pickupAnchor.Name = "PetPickupAnchor"
+	pickupAnchor.CFrame = body.CFrame:ToObjectSpace(PetModels.GetPickupCFrame(model))
+	pickupAnchor.Parent = body
+	prompt.Parent = pickupAnchor
 	model.Parent = state.Folder
 	state.Pets[pet.PetId] = model
 	WanderingService.Track(model, plot.Pen.Floor)

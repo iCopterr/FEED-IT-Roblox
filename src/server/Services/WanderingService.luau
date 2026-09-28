@@ -11,7 +11,8 @@ function Service.Track(model, floor)
 	local state = {
 		Floor = floor, Parent = model.Parent,
 		Offset = bounds:ToObjectSpace(model:GetPivot()),
-		-- A rotation-safe footprint also handles large Feed-grown pets.
+		-- Oversized monsters keep their authored scale and settle at the pen
+		-- center. Wings/tentacles may overhang; ordinary pets remain contained.
 		Radius = Vector2.new(size.X, size.Z).Magnitude / 2 + Config.FenceClearance,
 		Wait = random:NextNumber(Config.MinPauseSeconds, Config.MaxPauseSeconds),
 		PausedUntil = 0,

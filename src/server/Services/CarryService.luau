@@ -56,7 +56,7 @@ local function equip(player, id, isEgg)
 	if not attachment or not attachment:IsA("BasePart") then return false, "CharacterUnavailable" end
 	if carried[player] and carried[player].Id == id and carried[player].Egg == isEgg and carried[player].Model.Parent == character then return true end
 	if pet.Placed then
-		local slot = PlacementService.GetLivePetCFrame(player, pet)
+		local slot = PlacementService.GetPickupCFrame(player, pet)
 		if not slot or (root.Position - slot.Position).Magnitude > Config.PickupDistance then return false, "TooFar" end
 	end
 	local definition = isEgg and require(game.ReplicatedStorage.Shared.Config.EggConfig).Definitions[egg.EggId]
@@ -154,7 +154,7 @@ local function pickupTarget(player, prompt)
 	local pet = data and data.Inventory[model.Name]
 	local character, root = living(player)
 	if not character or not pet or not pet.Placed then return nil end
-	local cf = PlacementService.GetLivePetCFrame(player, pet)
+	local cf = PlacementService.GetPickupCFrame(player, pet)
 	if not cf or (root.Position - cf.Position).Magnitude > Config.PickupDistance then return nil end
 	return pet.PetId, character
 end

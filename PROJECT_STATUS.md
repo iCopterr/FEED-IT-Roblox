@@ -6,6 +6,35 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — creature-appropriate scale for all 36 pets
+
+- Current Feature / Completed: owner rejected the previous small size range.
+  Chicken retains its authored 4.85-stud height; all species now use a much wider
+  creature-based hierarchy. Hydra is 35.94 studs tall; Kraken spans 56.57 x 56.57;
+  World Serpent stands 73.41. Base diagonals range 6–120 studs.
+- Removed the universal 40-stud cap. Large species add up to 48 footprint studs
+  by level 40, retaining relative size and visible growth at every Feed level.
+  Normal animals still grow with the existing 5x curve where within that budget.
+- Ground-height pickup attachments and matching server distance checks keep
+  giant pets reachable. Pedestal interaction stays by its dish after growth.
+  Placement raycasts ignore ActivePets to reach floors beneath giant silhouettes.
+- Verified: all six egg groups visually inspected, screenshots saved under
+  assets/pets/creature-scale-20260928. Actual PetModels edit audit passes 4,705
+  checks across 36 species/41 levels, joints, part counts and interaction heights.
+  Actual WanderingService passes 14,418 step assertions across six rotated pens.
+  Model part counts remain 14–71; no template or backup geometry changed.
+- Limitations: huge pets intentionally overhang the existing pen and settle at
+  its center; multiple giants overlap, and large carry/pedestal pets can obscure
+  the camera. No new map layout or FPS claim. Fresh Play suite is blocked by
+  StudioTestService's stale prior-session state; multiplayer pickup/feeding/click
+  changes still need a Play smoke test after restart.
+- Files Modified: PetConfig, PetModels, Placement/Carry/Pedestal/Wandering services,
+  CarryController, size/wandering verifiers, review recipes, sizing evidence,
+  historical size README, and this handoff. Economy and saved identities unchanged.
+- Overall Progress: implemented and edit-mode/visually verified. Next Task:
+  restart Studio for ordinary Play smoke tests. This supersedes the earlier
+  6–22 stud range / shared cap. Unrelated UI/reference work preserved; no push.
+
 ### Latest session — uploaded icons integrated into existing UI
 
 - Completed: replaced Money, Egg/Pet remote and Index emojis with authored

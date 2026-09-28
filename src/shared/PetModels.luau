@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PetConfig = require(script.Parent.Config.PetConfig)
 local PlacementConfig = require(script.Parent.Config.PlacementConfig)
+local FeedConfig = require(script.Parent.Config.FeedConfig)
 
 local PetModels = {}
 
@@ -19,19 +20,29 @@ function PetModels.GetTemplate(speciesId: string): Model?
 	return if template and template:IsA("Model") then template else nil
 end
 
--- A footprint-based size keeps long tails and broad wings proportional while
--- making authoring/export scale irrelevant. Large species start imposing, while
--- the world-footprint cap keeps highly fed pets inside the pen's narrow side.
+-- Species keep their relative size even at maximum growth. Large monsters use
+-- a gentler growth rate instead of collapsing into one shared footprint cap.
+function PetModels.GetFootprint(speciesId: string, feedLevel: number): number
+	local definition = assert(PetConfig.Species[speciesId], "Unknown species")
+	local growth = FeedConfig.GetScale(feedLevel) - 1
+	local growthPerMultiplier = math.min(definition.BaseFootprint,
+		PetConfig.MaxFootprintGrowth / (FeedConfig.MaxVisualScale - 1))
+	return definition.BaseFootprint + growth * growthPerMultiplier
+end
+
 function PetModels.GetScale(speciesId: string, feedLevel: number): number
 	local definition=assert(PetConfig.Species[speciesId], "Unknown species")
 	local template=assert(PetModels.GetTemplate(speciesId), "Missing pet template")
 	local _,size=template:GetBoundingBox()
 	local footprint=Vector2.new(size.X,size.Z).Magnitude
 	assert(footprint>0 and definition.BaseFootprint>0, "Invalid pet dimensions")
-	local baseScale = template:GetScale() * definition.BaseFootprint / footprint
-	local growthScale = require(script.Parent.Config.FeedConfig).GetScale(feedLevel)
-	local cappedGrowthScale = math.min(growthScale, PetConfig.MaxWorldFootprint / definition.BaseFootprint)
-	return baseScale * cappedGrowthScale
+	return template:GetScale() * PetModels.GetFootprint(speciesId, feedLevel) / footprint
+end
+
+-- An attachment can stay within reach even when the torso is several floors up.
+function PetModels.GetPickupCFrame(model: Model): CFrame
+	local bounds, size = model:GetBoundingBox()
+	return bounds * CFrame.new(0, -size.Y / 2 + 2, 0)
 end
 
 return table.freeze(PetModels)

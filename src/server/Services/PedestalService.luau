@@ -88,7 +88,11 @@ function PedestalService.Place(player, id)
 		prompt.GamepadKeyCode = Enum.KeyCode.ButtonX
 		prompt.HoldDuration, prompt.MaxActivationDistance = Config.PickupHoldSeconds, Config.PickupDistance
 		prompt.RequiresLineOfSight = false
-		prompt.Parent = body
+		local anchor = Instance.new("Attachment")
+		anchor.Name = "FeedInteractionAnchor"
+		anchor.Position = body.CFrame:PointToObjectSpace(dish.Position + Vector3.new(0, 2, 0))
+		anchor.Parent = body
+		prompt.Parent = anchor
 		model.Parent = plate
 		require(script.Parent.PetPresentation).Update(model,pet)
 	end)
@@ -125,6 +129,8 @@ function PedestalService.EndPresentation(player, id, returnToInventory)
 	local dish = state.Plate.Dish
 	local target = CFrame.new(dish.Position + Vector3.new(0,dish.Size.X/2+size.Y/2+.05,0)) * state.Plate.Parent.Ground.CFrame.Rotation
 	state.Model:PivotTo(target * bounds:ToObjectSpace(state.Model:GetPivot()))
+	local anchor = state.Prompt.Parent
+	anchor.Position = anchor.Parent.CFrame:PointToObjectSpace(dish.Position + Vector3.new(0, 2, 0))
 	for part, transparency in state.Transparencies or {} do
 		if part.Parent then part.Transparency = transparency end
 	end

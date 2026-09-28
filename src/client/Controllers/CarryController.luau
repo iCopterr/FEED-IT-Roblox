@@ -17,9 +17,6 @@ function CarryController.Start()
 		local ray = camera:ViewportPointToRay(screenPosition.X, screenPosition.Y)
 		local params = RaycastParams.new()
 		params.FilterType = Enum.RaycastFilterType.Exclude
-		params.FilterDescendantsInstances = if player.Character then {player.Character} else {}
-		local hit = workspace:Raycast(ray.Origin, ray.Direction * 500, params)
-		if not hit then return end
 		local plots = workspace:FindFirstChild("PlayerPlots")
 		local plot
 		if plots then
@@ -28,6 +25,19 @@ function CarryController.Start()
 			end
 		end
 		if not plot then return end
+		-- Giant pets can cover the pen. Placement clicks should still reach its
+		-- floor instead of being swallowed by a wing or tentacle overhead.
+		local excluded = if player.Character then {player.Character} else {}
+		if plots then
+			for _, candidate in plots:GetChildren() do
+				local pen = candidate:FindFirstChild("Pen")
+				local pets = pen and pen:FindFirstChild("ActivePets")
+				if pets then table.insert(excluded, pets) end
+			end
+		end
+		params.FilterDescendantsInstances = excluded
+		local hit = workspace:Raycast(ray.Origin, ray.Direction * 500, params)
+		if not hit then return end
 		local action, id, position
 		if hit.Instance == plot.Pen.Floor and player:GetAttribute("CarriedEggUid") then
 			action, id, position = "Place", player:GetAttribute("CarriedEggUid"), hit.Position
