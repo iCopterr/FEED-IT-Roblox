@@ -6,6 +6,34 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — progressively richer Epic-to-Celestial pet effects
+
+- Current Feature / Completed: owner requested premium particle/light effects
+  increasing by rarity. Epic/Legendary/Mythic/Fabled/Divine/Celestial now emit
+  3/7/12/20/34/52 particles per second at full detail. Higher tiers add side
+  sparkles, a soft glow and crown stars; nearby lights increase in brightness.
+- Low-tier sparks emit above the silhouette after visual review found that the
+  original torso origin hid sparse particles. All effects follow pet movement
+  and update with feeding growth. No BaseParts or model/rig edits were added.
+- Shiny/Rainbow/Celestial variants retain their colors and establish minimum
+  aura tiers; they never downgrade the base rarity. Rainbow still cycles color.
+- Budgets: nearest 18 auras within 100 studs, 40% rate beyond 55; max six local
+  shadowless lights within 45, range capped at 12. Hidden/presenting and distant
+  pets clean up effects; eight-burst cap retained. No FPS improvement claimed.
+- PASS: VFXVerification in Studio Play, 58 checks covering tier progression,
+  variant floors, growth, zero added parts, duplication, aura/light limits,
+  distance/hidden cleanup and burst cleanup. Final Rojo build/diff checks passed.
+  Overview and Epic/Celestial close-ups inspected; Epic origin refined/rechecked.
+- Files Modified: VFXController, VFXConfig, VFXVerification.client, this handoff;
+  new review recipe and `assets/vfx/rarity-auras-20260928` evidence/readme.
+- Architecture unchanged: client-local effects on runtime PetVisual tags;
+  Rojo owns source. Existing templates, backups and balance are unchanged.
+- Overall Progress: complete. In Progress / Blockers: none. Next Task: owner
+  visual review in ordinary gameplay, with profiling if crowded pens need it.
+- Session Handoff: MCP localhost:58741; temporary comparison models removed.
+  Prior working commit 25e57e7; this completed change is committed locally, no
+  push. Unrelated Ember/Kitsune reference work is preserved.
+
 ### Latest session — revised six-egg roster and six Divine/Cosmic pets
 
 - Current Feature: owner explicitly authorized the new 36-pet table, new Ultimate
