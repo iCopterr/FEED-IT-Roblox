@@ -27,14 +27,14 @@ Empty plate is a merchant fallback, not another purchasable item.
 
 ## Upload/handoff
 
-Upload attempted for Basic Food via Roblox MCP upload_decal targeting owner
-5250447342. Tool rejected it: No auth configured for asset upload. No assets
-were created and no asset IDs are claimed. Configure upload authentication in
-the MCP server locally (prefer a scoped Open Cloud key with required asset-write
-permission); never paste secrets in chat. Reconnect Studio for live checks.
-Alternatively manually upload the PNGs in Creator Dashboard and supply IDs.
+Owner uploaded all 14 images and provided an Asset Manager screenshot on
+2026-09-28. The matching Image asset IDs are recorded as strings in manifest.json.
+Use `rbxassetid://` followed by the ID when integrating. No duplicate uploads needed.
+IDs were transcribed from the screenshot and checked for completeness/uniqueness;
+Roblox loading, moderation and experience permissions have not been verified.
+The previous agent upload attempt failed due to missing MCP authentication.
 
-No production UI, config, scripts or models changed. After upload approval and
+No production UI, config, scripts or models changed. After asset loading
 verification, set authored ImageLabels and hide emoji fallbacks; preserve saved
 ScreenGui ownership. Icons were visually inspected, but small-size UI rendering
 still needs Studio verification. Original emoji behavior remains intact.

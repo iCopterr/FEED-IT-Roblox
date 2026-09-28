@@ -1,104 +1,105 @@
 {
   "generator": "built-in image_gen",
-  "uploadStatus": "blocked_missing_mcp_upload_auth",
+  "uploadStatus": "owner_uploaded_ids_provided",
+  "assetIdSource": "Owner Asset Manager screenshot, 2026-09-28; runtime loading not yet verified",
   "uiChanged": false,
   "icons": [
     {
       "name": "basic-food",
       "emoji": "🍗",
       "file": "basic-food.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "131418338555963",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one roasted chicken drumstick, golden brown meat and ivory bone"
     },
     {
       "name": "fresh-food",
       "emoji": "🍎",
       "file": "fresh-food.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "101564069712753",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one shiny red apple with a green leaf"
     },
     {
       "name": "hearty-food",
       "emoji": "🥩",
       "file": "hearty-food.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "9139249015097",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one thick red steak with cream fat edge"
     },
     {
       "name": "fortified-food",
       "emoji": "🥘",
       "file": "fortified-food.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "122378810281551",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one small dark skillet full of hearty orange stew and chunky vegetables"
     },
     {
       "name": "gourmet-food",
       "emoji": "🍱",
       "file": "gourmet-food.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "140153290084855",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one premium bento box with rice, salmon and vegetables in clear compartments"
     },
     {
       "name": "enchanted-food",
       "emoji": "🔮",
       "file": "enchanted-food.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "106621119091918",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one magical purple crystal orb seated in a small gold food bowl"
     },
     {
       "name": "royal-food",
       "emoji": "🍰",
       "file": "royal-food.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "77276289439345",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one triangular slice of white cream cake with pink filling and a strawberry"
     },
     {
       "name": "blessed-food",
       "emoji": "✨",
       "file": "blessed-food.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "104592447471173",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one golden food morsel surrounded by three large gold four-point sparkles"
     },
     {
       "name": "revive-charm",
       "emoji": "💖",
       "file": "revive-charm.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "133373414506019",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one pink heart-shaped gemstone in a gold charm frame with small luminous highlights"
     },
     {
       "name": "money",
       "emoji": "💵",
       "file": "money.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "126548654782636",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one stack of green banknotes held by a golden band, no currency text"
     },
     {
       "name": "egg",
       "emoji": "🥚",
       "file": "egg.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "72169852222000",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one ivory pet egg with warm golden shading"
     },
     {
       "name": "pets",
       "emoji": "🐾",
       "file": "pets.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "108650929244773",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one large orange paw-print emblem, one central pad four toe pads"
     },
     {
       "name": "index",
       "emoji": "📖",
       "file": "index.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "109462693099065",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one open blue hardcover bestiary book with simple paw silhouette on a page"
     },
     {
       "name": "empty-food",
       "emoji": "🍽️",
       "file": "empty-food.png",
-      "robloxAssetId": null,
+      "robloxAssetId": "110660797048747",
       "prompt": "Create ONE standalone polished Roblox game inventory UI icon, square composition, genuinely transparent background alpha, no background color, no checkerboard drawn, no text, no labels, no border frame. Bold chunky silhouette, clean dark plum outline, saturated colors, simplified cel-shaded 3D appearance, clear at 48px. Center fully visible object with 15% transparent padding, no ground shadow, no tiny clutter. Subject: one empty silver plate with fork and knife"
     }
   ]
