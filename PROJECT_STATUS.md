@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — inventory, remote and merchant edge cleanup
+
+- Inventory previews use 0.72 camera distance (larger pets in cards/details only,
+  no world size change). Inventory header/background art inset and rounded;
+  rarity stripes inset with rounded ends, preserving rarity colors.
+- Egg/pen shared remote panel and button textures inset/rounded. Merchant list
+  gets 8px top/bottom/left and 16px right inner padding for art/border clearance;
+  merchant page art also inset/rounded. No runtime GUI creation.
+- Verified: Rojo build, Studio structure assertions and merchant screenshot.
+  Inventory Chicken model loaded in test card; screenshot attempt timed out,
+  so full visual review of larger species and remote panels remains pending.
+  Temporary card deleted and inspection panels hidden. No gameplay/economy edits.
+- Files: ItemPreview, three saved ScreenGuis, format-inventory-edges.ps1, handoff.
+  Next: Play review of inventory previews and scroll boundaries at player size.
+
 ### Latest session — unclipped food selection border
 
 - Added authored UIPadding inside the food scrolling list: 6px top/bottom/left

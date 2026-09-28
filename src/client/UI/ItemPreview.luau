@@ -54,6 +54,8 @@ function Preview.Set(view,entry)
 	local bounds,size=model:GetBoundingBox()
 	local radius=math.max(size.X,size.Y,size.Z)
 	camera.FieldOfView=35
-	camera.CFrame=CFrame.lookAt(bounds.Position+Vector3.new(radius*1.4,radius*.8,-radius*2.1),bounds.Position)
+	local inventory=view:FindFirstAncestor("Inventory")~=nil
+	local distance=if inventory then .72 else 1
+	camera.CFrame=CFrame.lookAt(bounds.Position+Vector3.new(radius*1.4,radius*.8,-radius*2.1)*distance,bounds.Position)
 end
 return Preview
