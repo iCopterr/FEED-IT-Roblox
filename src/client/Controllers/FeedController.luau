@@ -7,6 +7,7 @@ local Config = require(ReplicatedStorage.Shared.Config.FeedConfig)
 local Foods = require(ReplicatedStorage.Shared.Config.FoodConfig)
 local Preview=require(script.Parent.Parent.UI.ItemPreview)
 local FoodCard=require(script.Parent.Parent.UI.FoodCard)
+local FeedPrompt=require(script.Parent.Parent.UI.FeedPrompt)
 local FeedController = {}
 local numberText = require(ReplicatedStorage.Shared.NumberFormat).Compact
 
@@ -92,13 +93,9 @@ function FeedController.Start()
 	game:GetService("ProximityPromptService").PromptTriggered:Connect(function(prompt, triggeringPlayer)
 		if triggeringPlayer and triggeringPlayer ~= player then return end
 		if prompt.Name ~= "OpenFeedUI" then return end
-		local model = prompt:FindFirstAncestorOfClass("Model")
 		local character = player.Character
 		local root = character and character:FindFirstChild("HumanoidRootPart")
-		local body = prompt.Parent
-		if model and model:GetAttribute("OwnerUserId") == player.UserId
-			and model:GetAttribute("PetId") == player:GetAttribute("FeedPlatePetId")
-			and root and body:IsA("BasePart") and (root.Position-body.Position).Magnitude <= prompt.MaxActivationDistance+1 then show() end
+		if FeedPrompt.CanOpen(prompt,player.UserId,player:GetAttribute("FeedPlatePetId"),root) then show() end
 	end)
 	panel.Pickup.Activated:Connect(function()
 		local id = player:GetAttribute("FeedPlatePetId")

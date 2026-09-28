@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-09-28
 
+### Latest session — Feed UI reopen prompt fix
+
+- Completed: FeedController now accepts Attachment-based OpenFeedUI prompts and
+  checks distance to WorldPosition instead of requiring a BasePart parent. The
+  recent plate-height attachment change caused E reopening to be silently ignored;
+  initial placement auto-open bypassed that path. Ownership/pet/distance checks stay.
+- Files: FeedController, new UI/FeedPrompt helper and docs/studio/verify-feed-prompt.luau.
+- Verified: Rojo build, diff check and 10 MCP edit-mode regression assertions:
+  repeat opens, distant body/near attachment, legacy Part parent, wrong owner/pet,
+  missing pet/root, out-of-range and wrong prompt rejected as appropriate.
+- Overall Progress: fix synced to Studio. Next: fresh Play smoke test of actual
+  hold-E / close / hold-E interaction; no full Play test claimed this session.
+  No save/economy or UI layout changes. Unrelated reference assets preserved.
+
 ### Latest session — creature-appropriate scale for all 36 pets
 
 - Current Feature / Completed: owner rejected the previous small size range.
