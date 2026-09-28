@@ -19,4 +19,19 @@ function PetModels.GetTemplate(speciesId: string): Model?
 	return if template and template:IsA("Model") then template else nil
 end
 
+-- A footprint-based size keeps long tails and broad wings proportional while
+-- making authoring/export scale irrelevant. Large species start imposing, while
+-- the world-footprint cap keeps highly fed pets inside the pen's narrow side.
+function PetModels.GetScale(speciesId: string, feedLevel: number): number
+	local definition=assert(PetConfig.Species[speciesId], "Unknown species")
+	local template=assert(PetModels.GetTemplate(speciesId), "Missing pet template")
+	local _,size=template:GetBoundingBox()
+	local footprint=Vector2.new(size.X,size.Z).Magnitude
+	assert(footprint>0 and definition.BaseFootprint>0, "Invalid pet dimensions")
+	local baseScale = template:GetScale() * definition.BaseFootprint / footprint
+	local growthScale = require(script.Parent.Config.FeedConfig).GetScale(feedLevel)
+	local cappedGrowthScale = math.min(growthScale, PetConfig.MaxWorldFootprint / definition.BaseFootprint)
+	return baseScale * cappedGrowthScale
+end
+
 return table.freeze(PetModels)

@@ -3,7 +3,6 @@ local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
 local Config = require(game.ReplicatedStorage.Shared.Config.CarryConfig)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
-local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local PetModels = require(game.ReplicatedStorage.Shared.PetModels)
 local PedestalService = {}
 local states = {}
@@ -68,7 +67,7 @@ function PedestalService.Place(player, id)
 		if item:IsA("LuaSourceContainer") then return false, "TemplateUnavailable" end
 	end
 	local model = template:Clone()
-	model:ScaleTo(FeedConfig.GetScale(pet.FeedLevel))
+	model:ScaleTo(PetModels.GetScale(pet.SpeciesId,pet.FeedLevel))
 	local prompt
 	local ok = pcall(function()
 		local body = assert(model:FindFirstChildWhichIsA("BasePart", true), "Pet has no body")
@@ -121,7 +120,7 @@ function PedestalService.EndPresentation(player, id, returnToInventory)
 	local data = DataService.GetData(player)
 	local pet = data and data.Inventory[id]
 	if returnToInventory or not pet then PedestalService.Clear(player); return end
-	state.Model:ScaleTo(FeedConfig.GetScale(pet.FeedLevel))
+	state.Model:ScaleTo(PetModels.GetScale(pet.SpeciesId,pet.FeedLevel))
 	local bounds, size = state.Model:GetBoundingBox()
 	local dish = state.Plate.Dish
 	local target = CFrame.new(dish.Position + Vector3.new(0,dish.Size.X/2+size.Y/2+.05,0)) * state.Plate.Parent.Ground.CFrame.Rotation

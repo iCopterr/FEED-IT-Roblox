@@ -57,7 +57,7 @@ local ok, failure = xpcall(function()
 	local grownModel = a.Character:FindFirstChild("HeldPet")
 	local carryConfig = require(game.ReplicatedStorage.Shared.Config.CarryConfig)
 	local feedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
-	check(math.abs(grownModel:GetScale() - carryConfig.HeldScale * feedConfig.GetScale(grownLevel)) < 1e-5,
+	check(math.abs(grownModel:GetScale() - carryConfig.HeldScale * require(game.ReplicatedStorage.Shared.PetModels).GetScale(grown.SpeciesId,grownLevel)) < 1e-5,
 		"Held pet preserves its Feed-level growth")
 	local grownBounds, grownSize = grownModel:GetBoundingBox()
 	check(grownBounds.Position.Y - grownSize.Y / 2 >= headTop + carryConfig.PetHeadClearance - 0.05,

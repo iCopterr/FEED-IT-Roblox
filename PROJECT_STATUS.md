@@ -23,6 +23,35 @@
   in chat. Preserve concurrent species-sizing/model edits from the other session.
   Overall Progress: image assets ready; upload/in-game verification outstanding.
 
+### Latest session — species-specific base pet sizes
+
+- Current Feature: owner requested sensible species size differences, especially
+  Chicken versus Hydra. Added BaseFootprint for all 36 species in PetConfig and
+  centralized derived world scale in PetModels.GetScale(speciesId, feedLevel).
+- Implemented: restored Chicken's authored 6.3-stud footprint / 4.85-stud height,
+  then built a clear hierarchy up to 22 studs for World Eater. Hydra is now an
+  18-stud footprint and ~12.44 studs tall, over 2.5 times Chicken's height.
+  Uniform scaling preserves rigs.
+  Placement, carry, pedestal updates and client feed animations share this scale.
+  Feed growth remains 1x–5x, capped when a pet reaches a 40-stud world footprint;
+  the 0.65 held-size multiplier remains. UI previews remain camera-fitted. No save
+  migration, income or model geometry changes.
+- Verified: Studio visual lineup inspected and saved as
+  `assets/pets/species-sizing-20260928/revised-size-comparison.png`; Chicken,
+  Black Wolf, Ice Dragon, Hydra and Godly Behemoth form a readable hierarchy.
+  Rojo build passed. Earlier shared-path runtime passes: CarryVerification 38,
+  DebugVerification 47 and WanderingVerification 21. A stale manually-started
+  StudioTestService session blocked rerunning the opt-in runtime suites this pass;
+  edit-mode geometry verification covers all species, levels, rigs and pen caps.
+  Review scene is Workspace.PetSizeComparison; recipe docs/studio/review-pet-sizes.luau.
+- Files modified: PetConfig, PetModels, Carry/Pedestal/Placement services,
+  FeedEffects, Carry/Debug/Wandering verification; new PetSizeVerification,
+  comparison recipe and assets/pets/species-sizing-20260928 reports.
+- Next Task: restart Studio before the next runtime suite to clear its stale
+  manually-started StudioTestService state. Continue prototype playtesting from
+  the revised hierarchy. Previous working commit 618f972. No push. Preserve
+  unrelated Ember/Kitsune reference assets/scripts. Templates/backups untouched.
+
 ### Latest session — progressively richer Epic-to-Celestial pet effects
 
 - Current Feature / Completed: owner requested premium particle/light effects

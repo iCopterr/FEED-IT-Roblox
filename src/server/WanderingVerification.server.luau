@@ -69,8 +69,8 @@ local ok, failure = xpcall(function()
 	-- Exercise authored floors on both rotated rows, with grown template clones.
 	for _, plot in workspace.PlayerPlots:GetChildren() do
 		if not plot:IsA("Model") then continue end
-		local testModel = assert(petModels.GetTemplate("test_common")):Clone()
-		testModel:ScaleTo(feedConfig.MaxVisualScale)
+		local testModel = assert(petModels.GetTemplate("supreme_pet_6")):Clone()
+		testModel:ScaleTo(petModels.GetScale("supreme_pet_6",40))
 		local bounds, size = testModel:GetBoundingBox()
 		local penFloor = plot.Pen.Floor
 		testModel:PivotTo(penFloor.CFrame * CFrame.new(0, penFloor.Size.Y/2 + size.Y/2 + .05, 0) * bounds:ToObjectSpace(testModel:GetPivot()))

@@ -85,7 +85,7 @@ local function prepareVisual(player: Player, pet: PetData, slot: CFrame): (Model
 	end
 	if not hasPart then return nil, "TemplateUnavailable" end
 	local model = template:Clone()
-	model:ScaleTo(require(game.ReplicatedStorage.Shared.Config.FeedConfig).GetScale(pet.FeedLevel))
+	model:ScaleTo(PetModels.GetScale(pet.SpeciesId,pet.FeedLevel))
 	local ok = pcall(function()
 		model.Name = pet.PetId
 		model:SetAttribute("PetId", pet.PetId)

@@ -59,7 +59,7 @@ function FeedEffects.Play(result, gui)
 			-- Clone the authored pet, never generate replacement world geometry.
 			model = template:Clone()
 			model.Name = "FeedEffect_"..result.AttemptId
-			local oldScale, newScale = Config.GetScale(result.OldLevel), Config.GetScale(result.FeedLevel)
+			local oldScale, newScale = PetModels.GetScale(result.SpeciesId,result.OldLevel), PetModels.GetScale(result.SpeciesId,result.FeedLevel)
 			model:ScaleTo(oldScale)
 			model:PivotTo(result.Origin)
 			local _, oldSize = model:GetBoundingBox()
