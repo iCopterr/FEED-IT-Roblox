@@ -6,6 +6,25 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — incubating egg idle motion
+
+- Current Feature / Completed implementation: client-only gentle bob/rock for
+  placed incubating eggs; slightly faster/larger movement when HatchReady is true.
+  Stable server-authored EggIdleOrigin prevents accumulated drift; EggUid sets
+  individual phase. No extra parts, remotes, economy changes or timer changes.
+- Controller handles newly replicated/streamed eggs, removes destroyed models,
+  retries late attributes and limits per-frame movement to 160 studs from camera.
+  Only models in PlayerPlots with incubation origin/identity are registered.
+- Verified: Rojo build and Studio motion bounds on all six egg models. Visual
+  check blocked: screenshot returns blank viewport even after camera reposition.
+  Full Play waiting/ready/hatch cleanup integration has not been tested.
+- Overall Progress: implementation complete, visual/runtime verification pending.
+  Next Task: inspect waiting and ready motion in Play, then hatch and check cleanup.
+- Files Modified: EggIdleMotion.luau, EggIdleController.luau, client init,
+  EggVisuals.luau, docs/studio/verify-egg-idle.luau and this handoff.
+- Session Handoff: source managed by Rojo; no continuous Edit preview installed.
+  Last Working Commit before this task: 5aa648b. Unrelated changes preserved.
+
 ### Latest session — detailed themed egg particles (visually verified)
 
 - Implemented authored particle layers in all six rectangular egg templates:

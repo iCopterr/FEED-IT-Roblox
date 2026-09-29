@@ -52,6 +52,7 @@ function Visuals.Install(player,id,model)
 	local state=states[player] or {};states[player]=state
 	if state[id] then state[id]:Destroy() end
 	model.Name="Egg_"..id;model:SetAttribute("EggUid",id)
+	model:SetAttribute("EggIdleOrigin",model:GetPivot())
 	model.Parent=plot.Pen;state[id]=model
 	local prompt=Instance.new("ProximityPrompt")
 	prompt.Name=Config.HatchPromptName
