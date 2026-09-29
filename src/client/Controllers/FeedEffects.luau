@@ -6,6 +6,7 @@ local FeedEffects = {}
 local numberText = require(game.ReplicatedStorage.Shared.NumberFormat).Compact
 local PetModels = require(game.ReplicatedStorage.Shared.PetModels)
 local VFX = require(script.Parent.VFXController)
+local FeedCharge = require(script.Parent.Parent.UI.FeedCharge)
 local seen = {}
 local bannerToken = 0
 
@@ -65,20 +66,32 @@ function FeedEffects.Play(result, gui)
 			local _, oldSize = model:GetBoundingBox()
 			local parts = {}
 			for _, part in model:GetDescendants() do
-				if part:IsA("BasePart") then
+				if part:IsA("LuaSourceContainer") or part:IsA("ProximityPrompt") or part:IsA("LayerCollector") then
+					part:Destroy()
+				elseif part:IsA("BasePart") then
 					part.Anchored=true; part.CanCollide=false; part.CanTouch=false; part.CanQuery=false
 					table.insert(parts,{Part=part,Color=part.Color,Material=part.Material})
 				end
 			end
 			model.Parent = workspace
+			game:GetService("Debris"):AddItem(model,10)
+			local charge=FeedCharge.Create(model)
 			local origin = result.Origin
 			local raised = origin + Vector3.new(0,P.FloatHeight,0)
-			animate(P.FloatSeconds,function(a) model:PivotTo(origin:Lerp(raised,1-(1-a)^3)) end)
+			animate(P.FloatSeconds,function(a)
+				local eased=1-(1-a)^3
+				model:PivotTo(origin:Lerp(raised,eased)+Vector3.new(0,math.sin(a*math.pi)*.25,0))
+				charge.Update(a*.15,model:GetPivot().Position)
+			end)
 			animate(P.SpinSeconds,function(a)
 				local degrees = P.SpinSeconds*(P.SpinStartDegreesPerSecond*a
 					+(P.SpinEndDegreesPerSecond-P.SpinStartDegreesPerSecond)*a^(P.SpinAccelerationExponent+1)/(P.SpinAccelerationExponent+1))
-				model:PivotTo(raised*CFrame.Angles(0,math.rad(degrees),0))
+				local tremble=math.max(0,(a-.75)/.25)
+				model:PivotTo((raised+Vector3.new(0,math.sin(a*math.pi*6)*.12,0))
+					*CFrame.Angles(math.sin(a*60)*tremble*.035,math.rad(degrees),math.sin(a*75)*tremble*.04))
+				charge.Update(.15+.85*a,model:GetPivot().Position)
 			end)
+			charge.Finish()
 			banner(gui,result)
 			VFX.Burst(raised.Position,result.Code)
 			if result.Code == "Explosion" then
@@ -86,10 +99,11 @@ function FeedEffects.Play(result, gui)
 					local part = entry.Part
 					-- Multipart pets can contain thousands of blocks: cap debris tweens.
 					if i > 24 then part.Transparency=1; continue end
-					local angle = i*math.pi*2/#parts
+					local angle = i*math.pi*2/math.min(#parts,24)
 					part.Color=Color3.fromRGB(255,132,46); part.Material=Enum.Material.Neon
 					TweenService:Create(part,TweenInfo.new(P.Explosion.BurstSeconds+P.Explosion.FadeSeconds),{
-						CFrame=part.CFrame+Vector3.new(math.cos(angle)*8,3+(i%4),math.sin(angle)*8),Transparency=1}):Play()
+						CFrame=(part.CFrame+Vector3.new(math.cos(angle)*8,3+(i%4),math.sin(angle)*8))
+							*CFrame.Angles(i*.7,i*.4,i*.9),Transparency=1}):Play()
 				end
 				task.wait(P.Explosion.BurstSeconds+P.Explosion.FadeSeconds)
 			else
@@ -98,7 +112,8 @@ function FeedEffects.Play(result, gui)
 				local start = model:GetPivot()
 				animate(seconds,function(a)
 					local smooth = a*a*(3-2*a)
-					model:ScaleTo(oldScale+(newScale-oldScale)*smooth)
+					local growth=oldScale+(newScale-oldScale)*smooth
+					model:ScaleTo(growth*(1+(if miracle then .02 else .06)*math.sin(math.pi*a)))
 					local lift = oldSize.Y*(newScale/oldScale-1)/2
 					model:PivotTo(start:Lerp(origin+Vector3.new(0,lift,0),smooth))
 					for _, entry in parts do

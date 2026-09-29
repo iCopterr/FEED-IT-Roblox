@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — feed animation polish
+
+- Added FeedCharge presentation helper: three orbiting gold spark attachments,
+  pulsing point light and occluded energy highlight. Lift has a small eased bob;
+  final quarter of accelerating spin trembles before revealing the server outcome.
+- Success/miracle returns have subtle scale overshoot, ending at exact configured
+  scale. Explosion's capped 24 pieces now scatter over a full circle and tumble
+  instead of clustering to one side on multipart pets. Existing result bursts stay.
+- Clone strips scripts/prompts/UI and has a 10s Debris cleanup fallback. No new
+  physical parts or UI construction; feed timing, locks, odds and rewards unchanged.
+- Files: FeedEffects, UI/FeedCharge, handoff. Rojo build and diff checks passed.
+  MCP analysis requested; visual/runtime validation pending connection recovery.
+  Next: inspect success, critical, miracle and explosion for small/giant pets.
+
 ### Latest session — hatch reward flies into player
 
 - Added client-only gold reward orb/trail from hatch origin to moving player's
