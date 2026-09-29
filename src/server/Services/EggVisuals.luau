@@ -1,5 +1,6 @@
 -- Runtime clones of the authored egg and label; no generated geometry or UI.
 local Config=require(game.ReplicatedStorage.Shared.Config.EggConfig)
+local EggLabelAnchor=require(game.ReplicatedStorage.Shared.EggLabelAnchor)
 local Placement=require(script.Parent.PlacementService)
 local Plots=require(script.Parent.PlotService)
 local Visuals={}
@@ -37,9 +38,7 @@ function Visuals.Prepare(player,egg,position)
 		label.Price.Text=""
 		label.Price.Visible=false
 		label.Size=UDim2.fromOffset(240,56)
-		local liveBounds,liveSize=model:GetBoundingBox()
-		label.StudsOffsetWorldSpace=liveBounds.Position+Vector3.new(0,liveSize.Y/2+2.5,0)-body.Position
-		label.Adornee=body;label.Parent=body
+		EggLabelAnchor.Bind(model,label)
 		model:SetAttribute("OwnerUserId",player.UserId)
 	end)
 	if not ok then model:Destroy();return nil end

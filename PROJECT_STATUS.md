@@ -6,6 +6,25 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — centered egg labels
+
+- Owner confirmed text was off-center. Added shared EggLabelAnchor.Bind: an
+  Attachment on Shell (PrimaryPart fallback), directly over shell X/Z and above
+  model bounds. Clears GUI/extent offsets. Conveyor and placed eggs use this
+  common anchor, instead of first-descendant adorners with baked world offsets.
+  Name/price fonts, fixed pixel dimensions and model geometry unchanged.
+- Verified actual filesystem helper in Studio on clones of all six templates
+  across four headings (24 center/height checks); inspected Advanced Egg screenshot.
+  Temporary preview removed and camera restored. Rojo build/diff checks passed.
+  Existing LabelVerification assertions updated for Attachment.WorldPosition.
+  Full Play suite not run; existing offers need respawn/new Play session to update.
+  Exact old screenshot runtime cause not reproduced; new explicit shell anchor
+  eliminates dependency on arbitrary decoration-part placement/order.
+- Files: shared/EggLabelAnchor, ConveyorService, EggVisuals, LabelVerification,
+  docs/studio/test-egg-label-anchor.luau, advanced-label-centered.png, handoff.
+  Previous commit 98a75d4. Next: confirm moving offers in Play; Sakura replacement
+  remains paused with imported script metadata requiring safe inspection.
+
 ### Latest session — Advanced Egg alignment investigation (no fix applied)
 
 - Owner interrupted Sakura flower replacement to ask why Advanced Egg looks off.
