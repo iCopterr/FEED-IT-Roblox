@@ -7,6 +7,9 @@
       "$path": "src/lighting/Lighting.rbxmx"
     },
     "Workspace": {
+      "MapEnvironment": {
+        "$path": "src/world/MapEnvironment.rbxm"
+      },
       "ReviveMachine": {
         "$path": "src/world/ReviveMachine.rbxmx"
       },

@@ -6,6 +6,31 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — lightweight environment first pass
+
+- Current feature: environment-only landscaping around the preserved six-plot map.
+  Direct MCP localhost:58742 works. Previous completed commit: 944ebfe.
+- Added Workspace.MapEnvironment with Terrain/Trees/Rocks/Bushes/Flowers/Paths/
+  Decorations/Lighting folders: outer-edge mounds/cliff accents, trees, dirt patches,
+  garden shrubs/flowers/mushrooms, approach stones/lanterns, merchant crates and
+  small revive crystals. 248 anchored, noncolliding/nonquery decorative BaseParts;
+  zero runtime scripts. Existing global lighting, UI and gameplay untouched.
+- Saved static src/world/MapEnvironment.rbxm and mapped it in default.project.json.
+  No runtime construction. Reproducible edit-mode recipe in docs/studio/build-map-
+  environment.luau; MCP helpers/review/export/verification recipes alongside it.
+- Verified all 548 pre-existing Workspace BaseParts retain exact CFrame and Size;
+  one live MapEnvironment folder with 248 parts after mapping; all decoration
+  centers outside plot Ground bounds. Rojo build and git diff --check passed.
+  Visually inspected overhead and closer screenshots; refined evergreen crowns.
+  Camera restored. Screenshots in assets/world/environment-20260929 (overview
+  is initial pass; merchant.png shows final tree refinement / broader plot view).
+- Scope: restrained first landscaping pass, no water/bridges/new gameplay. No
+  player movement Play test or device FPS profiling this session; added geometry
+  has collision disabled, but performance improvement is not claimed.
+- Next: owner visual review and in-game walkthrough. Preserve unrelated untracked
+  pet-reference work. All additions isolated for easy iteration; do not rerun the
+  authoring/refinement recipes on an existing environment without inspection.
+
 ### Latest session — polished feed plates, MCP port 58741
 
 - Direct localhost:58741/mcp works; configured Roblox tool connection was stale.
