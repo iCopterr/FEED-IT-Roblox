@@ -6,6 +6,24 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — Advanced Egg alignment investigation (no fix applied)
+
+- Owner interrupted Sakura flower replacement to ask why Advanced Egg looks off.
+  Inspected edit templates and reproduced ConveyorService placement on unparented
+  clones: all six eggs have the same bottom Y=1.2 (within float tolerance), upright
+  Shell primary parts and scale 1. Advanced bounds height 5.7225 vs Basic 4.7738;
+  its taller crystals cause a higher automatically positioned label.
+- Label anchor first descendant is Advanced's ElementCore, but existing world
+  offset compensates its position; this alone does not prove misalignment.
+  No live Offers in edit target, so screenshot's exact runtime symptom is not
+  confirmed. Need clarify label offset versus crystal geometry; no gameplay,
+  source asset, or positioning changes made. Diagnostic recipes added only.
+- Sakura task paused before replacement. Found owner's model with two MeshParts
+  plus six embedded LuaSourceContainers under thumbnail/dependency metadata.
+  Nothing executed, removed or cloned into the environment. Future use must strip
+  executable/thumbnail metadata from clones and inspect source scripts safely.
+  inspect-sakura-flowers.luau remains untracked unfinished inspection work.
+
 ### Latest session — reference-inspired garden terrain, no water
 
 - Completed environment-only landscaping based on owner's reference: continuous
