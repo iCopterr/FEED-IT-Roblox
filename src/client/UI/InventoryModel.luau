@@ -20,6 +20,7 @@ function Model.Entries(snapshot)
 				elseif pet.Placed then "IN PEN" else "STORED"}
 	end
 	for _,egg in snapshot.Eggs or {} do
+		if egg.Placed then continue end
 		entries["egg:"..egg.EggUid]={Key="egg:"..egg.EggUid,Id=egg.EggUid,Kind="Egg",Name=egg.Name,
 			EggId=egg.EggId,Rarity="Egg",Level=0,Income=0,CreatedAt=egg.StartedAt,ReadyAt=egg.ReadyAt,
 			State=if snapshot.CarriedEggUid==egg.EggUid then "HELD" elseif not egg.Placed then "STORED"

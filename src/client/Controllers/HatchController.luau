@@ -2,6 +2,7 @@ local Storage = game:GetService("ReplicatedStorage")
 local Run = game:GetService("RunService")
 local Debris = game:GetService("Debris")
 local Eggs = require(Storage.Shared.Config.EggConfig)
+local Timing = require(Storage.Shared.Config.HatchAnimationConfig)
 local Controller = {}
 local seen = {}
 local started, active = false, 0
@@ -22,6 +23,21 @@ local function play(result)
 	egg:PivotTo(result.HatchOrigin)
 	egg.Parent = workspace
 	Debris:AddItem(egg, 5)
+	local hidden = {}
+	local disabled = {}
+	local plots = workspace:FindFirstChild("PlayerPlots")
+	if plots then
+		for _, plot in plots:GetChildren() do
+			local pen = plot:FindFirstChild("Pen")
+			local original = pen and pen:FindFirstChild("Egg_" .. result.EggUid)
+			if original then for _, item in original:GetDescendants() do
+				if item:IsA("BasePart") then hidden[item]=item.LocalTransparencyModifier;item.LocalTransparencyModifier=1 end
+				if item:IsA("ParticleEmitter") or item:IsA("Light") or item:IsA("BillboardGui") or item:IsA("ProximityPrompt") then
+					disabled[item]=item.Enabled;item.Enabled=false
+				end
+			end end
+		end
+	end
 	local ok, failure = xpcall(function()
 		local shell = assert(egg.PrimaryPart or egg:FindFirstChildWhichIsA("BasePart", true))
 		local light = Instance.new("PointLight")
@@ -35,11 +51,11 @@ local function play(result)
 		burst.Size = NumberSequence.new({NumberSequenceKeypoint.new(0,1),NumberSequenceKeypoint.new(.3,4),NumberSequenceKeypoint.new(1,6)})
 		burst.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0,.2),NumberSequenceKeypoint.new(.25,.35),NumberSequenceKeypoint.new(1,1)})
 		burst.Parent = attachment
-		local start = os.clock()
+		local start = result.EndsAt - Timing.Duration
 		local revealed = false
 		egg:SetAttribute("Stage", "Float")
 		repeat
-			local t = os.clock() - start
+			local t = math.max(0, workspace:GetServerTimeNow() - start)
 			local rise = math.clamp(t / .8,0,1)
 			local shake = math.clamp((t-.8)/1.2,0,1)
 			local position = result.HatchOrigin * CFrame.new(0,2*(1-(1-rise)^3),0)
@@ -54,16 +70,18 @@ local function play(result)
 				end
 			end
 			if revealed then light.Brightness = 4 * math.clamp(1-(t-2)/.8,0,1) end
-			if t >= 2.85 then break end
+			if t >= Timing.Duration then break end
 			Run.RenderStepped:Wait()
 		until not egg.Parent
 	end, debug.traceback)
 	egg:Destroy()
+	for part, transparency in hidden do if part.Parent then part.LocalTransparencyModifier=transparency end end
+	for item, enabled in disabled do if item.Parent then item.Enabled=enabled end end
 	if not ok then warn("[HatchController]", failure) end
 end
 
 function Controller.Enqueue(result)
-	if type(result) ~= "table" or not result.Ok or result.Code ~= "Hatched"
+	if type(result) ~= "table" or not result.Ok or result.Code ~= "HatchStarted" or type(result.EndsAt) ~= "number"
 		or type(result.EggUid) ~= "string" or type(result.EggId) ~= "string"
 		or typeof(result.HatchOrigin) ~= "CFrame" or seen[result.EggUid] then return false end
 	seen[result.EggUid] = true
@@ -81,6 +99,6 @@ end
 function Controller.Start()
 	if started then return end
 	started = true
-	Storage:WaitForChild("HatchOutcome").OnClientEvent:Connect(Controller.Enqueue)
+	Storage:WaitForChild("HatchStarted").OnClientEvent:Connect(Controller.Enqueue)
 end
 return Controller

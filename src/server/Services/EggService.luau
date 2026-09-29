@@ -13,9 +13,11 @@ local Plots=require(script.Parent.PlotService)
 local Visuals=require(script.Parent.EggVisuals)
 local PlacementConfig=require(game.ReplicatedStorage.Shared.Config.PlacementConfig)
 local Service={}
+local HatchAnimation=require(game.ReplicatedStorage.Shared.Config.HatchAnimationConfig)
 local saving,sessions={},{}
 local rng=Random.new()
 local hatchOutcome
+local hatchStarted
 
 local function save(player,profile,afterSave)
 	local token={};saving[player]=token
@@ -129,6 +131,19 @@ function Service.HandleRequest(player,action,id,position)
 	if not humanoid or humanoid.Health<=0 or not root then return {Ok=false,Code="CharacterUnavailable"} end
 	if not remoteHatch and (not body or (root.Position-body.Position).Magnitude>Config.HatchDistance) then return {Ok=false,Code="TooFar"} end
 	assert(Locks.Begin(player,egg.Pet.PetId))
+	local origin=if model then model:GetPivot() else root.CFrame*CFrame.new(0,0,-5)
+	if model then model:SetAttribute("Hatching",true) end
+	-- Keep the reserved pet in the saved egg until the server's reveal deadline.
+	-- Leaving during this wait preserves the egg for a safe retry on reconnect.
+	local endsAt=workspace:GetServerTimeNow()+HatchAnimation.Duration
+	if hatchStarted then hatchStarted:FireClient(player,{Ok=true,Code="HatchStarted",EggUid=id,
+		EggId=egg.EggId,HatchOrigin=origin,EndsAt=endsAt}) end
+	repeat task.wait(math.max(.01,endsAt-workspace:GetServerTimeNow())) until workspace:GetServerTimeNow()>=endsAt
+	if player.Parent~=Players or Data.GetData(player)~=profile or profile.IncubatingEggs[id]~=egg then
+		if model and model.Parent then model:SetAttribute("Hatching",nil) end
+		Locks.Finish(player)
+		return {Ok=false,Code="Loading"}
+	end
 	local pet=egg.Pet
 	local previousIndex=profile.PetIndex[pet.SpeciesId]
 	profile.IncubatingEggs[id]=nil
@@ -137,17 +152,18 @@ function Service.HandleRequest(player,action,id,position)
 	if not Schema.Validate(profile) then
 		profile.IncubatingEggs[id]=egg;profile.Inventory[pet.PetId]=nil
 		profile.PetIndex[pet.SpeciesId]=previousIndex;Locks.Finish(player)
+		if model and model.Parent then model:SetAttribute("Hatching",nil) end
 		return {Ok=false,Code="InvalidData"}
 	end
 	local definition=PetConfig.Species[pet.SpeciesId]
 	local result={Ok=true,Code="Hatched",EggUid=id,EggId=egg.EggId,SpeciesId=pet.SpeciesId,PetId=pet.PetId,Rarity=pet.Rarity,
 		Variant=pet.Variant,PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant),
-		HatchOrigin=if model then model:GetPivot() else root.CFrame*CFrame.new(0,0,-5)}
+		HatchOrigin=origin}
 	state.LastHatch=table.clone(result)
 	require(script.Parent.TutorialProgress).Record(profile,"Hatched",id,pet.PetId)
 	Visuals.Reconcile(player,profile)
 	save(player,profile,function()
-		-- Cosmetic reveal only after persistence; never disclose reserved results early.
+		-- Reveal deadline passed; disclose the result only after persistence.
 		if hatchOutcome then hatchOutcome:FireClient(player,result) end
 		-- Inventory is authoritative even if the character is absent or hands are busy.
 		if not Carry.GetPetId(player) and not Carry.GetEggId(player) then Carry.Equip(player,pet.PetId) end
@@ -156,6 +172,7 @@ function Service.HandleRequest(player,action,id,position)
 end
 
 function Service.Start()
+	hatchStarted=Instance.new("RemoteEvent");hatchStarted.Name="HatchStarted";hatchStarted.Parent=game.ReplicatedStorage
 	hatchOutcome=Instance.new("RemoteEvent");hatchOutcome.Name="HatchOutcome";hatchOutcome.Parent=game.ReplicatedStorage
 	Visuals.OnHatch=function(player,id) return Service.HandleRequest(player,"Hatch",id) end
 	for id,definition in Config.Definitions do

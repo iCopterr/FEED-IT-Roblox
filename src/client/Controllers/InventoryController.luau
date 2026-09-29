@@ -238,7 +238,8 @@ function Controller.Start(gui,onSnapshot)
 		revision+=1
 		local key=string.lower(kind)..":"..id
 		local entry=entries[key]
-		if entry then entry.State=if kind=="Egg" then "INCUBATING" else "IN PEN" end
+		if kind=="Egg" then entries[key]=nil;if selected==key then selected=nil end
+		elseif entry then entry.State="IN PEN" end
 		Model.Reconcile(slots,known,entries)
 		render();task.defer(refresh)
 	end

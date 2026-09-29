@@ -162,7 +162,16 @@ local ok,failure=xpcall(function()
 	local hatchPrompt=visuals.GetModel(a,uid):FindFirstChild(config.HatchPromptName,true)
 	check(hatchPrompt and hatchPrompt.Enabled and hatchPrompt.KeyboardKeyCode==Enum.KeyCode.E
 		and hatchPrompt.HoldDuration==0,"Ready egg has instant E hatch interaction")
-	local hatched=eggs.HandleRequest(a,"Hatch",uid)
+	local hatched
+	local hatchStart=os.clock()
+	task.spawn(function() hatched=eggs.HandleRequest(a,"Hatch",uid) end)
+	task.wait(.4)
+	check(profile.Inventory[petId]==nil and profile.IncubatingEggs[uid]==egg
+		and carry.GetPetId(a)~=petId,"Pet remains reserved during hatch animation")
+	check(eggs.HandleRequest(a,"Hatch",uid).Code=="Busy","Duplicate hatch during reveal is blocked")
+	waitFor(function() return hatched~=nil end)
+	check(os.clock()-hatchStart>=require(game.ReplicatedStorage.Shared.Config.HatchAnimationConfig).Duration,
+		"Pet grant waits for full reveal duration")
 	-- Manual E route remains covered above and by the later tier hatches.
 	check(hatched.Ok and hatched.PetId==petId and count(profile.Inventory)==inventoryCount+1
 		and profile.IncubatingEggs[uid]==nil,"Ready egg atomically becomes original reserved pet")

@@ -4,7 +4,7 @@ if not report then return end
 local Controller=require(script.Parent.Controllers.HatchController)
 Controller.Start()
 local lastResult
-game.ReplicatedStorage.HatchOutcome.OnClientEvent:Connect(function(r) lastResult=r end)
+game.ReplicatedStorage:WaitForChild("HatchStarted").OnClientEvent:Connect(function(r) lastResult=r end)
 report.OnClientEvent:Connect(function()
 	local ok,failure=xpcall(function()
 		local function waitFor(fn)

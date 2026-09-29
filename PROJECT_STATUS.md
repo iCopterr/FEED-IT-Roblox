@@ -6,6 +6,31 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — grant pets after reveal; placed eggs leave inventory
+
+- Completed implementation: server locks hatch, sends egg-only HatchStarted with
+  a synchronized deadline, then waits 2.85s before moving the reserved pet into
+  Inventory. Shared HatchAnimationConfig supplies duration to client and server.
+  HatchOutcome and auto-carry remain after save success. No client completion
+  signal can grant a pet. Duplicate requests during reveal receive Busy.
+- Interrupted reveal preserves the saved egg: after waiting, server verifies
+  player/session/profile/egg still match before committing. No schema change.
+  Client hides original shell/effects during its local reveal and restores any
+  surviving original after cleanup; server prompt disabled during hatch.
+- Placed eggs excluded by InventoryModel; successful placement immediately removes
+  inventory entry/selection and reconciles hotbar. Server incubation data and
+  separate pen egg list remain intact for hatching and reconnect recovery.
+- Verified: Rojo build, diff check, live Studio InventoryModel assertions for
+  placed exclusion/stored retention/stale slot removal. Updated conveyor regression
+  to check reserved ownership during reveal, delay, and concurrent duplicate.
+  Updated hatch client test to use HatchStarted. Full Play tests remain unrun
+  following the previous client MCP timeout; no runtime timing success claimed.
+- Next Task: run conveyor/hatch integration suite, including leave/reconnect during
+  reveal. Overall Progress: implementation complete; Play validation pending.
+- Files: EggService, EggVisuals, HatchController, HatchAnimationConfig,
+  InventoryModel, InventoryController, conveyor/hatch verification and this handoff.
+- Session Handoff: previous commit e2d15aa; unrelated work preserved.
+
 ### Latest session — world-space hatch reveal, no popup
 
 - Current Feature / Completed implementation: replaced HatchController viewport
