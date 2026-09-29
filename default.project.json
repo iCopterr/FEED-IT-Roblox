@@ -30,9 +30,6 @@
       }
     },
     "StarterGui": {
-      "HatchUI": {
-        "$path": "src/ui/HatchUI.rbxmx"
-      },
       "TutorialUI": {
         "$path": "src/ui/TutorialUI.rbxmx"
       },

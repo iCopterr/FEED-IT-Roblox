@@ -141,7 +141,8 @@ function Service.HandleRequest(player,action,id,position)
 	end
 	local definition=PetConfig.Species[pet.SpeciesId]
 	local result={Ok=true,Code="Hatched",EggUid=id,EggId=egg.EggId,SpeciesId=pet.SpeciesId,PetId=pet.PetId,Rarity=pet.Rarity,
-		Variant=pet.Variant,PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant)}
+		Variant=pet.Variant,PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant),
+		HatchOrigin=if model then model:GetPivot() else root.CFrame*CFrame.new(0,0,-5)}
 	state.LastHatch=table.clone(result)
 	require(script.Parent.TutorialProgress).Record(profile,"Hatched",id,pet.PetId)
 	Visuals.Reconcile(player,profile)

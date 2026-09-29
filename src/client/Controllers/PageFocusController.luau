@@ -10,7 +10,6 @@ local pages={
 	FeedYourPetUI={"Inventory","FeedPanel"}, MerchantUI={"Panel"},
 	ReviveUI={"Panel"}, DebugUI={"Panel"}, IndexUI={"Panel"},
 	-- Egg and pen remote side panels intentionally leave the world view unchanged.
-	HatchUI={"Panel"},
 }
 local started=false
 

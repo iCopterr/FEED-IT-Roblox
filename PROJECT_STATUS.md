@@ -6,6 +6,26 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — world-space hatch reveal, no popup
+
+- Current Feature / Completed implementation: replaced HatchController viewport
+  popup with a local copy of the egg at the server-provided HatchOrigin. Floats
+  two studs for 0.8s, shakes with increasing intensity for 1.2s, then vanishes in
+  a white particle burst and fading point light. Cleanup after 2.85s; Debris
+  fallback at 5s. No camera takeover, full-screen flash or added shell parts.
+- Removed HatchUI from Rojo mapping and page-focus handling; original XML remains
+  on disk as an inactive asset. Incubation idle and saved-result event retained.
+  Result deduplication and eight simultaneous effect limit retained. Existing
+  server inventory grant/auto-carry timing is unchanged; reveal is cosmetic.
+- Verified: Rojo build and diff checks. Attempted Play launch, but client MCP
+  execution timed out; stop signal sent. No successful runtime/visual check claimed.
+- Overall Progress: implementation ready; Next Task: Play-check nearby/remote
+  hatch float/shake/light and cleanup. Updated hatch and page-focus verification
+  scripts for the new presentation; these tests have not run successfully yet.
+- Files: HatchController, EggService, PageFocusController, default.project.json,
+  HatchVerification.client, PageFocusVerification.client and this handoff.
+- Session Handoff: previous commit 291824c; unrelated reference work preserved.
+
 ### Latest session — incubating egg idle motion
 
 - Current Feature / Completed implementation: client-only gentle bob/rock for

@@ -1,82 +1,86 @@
-local Storage=game:GetService("ReplicatedStorage")
-local Run=game:GetService("RunService")
-local Preview=require(script.Parent.Parent.UI.ItemPreview)
-local Colors=require(Storage.Shared.Config.InventoryConfig).RarityColors
-local Controller={}
-local queue,seen={},{}
-local panel,working,cancelled
-
-local function animate(seconds,update)
-	local start=os.clock()
-	repeat
-		if cancelled or not panel.Parent then return false end
-		local a=math.clamp((os.clock()-start)/seconds,0,1);update(a)
-		if a==1 then return true end
-		Run.RenderStepped:Wait()
-	until false
-end
+local Storage = game:GetService("ReplicatedStorage")
+local Run = game:GetService("RunService")
+local Debris = game:GetService("Debris")
+local Eggs = require(Storage.Shared.Config.EggConfig)
+local Controller = {}
+local seen = {}
+local started, active = false, 0
 
 local function play(result)
-	cancelled=false
-	panel.Visible=true;panel.Title.Text="HATCHING...";panel.PetName.Text="";panel.Rarity.Text=""
-	panel.Flash.BackgroundTransparency=1
-	panel:SetAttribute("Stage","Egg")
-	Preview.Set(panel.Preview,{Kind="Egg",EggId=result.EggId})
-	local egg=panel.Preview.World:FindFirstChildOfClass("Model")
-	local pivot=egg and egg:GetPivot()
-	if not animate(1.25,function(a)
-		if egg then egg:PivotTo(pivot*CFrame.new(0,math.abs(math.sin(a*math.pi*6))*.25,0)*CFrame.Angles(0,0,math.sin(a*a*40)*a*.35)) end
-	end) then return end
-	panel.Flash.BackgroundTransparency=.15
-	Preview.Set(panel.Preview,nil)
-	Preview.Set(panel.Preview,{Kind="Pet",SpeciesId=result.SpeciesId})
-	panel:SetAttribute("Stage","Pet")
-	panel.Title.Text="YOU HATCHED!";panel.PetName.Text=result.PetName
-	panel.Rarity.Text=(if result.Variant~="Normal" then result.Variant.." • " else "")..result.Rarity
-	panel.Rarity.TextColor3=Colors[result.Rarity] or Color3.new(1,1,1)
-	local pet=panel.Preview.World:FindFirstChildOfClass("Model")
-	local bounds=pet and pet:GetBoundingBox()
-	local offset=pet and bounds:ToObjectSpace(pet:GetPivot())
-	animate(2.1,function(a)
-		panel.Flash.BackgroundTransparency=math.min(1,.15+a*7)
-		if pet then pet:PivotTo(bounds*CFrame.Angles(0,math.rad(65)*math.sin(a*math.pi),0)*offset) end
-	end)
+	local definition = Eggs.Definitions[result.EggId]
+	local templates = workspace:FindFirstChild("EggTemplates")
+	local template = templates and templates:FindFirstChild(definition and definition.TemplateName or result.EggId)
+	if not template then return end
+	local egg = template:Clone()
+	egg.Name = "HatchReveal_" .. result.EggUid
+	for _, item in egg:GetDescendants() do
+		if item:IsA("LuaSourceContainer") or item:IsA("LayerCollector") or item:IsA("ProximityPrompt") then item:Destroy()
+		elseif item:IsA("BasePart") then
+			item.Anchored = true; item.CanCollide = false; item.CanTouch = false; item.CanQuery = false
+		end
+	end
+	egg:PivotTo(result.HatchOrigin)
+	egg.Parent = workspace
+	Debris:AddItem(egg, 5)
+	local ok, failure = xpcall(function()
+		local shell = assert(egg.PrimaryPart or egg:FindFirstChildWhichIsA("BasePart", true))
+		local light = Instance.new("PointLight")
+		light.Color = Color3.new(1,1,1); light.Range = 16; light.Brightness = 0; light.Shadows = false; light.Parent = shell
+		local attachment = Instance.new("Attachment"); attachment.Parent = shell
+		local burst = Instance.new("ParticleEmitter")
+		burst.Texture = "rbxasset://textures/particles/flare_main.dds"
+		burst.Color = ColorSequence.new(Color3.new(1,1,1))
+		burst.LightEmission = 1; burst.Rate = 0; burst.Speed = NumberRange.new(1,3)
+		burst.SpreadAngle = Vector2.new(180,180); burst.Lifetime = NumberRange.new(.5,.8)
+		burst.Size = NumberSequence.new({NumberSequenceKeypoint.new(0,1),NumberSequenceKeypoint.new(.3,4),NumberSequenceKeypoint.new(1,6)})
+		burst.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0,.2),NumberSequenceKeypoint.new(.25,.35),NumberSequenceKeypoint.new(1,1)})
+		burst.Parent = attachment
+		local start = os.clock()
+		local revealed = false
+		egg:SetAttribute("Stage", "Float")
+		repeat
+			local t = os.clock() - start
+			local rise = math.clamp(t / .8,0,1)
+			local shake = math.clamp((t-.8)/1.2,0,1)
+			local position = result.HatchOrigin * CFrame.new(0,2*(1-(1-rise)^3),0)
+			egg:PivotTo(position * CFrame.Angles(math.sin(t*32)*shake*.06,0,math.sin(t*45)*shake*.18))
+			light.Brightness = shake * 3
+			if t >= .8 and not revealed then egg:SetAttribute("Stage", "Shake") end
+			if t >= 2 and not revealed then
+				revealed = true; egg:SetAttribute("Stage", "Light"); burst:Emit(12)
+				for _, item in egg:GetDescendants() do
+					if item:IsA("BasePart") then item.Transparency = 1 end
+					if item:IsA("ParticleEmitter") and item ~= burst then item.Enabled = false; item:Clear() end
+				end
+			end
+			if revealed then light.Brightness = 4 * math.clamp(1-(t-2)/.8,0,1) end
+			if t >= 2.85 then break end
+			Run.RenderStepped:Wait()
+		until not egg.Parent
+	end, debug.traceback)
+	egg:Destroy()
+	if not ok then warn("[HatchController]", failure) end
 end
 
 function Controller.Enqueue(result)
-	if not panel or type(result)~="table" or result.Code~="Hatched" or not result.Ok
-		or type(result.EggUid)~="string" or type(result.SpeciesId)~="string" or seen[result.EggUid] then return false end
-	seen[result.EggUid]=true
-	task.delay(120,function() seen[result.EggUid]=nil end)
-	-- Visual-only queue budget: pets are already granted even if presentation is skipped.
-	if #queue>=8 then return false end
-	table.insert(queue,table.clone(result))
-	if working then return true end
-	working=true
+	if type(result) ~= "table" or not result.Ok or result.Code ~= "Hatched"
+		or type(result.EggUid) ~= "string" or type(result.EggId) ~= "string"
+		or typeof(result.HatchOrigin) ~= "CFrame" or seen[result.EggUid] then return false end
+	seen[result.EggUid] = true
+	task.delay(120,function() seen[result.EggUid] = nil end)
+	if active >= 8 then return false end
+	active += 1
 	task.spawn(function()
-		while #queue>0 do
-			local ok,failure=xpcall(function() play(table.remove(queue,1)) end,debug.traceback)
-			Preview.Set(panel.Preview,nil);panel.Visible=false;panel:SetAttribute("Stage","Idle")
-			if not ok then warn("[HatchController]",failure) end
-			task.wait(.1)
-		end
-		working=false
+		local ok, failure = xpcall(function() play(result) end, debug.traceback)
+		active -= 1
+		if not ok then warn("[HatchController]", failure) end
 	end)
 	return true
 end
 
-function Controller.Skip() cancelled=true end
 function Controller.Start()
-	if panel then return end
-	local gui=game.Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("HatchUI",30)
-	if not gui then warn("[HatchController] Authored HatchUI missing");return end
-	panel=gui.Panel
-	panel.Skip.Activated:Connect(Controller.Skip)
-	local function resize()
-		local size=workspace.CurrentCamera.ViewportSize
-		panel.UIScale.Scale=math.min(1,(size.X-24)/520,(size.Y-40)/500)
-	end
-	resize();workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(resize)
+	if started then return end
+	started = true
 	Storage:WaitForChild("HatchOutcome").OnClientEvent:Connect(Controller.Enqueue)
 end
 return Controller
