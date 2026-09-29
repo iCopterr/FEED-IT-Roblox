@@ -9,7 +9,7 @@ for id,parts in expected do
   if item:IsA('ParticleEmitter')then
    emitters+=1;rate+=item.Rate
    assert(item.Parent:IsA('Attachment') and item.Enabled and item.LockedToPart)
-   assert(item.Lifetime.Max<=2.2 and item.Rate<=7)
+   assert(item.Lifetime.Max<=2.201 and item.Rate<=7)
    assert(#item.Size.Keypoints==4 and #item.Transparency.Keypoints==4)
    assert(item.Transparency.Keypoints[1].Value==1 and item.Transparency.Keypoints[4].Value==1)
    assert(item.Texture:find('rbxasset://textures/particles/',1,true))

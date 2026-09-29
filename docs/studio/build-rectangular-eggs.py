@@ -121,6 +121,10 @@ for x,y in ((-.85,2.8),(.95,1.1)):
 finish('ultimate_egg')
 
 def effect(shell,name,position,color,rate,texture='sparkles_main.dds',size=.32,speed=.7,life=1.6,spread=45,opacity=.15):
+    # The first Studio pass showed tiny premium sparkles disappearing at belt distance.
+    tier=model.find("Properties/string[@name='Name']").text
+    if texture=='sparkles_main.dds' and tier!='prototype_egg':
+        size*=1.5
     anchor=E.SubElement(shell,'Item',{'class':'Attachment'})
     ap=E.SubElement(anchor,'Properties');prop(ap,'string','Name',name+'Origin')
     cf=E.SubElement(ap,'CoordinateFrame',name='CFrame')

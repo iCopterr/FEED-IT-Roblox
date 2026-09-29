@@ -6,7 +6,7 @@
 
 **Last Updated:** 2026-09-29
 
-### Latest session — detailed themed egg particles (visual review pending)
+### Latest session — detailed themed egg particles (visually verified)
 
 - Implemented authored particle layers in all six rectangular egg templates:
   Basic pollen/fireflies; Advanced frost/embers/mist; Elite horn wisps/crest glow;
@@ -16,16 +16,21 @@
 - Budgets: 2/4/4/4/5/6 emitters, 5/14/16/18/22/31 particles/sec respectively;
   lifetime <=2.2 seconds. BaseParts unchanged at 12/14/15/19/24/18. Authored
   effects clone with the existing conveyor/held/incubating egg models. No FPS claim.
-- Verified offline: saved XML part/emitter/rate/lifetime/sequence assertions,
-  Rojo build and diff check. NOT visually or live-runtime verified yet.
-- Blocker: localhost:58741 refused connection; MCP at 58742 responds but Studio
-  plugin calls time out. Asked owner to reconnect to 58742 and reply ready.
-- Next: run docs/studio/review-rectangular-eggs.luau then verify-egg-particles.luau,
-  inspect emitting eggs close-up, adjust opacity/rates if shells are obscured.
-  Source generator and asset are saved; do not rebuild from the old recipe.
+- Verified: saved XML part/emitter/rate/lifetime/sequence assertions, Rojo build,
+  live Studio assertions and all six emitting models in entry/premium views.
+  Reconnected successfully on 58742. Enlarged non-Basic sparkles by 50% after
+  visual review; shells remain readable, rates and part counts unchanged.
+  Live lifetime assertion tolerates float32 rounding of 2.2 seconds.
+- Next / limitations: fresh Play hatch/conveyor/carry smoke test remains pending;
+  this session verified Edit-mode appearance, not runtime FPS or Play interaction.
+  Review clones remain in Workspace.RectangularEggReview. Source generator and
+  asset are saved; do not rebuild from the old recipe.
 - Files: build-rectangular-eggs.py, EggTemplates.rbxmx, offline/live egg particle
   verification scripts, particle-audit.json, asset README and this handoff.
-  Overall Progress: effects authored/offline verified; visual review outstanding.
+  Added entry/premium particle screenshots and particle-live-audit.json.
+  Overall Progress: effects authored, refined and visually verified. Session
+  Handoff: no remaining particle edits; Play integration check is separate.
+  Last Working Commit before this refinement: d5ad8bc. Unrelated work preserved.
 
 ### Latest session — six distinct rectangular egg models
 

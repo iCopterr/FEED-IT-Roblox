@@ -9,11 +9,13 @@ stay attached to moving shells. Supreme and Ultimate add soft shadowless lights.
 No BaseParts added. Rates per Basic through Ultimate: 5, 14, 16, 18, 22, 31/sec;
 2–6 emitters per egg, lifetime <=2.2 seconds. Built-in textures require no upload.
 
-Saved asset budget/sequence checks and Rojo build pass. Particle visual review is
-pending Studio reconnection to localhost:58742; existing screenshots below show
-the earlier geometry-only pass. Run review-rectangular-eggs.luau followed by
-verify-egg-particles.luau once connected. Do not claim particle appearance or
-runtime performance is verified from these offline checks.
+Saved asset budget/sequence checks, Rojo build and live Studio assertions pass.
+After reconnecting to localhost:58742, inspected all six emitting review models
+in entry/premium views. Increased non-Basic sparkle sizes by 50% for readability
+without increasing rates. Shell silhouettes remain clear. Evidence is saved in
+particles-entry.png, particles-premium.png and particle-live-audit.json.
+This verifies Edit-mode appearance; fresh Play interactions and FPS profiling
+were not performed.
 
 Six stepped, studded cuboid shells with original tier-specific decorations.
 Authored source: `src/world/EggTemplates.rbxmx`; rebuild recipe:
