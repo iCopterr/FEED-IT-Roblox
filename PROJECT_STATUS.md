@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — polished feed plates, MCP port 58741
+
+- Direct localhost:58741/mcp works; configured Roblox tool connection was stale.
+- Updated all six feed plates in Studio and saved PlayerPlots asset: navy layered
+  base, metallic gold rim/foot, pale feeding surface, eight small cyan glow accents.
+  12 BaseParts per plate. Preserved Dish transform/size, names, labels and feeding
+  scripts; no gameplay/economy change or runtime geometry generation.
+- Verified: six live plates each have 12 parts, Rojo build/diff checks pass;
+  close-up Studio screenshot inspected and saved in assets/world/feed-plate-20260929.
+  Removed only duplicate newly-added accent/foot parts caused by edit/Rojo sync.
+  Editor camera restored to previous CFrame and Fixed mode after review.
+- Files: src/world/PlayerPlots.rbxmx, docs/studio/polish-feed-plates.ps1, screenshot,
+  handoff. Next: normal placement/feed Play smoke test (not run this session).
+
 ### Latest session — feed animation polish
 
 - Added FeedCharge presentation helper: three orbiting gold spark attachments,
