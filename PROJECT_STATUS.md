@@ -6,6 +6,32 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — reference-inspired garden terrain, no water
+
+- Completed environment-only landscaping based on owner's reference: continuous
+  irregular boulder edge, grass shoulders/overlays, staggered tree groups, garden
+  shrub/flower pockets, stone approaches and short decorative border fences.
+  Reuses owner's Tree and Rock geometry with adapted sizes/colors. No water.
+- Only Workspace.MapEnvironment changed. Verified all 568 BaseParts outside it
+  retain exact CFrame, Size, Color, Material and Transparency, including source
+  Tree/Rock samples, plots, conveyor, merchant, revive station and SkyIsland.
+  Original island remains intact beneath new environment grass overlays. UI,
+  global lighting and gameplay unchanged. Future plot space kept clear of trees.
+- Environment now 874 BaseParts / 22 trees, anchored, noncolliding/nonquery,
+  zero scripts. Source tree remains 19 parts. Budget <=1000; device FPS and
+  triangle counts not measured. Grass overlays raised slightly to avoid original
+  island decal depth bias; no physics terrain or runtime generation added.
+- Verified full tree-part bounds outside plots, protected geometry, single root,
+  exported static asset, Rojo build and diff checks. Inspected overview/close/final
+  Studio screenshots; garden-final.png is final. Camera and selection restored.
+- Previous environment recoverable from Git (c485832) and live ServerStorage.
+  MapEnvironmentBeforeGarden_20260929. Historical build/owner replacement recipes
+  are prior passes; latest edit recipes are landscape-reference-pass and
+  refine-garden-ground, with verify-garden-pass / finish-garden-review helpers.
+- Files: MapEnvironment.rbxm; five garden authoring/review/verification recipes;
+  garden screenshots; handoff. Previous commit ebfb3c9. Next: owner visual review
+  and Play walkthrough/device profiling. No Play test run this environment session.
+
 ### Latest session — background music placeholder
 
 - Added authored SoundService.BackgroundMusic in Studio and default.project.json:
