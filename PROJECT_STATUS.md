@@ -6,6 +6,16 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — longer hatch pacing
+
+- Extended shared hatch duration from 2.85 to 4.2 seconds: 1s rise, charge/spin
+  until 3.2s, then 1s burst fade. Server grant deadline consumes the same config,
+  so pets remain reserved until the longer reveal ends. Cleanup fallback now
+  follows Duration + 2 instead of a hard-coded 5 seconds.
+- Files: HatchAnimationConfig, HatchController and handoff. Rojo build/diff check
+  verified; live visual timing remains unverified (previous MCP timeout).
+- Next: playtest pacing and delayed replication. No odds or economy changes.
+
 ### Latest session — hatch disappearance burst and original-shell flash fix
 
 - Fixed cleanup race: animation previously restored the original egg immediately

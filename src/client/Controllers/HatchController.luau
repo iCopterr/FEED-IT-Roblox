@@ -22,7 +22,7 @@ local function play(result)
 	end
 	egg:PivotTo(result.HatchOrigin)
 	egg.Parent = workspace
-	Debris:AddItem(egg, 5)
+	Debris:AddItem(egg, Timing.Duration + 2)
 	local hidden = {}
 	local disabled = {}
 	local originals = {}

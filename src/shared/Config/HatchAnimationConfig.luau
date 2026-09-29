@@ -1,7 +1,7 @@
 return table.freeze({
-	Duration = 2.85, -- Shared server grant deadline: presentation must not extend it.
-	RiseSeconds = .65,
-	BurstAt = 2,
+	Duration = 4.2, -- Shared server grant deadline: presentation must not extend it.
+	RiseSeconds = 1,
+	BurstAt = 3.2,
 	RiseHeight = 2.6,
 	SparkCount = 56,
 	AftershockDelay = .14,
