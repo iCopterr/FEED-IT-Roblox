@@ -3,7 +3,22 @@ local SoundService = game:GetService("SoundService")
 local Sounds = {}
 local allowed = {Hatching=true, HatchFinish=true, Click=true, Buy=true, Eating=true, Feeding=true, Failed=true, Complete=true}
 local active, lastClick = {}, -math.huge
+local preloaded = setmetatable({}, {__mode = "k"})
 local function silent() end
+
+function Sounds.Preload(name: string)
+	if not allowed[name] then return end
+	local template = SoundService:FindFirstChild(name)
+	if not template or not template:IsA("Sound") or not template.SoundId:match("%S") then return end
+	local id = template.SoundId
+	if preloaded[template] == id then return end
+	preloaded[template] = id
+	-- Never hold up the animation while the sound is downloading.
+	task.spawn(function()
+		local ok = pcall(function() game:GetService("ContentProvider"):PreloadAsync({template}) end)
+		if not ok and preloaded[template] == id then preloaded[template] = nil end
+	end)
+end
 
 function Sounds.Play(name: string, maxSeconds: number?): () -> ()
 	if not allowed[name] then return silent end

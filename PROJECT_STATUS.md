@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — hatch finish sound at pop
+
+- Moved HatchFinish from HatchCollect reward confirmation to HatchController's
+  one-shot BurstAt block, immediately alongside shell disappearance/particle pop.
+  Existing reveal flag and EggUid deduplication prevent repeats; reward arrival
+  no longer plays it. Hatching loop stops at that same transition.
+- Added nonblocking, ID-aware audio preloading when hatching starts to reduce
+  first-play asset download lag. Blank IDs remain silent. No SoundId edits,
+  animation length changes or reward/persistence changes.
+- Files: HatchController, HatchCollect, Audio/GameSounds, sound test, handoff.
+  Three modified Luau modules compile in Studio; pop-block ordering/no reward
+  replay checked; playback/cleanup and preload mock tests, Rojo build and diff
+  check pass. Actual audible timing still needs Play check with permitted audio.
+  Previous commit c9114a0. Next: owner verifies pop timing; Sakura task paused.
+
 ### Latest session — preserve owner's Studio UI edits
 
 - Captured all nine edit-mode StarterGui ScreenGuis through MCP 58741 BEFORE

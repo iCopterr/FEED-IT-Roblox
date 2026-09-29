@@ -2,7 +2,6 @@ local Players=game:GetService("Players")
 local Run=game:GetService("RunService")
 local Debris=game:GetService("Debris")
 local Timing=require(game.ReplicatedStorage.Shared.Config.HatchAnimationConfig)
-local Sounds=require(script.Parent.Parent.Audio.GameSounds)
 local Collect={}
 local seen={}
 local active=0
@@ -12,7 +11,6 @@ function Collect.Play(result)
 		or type(result.EggUid)~="string" or typeof(result.HatchOrigin)~="CFrame"
 		or type(result.CollectEndsAt)~="number" or seen[result.EggUid] then return end
 	seen[result.EggUid]=true;task.delay(120,function() seen[result.EggUid]=nil end)
-	Sounds.Play("HatchFinish")
 	if active>=8 then return end
 	local character=Players.LocalPlayer.Character
 	local root=character and character:FindFirstChild("HumanoidRootPart")

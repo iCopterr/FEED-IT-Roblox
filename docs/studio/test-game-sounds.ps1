@@ -2,7 +2,7 @@ param([int]$Port=58741)
 $source=[IO.File]::ReadAllText((Resolve-Path 'src/client/Audio/GameSounds.luau'))
 $prefix=@'
 local callbacks,clones={},{}
-local now=0
+local now,loads=0,0
 local function signal()
  local handlers={}
  return {Connect=function(_,fn)
@@ -23,15 +23,22 @@ end
 local templates={}
 for _,name in {'Hatching','HatchFinish','Click','Buy','Eating','Feeding','Failed','Complete'} do templates[name]=sound('') end
 local service={FindFirstChild=function(_,name) return templates[name] end}
-local fakeGame={GetService=function(_,name) assert(name=='SoundService');return service end}
+local fakeGame={GetService=function(_,name)
+ if name=='ContentProvider' then return {PreloadAsync=function(_,assets) assert(#assets==1);loads+=1 end} end
+ assert(name=='SoundService');return service
+end}
 local fakeTask={delay=function(seconds,fn) assert(seconds>=.05 and seconds<=30);table.insert(callbacks,fn) end}
+fakeTask.spawn=function(fn) fn() end
 local fakeOs={clock=function() return now end}
 local audio=(function(game,task,os)
 '@
 $suffix=@'
 end)(fakeGame,fakeTask,fakeOs)
 audio.Play('Buy')();audio.Play('Unknown')();assert(#clones==0,'Empty IDs must not clone/play')
+audio.Preload('HatchFinish');assert(loads==0)
 for _,s in templates do s.SoundId='test-only-mock' end
+audio.Preload('HatchFinish');audio.Preload('HatchFinish');assert(loads==1,'Preload deduplicated')
+templates.HatchFinish.SoundId='changed-mock';audio.Preload('HatchFinish');assert(loads==2,'Changed asset preloaded')
 local stop=audio.Play('Feeding',3);assert(#clones==1 and clones[1].Looped and clones[1].plays==1)
 stop();stop();assert(clones[1].dead and clones[1].stops==1,'Stop must be idempotent')
 local a,b,c=audio.Play('Hatching'),audio.Play('Hatching'),audio.Play('Hatching')
@@ -46,7 +53,7 @@ end
 audio.Play('Feeding');local s=clones[#clones];s:Destroy()
 for _,callback in callbacks do callback() end
 for _,s in clones do assert(s.dead,'Timeout must remove sound') end
-return 'PASS: blank IDs, allowlist, playback, phase loops, idempotent stop, overlap cap, click throttle, Ended/external destruction and timeout cleanup'
+return 'PASS: blank IDs, preload deduplication/ID changes, playback, phase loops, idempotent stop, overlap cap, click throttle, Ended/external destruction and timeout cleanup'
 '@
 $code=$prefix+"`n"+$source+"`n"+$suffix
 $body=@{jsonrpc='2.0';id=979;method='tools/call';params=@{name='execute_luau';arguments=@{code=$code;target='edit'}}}|ConvertTo-Json -Depth 8

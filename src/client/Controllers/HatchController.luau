@@ -117,6 +117,7 @@ local function play(result)
 			if t >= Timing.RiseSeconds and not revealed then egg:SetAttribute("Stage", "Shake") end
 			if t >= Timing.BurstAt and not revealed then
 				stopHatching()
+				Sounds.Play("HatchFinish")
 				revealed = true; egg:SetAttribute("Stage", "Light");burst:Emit(12);sparks:Emit(Timing.SparkCount);shock:Emit(2)
 				glow.Enabled=false
 				for _, item in egg:GetDescendants() do
@@ -159,6 +160,7 @@ function Controller.Enqueue(result)
 	seen[result.EggUid] = true
 	task.delay(120,function() seen[result.EggUid] = nil end)
 	if active >= 8 then return false end
+	Sounds.Preload("HatchFinish")
 	active += 1
 	task.spawn(function()
 		local ok, failure = xpcall(function() play(result) end, debug.traceback)
