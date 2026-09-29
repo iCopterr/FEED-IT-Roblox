@@ -9,6 +9,7 @@
       "HatchFinish": { "$className": "Sound", "$properties": { "Volume": 0.5 } },
       "Click": { "$className": "Sound", "$properties": { "Volume": 0.25 } },
       "Buy": { "$className": "Sound", "$properties": { "Volume": 0.4 } },
+      "BuyFail": { "$className": "Sound", "$properties": { "Volume": 0.4 } },
       "Eating": { "$className": "Sound", "$properties": { "Volume": 0.4 } },
       "Feeding": { "$className": "Sound", "$properties": { "Looped": true, "Volume": 0.35 } },
       "Failed": { "$className": "Sound", "$properties": { "Volume": 0.5 } },

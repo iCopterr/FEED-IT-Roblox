@@ -1,7 +1,7 @@
 -- Local-only playback from owner-editable SoundService templates.
 local SoundService = game:GetService("SoundService")
 local Sounds = {}
-local allowed = {Hatching=true, HatchFinish=true, Click=true, Buy=true, Eating=true, Feeding=true, Failed=true, Complete=true}
+local allowed = {Hatching=true, HatchFinish=true, Click=true, Buy=true, BuyFail=true, Eating=true, Feeding=true, Failed=true, Complete=true}
 local active, lastClick = {}, -math.huge
 local preloaded = setmetatable({}, {__mode = "k"})
 local function silent() end
@@ -55,6 +55,18 @@ function Sounds.Play(name: string, maxSeconds: number?): () -> ()
 	task.delay(math.clamp(maxSeconds or 10, .05, 30), stop)
 	sound:Play()
 	return stop
+end
+
+local pendingPurchase = {Busy=true, Cooldown=true, Loading=true, Saving=true}
+
+function Sounds.PurchaseResult(result)
+	if type(result) ~= "table" then return end
+	if result.Ok == true then
+		Sounds.Play("Buy")
+	elseif result.Ok == false and not pendingPurchase[result.Code] then
+		-- Quiet during queue retries; only confirmed rejections get failure feedback.
+		Sounds.Play("BuyFail")
+	end
 end
 
 return table.freeze(Sounds)

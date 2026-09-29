@@ -1,6 +1,6 @@
 assert(not game:GetService('RunService'):IsRunning())
 local service=game:GetService('SoundService')
-local settings={Hatching={.35,true},HatchFinish={.5,false},Click={.25,false},Buy={.4,false},Eating={.4,false},Feeding={.35,true},Failed={.5,false},Complete={.5,false}}
+local settings={Hatching={.35,true},HatchFinish={.5,false},Click={.25,false},Buy={.4,false},BuyFail={.4,false},Eating={.4,false},Feeding={.35,true},Failed={.5,false},Complete={.5,false}}
 local report={}
 for name,setting in settings do
  local sound=service:FindFirstChild(name)

@@ -4,6 +4,7 @@ local Prompts=game:GetService("ProximityPromptService")
 local NumberFormat=require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("NumberFormat"))
 local Shop=require(ReplicatedStorage.Shared.Config.MerchantConfig)
 local Controller={}
+local Sounds=require(script.Parent.Parent.Audio.GameSounds)
 local Images=require(script.Parent.Parent.UI.IconImages)
 local Art=require(script.Parent.Parent.UI.ImageArt)
 local foodOrder={}
@@ -93,10 +94,10 @@ function Controller.Start()
 			busy=true
 			local ok,result=pcall(function() return remote:InvokeServer("Purchase",item.Slot,current.RestockId,current.NextSequence) end)
 			busy=false
+			if ok then Sounds.PurchaseResult(result) end
 			if not ok then
 				table.clear(pending);panel.Status.Text="Connection interrupted. Check your inventory.";refresh();break
 			elseif result.Ok then
-				require(script.Parent.Parent.Audio.GameSounds).Play("Buy")
 				if pending[1]==request then table.remove(pending,1) end
 				current.NextSequence=result.NextSequence;current.Money=result.Money
 				item.Remaining=result.Remaining;item.Purchased=result.Remaining<=0
@@ -121,6 +122,7 @@ function Controller.Start()
 		if prompt.Name=="OpenMysteryMerchant" and prompt:IsDescendantOf(workspace:WaitForChild("MysteryMerchant")) then show() end
 	end)
 	for i=1,3 do
+		panel.Offers["Slot"..i]:SetAttribute("SuppressClickSound",true)
 		panel.Offers["Slot"..i].Activated:Connect(function()
 			local current=state;local item=displayed[i]
 			if not current or not item or item.Purchased or not panel.Visible or #pending>=20 then return end

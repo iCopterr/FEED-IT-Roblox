@@ -11,7 +11,9 @@ function Controller.Start()
 		if not button:IsA("GuiButton") or bound[button] then return end
 		bound[button] = true
 		button.Activated:Connect(function()
-			Sounds.Play("Click", 2)
+			if button:GetAttribute("SuppressClickSound") ~= true then
+				Sounds.Play("Click", 2)
+			end
 		end)
 	end
 	gui.DescendantAdded:Connect(bind)

@@ -21,7 +21,7 @@ local function sound(id)
  return s
 end
 local templates={}
-for _,name in {'Hatching','HatchFinish','Click','Buy','Eating','Feeding','Failed','Complete'} do templates[name]=sound('') end
+for _,name in {'Hatching','HatchFinish','Click','Buy','BuyFail','Eating','Feeding','Failed','Complete'} do templates[name]=sound('') end
 local service={FindFirstChild=function(_,name) return templates[name] end}
 local fakeGame={GetService=function(_,name)
  if name=='ContentProvider' then return {PreloadAsync=function(_,assets) assert(#assets==1);loads+=1 end} end
@@ -47,13 +47,20 @@ a();audio.Play('Hatching')();assert(#clones==n+1,'Released slot can play')
 b();c()
 audio.Play('Click');local before=#clones;audio.Play('Click');assert(#clones==before,'Click throttle')
 now=.1;audio.Play('Click');assert(#clones==before+1)
-for _,name in {'HatchFinish','Buy','Eating','Failed','Complete'} do
+for _,name in {'HatchFinish','Buy','BuyFail','Eating','Failed','Complete'} do
  audio.Play(name);local s=clones[#clones];assert(not s.Looped);s.Ended.Fire();assert(s.dead)
 end
+local beforeResult=#clones
+audio.PurchaseResult({Ok=false,Code='Busy'});audio.PurchaseResult({Ok=false,Code='Cooldown'})
+audio.PurchaseResult({Ok=false,Code='Loading'});audio.PurchaseResult({Ok=false,Code='Saving'})
+audio.PurchaseResult(nil);assert(#clones==beforeResult,'Transient/unknown results stay silent')
+audio.PurchaseResult({Ok=false,Code='NotEnoughMoney'});assert(clones[#clones].Name=='Playing_BuyFail');clones[#clones].Ended.Fire()
+audio.PurchaseResult({Ok=false,Code='Sold'});assert(clones[#clones].Name=='Playing_BuyFail');clones[#clones].Ended.Fire()
+audio.PurchaseResult({Ok=true});assert(clones[#clones].Name=='Playing_Buy');clones[#clones].Ended.Fire()
 audio.Play('Feeding');local s=clones[#clones];s:Destroy()
 for _,callback in callbacks do callback() end
 for _,s in clones do assert(s.dead,'Timeout must remove sound') end
-return 'PASS: blank IDs, preload deduplication/ID changes, playback, phase loops, idempotent stop, overlap cap, click throttle, Ended/external destruction and timeout cleanup'
+return 'PASS: purchase success/failure/transient routing, blank IDs, preload, playback/loops, caps, click throttle and cleanup'
 '@
 $code=$prefix+"`n"+$source+"`n"+$suffix
 $body=@{jsonrpc='2.0';id=979;method='tools/call';params=@{name='execute_luau';arguments=@{code=$code;target='edit'}}}|ConvertTo-Json -Depth 8

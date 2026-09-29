@@ -6,6 +6,24 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — buy failure audio / no purchase click sound
+
+- Added owner-editable SoundService.BuyFail (blank ID, volume 0.4, nonlooping),
+  preserving all existing audio IDs. Shared PurchaseResult plays Buy on confirmed
+  success and BuyFail on confirmed rejection (including NotEnoughMoney/Sold).
+  Busy/Cooldown/Loading/Saving and ambiguous network errors stay silent.
+- Wired merchant queue, conveyor purchases and plot-upgrade responses. Merchant
+  purchase cards and plot Buy buttons carry SuppressClickSound; generic button
+  audio reads it at activation, so buy presses do not also play Click. Other
+  buttons unchanged; disabled controls still issue no purchase request or sound.
+- Verified live BuyFail placeholder in Studio 58741, five modules compile;
+  actual-source mock tests cover success/failure/transient routing, normal vs
+  purchase clicks, dynamic/late tagging, binding dedupe and audio cleanup.
+  Rojo build and diff checks pass. Audible verification awaits BuyFail asset ID.
+- Files: project mapping, GameSounds, SoundController, Merchant/Conveyor/
+  PlotUpgrade controllers, sound setup/test recipes, handoff. Previous commit
+  0dbac6e. Next: assign BuyFail.SoundId and Play-test success/insufficient money.
+
 ### Latest session — hatch finish sound at pop
 
 - Moved HatchFinish from HatchCollect reward confirmation to HatchController's

@@ -23,7 +23,7 @@ function Controller.Start()
 		busy=true
 		local ok,result=pcall(function() return remote:InvokeServer(model:GetAttribute("OfferId")) end)
 		busy=false
-		if ok and result.Ok then Sounds.Play("Buy") end
+		if ok then Sounds.PurchaseResult(result) end
 		messageToken+=1;local token=messageToken
 		gui.Message.Text=if ok and result.Ok then "Egg bought! It is in your inventory."
 			else if ok then messages[result.Code] or "Purchase rejected. No egg bought."

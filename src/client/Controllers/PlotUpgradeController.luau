@@ -2,6 +2,7 @@ local Players=game:GetService("Players")
 local Config=require(game.ReplicatedStorage.Shared.Config.PlotUpgradeConfig)
 local View=require(script.Parent.Parent.UI.PlotUpgradeSignView)
 local Controller={}
+local Sounds=require(script.Parent.Parent.Audio.GameSounds)
 function Controller.Start()
 	local player=Players.LocalPlayer
 	local playerGui=player:WaitForChild("PlayerGui")
@@ -22,6 +23,7 @@ function Controller.Start()
 		local gui=template:Clone()
 		gui.Name="PlotUpgrade_"..sign.Name
 		gui.Adornee=board;gui.Enabled=true;gui.ResetOnSpawn=false
+		gui.Buy:SetAttribute("SuppressClickSound",true)
 		gui.Parent=playerGui
 		template.Enabled=false
 		local binding={Gui=gui,Template=template}
@@ -46,7 +48,7 @@ function Controller.Start()
 			local expected=binding.Level
 			binding.Busy=true;render()
 			local ok,result=pcall(function() return remote:InvokeServer(sign.Name,expected) end)
-			if ok and result.Ok then require(script.Parent.Parent.Audio.GameSounds).Play("Buy") end
+			if ok then Sounds.PurchaseResult(result) end
 			binding.Busy=false
 			if not gui.Parent then return end
 			binding.Message=if ok and result.Ok then "UPGRADED! "..View.Number(result.Level).." active pet slots"
