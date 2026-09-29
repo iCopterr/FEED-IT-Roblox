@@ -96,6 +96,7 @@ function Controller.Start()
 			if not ok then
 				table.clear(pending);panel.Status.Text="Connection interrupted. Check your inventory.";refresh();break
 			elseif result.Ok then
+				require(script.Parent.Parent.Audio.GameSounds).Play("Buy")
 				if pending[1]==request then table.remove(pending,1) end
 				current.NextSequence=result.NextSequence;current.Money=result.Money
 				item.Remaining=result.Remaining;item.Purchased=result.Remaining<=0

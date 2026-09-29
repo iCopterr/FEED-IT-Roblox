@@ -7,6 +7,7 @@ local numberText = require(game.ReplicatedStorage.Shared.NumberFormat).Compact
 local PetModels = require(game.ReplicatedStorage.Shared.PetModels)
 local VFX = require(script.Parent.VFXController)
 local FeedCharge = require(script.Parent.Parent.UI.FeedCharge)
+local Sounds = require(script.Parent.Parent.Audio.GameSounds)
 local seen = {}
 local bannerToken = 0
 
@@ -54,6 +55,8 @@ function FeedEffects.Play(result, gui)
 	if result.StartedAt and workspace:GetServerTimeNow()-result.StartedAt > 8 then return end
 	task.spawn(function()
 		local model
+		local own = result.OwnerUserId == game.Players.LocalPlayer.UserId
+		local stopEating, stopFeeding = function() end, function() end
 		local ok, failure = xpcall(function()
 			local template = PetModels.GetTemplate(result.SpeciesId)
 			if not template then banner(gui,result); return end
@@ -78,11 +81,14 @@ function FeedEffects.Play(result, gui)
 			local charge=FeedCharge.Create(model)
 			local origin = result.Origin
 			local raised = origin + Vector3.new(0,P.FloatHeight,0)
+			if own then stopEating = Sounds.Play("Eating", P.FloatSeconds + .1) end
 			animate(P.FloatSeconds,function(a)
 				local eased=1-(1-a)^3
 				model:PivotTo(origin:Lerp(raised,eased)+Vector3.new(0,math.sin(a*math.pi)*.25,0))
 				charge.Update(a*.15,model:GetPivot().Position)
 			end)
+			stopEating()
+			if own then stopFeeding = Sounds.Play("Feeding", P.SpinSeconds + .5) end
 			animate(P.SpinSeconds,function(a)
 				local degrees = P.SpinSeconds*(P.SpinStartDegreesPerSecond*a
 					+(P.SpinEndDegreesPerSecond-P.SpinStartDegreesPerSecond)*a^(P.SpinAccelerationExponent+1)/(P.SpinAccelerationExponent+1))
@@ -92,6 +98,8 @@ function FeedEffects.Play(result, gui)
 				charge.Update(.15+.85*a,model:GetPivot().Position)
 			end)
 			charge.Finish()
+			stopFeeding()
+			if own then Sounds.Play(if result.Code == "Explosion" then "Failed" else "Complete") end
 			banner(gui,result)
 			VFX.Burst(raised.Position,result.Code)
 			if result.Code == "Explosion" then
@@ -124,6 +132,7 @@ function FeedEffects.Play(result, gui)
 				end)
 			end
 		end,debug.traceback)
+		stopEating(); stopFeeding()
 		if model then model:Destroy() end
 		if not ok then warn("[FeedEffects]",failure); banner(gui,result) end
 	end)

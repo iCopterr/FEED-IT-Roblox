@@ -2,6 +2,7 @@ local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
 local Config=require(game.ReplicatedStorage.Shared.Config.ConveyorConfig)
 local Controller={}
+local Sounds=require(script.Parent.Parent.Audio.GameSounds)
 function Controller.Start()
 	local player=Players.LocalPlayer
 	local playerGui=player:WaitForChild("PlayerGui")
@@ -22,6 +23,7 @@ function Controller.Start()
 		busy=true
 		local ok,result=pcall(function() return remote:InvokeServer(model:GetAttribute("OfferId")) end)
 		busy=false
+		if ok and result.Ok then Sounds.Play("Buy") end
 		messageToken+=1;local token=messageToken
 		gui.Message.Text=if ok and result.Ok then "Egg bought! It is in your inventory."
 			else if ok then messages[result.Code] or "Purchase rejected. No egg bought."

@@ -6,6 +6,33 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — gameplay sound placeholders and event hooks
+
+- Added eight authored SoundService Sounds: Hatching, HatchFinish, Click, Buy,
+  Eating, Feeding, Failed, Complete. Blank SoundIds deliberately unmanaged by
+  Rojo for owner editing; existing BackgroundMusic/its ID untouched. Hatching
+  and Feeding loop; volumes 0.25-0.5. Save Studio after assigning IDs; add IDs
+  to source mapping later for reproducible fresh builds.
+- Hooked hatch charge/burst cleanup and confirmed hatch reward, all PlayerGui
+  GuiButton activations (including dynamically created buttons), successful egg/
+  merchant/plot-upgrade purchases, eating during feed lift, feeding during spin,
+  then Failed for explosion / Complete for survival. Feed audio only plays for
+  the owner, even though feed visuals are broadcast. No economy/server changes.
+- GameSounds clones local playback instances under SoundService with overlap
+  cap, click throttle, blank-ID no-op, Ended cleanup, idempotent stop and bounded
+  timeout fallback. Existing feed/hatch deduplication prevents outcome replays.
+- Studio moved from 58742 to 58741. Eight Sounds created and inspected; Rojo
+  SoundController/Audio folder present live. All 9 changed client scripts compile
+  in Studio. Actual GameSounds source passed mocked playback/cleanup/cap tests;
+  Rojo build and diff check passed. Audible timing remains unverified until real
+  permitted sound IDs are supplied; no full Play session run.
+- Files: default.project.json, client init, Audio/GameSounds, SoundController,
+  HatchController/HatchCollect, FeedEffects, Conveyor/Merchant/PlotUpgrade
+  controllers, docs/studio/setup-game-sounds and test-game-sounds, MCP helper
+  now accepts optional Port, handoff. Previous commit 7701e1c.
+- Next: owner fills SoundId values and Play-tests sound timing/volume. Sakura
+  flower replacement remains paused; imported script metadata not executed.
+
 ### Latest session — centered egg labels
 
 - Owner confirmed text was off-center. Added shared EggLabelAnchor.Bind: an

@@ -46,6 +46,7 @@ function Controller.Start()
 			local expected=binding.Level
 			binding.Busy=true;render()
 			local ok,result=pcall(function() return remote:InvokeServer(sign.Name,expected) end)
+			if ok and result.Ok then require(script.Parent.Parent.Audio.GameSounds).Play("Buy") end
 			binding.Busy=false
 			if not gui.Parent then return end
 			binding.Message=if ok and result.Ok then "UPGRADED! "..View.Number(result.Level).." active pet slots"

@@ -3,6 +3,7 @@ local Run = game:GetService("RunService")
 local Debris = game:GetService("Debris")
 local Eggs = require(Storage.Shared.Config.EggConfig)
 local Timing = require(Storage.Shared.Config.HatchAnimationConfig)
+local Sounds = require(script.Parent.Parent.Audio.GameSounds)
 local Controller = {}
 local seen = {}
 local started, active = false, 0
@@ -41,6 +42,7 @@ local function play(result)
 			end end
 		end
 	end
+	local stopHatching = Sounds.Play("Hatching", Timing.Duration + 1)
 	local ok, failure = xpcall(function()
 		local shell = assert(egg.PrimaryPart or egg:FindFirstChildWhichIsA("BasePart", true))
 		local baseScale=egg:GetScale()
@@ -114,6 +116,7 @@ local function play(result)
 			end
 			if t >= Timing.RiseSeconds and not revealed then egg:SetAttribute("Stage", "Shake") end
 			if t >= Timing.BurstAt and not revealed then
+				stopHatching()
 				revealed = true; egg:SetAttribute("Stage", "Light");burst:Emit(12);sparks:Emit(Timing.SparkCount);shock:Emit(2)
 				glow.Enabled=false
 				for _, item in egg:GetDescendants() do
@@ -129,6 +132,7 @@ local function play(result)
 			Run.RenderStepped:Wait()
 		until not egg.Parent
 	end, debug.traceback)
+	stopHatching()
 	egg:Destroy()
 	-- The reveal deadline and server removal replication can arrive on different
 	-- frames. Do not flash the original shell back while its hatch is committing.

@@ -1,9 +1,9 @@
-param([string]$Recipe, [string]$Export, [string]$Screenshot)
+param([string]$Recipe, [string]$Export, [string]$Screenshot, [int]$Port=58742)
 $ErrorActionPreference = 'Stop'
 if ($Screenshot) { $name='capture_screenshot'; $arguments=@{} }
 else { $name='execute_luau'; $arguments=@{code=[IO.File]::ReadAllText((Resolve-Path $Recipe));target='edit'} }
 $body=@{jsonrpc='2.0';id=801;method='tools/call';params=@{name=$name;arguments=$arguments}}|ConvertTo-Json -Depth 8
-$response=(Invoke-WebRequest -UseBasicParsing 'http://localhost:58742/mcp' -Method Post -ContentType 'application/json' -Headers @{Accept='application/json, text/event-stream'} -Body $body -TimeoutSec 45).Content
+$response=(Invoke-WebRequest -UseBasicParsing "http://localhost:$Port/mcp" -Method Post -ContentType 'application/json' -Headers @{Accept='application/json, text/event-stream'} -Body $body -TimeoutSec 45).Content
 $line=$response -split "`n"|Where-Object {$_.StartsWith('data: ')}|Select-Object -First 1
 $result=($line.Substring(6)|ConvertFrom-Json).result
 if ($Screenshot) {
