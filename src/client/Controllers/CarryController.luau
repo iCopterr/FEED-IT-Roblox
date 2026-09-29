@@ -3,6 +3,7 @@ local Input = game:GetService("UserInputService")
 local CarryController = {}
 
 function CarryController.Start()
+	require(script.Parent.Parent.UI.CarryPose).Start()
 	local player = Players.LocalPlayer
 	local remote = game.ReplicatedStorage:WaitForChild("PrototypeUI"):WaitForChild("Request")
 	local eggRemote = game.ReplicatedStorage:WaitForChild("PrototypeEgg")

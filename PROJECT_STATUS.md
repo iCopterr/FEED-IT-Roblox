@@ -6,6 +6,23 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — overhead eggs and raised carrying arms
+
+- Implemented: eggs now attach to Head, with bounds-aware EggHeadClearance like
+  pets. Egg/pet held scales and massless/non-colliding physics unchanged.
+- Added client CarryPose for both R6/R15 shoulder naming conventions. Runs after
+  animation evaluation for all replicated carriers, raising shoulders 165 degrees
+  while either carry attribute is set. Restores on unequip, death or character
+  replacement; leaves lower-body animation and movement settings untouched.
+  Waits for both shoulders before applying to partially streamed characters.
+- Files: CarryService, CarryConfig, CarryController, UI/CarryPose and
+  docs/studio/verify-carry-pose.luau. No inventory/persistence/transaction changes.
+- Verified: Rojo build and diff check. Studio MCP plugin connection timed out;
+  rig regression recipe (26 assertions) is written but NOT run. Visual pose,
+  overhead egg clearance and multiplayer/respawn Play tests remain pending.
+- Next: reconnect MCP and run recipe, inspect actual R6/R15 carry poses and normal
+  arm restoration after place/unequip. Implementation committed, not visually verified.
+
 ### Latest session — grant pets after reveal; placed eggs leave inventory
 
 - Completed implementation: server locks hatch, sends egg-only HatchStarted with

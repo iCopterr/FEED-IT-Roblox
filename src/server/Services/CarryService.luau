@@ -50,9 +50,7 @@ local function equip(player, id, isEgg)
 	if not pet then return false, "NotOwned" end
 	if isEgg and egg.PenPosition then return false, "AlreadyPlaced" end
 	local character, root = living(player)
-	local attachment = if isEgg
-		then character and (character:FindFirstChild("RightHand") or character:FindFirstChild("Right Arm"))
-		else character and character:FindFirstChild("Head")
+	local attachment = character and character:FindFirstChild("Head")
 	if not attachment or not attachment:IsA("BasePart") then return false, "CharacterUnavailable" end
 	if carried[player] and carried[player].Id == id and carried[player].Egg == isEgg and carried[player].Model.Parent == character then return true end
 	if pet.Placed then
@@ -78,9 +76,8 @@ local function equip(player, id, isEgg)
 		if not isEgg then heldScale *= PetModels.GetScale(pet.SpeciesId,pet.FeedLevel) end
 		model:ScaleTo(heldScale)
 		local bounds, size = model:GetBoundingBox()
-		local targetBounds = if isEgg
-			then attachment.CFrame * Config.HandOffset
-			else attachment.CFrame * CFrame.new(0, attachment.Size.Y / 2 + Config.PetHeadClearance + size.Y / 2, 0)
+		local clearance = if isEgg then Config.EggHeadClearance else Config.PetHeadClearance
+		local targetBounds = attachment.CFrame * CFrame.new(0, attachment.Size.Y / 2 + clearance + size.Y / 2, 0)
 		model:PivotTo(targetBounds * bounds:ToObjectSpace(model:GetPivot()))
 		if not isEgg then
 			local petHumanoid = model:FindFirstChildOfClass("Humanoid")
