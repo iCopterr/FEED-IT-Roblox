@@ -164,9 +164,17 @@ function Service.HandleRequest(player,action,id,position)
 	Visuals.Reconcile(player,profile)
 	save(player,profile,function()
 		-- Reveal deadline passed; disclose the result only after persistence.
+		result.CollectEndsAt=workspace:GetServerTimeNow()+HatchAnimation.CollectSeconds
 		if hatchOutcome then hatchOutcome:FireClient(player,result) end
-		-- Inventory is authoritative even if the character is absent or hands are busy.
-		if not Carry.GetPetId(player) and not Carry.GetEggId(player) then Carry.Equip(player,pet.PetId) end
+		-- Ownership is already safely saved; only automatic carrying waits for the
+		-- reward trail. No client acknowledgement can grant or duplicate the pet.
+		local character=player.Character
+		task.delay(HatchAnimation.CollectSeconds,function()
+			if player.Parent~=Players or player.Character~=character or Data.GetData(player)~=profile
+				or profile.Inventory[pet.PetId]~=pet or pet.Placed then return end
+			if require(script.Parent.PedestalService).GetPetId(player)==pet.PetId then return end
+			if not Carry.GetPetId(player) and not Carry.GetEggId(player) then Carry.Equip(player,pet.PetId) end
+		end)
 	end)
 	return result
 end

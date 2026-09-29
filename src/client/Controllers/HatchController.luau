@@ -168,5 +168,6 @@ function Controller.Start()
 	if started then return end
 	started = true
 	Storage:WaitForChild("HatchStarted").OnClientEvent:Connect(Controller.Enqueue)
+	Storage:WaitForChild("HatchOutcome").OnClientEvent:Connect(require(script.Parent.Parent.UI.HatchCollect).Play)
 end
 return Controller

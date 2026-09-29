@@ -7,4 +7,5 @@ return table.freeze({
 	AftershockDelay = .14,
 	OriginalRestoreTimeout = 30,
 	MaxLightRange = 18,
+	CollectSeconds = .8,
 })

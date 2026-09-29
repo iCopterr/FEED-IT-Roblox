@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — hatch reward flies into player
+
+- Added client-only gold reward orb/trail from hatch origin to moving player's
+  chest over 0.8s, with arrival spark burst. Triggered only by confirmed post-save
+  HatchOutcome; deduplicated, limited to eight effects and cleaned with Debris.
+- Server adds synchronized CollectEndsAt and delays automatic carry until arrival.
+  Inventory grant remains authoritative and persisted BEFORE this cosmetic phase.
+  Delay checks profile, character, ownership, placement and pedestal state; never
+  replaces another held item. No client acknowledgement or reward remote added.
+- Files: EggService, HatchController, HatchAnimationConfig, UI/HatchCollect, handoff.
+  Rojo build/diff checks pass. MCP validation requested; live visual/Play verification
+  remains pending following connection timeouts. Next: verify moving-player arrival,
+  respawn/leave during transfer and normal auto-carry with connected Studio.
+
 ### Latest session — longer hatch pacing
 
 - Extended shared hatch duration from 2.85 to 4.2 seconds: 1s rise, charge/spin
