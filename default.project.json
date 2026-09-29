@@ -3,6 +3,16 @@
   "servePort": 34872,
   "tree": {
     "$className": "DataModel",
+    "SoundService": {
+      "$className": "SoundService",
+      "BackgroundMusic": {
+        "$className": "Sound",
+        "$properties": {
+          "Looped": true,
+          "Volume": 0.2
+        }
+      }
+    },
     "Lighting": {
       "$path": "src/lighting/Lighting.rbxmx"
     },

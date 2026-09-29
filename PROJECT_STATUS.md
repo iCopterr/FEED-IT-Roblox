@@ -6,6 +6,23 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — background music placeholder
+
+- Added authored SoundService.BackgroundMusic in Studio and default.project.json:
+  Looped=true, Volume=0.2, blank SoundId. Owner will supply the audio ID.
+- Added MusicController to client startup: local playback when an ID is present,
+  switches/stops when SoundId changes, idempotent Start, no request with blank ID.
+  SoundId deliberately NOT managed by Rojo, allowing owner Studio edits without
+  being reset by source sync. Once chosen, save the place; add the chosen ID to
+  the source mapping later if it must also survive a fresh filesystem-only build.
+- Verified Studio Sound properties, Rojo build, diff check. Executed actual
+  controller source against a Luau Sound stub: blank ID stays silent, duplicate
+  Start adds no connection, ID assignment plays, clearing stops. Audible playback
+  remains unverified until a permitted real audio asset is supplied.
+- Files: default.project.json, client init/MusicController, music inspection/setup
+  recipes, handoff. Previous commit c485832. Next: owner enters SoundId and checks
+  volume/audio permissions in Play. No other gameplay/UI changes.
+
 ### Latest session — use owner's Tree and Rock assets
 
 - Completed: replaced all 18 MapEnvironment trees with clones of Workspace.Tree
