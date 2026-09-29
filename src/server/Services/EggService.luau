@@ -164,12 +164,15 @@ function Service.HandleRequest(player,action,id,position)
 	Visuals.Reconcile(player,profile)
 	save(player,profile,function()
 		-- Reveal deadline passed; disclose the result only after persistence.
-		result.CollectEndsAt=workspace:GetServerTimeNow()+HatchAnimation.CollectSeconds
+		local revealStart=workspace:GetServerTimeNow()
+		result.RevealEndsAt=revealStart+HatchAnimation.PetRevealSeconds
+		result.CollectStartsAt=result.RevealEndsAt+HatchAnimation.PetDissolveSeconds
+		result.CollectEndsAt=result.CollectStartsAt+HatchAnimation.CollectSeconds
 		if hatchOutcome then hatchOutcome:FireClient(player,result) end
 		-- Ownership is already safely saved; only automatic carrying waits for the
 		-- reward trail. No client acknowledgement can grant or duplicate the pet.
 		local character=player.Character
-		task.delay(HatchAnimation.CollectSeconds,function()
+		task.delay(result.CollectEndsAt-revealStart,function()
 			if player.Parent~=Players or player.Character~=character or Data.GetData(player)~=profile
 				or profile.Inventory[pet.PetId]~=pet or pet.Placed then return end
 			if require(script.Parent.PedestalService).GetPetId(player)==pet.PetId then return end

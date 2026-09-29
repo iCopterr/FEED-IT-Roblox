@@ -8,4 +8,7 @@ return table.freeze({
 	OriginalRestoreTimeout = 30,
 	MaxLightRange = 18,
 	CollectSeconds = .8,
+	PetRevealSeconds = 2,
+	PetDissolveSeconds = .3,
+	RevealMaxSize = 8,
 })

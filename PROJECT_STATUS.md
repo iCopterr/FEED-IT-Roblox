@@ -4,7 +4,30 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-29
+**Last Updated:** 2026-09-30
+
+### Latest session — hatch pet reveal before collection
+
+- Current feature / completed: successful hatch shows the actual species model
+  at the hatch location for 2 seconds, then shrinks/fades it into light over
+  0.3 seconds. The light flies to the character over the existing 0.8 seconds.
+  Glow, light, trail and arrival sparkles use the pet's rarity color.
+- Presentation timestamps are sent only after the existing successful save.
+  Automatic carrying waits until light arrival; ownership/save, hatch RNG and
+  egg-pop HatchFinish sound timing are unchanged. No client acknowledgment grants
+  rewards. Respawn/duplicate-result cleanup and bounded effects remain in place.
+- Verification: actual-source edit-mode component tests passed for all 9 rarity
+  colors, 2-second hold, dissolve, flight, duplicate suppression and respawn
+  cleanup, using real pet template geometry. Chicken reveal visually inspected
+  through Studio 58741; temporary preview removed and camera restored. Four
+  synced modules compile; Rojo build and git diff checks pass.
+- Overall progress: implementation and component verification complete. Full
+  live hatch / network-latency playtest remains unverified; no Play session run.
+  Next task: owner checks the complete hatch sequence in Play. Existing Sakura
+  flower replacement is still paused; no imported scripts were executed.
+- Files modified: HatchAnimationConfig, EggService, UI/HatchCollect, new
+  UI/HatchPetReveal, docs/studio/test-hatch-reward-reveal.ps1, this handoff.
+  Last working commit before this session: d81c914. Unrelated assets preserved.
 
 ### Latest session — buy failure audio / no purchase click sound
 
