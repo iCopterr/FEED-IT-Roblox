@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — hatch disappearance burst and original-shell flash fix
+
+- Fixed cleanup race: animation previously restored the original egg immediately
+  at its deadline, before server removal replicated. Successful reveals now defer
+  restoring originals while their server Hatching attribute remains true; deletion
+  needs no restoration, cancelled hatches restore, with a 30s recovery timeout.
+  Failed client animation restores immediately. No server grant/save changes.
+- Added expanding gold-white flare shockwave, 56-spark main burst, stronger flare
+  and a second 16-spark aftershock 0.14s later. No physical parts; existing effect
+  cleanup and 2.85s server duration retained.
+- Files: HatchController, HatchAnimationConfig and handoff. Rojo/diff checks pass.
+  Live MCP analysis/visual validation pending due to connection responsiveness.
+  Next: verify no shell flash under latency and cancelled-hatch recovery in Play.
+
 ### Latest session — richer world-space hatch animation
 
 - Implemented: eased 2.6-stud lift/bob, accelerating shake and full spin, pulsing

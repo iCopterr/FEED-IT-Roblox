@@ -25,12 +25,15 @@ local function play(result)
 	Debris:AddItem(egg, 5)
 	local hidden = {}
 	local disabled = {}
+	local originals = {}
 	local plots = workspace:FindFirstChild("PlayerPlots")
 	if plots then
 		for _, plot in plots:GetChildren() do
 			local pen = plot:FindFirstChild("Pen")
 			local original = pen and pen:FindFirstChild("Egg_" .. result.EggUid)
-			if original then for _, item in original:GetDescendants() do
+			if original then
+				table.insert(originals,original)
+				for _, item in original:GetDescendants() do
 				if item:IsA("BasePart") then hidden[item]=item.LocalTransparencyModifier;item.LocalTransparencyModifier=1 end
 				if item:IsA("ParticleEmitter") or item:IsA("Light") or item:IsA("BillboardGui") or item:IsA("ProximityPrompt") then
 					disabled[item]=item.Enabled;item.Enabled=false
@@ -59,6 +62,13 @@ local function play(result)
 		burst.Size = NumberSequence.new({NumberSequenceKeypoint.new(0,1),NumberSequenceKeypoint.new(.3,4),NumberSequenceKeypoint.new(1,6)})
 		burst.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0,.2),NumberSequenceKeypoint.new(.25,.35),NumberSequenceKeypoint.new(1,1)})
 		burst.Parent = attachment
+		local shock=burst:Clone()
+		shock.Name="HatchShockwave";shock.Speed=NumberRange.new(0)
+		shock.Lifetime=NumberRange.new(.55);shock.Rotation=NumberRange.new(0,360)
+		shock.Color=ColorSequence.new(Color3.new(1,1,1),tint)
+		shock.Size=NumberSequence.new({NumberSequenceKeypoint.new(0,.5),NumberSequenceKeypoint.new(.2,radius*3),NumberSequenceKeypoint.new(1,radius*6)})
+		shock.Transparency=NumberSequence.new({NumberSequenceKeypoint.new(0,.15),NumberSequenceKeypoint.new(.25,.5),NumberSequenceKeypoint.new(1,1)})
+		shock.Parent=attachment
 		local sparks=Instance.new("ParticleEmitter")
 		sparks.Name="HatchSparks";sparks.Texture="rbxasset://textures/particles/sparkles_main.dds"
 		sparks.Color=ColorSequence.new(Color3.new(1,1,1),tint);sparks.LightEmission=1
@@ -79,6 +89,7 @@ local function play(result)
 		end
 		local start = result.EndsAt - Timing.Duration
 		local revealed = false
+		local aftershock = false
 		local lastPulse=-1
 		egg:SetAttribute("Stage", "Float")
 		repeat
@@ -103,12 +114,15 @@ local function play(result)
 			end
 			if t >= Timing.RiseSeconds and not revealed then egg:SetAttribute("Stage", "Shake") end
 			if t >= Timing.BurstAt and not revealed then
-				revealed = true; egg:SetAttribute("Stage", "Light");burst:Emit(8);sparks:Emit(Timing.SparkCount)
+				revealed = true; egg:SetAttribute("Stage", "Light");burst:Emit(12);sparks:Emit(Timing.SparkCount);shock:Emit(2)
 				glow.Enabled=false
 				for _, item in egg:GetDescendants() do
 					if item:IsA("BasePart") then item.Transparency = 1 end
-					if item:IsA("ParticleEmitter") and item ~= burst and item ~= sparks then item.Enabled = false; item:Clear() end
+					if item:IsA("ParticleEmitter") and item ~= burst and item ~= sparks and item ~= shock then item.Enabled = false; item:Clear() end
 				end
+			end
+			if revealed and not aftershock and t>=Timing.BurstAt+Timing.AftershockDelay then
+				aftershock=true;sparks:Emit(16);shock:Emit(1)
 			end
 			if revealed then light.Brightness = 5 * math.clamp(1-(t-Timing.BurstAt)/(Timing.Duration-Timing.BurstAt),0,1)^2 end
 			if t >= Timing.Duration then break end
@@ -116,8 +130,21 @@ local function play(result)
 		until not egg.Parent
 	end, debug.traceback)
 	egg:Destroy()
-	for part, transparency in hidden do if part.Parent then part.LocalTransparencyModifier=transparency end end
-	for item, enabled in disabled do if item.Parent then item.Enabled=enabled end end
+	-- The reveal deadline and server removal replication can arrive on different
+	-- frames. Do not flash the original shell back while its hatch is committing.
+	task.spawn(function()
+		local deadline=os.clock()+Timing.OriginalRestoreTimeout
+		while ok and os.clock()<deadline do
+			local waiting=false
+			for _,original in originals do
+				if original.Parent and original:GetAttribute("Hatching")==true then waiting=true;break end
+			end
+			if not waiting then break end
+			task.wait(.05)
+		end
+		for part, transparency in hidden do if part.Parent then part.LocalTransparencyModifier=transparency end end
+		for item, enabled in disabled do if item.Parent then item.Enabled=enabled end end
+	end)
 	if not ok then warn("[HatchController]", failure) end
 end
 
