@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — richer world-space hatch animation
+
+- Implemented: eased 2.6-stud lift/bob, accelerating shake and full spin, pulsing
+  shell scale, energy outline/fill, four orbiting spark attachments that contract
+  toward the shell, three anticipation spark beats, final gold/white spark burst
+  and fading light. No extra physical parts, camera takeover or popup UI.
+- Preserved server-authoritative 2.85s grant deadline, egg-only pre-reveal payload,
+  deduplication/concurrency limits and original-shell restoration/cleanup.
+  Presentation values centralized in HatchAnimationConfig; no hatch odds changes.
+- Files: HatchController, HatchAnimationConfig and handoff. Build/diff checks pass.
+  Studio MCP syntax/preview attempt timed out; live visual verification remains
+  pending, so no visual quality or Play-test success claim. Next: reconnect Studio
+  and inspect full animation, concurrent hatches, delayed events and cleanup.
+
 ### Latest session — overhead eggs and raised carrying arms
 
 - Implemented: eggs now attach to Head, with bounds-aware EggHeadClearance like
