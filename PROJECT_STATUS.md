@@ -6,6 +6,28 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — use owner's Tree and Rock assets
+
+- Completed: replaced all 18 MapEnvironment trees with clones of Workspace.Tree
+  (19 parts each), and 20 small rocks plus 10 cliff accents with Workspace.Rock
+  MeshPart clones. Adapted scale/yaw and tree grounding; retained source appearance.
+  Original Tree/Rock samples and gameplay objects untouched. Previous commit 822b873.
+- Current environment: 504 anchored noncolliding/nonquery BaseParts, no scripts.
+  This increases instance count from 248; no FPS/triangle-count claim is made.
+  Removed camera/post-effect metadata from rock clones only. Old primitive pieces
+  are recoverable in ServerStorage.EnvironmentPrimitivesBackup_20260929 in this
+  Studio session and in Git history. No saved gameplay/system code changed.
+- Verified through MCP 58742: 18 trees, 30 matching rock meshes, 700 unrelated
+  parts with unchanged transforms/sizes, full tree part bounds outside plots,
+  one environment folder. Inspected template and replacement screenshots; camera
+  restored. Static asset exported, Rojo build and diff checks pass.
+- Files: src/world/MapEnvironment.rbxm; docs/studio/*owner-environment-assets.luau,
+  inspect-environment-replacements.luau; owner-* screenshots and this handoff.
+  Original build-map-environment recipe is historical first pass; follow with
+  replace-environment-owner-assets migration only when rebuilding that first pass.
+- Next: owner visual review / Play walkthrough; runtime FPS not tested. Preserve
+  unrelated untracked pet-reference work. No work in progress for this replacement.
+
 ### Latest session — lightweight environment first pass
 
 - Current feature: environment-only landscaping around the preserved six-plot map.
