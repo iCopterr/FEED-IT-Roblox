@@ -1,0 +1,38 @@
+[
+  {
+    "egg": "prototype_egg",
+    "parts": 12,
+    "emitters": 2,
+    "particlesPerSecond": 5.0
+  },
+  {
+    "egg": "advanced_egg",
+    "parts": 14,
+    "emitters": 4,
+    "particlesPerSecond": 14.0
+  },
+  {
+    "egg": "elite_egg",
+    "parts": 15,
+    "emitters": 4,
+    "particlesPerSecond": 16.0
+  },
+  {
+    "egg": "master_egg",
+    "parts": 19,
+    "emitters": 4,
+    "particlesPerSecond": 18.0
+  },
+  {
+    "egg": "supreme_egg",
+    "parts": 24,
+    "emitters": 5,
+    "particlesPerSecond": 22.0
+  },
+  {
+    "egg": "ultimate_egg",
+    "parts": 18,
+    "emitters": 6,
+    "particlesPerSecond": 31.0
+  }
+]

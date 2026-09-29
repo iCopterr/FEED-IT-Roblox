@@ -1,5 +1,20 @@
 # Rectangular egg set
 
+## Particle detail pass — 2026-09-29
+
+All eggs now include themed authored emitters: pollen/fireflies, frost/embers,
+enchanted wisps, ancient soul embers, divine stardust, and cosmic stars/nebula.
+Each layer uses short lifetimes, rotation, size and transparency curves. Emitters
+stay attached to moving shells. Supreme and Ultimate add soft shadowless lights.
+No BaseParts added. Rates per Basic through Ultimate: 5, 14, 16, 18, 22, 31/sec;
+2–6 emitters per egg, lifetime <=2.2 seconds. Built-in textures require no upload.
+
+Saved asset budget/sequence checks and Rojo build pass. Particle visual review is
+pending Studio reconnection to localhost:58742; existing screenshots below show
+the earlier geometry-only pass. Run review-rectangular-eggs.luau followed by
+verify-egg-particles.luau once connected. Do not claim particle appearance or
+runtime performance is verified from these offline checks.
+
 Six stepped, studded cuboid shells with original tier-specific decorations.
 Authored source: `src/world/EggTemplates.rbxmx`; rebuild recipe:
 `python docs/studio/build-rectangular-eggs.py`.

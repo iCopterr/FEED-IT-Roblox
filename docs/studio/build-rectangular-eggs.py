@@ -120,6 +120,67 @@ for x,y in ((-.85,2.8),(.95,1.1)):
     part('Star',(.12,.45,.1),(x,y,-1.68),'DFD5FF',neon=True)
 finish('ultimate_egg')
 
+def effect(shell,name,position,color,rate,texture='sparkles_main.dds',size=.32,speed=.7,life=1.6,spread=45,opacity=.15):
+    anchor=E.SubElement(shell,'Item',{'class':'Attachment'})
+    ap=E.SubElement(anchor,'Properties');prop(ap,'string','Name',name+'Origin')
+    cf=E.SubElement(ap,'CoordinateFrame',name='CFrame')
+    for k,n in zip('XYZ',position):E.SubElement(cf,k).text=str(n)
+    for i in range(3):
+        for j in range(3):E.SubElement(cf,f'R{i}{j}').text=str(int(i==j))
+    emitter=E.SubElement(anchor,'Item',{'class':'ParticleEmitter'})
+    p=E.SubElement(emitter,'Properties');prop(p,'string','Name',name)
+    prop(p,'bool','Enabled','true');prop(p,'bool','LockedToPart','true')
+    prop(p,'float','Rate',rate);prop(p,'float','LightEmission',.7)
+    prop(p,'float','LightInfluence',0);prop(p,'float','Drag',.4)
+    prop(p,'NumberRange','Lifetime',f'{life*.65} {life}')
+    prop(p,'NumberRange','Speed',f'{speed*.5} {speed}')
+    prop(p,'NumberRange','Rotation','0 360');prop(p,'NumberRange','RotSpeed','-35 35')
+    prop(p,'NumberSequence','Size',f'0 0 0 .18 {size} 0 .65 {size*.65} 0 1 0 0')
+    prop(p,'NumberSequence','Transparency',f'0 1 0 .12 {opacity} 0 .65 {min(1,opacity+.2)} 0 1 1 0')
+    r,g,b=rgb(color);prop(p,'ColorSequence','Color',f'0 {r} {g} {b} 0 1 {r*.8} {g*.9} {b} 0')
+    content=E.SubElement(p,'Content',name='Texture');E.SubElement(content,'url').text='rbxasset://textures/particles/'+texture
+    v=E.SubElement(p,'Vector2',name='SpreadAngle');E.SubElement(v,'X').text=str(spread);E.SubElement(v,'Y').text=str(spread)
+    prop(p,'token','EmissionDirection',1)
+    return anchor
+
+for model in folder.findall('Item'):
+    name=model.find("Properties/string[@name='Name']").text
+    shell=model.find("Item[@class='Part']")
+    if name=='prototype_egg':
+        effect(shell,'GoldenPollen',(.4,2.7,0),'FFE1A0',3,size=.18,life=2,spread=70)
+        effect(shell,'SproutFireflies',(-1.8,.5,-.6),'B9DE82',2,size=.14,life=2.2,spread=90)
+    elif name=='advanced_egg':
+        effect(shell,'FrostCrystals',(-.85,3.7,0),'9DF4FF',6,size=.3,speed=1,spread=35)
+        effect(shell,'EmberSparks',(1.85,.2,0),'FFAC54',5,size=.2,speed=1.7,life=1.2,spread=30)
+        effect(shell,'ColdMist',(-1.85,.3,0),'81DDEB',2,texture='smoke_main.dds',size=.7,speed=.35,opacity=.85)
+        effect(shell,'CorePulse',(0,.2,-1.78),'9AEFFF',1,texture='flare_main.dds',size=.8,speed=0,life=2,opacity=.7)
+    elif name=='elite_egg':
+        effect(shell,'HornWisps',(-1.55,3.1,0),'DEADFF',5,size=.32,speed=.7,spread=40)
+        effect(shell,'HornWisps',(1.55,3.1,0),'F8D887',5,size=.25,speed=.7,spread=40)
+        effect(shell,'EnchantedDust',(0,1.65,-1.85),'C895FF',5,size=.14,speed=.8,spread=110)
+        effect(shell,'CrestBloom',(0,.2,-1.85),'DFB5FF',1,texture='flare_main.dds',size=1,speed=0,life=2,opacity=.78)
+    elif name=='master_egg':
+        effect(shell,'AncientDust',(-1.85,-.8,0),'D0B483',4,texture='smoke_main.dds',size=.65,speed=.4,opacity=.88)
+        effect(shell,'AncientDust',(1.85,-.8,0),'D0B483',4,size=.16,speed=.8,spread=70)
+        effect(shell,'SoulEmbers',(0,2.7,0),'A8E8BC',7,size=.27,speed=.55,life=2.2,spread=60)
+        effect(shell,'FossilGlints',(0,.45,-1.92),'E4DBA9',3,size=.19,speed=.5,spread=100)
+    elif name=='supreme_egg':
+        for x in (-2.3,2.3):effect(shell,'WingStardust',(x,1.9,0),'FFF1BE',6,size=.3,speed=.6,life=1.8,spread=80)
+        effect(shell,'HaloStars',(0,4,0),'FFF6D7',6,size=.42,speed=.5,life=2,spread=90)
+        effect(shell,'DivineMist',(0,2.25,0),'FFE5A2',2,texture='smoke_main.dds',size=1.1,speed=.3,opacity=.9)
+        effect(shell,'SealRadiance',(0,.2,-1.88),'FFF1C3',2,texture='flare_main.dds',size=1.15,speed=0,life=2,opacity=.77)
+    else:
+        for x in (-2.2,2.2):effect(shell,'OrbitStardust',(x,.8,.2),'8CEAFF',7,size=.23,speed=.7,life=2.1,spread=110)
+        effect(shell,'CrownStars',(0,3.2,0),'E7BDFF',7,size=.4,speed=.7,life=2,spread=75)
+        effect(shell,'NebulaVeil',(0,2.5,.4),'AC80EB',3,texture='smoke_main.dds',size=1.15,speed=.3,opacity=.88)
+        effect(shell,'VoidCoreBloom',(0,.2,-1.98),'DC9DF8',2,texture='flare_main.dds',size=1.25,speed=0,life=2,opacity=.78)
+        effect(shell,'FallingStars',(0,3.4,-1.65),'C8EFFF',5,size=.16,speed=1.5,life=1.5,spread=130)
+    if name in ('supreme_egg','ultimate_egg'):
+        light=E.SubElement(shell,'Item',{'class':'PointLight'});p=E.SubElement(light,'Properties')
+        prop(p,'string','Name','EggGlow');prop(p,'float','Brightness',.45);prop(p,'float','Range',7);prop(p,'bool','Shadows','false')
+        v=E.SubElement(p,'Color3',name='Color')
+        for k,n in zip('RGB',rgb('FFE3A2' if name=='supreme_egg' else 'BC9AFF')):E.SubElement(v,k).text=str(n)
+
 E.indent(tree,space='  ')
 E.ElementTree(tree).write(ROOT/'src/world/EggTemplates.rbxmx',encoding='utf-8',xml_declaration=True)
 print(counts)

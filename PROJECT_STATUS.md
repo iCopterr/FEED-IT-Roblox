@@ -4,7 +4,28 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-28
+**Last Updated:** 2026-09-29
+
+### Latest session — detailed themed egg particles (visual review pending)
+
+- Implemented authored particle layers in all six rectangular egg templates:
+  Basic pollen/fireflies; Advanced frost/embers/mist; Elite horn wisps/crest glow;
+  Master dust/soul embers; Supreme wing/halo stardust; Ultimate orbit stars/nebula.
+  Emitters follow their shells, use built-in Roblox textures, short lifetimes and
+  fade/size curves. Supreme/Ultimate add one range-7 shadowless light each.
+- Budgets: 2/4/4/4/5/6 emitters, 5/14/16/18/22/31 particles/sec respectively;
+  lifetime <=2.2 seconds. BaseParts unchanged at 12/14/15/19/24/18. Authored
+  effects clone with the existing conveyor/held/incubating egg models. No FPS claim.
+- Verified offline: saved XML part/emitter/rate/lifetime/sequence assertions,
+  Rojo build and diff check. NOT visually or live-runtime verified yet.
+- Blocker: localhost:58741 refused connection; MCP at 58742 responds but Studio
+  plugin calls time out. Asked owner to reconnect to 58742 and reply ready.
+- Next: run docs/studio/review-rectangular-eggs.luau then verify-egg-particles.luau,
+  inspect emitting eggs close-up, adjust opacity/rates if shells are obscured.
+  Source generator and asset are saved; do not rebuild from the old recipe.
+- Files: build-rectangular-eggs.py, EggTemplates.rbxmx, offline/live egg particle
+  verification scripts, particle-audit.json, asset README and this handoff.
+  Overall Progress: effects authored/offline verified; visual review outstanding.
 
 ### Latest session — six distinct rectangular egg models
 
