@@ -6,6 +6,26 @@
 
 **Last Updated:** 2026-09-29
 
+### Latest session — preserve owner's Studio UI edits
+
+- Captured all nine edit-mode StarterGui ScreenGuis through MCP 58741 BEFORE
+  overwriting source assets: FeedYourPetUI, ConveyorUI, ReviveUI, DebugUI,
+  PenManagerUI, MerchantUI, IndexUI, TutorialUI, HatchUI. No embedded scripts.
+- Saved native full-fidelity snapshots, converted using Rojo's native binary/XML
+  reader/writer and extracted ScreenGui roots into existing src/ui/*.rbxmx paths.
+  Export preserves authored properties/children/references; serialization now
+  includes more default properties, so XML diffs are larger than visual edits.
+- FeedYourPetUI 406 -> 422 instances, IndexUI 214 -> 219. Other existing mapped
+  GUI hierarchy counts unchanged. HatchUI (16 instances) already had a source
+  file but was missing from default.project.json; added its StarterGui mapping.
+- All nine exported hierarchy counts match Studio capture; full Rojo build and
+  diff check pass. No design corrections, UI behavior edits or gameplay changes.
+  Binary recovery snapshots retained in local Temp/FeedUIBackup_
+  e37ba9d751534752a8a54c3b21a15a3c; prior source version recoverable in Git.
+- Files: nine ScreenGui assets, default.project.json, docs/studio/save-studio-ui.ps1,
+  handoff. Previous commit c190f47. Next: owner's Play review of new UI; this
+  save-only session did not test all UI actions or publish/save a cloud place.
+
 ### Latest session — gameplay sound placeholders and event hooks
 
 - Added eight authored SoundService Sounds: Hatching, HatchFinish, Click, Buy,
