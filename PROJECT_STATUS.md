@@ -4,7 +4,26 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-09-30
+**Last Updated:** 2026-10-01
+
+### Latest session — direct native growth checkout
+
+- GrowNowController now routes the server's waiting-egg offer straight to
+  Purchases.Request("Grow", EggUid), for remote and world Hatch interactions.
+  Removed custom popup opening/buy step; old authored frame kept hidden and
+  inactive for recovery. Validates event shape and prevents duplicate listeners.
+- Grow All retains direct native checkout and its uploaded picture, but authored
+  and runtime labels now read only GROW ALL (including old template shadow).
+  No displayed price/empty-state sentence on this button; no-egg state disabled.
+- Saved PenManagerUI to filesystem; export retained pre-export Studio binary.
+  No Inventory, monetization price, receipt or gameplay logic changed.
+- Tests: direct-grow controller mock, UI label/icon assertions, all 24 commerce
+  regression handlers, Rojo build and git diff checks pass. Actual native popup
+  not observed in live Play; restart Play required for running clients.
+- Files: GrowNowController, PenManagerController, PenManagerUI, authoring/test
+  recipes, handoff. Prior working commit 5a6d764. Owner's assets untouched.
+- Owner reminder: do not use Roblox UI Director. Previous Inventory attempt
+  was reverted; it is not part of this change.
 
 ### Latest session — Studio purchase prompts and owned pass color
 

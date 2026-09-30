@@ -52,9 +52,9 @@ function Controller.Start()
 		panel.Title.Text=if mode=="Eggs" then "GROWING EGGS • "..#list else string.format("PETS • %d / %d",snapshot.PlacedCount,snapshot.MaxPetSlots)
 		panel.EquipBest.Visible=mode=="Pets"
 		panel.GrowAll.Visible=mode=="Eggs"
-		local price,count=Monetization.GrowAllQuote(snapshot.Eggs or {},snapshot.ServerNow)
+		local _,count=Monetization.GrowAllQuote(snapshot.Eggs or {},snapshot.ServerNow)
 		panel.GrowAll.Active=count>0 and not snapshot.Busy
-		panel.GrowAll.ButtonText.Text=if count==0 then "GROW ALL • NO GROWING EGGS" else "GROW ALL • "..price.." ROBUX"
+		panel.GrowAll.ButtonText.Text="GROW ALL"
 		panel.EquipBest.Active=mode=="Pets" and not busy and not snapshot.Busy
 		panel.EquipBest.BackgroundColor3=if panel.EquipBest.Active then Color3.fromRGB(78,227,51) else Color3.fromRGB(90,94,108)
 		local shown={}
@@ -113,7 +113,7 @@ function Controller.Start()
 		panel.EquipBest.Visible=mode=="Pets"
 		panel.GrowAll.Visible=mode=="Eggs"
 		panel.GrowAll.Active=false
-		panel.GrowAll.ButtonText.Text="GROW ALL • 199 ROBUX"
+		panel.GrowAll.ButtonText.Text="GROW ALL"
 		panel.Status.Text="Loading…";panel.Visible=true;task.spawn(refresh)
 	end
 	gui.Dock.Eggs.Activated:Connect(function() open("Eggs") end)
