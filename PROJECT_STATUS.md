@@ -6,6 +6,33 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — pet idle/walk foundation (NOT visually approved / disabled)
+
+- Request: idle and walk for every pet, reviewed one by one. Built a procedural
+  client-side anchored-rig solver and 36 individually named cadence/stride
+  profiles, with bird/walker/heavy/hop/winged/serpent/swimmer/tentacle treatment.
+  PetPose traverses Motor6D and welded detail links; root is never moved.
+  PetAnimationController targets only placed-pet visual folders, blends motion
+  from root displacement, restores departing rigs and culls beyond 350 studs.
+- IMPORTANT: PetAnimationConfig.Enabled=false. No production motion enabled.
+  Per-pet visual polish/approval and input-driven runtime tests are incomplete.
+  This is a first-pass procedural system, not uploaded AnimationTrack assets.
+  Carry/feed/hatch/inventory presentation is deliberately not animated by it.
+- Test: all 36 live templates pass independently for idle movement, walk
+  movement, complete n-1 rig-link coverage, finite positions, unchanged root,
+  rest restoration. Build/diff pass. No source geometry or part counts changed.
+- Blocker: Studio MCP 58741 captures HUD but blank dark 3D scene; both viewport
+  previews and isolated Workspace clones failed visual capture. Cannot honestly
+  approve any pet's animation. Temporary previews removed, camera restored.
+  Next: restore visible Studio viewport; start Chicken and visually review each
+  pet over idle/walk cycles, ground contact, transitions and live wandering.
+  Fix poses/grounding and confirm replication behavior before enabling. Runtime
+  scale/streaming and performance still need checks; no FPS claim.
+- Files: PetAnimationConfig, PetPose, PetAnimationController, client init,
+  test-pet-animations.ps1, handoff. Previous working commit 0fd9dde.
+- Unrelated pending design: owner changed Grow All to flat 199 Robux; earlier
+  sum/cap implementation has NOT yet been changed. Limited egg remains concept.
+
 ### Latest session — teleport-style Shop shine
 
 - Added authored TeleportShine CanvasGroups to Shop header and eight offer
