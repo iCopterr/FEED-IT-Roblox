@@ -1,0 +1,15 @@
+return table.freeze({
+	DoubleMoney="rbxassetid://95919368095777",
+	Settings="rbxassetid://135207090414972",
+	MoneyTreasury="rbxassetid://114752335997381",
+	Revive="rbxassetid://78557748571560",
+	GrowNow="rbxassetid://110321125287787",
+	MoneyChest="rbxassetid://101348459732664",
+	MoneyVault="rbxassetid://137696958080260",
+	GrowAll="rbxassetid://112103082378017",
+	MoneyPocket="rbxassetid://129010493739488",
+	WelcomePack="rbxassetid://73142330309053",
+	MoneyBundle="rbxassetid://140331161844607",
+	MoneyPouch="rbxassetid://110966194947566",
+	Restock="rbxassetid://134129822217722",
+})

@@ -6,6 +6,26 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — uploaded artwork and owner catalog IDs
+
+- Applied all 13 owner-uploaded image IDs to authored Shop, Settings, Grow Now,
+  Grow All, Restock and Revive UI. Exported five ScreenGuis; original live binary
+  backups retained by save-studio-ui. Added shared MonetizationImages mapping.
+- Recorded 24 developer product IDs and Double Money pass 2003036427 in
+  MonetizationConfig. Grow All quote now flat 199 when growing eggs exist.
+- Verified config assertions in Studio and representative image properties;
+  Rojo build and diff check pass. Image preload call did not return conclusive
+  results; full visual render and Marketplace ID ownership/price checks pending.
+- IMPORTANT: purchases remain disabled. No receipt handler/pass entitlement
+  integration is active. Do not enable buttons just because IDs are present.
+  Next: durable idempotent receipt grants, shared food-stock reservations,
+  personal restock state, growth/revive targets, x2 income, then end-to-end tests.
+- Owner asked for recommendation on stale paid targets; recommended persisted
+  same-or-cheaper Grow Now credit / eligible-pet Revive credit, awaiting approval.
+  No credit economy implemented. Earlier temporary receipt draft removed before
+  commit rather than shipping an incomplete handler. Previous commit 94434f3.
+- Existing untracked assets/Monetization left untouched. No real purchases made.
+
 ### Latest session — generated monetization/Settings artwork
 
 - Completed 13 separate PNGs in assets/ui/monetization-20260930: Settings,
