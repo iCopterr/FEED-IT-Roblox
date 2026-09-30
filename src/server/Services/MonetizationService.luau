@@ -1,6 +1,7 @@
 local Players=game:GetService("Players")
 local Market=game:GetService("MarketplaceService")
 local Http=game:GetService("HttpService")
+local RunService=game:GetService("RunService")
 local Config=require(game.ReplicatedStorage.Shared.Config.MonetizationConfig)
 local Shop=require(game.ReplicatedStorage.Shared.Config.MerchantConfig)
 local Revive=require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
@@ -12,6 +13,11 @@ local State=require(script.Parent.CommerceState)
 local Service={}
 local busy,last,prompted,passes={},{},{},{}
 local notices
+local function persistenceBlocked()
+ -- Studio checkout tests use the isolated in-memory profile. Never allow
+ -- nonpersistent fulfillment in a published server.
+ return Adapter.IsMemory() and not RunService:IsStudio()
+end
 local catalog={}
 catalog[Config.WelcomePack.ProductId]={Kind="Welcome"}
 for _,p in Config.MoneyPacks do catalog[p.ProductId]={Kind="Money",Money=p.Money} end
@@ -85,7 +91,7 @@ end
 function Service.Request(player,kind,arg,extra)
  local data=Data.GetData(player)
  if not data or player.Parent~=Players then return {Ok=false,Code="Loading"} end
- if Adapter.IsMemory() then return {Ok=false,Code="PersistenceRequired"} end
+ if persistenceBlocked() then return {Ok=false,Code="PersistenceRequired"} end
  if os.clock()-(last[player] or -math.huge)<1 then return {Ok=false,Code="Cooldown"} end
  last[player]=os.clock()
  if busy[player] or prompted[player] or Locks.IsLocked(player) then return {Ok=false,Code="Busy"} end
@@ -117,7 +123,7 @@ end
 function Service.ProcessReceipt(receipt)
  local retry=Enum.ProductPurchaseDecision.NotProcessedYet
  local player=Players:GetPlayerByUserId(receipt.PlayerId)
- if not player or Adapter.IsMemory() or not catalog[receipt.ProductId] or type(receipt.PurchaseId)~="string" then return retry end
+ if not player or persistenceBlocked() or not catalog[receipt.ProductId] or type(receipt.PurchaseId)~="string" then return retry end
  -- Roblox does not provide a periodic receipt retry. Wait out an active
  -- gameplay transaction here instead of requiring another purchase or rejoin.
  while player.Parent==Players and (not Data.GetData(player) or busy[player] or Locks.IsLocked(player)) do

@@ -6,6 +6,22 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — Studio purchase prompts and owned pass color
+
+- Found all Studio checkout blocked before prompting by Adapter.IsMemory().
+  Allow Studio-local memory checkout/receipts only; published memory servers
+  remain blocked. No production data or Studio persistence settings changed.
+- Shop owned offers (including x2 pass) show OWNED, disabled interaction, gray
+  background/image and neutral gradient; original colors restore when unowned.
+- Purchase helper no longer waits indefinitely for the notice remote before
+  requesting a purchase; bounded service lookup resets its busy flag on failure.
+- Extended commerce mocks: Studio memory product/pass prompts allowed, receipt
+  grants session-local; published memory prompts/receipts still blocked. Full
+  commerce suite, Rojo build and diff checks pass. Studio edit inspection confirms
+  memory mode and green gradient; native popup/live checkout not yet verified.
+- Files: MonetizationService, ShopController, Purchases, commerce test and docs.
+  Prior commit 7f6645b. Restart Play to load updated server/client controllers.
+
 ### Latest session — server-authoritative monetization implementation
 
 - Added CommerceState + MonetizationService; connected startup and all Shop,

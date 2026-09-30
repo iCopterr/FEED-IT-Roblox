@@ -8,16 +8,24 @@ local messages={
  PersistenceRequired="Purchases require a saved-data server.",
  SupportRequired="Please contact support before another purchase.",
  Loading="Your data is still loading.",
+ Busy="Finish your current action before buying.",
 }
 function Purchases.Request(kind,arg,extra)
  if busy then return end
  busy=true
  local storage=game.ReplicatedStorage
- if not listening then
-  listening=true
-  storage:WaitForChild("MonetizationNotice").OnClientEvent:Connect(function(message) Notice.Show(message) end)
- end
- local ok,result=pcall(function() return storage:WaitForChild("MonetizationRequest"):InvokeServer(kind,arg,extra) end)
+ local ok,result=pcall(function()
+  local remote=storage:WaitForChild("MonetizationRequest",10)
+  assert(remote,"Purchase service unavailable")
+  if not listening then
+   local notice=storage:FindFirstChild("MonetizationNotice")
+   if notice then
+    listening=true
+    notice.OnClientEvent:Connect(function(message) Notice.Show(message) end)
+   end
+  end
+  return remote:InvokeServer(kind,arg,extra)
+ end)
  busy=false
  if not ok then Notice.Show("Purchase connection interrupted. Please rejoin if it stays pending.")
  elseif not result.Ok and messages[result.Code] then Notice.Show(messages[result.Code]) end

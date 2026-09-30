@@ -27,6 +27,7 @@ local persisted
 local data=Schema.CreateDefault()
 profiles[player]=data
 local memory=false
+local studio=false
 local deps={
  [root.Services.DataService]={
  GetData=function(p)return profiles[p] end,
@@ -47,6 +48,7 @@ local env=setmetatable({
  require=function(module)return deps[module] or realRequire(module) end,
  game={ReplicatedStorage=game.ReplicatedStorage,GetService=function(_,name)
   if name=="Players" then return players elseif name=="MarketplaceService" then return market end
+  if name=="RunService" then return {IsStudio=function()return studio end} end
   return game:GetService(name)
  end},
  os={time=os.time,clock=function()clock+=2;return clock end},
@@ -92,6 +94,14 @@ memory=true
 assert(not service.Request(player,"Product",cash.ProductId).Ok)
 assert(receipt("memory",cash.ProductId)==no)
 memory=false
+-- Studio memory checkout is allowed; published memory checkout stays blocked.
+memory=true;studio=true
+assert(service.Request(player,"Product",cash.ProductId).Ok)
+assert(receipt("studio-memory",cash.ProductId)==yes)
+assert(data.Money==30000)
+events.ProductFinished(123,cash.ProductId,true)
+assert(service.Request(player,"Pass").Ok)
+memory=false;studio=false
 assert(service.Multiplier(player)==1)
 events.PassFinished(player,Config.DoubleMoney.GamePassId,true)
 assert(service.Multiplier(player)==2 and attrs.DoubleMoneyOwned)

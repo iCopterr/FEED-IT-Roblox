@@ -12,10 +12,18 @@ function Controller.Start()
 	local panel=gui.Panel
 	local others={}
 	local function price(card,value,kind,id,attribute)
+		local normalBackground=card.Buy.BackgroundColor3
+		local normalImage=card.Buy.ImageColor3
+		local gradient=card.Buy:FindFirstChildOfClass("UIGradient")
+		local normalGradient=gradient and gradient.Color
 		local function refresh()
 			local owned=attribute and player:GetAttribute(attribute)==true
 			card.Buy.ButtonText.Text=if owned then "OWNED" else tostring(value).." ROBUX"
 			card.Buy.Active=not owned
+			card.Buy.AutoButtonColor=not owned
+			card.Buy.BackgroundColor3=if owned then Color3.fromRGB(110,114,124) else normalBackground
+			card.Buy.ImageColor3=if owned then Color3.fromRGB(110,114,124) else normalImage
+			if gradient then gradient.Color=if owned then ColorSequence.new(Color3.new(1,1,1),Color3.fromRGB(185,185,185)) else normalGradient end
 		end
 		refresh()
 		card.Buy:SetAttribute("SuppressClickSound",true)

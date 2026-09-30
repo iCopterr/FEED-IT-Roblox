@@ -54,8 +54,9 @@ than acknowledging payment for no reward.
   confirmed cancellation or receipt. New product prompts are blocked and the
   player sees a pending-purchase notice. Do not clear it blindly: verify payment
   history with support first. No automatic credit/refund economy was added.
-- Memory-only Studio rejects purchases. Published servers use the existing
-  production DataStore. Studio DataStore opt-in is intentionally unchanged.
+- Memory-only Studio allows local checkout/receipt tests. Its rewards reset when
+  Play ends. Nonpersistent published servers still reject purchases/receipts.
+  Production DataStore and Studio DataStore opt-in are unchanged.
 - Ordinary callback tests use mocks and detached profiles, never real payment
   or live account data. No real Robux purchases were made.
 - Live client/payment end-to-end testing is still required: MCP reported Play
