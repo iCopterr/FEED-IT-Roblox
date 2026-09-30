@@ -52,6 +52,9 @@
       }
     },
     "StarterGui": {
+      "ShopUI": {
+        "$path": "src/ui/ShopUI.rbxmx"
+      },
       "HatchUI": {
         "$path": "src/ui/HatchUI.rbxmx"
       },

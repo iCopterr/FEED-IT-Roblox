@@ -7,6 +7,7 @@ local Carry=require(Config.CarryConfig)
 local Revive=require(Config.ReviveConfig)
 local Controller={}
 local pages={
+	ShopUI={"Panel"},
 	FeedYourPetUI={"Inventory","FeedPanel"}, MerchantUI={"Panel"},
 	ReviveUI={"Panel"}, DebugUI={"Panel"}, IndexUI={"Panel"},
 	-- Egg and pen remote side panels intentionally leave the world view unchanged.

@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ProjectInfo = require(ReplicatedStorage.Shared.ProjectInfo)
+task.spawn(function() require(script.Controllers.ShopController).Start() end)
 task.spawn(function() require(script.Controllers.GrowNowController).Start() end)
 task.spawn(function() require(script.Controllers.NotificationController).Start() end)
 task.spawn(function() require(script.Controllers.PageFocusController).Start() end)

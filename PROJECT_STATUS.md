@@ -6,6 +6,33 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — main paid Shop page
+
+- Completed: authored ShopUI ScreenGui and matching Index-style SHOP launcher
+  above Index. Scrollable two-column page has Welcome Treat Pack, permanent
+  x2 pet income, and six money packs. Existing HUD buttons remain unchanged.
+- Welcome: 9 Robux, once/player, 2 Hearty + 1 Royal + 1 Revive Charm. x2: 249
+  Robux. Money packs: 19/25K, 49/100K, 99/300K, 249/1.5M, 499/5M, 799/10M
+  (Robux/Money). Owner gave five prices for six packs; added 19 as smallest,
+  stated in chat. Fixed amounts intentionally cannot buy a 500M Elite Egg.
+- Config contains zero IDs and display/reward definitions only. All eight buy
+  controls disabled; no purchase prompts, grants, receipts or gamepass benefit
+  implemented. Setting IDs alone must not enable purchases. Once/player and
+  permanent labels describe planned fulfillment, not working entitlements yet.
+- ShopController handles display, close/Escape, responsive scaling, popup/hover
+  motion and exclusive menus. PageFocus includes Shop blur/zoom; Carry suppresses
+  placement/pickup prompts while Shop open. No gameplay balance changed.
+- Tests: test-shop.ps1 passed pack/reward/config checks, disabled controls,
+  authored geometry and controller syntax. Rojo build and diff checks passed.
+  Studio screenshot visually reviewed launcher/page; preview visibility restored.
+  Full input-driven Play, small-screen input and paid fulfillment remain untested.
+- Files: ShopUI, ShopController, MonetizationConfig, CarryController,
+  PageFocusController, client init, project mapping, shop-page authoring recipe,
+  test-shop.ps1 and handoff. Last working previous commit: 4a28507.
+- Overall: ID-less Shop presentation complete. Next: owner review/IDs, then
+  server-authoritative durable receipt fulfillment and gamepass ownership checks.
+  Unrelated pet/model untracked files preserved; no push requested.
+
 ### Latest session — waiting eggs open Grow Now
 
 - Completed: remote egg rows show enabled HATCH while growing (subject to busy
