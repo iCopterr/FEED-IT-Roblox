@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — notification font/outline and invalid placement feedback
+
+- Fixed Notification's inherited Denk One/no-outline style: now copies the HUD
+  teleport text Fredoka One FontFace and contextual purple 5px stroke. Background
+  stays transparent; the border outlines letters, not a rectangular box.
+- Carry clicks while holding an egg/pet now report invalid ray hits, other plots,
+  fences/unsupported surfaces or unavailable plot. No-item clicks and UI-consumed
+  clicks remain silent. Server placement rejection notices use error color;
+  accepted placement handling remains unchanged and server authoritative.
+- Verified live style equivalence, no background, compiled CarryController and
+  invalid-hit/no-held-item guards; Rojo build/diff pass. Screenshot capture timed
+  out; preview text restored. Full input-driven Play/visual verification pending.
+- Files: CarryController, FeedYourPetUI, notification-label recipe, handoff.
+  Previous commit ddc990b. Overall: implemented; next owner Play review.
+
 ### Latest session — shared notifications above hotbar
 
 - Completed: authored transparent Notification text in FeedYourPetUI; shared

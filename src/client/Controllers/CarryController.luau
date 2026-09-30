@@ -13,6 +13,13 @@ function CarryController.Start()
 		if player:GetAttribute("IndexPanelOpen") or player:GetAttribute("RevivePanelOpen") or player:GetAttribute("DebugPanelOpen") or player:GetAttribute("MerchantPanelOpen") then return end
 		local gui = player.PlayerGui:FindFirstChild("FeedYourPetUI")
 		if busy or (gui and (gui.Inventory.Visible or (gui:FindFirstChild("FeedPanel") and gui.FeedPanel.Visible))) then return end
+		local eggId=player:GetAttribute("CarriedEggUid")
+		local petId=player:GetAttribute("CarriedPetId")
+		if not eggId and not petId then return end
+		local function invalidPlace()
+			Notice.Show(if eggId then "You can't place an egg here. Click inside your own pen."
+				else "You can't place a pet here. Use your own pen or feed plate.",Color3.fromRGB(255,108,73))
+		end
 		local camera = workspace.CurrentCamera
 		if not camera then return end
 		-- Input coordinates include the top bar; avoid applying the GUI inset twice.
@@ -26,7 +33,7 @@ function CarryController.Start()
 				if candidate:GetAttribute("OwnerUserId") == player.UserId then plot = candidate; break end
 			end
 		end
-		if not plot then return end
+		if not plot then Notice.Show("Your plot isn't ready yet. Try again shortly.",Color3.fromRGB(255,108,73));return end
 		-- Giant pets can cover the pen. Placement clicks should still reach its
 		-- floor instead of being swallowed by a wing or tentacle overhead.
 		local excluded = if player.Character then {player.Character} else {}
@@ -39,7 +46,7 @@ function CarryController.Start()
 		end
 		params.FilterDescendantsInstances = excluded
 		local hit = workspace:Raycast(ray.Origin, ray.Direction * 500, params)
-		if not hit then return end
+		if not hit then invalidPlace();return end
 		local action, id, position
 		if hit.Instance == plot.Pen.Floor and player:GetAttribute("CarriedEggUid") then
 			action, id, position = "Place", player:GetAttribute("CarriedEggUid"), hit.Position
@@ -47,7 +54,7 @@ function CarryController.Start()
 			action, id, position = "PlaceHeldPet", player:GetAttribute("CarriedPetId"), hit.Position
 		elseif plot:FindFirstChild("FeedPlate") and hit.Instance:IsDescendantOf(plot.FeedPlate) and player:GetAttribute("CarriedPetId") then
 			action, id = "PlaceOnPlate", player:GetAttribute("CarriedPetId")
-		else return end
+		else invalidPlace();return end
 		busy = true
 		local request = if action == "Place" then eggRemote else remote
 		local ok, response = pcall(function() return request:InvokeServer(action, id, position) end)
@@ -67,7 +74,7 @@ function CarryController.Start()
 				elseif action=="Place" then "Move closer and click inside your own fenced Pen."
 				elseif ok and response.Code == "PenFull" then "Your pen is full."
 				elseif ok and response.Code == "PlateOccupied" then "Your feed plate already has a pet. Open the feed UI to pick it up."
-				else "Move closer to your own Pen or feed plate and try again.")
+				else "Move closer to your own Pen or feed plate and try again.",Color3.fromRGB(255,108,73))
 		end
 		task.wait(.3)
 		busy = false
