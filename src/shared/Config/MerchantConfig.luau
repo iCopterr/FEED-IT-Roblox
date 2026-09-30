@@ -5,7 +5,7 @@ local order = table.clone(Food.Order)
 table.insert(order, Revive.Id)
 local items = {}
 for id, food in Food.Types do
-	items[id] = table.freeze({DisplayName=food.Name, Icon=food.Icon,
+	items[id] = table.freeze({DisplayName=food.Name, Icon=food.Icon, Rarity=food.Rarity,
 		Effect=if food.GuaranteedSuccess then "100% SUCCESS" else string.format("-%d%% RISK",math.round(food.Reduction*100)),
 		Description=if food.GuaranteedSuccess then "1 food • guaranteed success; normal critical chances"
 			else string.format("1 food • %d%% less risk",math.round(food.Reduction*100)),

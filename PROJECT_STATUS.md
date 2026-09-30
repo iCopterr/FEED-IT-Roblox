@@ -6,6 +6,23 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — food rarities and simplified merchant rows
+
+- Completed: plain risk/effect text left-aligned with food name, no badge
+  background. Stock now X4 stock (X0 stock when exhausted). Added authored,
+  noninteractive teleport-style rarity badges beside stock; price buttons intact.
+- Configured Basic Common, Fresh Uncommon, Hearty Rare, Fortified Epic, Gourmet
+  Legendary, Enchanted Mythic, Royal Fabled, Revive Charm Divine, Blessed Celestial.
+  Merchant definitions and inventory entries use these rarities/colors. No price,
+  stock, feed risk or restock-weight changes; existing saves require no migration.
+- Verified Studio row screenshot; neutralized cloned blue gradient so rarity
+  tints can display correctly. Nine unique configured tiers/colors, aligned clear
+  effect labels, unique badges and client compilation checks pass. Build/diff pass.
+  Full Play remains pending; temporary review removed and GUI Enabled restored.
+- Files: FoodConfig, ReviveConfig, MerchantConfig, MerchantController,
+  InventoryModel, MerchantUI, merchant-rarity-badges recipe, handoff. Overall:
+  complete. Previous commit 5db0461. Next owner review; Robux still disabled.
+
 ### Latest session — separate merchant Money / Robux buttons
 
 - Completed: each of the three rotating offer rows has authored BuyMoney and

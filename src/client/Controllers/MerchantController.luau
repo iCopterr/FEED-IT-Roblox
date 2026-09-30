@@ -3,6 +3,7 @@ local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local Prompts=game:GetService("ProximityPromptService")
 local NumberFormat=require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("NumberFormat"))
 local Shop=require(ReplicatedStorage.Shared.Config.MerchantConfig)
+local RarityColors=require(ReplicatedStorage.Shared.Config.InventoryConfig).RarityColors
 local Controller={}
 local Sounds=require(script.Parent.Parent.Audio.GameSounds)
 local Images=require(script.Parent.Parent.UI.IconImages)
@@ -47,8 +48,11 @@ function Controller.Start()
 			if item then
 				local definition=Shop.Items[item.ItemId]
 				button.ItemName.Text=item.Name
-				button.Stock.Text=if item.Purchased then "SOLD OUT"
-					else string.format("×%d %s  •  %d/%d STOCK",item.Amount,if item.RewardType=="Revive" then "CHARM" else "FOOD",item.Remaining,item.StockLimit)
+				button.Stock.Text=string.format("X%d stock",item.Remaining)
+				button.RarityBadge.Visible=true
+				button.RarityBadge.ButtonText.Text=definition.Rarity
+				button.RarityBadge.ImageColor3=RarityColors[definition.Rarity]
+				button.RarityBadge.BackgroundColor3=RarityColors[definition.Rarity]
 				button.Price.Text="$"..NumberFormat.Money(item.Price)
 				button.Effect.Text=definition.Effect
 				button.Art.Emoji.Text=definition.Icon
@@ -60,9 +64,9 @@ function Controller.Start()
 				button.BuyMoney.BackgroundColor3=button.BuyMoney.ImageColor3
 				button.BackgroundColor3=if item.Purchased then Color3.fromRGB(62,65,73) else Color3.fromRGB(77,49,37)
 				button.Price.TextColor3=if item.Purchased then Color3.fromRGB(175,175,185) else Color3.fromRGB(86,255,74)
-				button.Effect.BackgroundColor3=if item.Purchased then Color3.fromRGB(100,100,108) else Color3.fromRGB(74,132,211)
 			else
 				button.ItemName.Text="RESTOCKING…";button.Stock.Text=""
+				button.RarityBadge.Visible=false
 				button.Price.Text="—";button.Effect.Text="FOOD";button.Art.Emoji.Text="🍽️"
 				Art.Set(button.Art.Picture,button.Art.Emoji,Images.empty)
 				button.Active=false;button.BackgroundColor3=Color3.fromRGB(62,65,73)

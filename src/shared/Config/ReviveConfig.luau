@@ -1,5 +1,5 @@
 return table.freeze({
-	Shop = table.freeze({Id="revive", DisplayName="Revive Charm", Icon="💖", Effect="TIMED RESCUE",
+	Shop = table.freeze({Id="revive", Rarity="Divine", DisplayName="Revive Charm", Icon="💖", Effect="TIMED RESCUE",
 		Description="Restore a broken pet at the Revive Machine within 24 hours. Consumed once; food is not refunded.",
 		Price=5000000, Weight=.5, RewardType="Revive", Amount=1, StockLimit=1}),
 	WindowSeconds = 24*60*60,
