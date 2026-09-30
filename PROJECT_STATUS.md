@@ -6,6 +6,16 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — launcher positions
+
+- Moved Settings square to top-right; Inventory now below Index in the left
+  Shop/Index/Inventory stack, matching Index dimensions/anchor. Updated resize
+  handlers so runtime does not restore old positions. Small-screen Settings is
+  lowered beneath teleport controls to avoid overlap. Blank Icon retained.
+- Exported live FeedYourPetUI/SettingsUI; Studio screenshot reviewed and Rojo
+  build/diff pass. Full Play input not rerun. Files: both GUI assets, HUDController,
+  SettingsController, move-settings-inventory recipe, handoff. Previous fbe0f35.
+
 ### Latest session — Inventory/Settings launchers
 
 - Inventory retains OpenInventory instance/bindings/location; replaced old baked

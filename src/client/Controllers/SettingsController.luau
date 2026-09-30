@@ -96,7 +96,8 @@ function Controller.Start()
 	local function resize()
 		p.UIScale.Scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/820,(gui.AbsoluteSize.Y-24)/610))
 		local scale=if gui.AbsoluteSize.X<760 then .7 else math.min(1,gui.AbsoluteSize.Y/650)
-		gui.Open.UIScale.Scale=scale;gui.Open.Position=UDim2.new(0,18,.5,76*scale)
+		gui.Open.UIScale.Scale=scale
+		gui.Open.Position=UDim2.new(1,-18,0,if gui.AbsoluteSize.X<760 then 110*math.min(1,(gui.AbsoluteSize.X-24)/540) else 12)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize();render()
 	local originals=setmetatable({},{__mode="k"})

@@ -59,8 +59,10 @@ function Controller.Start()
 		hud.Money.Position=UDim2.new(0,18,1,-bottom)
 		hud.Money.UIScale.Scale=scale
 		hud.Travel.UIScale.Scale=math.min(1,(size.X-24)/540)
-		-- Keep the existing inventory button separate on smaller displays.
-		hud.OpenInventory.Position=UDim2.new(1,-18,0,if size.X<1020 then 110*hud.Travel.UIScale.Scale else 12)
+		-- Match the Index stack's responsive spacing.
+		local launcherScale=if narrow then .7 else math.min(1,size.Y/650)
+		hud.OpenInventory.UIScale.Scale=launcherScale
+		hud.OpenInventory.Position=UDim2.new(0,18,.5,76*launcherScale)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()
 	require(script.Parent.InventoryController).Start(gui,money)
