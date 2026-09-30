@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — teleport button hover tweens
+
+- Completed: Base and Merchant HUD buttons now use existing Motion.BindButton
+  TweenService behavior: 1.025 hover scale, 0.96 pressed scale, 0.09-second Quad
+  easing and smooth return. Teleport requests, speed and button styling unchanged.
+- Authored MotionScale UIScales in StarterGui, centered the anchors while
+  preserving resting bounds, and saved the current live FeedYourPetUI to Rojo.
+  Existing owner edits preserved; no runtime UI creation. Final asset 427 instances.
+- Verified actual Motion module with real TweenService on cloned scales and
+  synthetic input signals for both buttons: hover, press/release, leave, rapid
+  reversal, disabled/hidden reset and duplicate binding. Rojo build/diff pass.
+  Full pointer-driven Play test pending; next check in a fresh Play session.
+- Files: HUDController, FeedYourPetUI, new test-travel-hover.ps1, handoff.
+  Overall progress: complete. Previous working commit 0ad7936. No new blockers.
+
 ### Latest session — preserve authored inventory layout
 
 - Cause: InventoryLayout.Apply rewrote the owner's ScreenGui frame, tabs, text,

@@ -2,6 +2,7 @@ local Players=game:GetService("Players")
 local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local Config=require(ReplicatedStorage.Shared.Config.UIConfig)
 local GuiBootstrap=require(script.Parent.Parent.UI.GuiBootstrap)
+local Motion=require(script.Parent.Parent.UI.Motion)
 local numberText=require(ReplicatedStorage.Shared.NumberFormat).Compact
 local Controller={}
 
@@ -14,6 +15,7 @@ function Controller.Start()
 	local travelBusy=false
 	for _,destination in {"Base","Merchant"} do
 		local button=hud.Travel[destination]
+		Motion.BindButton(button,hud.Travel)
 		button.Activated:Connect(function()
 			if travelBusy then return end
 			travelBusy=true
