@@ -42,7 +42,7 @@ report.OnClientEvent:Connect(function(key)
 		elseif key=="CloseShop" then assert(button==merchant.Panel.Close,"Shop close button highlighted before Base")
 		elseif key=="BaseTeleport" or key=="BaseAfterOtherClose" or key=="BaseWithDisabledShop" then
 			assert(button==main.HUD.Travel.Base,"Closed shop skips directly to Base button")
-		elseif key=="BuyFood" then assert(button==merchant.Panel.Offers.Slot1,"Basic Food card highlighted")
+		elseif key=="BuyFood" then assert(button==merchant.Panel.Offers.Slot1.BuyMoney,"Basic Food money button highlighted")
 		elseif key=="Feed" then assert(button==main.FeedPanel.Feed or button==main.FeedPanel.FoodCards.List.basic,"Feed or Basic selection highlighted")
 		elseif key~="Done" then assert(typeof(world)=="Vector3" or button~=nil,"World or equip target is available") end
 		if button then

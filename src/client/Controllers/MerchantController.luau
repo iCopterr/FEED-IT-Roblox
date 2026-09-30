@@ -53,8 +53,11 @@ function Controller.Start()
 				button.Effect.Text=definition.Effect
 				button.Art.Emoji.Text=definition.Icon
 				Art.Set(button.Art.Picture,button.Art.Emoji,Images[item.ItemId] or Images.empty)
-				button.Active=not item.Purchased
-				button.AutoButtonColor=button.Active
+				button.Active=false;button.AutoButtonColor=false
+				button.BuyMoney.Active=not item.Purchased
+				button.BuyMoney.ButtonText.Text=if item.Purchased then "SOLD OUT" else "$"..NumberFormat.Money(item.Price)
+				button.BuyMoney.ImageColor3=if item.Purchased then Color3.fromRGB(100,100,108) else Color3.fromRGB(78,227,51)
+				button.BuyMoney.BackgroundColor3=button.BuyMoney.ImageColor3
 				button.BackgroundColor3=if item.Purchased then Color3.fromRGB(62,65,73) else Color3.fromRGB(77,49,37)
 				button.Price.TextColor3=if item.Purchased then Color3.fromRGB(175,175,185) else Color3.fromRGB(86,255,74)
 				button.Effect.BackgroundColor3=if item.Purchased then Color3.fromRGB(100,100,108) else Color3.fromRGB(74,132,211)
@@ -63,7 +66,12 @@ function Controller.Start()
 				button.Price.Text="—";button.Effect.Text="FOOD";button.Art.Emoji.Text="🍽️"
 				Art.Set(button.Art.Picture,button.Art.Emoji,Images.empty)
 				button.Active=false;button.BackgroundColor3=Color3.fromRGB(62,65,73)
+				button.BuyMoney.Active=false;button.BuyMoney.ButtonText.Text="—"
 			end
+			-- No product IDs/receipt handler are configured yet. Never prompt a
+			-- paid purchase that cannot be safely fulfilled on the server.
+			button.BuyRobux.Active=false;button.BuyRobux.AutoButtonColor=false
+			button.BuyRobux.ButtonText.Text="ROBUX • SOON"
 		end
 	end
 	local function refresh()
@@ -123,7 +131,9 @@ function Controller.Start()
 	end)
 	for i=1,3 do
 		panel.Offers["Slot"..i]:SetAttribute("SuppressClickSound",true)
-		panel.Offers["Slot"..i].Activated:Connect(function()
+		panel.Offers["Slot"..i].BuyMoney:SetAttribute("SuppressClickSound",true)
+		panel.Offers["Slot"..i].BuyRobux:SetAttribute("SuppressClickSound",true)
+		panel.Offers["Slot"..i].BuyMoney.Activated:Connect(function()
 			local current=state;local item=displayed[i]
 			if not current or not item or item.Purchased or not panel.Visible or #pending>=20 then return end
 			local count=0

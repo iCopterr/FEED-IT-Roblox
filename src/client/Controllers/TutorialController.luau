@@ -73,7 +73,7 @@ function Controller.Resolve(player,playerGui)
 		return "You have enough Money! Click MERCHANT to visit the food shop.",nil,main.HUD.Travel.Merchant
 	elseif step=="BuyFood" then
 		local shop=playerGui:FindFirstChild("MerchantUI")
-		if shop and shop.Panel.Visible then return "Buy Basic Food once for $100.",nil,shop.Panel.Offers.Slot1 end
+		if shop and shop.Panel.Visible then return "Buy Basic Food once for $100.",nil,shop.Panel.Offers.Slot1.BuyMoney end
 		local merchant=workspace:FindFirstChild("MysteryMerchant")
 		return "Go to the merchant and hold E to open the food shop.",merchant and merchant.InteractionPoint.Position
 	elseif step=="BaseTeleport" then

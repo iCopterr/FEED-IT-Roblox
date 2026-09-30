@@ -6,6 +6,29 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — separate merchant Money / Robux buttons
+
+- Completed: each of the three rotating offer rows has authored BuyMoney and
+  BuyRobux buttons, cloned from green Base / blue Merchant teleport styling.
+  Taller scrollable rows preserve food art/name/stock/effect; duplicate price
+  label hidden. Existing MotionScale enables normal merchant hover/press tweens.
+- Money button alone invokes the existing serialized purchase queue; whole-row
+  purchase binding removed. Server pricing/stock/sequence/persistence unchanged.
+  Tutorial BuyFood arrow now targets Slot1.BuyMoney; verification updated.
+- Owner confirmed no Developer Product IDs yet. Robux controls read ROBUX • SOON
+  and are disabled, with no purchase prompt or reward grant. Future activation
+  requires product IDs, pricing and idempotent server receipt handling.
+- Fixed cloned destination shadow text and decoration bounds. Removed duplicate
+  new purchase controls introduced by live Rojo export merging; both saved asset
+  and live rows now have exactly one of each button. Final MerchantUI 185 instances.
+- Verified screenshot in Studio 58741, unique controls, style, sound suppression,
+  money-only binding/tutorial target and script compilation; build/diff pass.
+  Temporary review removed and original Enabled restored. Full purchase Play
+  test not run; no paid transaction attempted. Overall: requested UI complete.
+- Files: MerchantController, TutorialController, TutorialVerification, MerchantUI,
+  docs/studio/merchant-purchase-buttons.luau, handoff. Previous commit 85ad25d.
+  Next: owner Play review; add Robux fulfillment only after product setup.
+
 ### Latest session — decimal money displays
 
 - Completed: added NumberFormat.Money with fixed two decimal places, retaining
