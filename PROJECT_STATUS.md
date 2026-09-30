@@ -6,6 +6,26 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — save owner's Studio UI edits
+
+- Current feature / completed: captured all 11 StarterGui ScreenGuis from Studio
+  on port 58741 with the existing save-studio-ui script; nine snapshot files
+  changed. Preserved the owner's design without authoring new UI or code.
+- Meaningful UI changes are in FeedYourPetUI: Inventory button uses Y scale
+  0.48, X offset 100, updated interaction/layer properties and shine image size;
+  36 duplicate decorative descendants were removed in the owner's Studio edit.
+  Other changed snapshots have serialization/reference/order-only differences.
+- Files modified: src/ui/{FeedYourPetUI,HatchUI,IndexUI,MerchantUI,PenManagerUI,
+  ReviveUI,SettingsUI,ShopUI,TutorialUI}.rbxmx and this handoff.
+- Verification: exported descendant counts match Studio; XML property comparison,
+  git diff --check and Rojo build pass. No runtime behavior test or redesign.
+- Original binary snapshots retained at
+  C:\Users\ADMIN\AppData\Local\Temp\FeedUIBackup_ddac203f9c464e0aa60c57ac57e86052.
+- Overall progress / handoff: UI save complete; no implementation in progress.
+  Existing runtime controller positioning and other gameplay are unchanged.
+  Next task remains owner-directed; live checkout testing remains unverified.
+  Prior working commit: 02613bd. Untracked assets/Monetization/ left untouched.
+
 ### Latest session — direct native growth checkout
 
 - GrowNowController now routes the server's waiting-egg offer straight to
