@@ -12,6 +12,7 @@ function Controller.Start()
 	local gui=playerGui:WaitForChild("FeedYourPetUI",3)
 	if not gui then gui=GuiBootstrap.Ensure(playerGui,game.StarterGui:WaitForChild("FeedYourPetUI",3)) end
 	local hud=gui.HUD
+	Motion.BindButton(hud.OpenInventory,hud)
 	local travelBusy=false
 	for _,destination in {"Base","Merchant"} do
 		local button=hud.Travel[destination]

@@ -6,6 +6,19 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — Inventory/Settings launchers
+
+- Inventory retains OpenInventory instance/bindings/location; replaced old baked
+  image appearance with Index-style blue stud/shine decoration and INVENTORY
+  label. Added existing Motion hover/press binding.
+- Settings Open is now 72x72, with blank Fit Icon (44x42) above bottom SETTING
+  label. Owner can set StarterGui.SettingsUI.Open.Icon.Image later. Existing
+  responsive position/scale and click behavior retained; no page logic changed.
+- Live UI captured before editing to preserve owner changes. Both ScreenGuis
+  exported. Studio screenshot reviewed, Rojo build/diff pass. Full click Play
+  not rerun. Files: two GUI assets, HUDController, authoring recipe, handoff.
+  Previous commit 3724384. Next: owner adds image ID.
+
 ### Latest session — Settings missing audio-group startup fix
 
 - Replaced unbounded MusicVolumeGroup/SFXVolumeGroup waits with client-local
