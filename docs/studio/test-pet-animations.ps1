@@ -1,8 +1,8 @@
-param([int]$Port=58741,[int]$PreviewPage=0)
+param([int]$Port=58741,[int]$PreviewPage=0,[double]$SampleTime=.3,[double]$Walk=1)
 $ErrorActionPreference='Stop'
 $pose=Get-Content src/client/UI/PetPose.luau -Raw
 $profiles=Get-Content src/shared/Config/PetAnimationConfig.luau -Raw
-$code="local Pose=(function()`n$pose`nend)()`nlocal Profiles=(function()`n$profiles`nend)()`nlocal page=$PreviewPage`n"+@'
+$code="local Pose=(function()`n$pose`nend)()`nlocal Profiles=(function()`n$profiles`nend)()`nlocal page=$PreviewPage`nlocal sampleTime=$SampleTime`nlocal walk=$Walk`n"+@'
 assert(not game:GetService('RunService'):IsRunning())
 Profiles=Profiles.Profiles
 local templates=game.ReplicatedStorage.PetsModel
@@ -40,12 +40,18 @@ if stage then stage:Destroy() end
 local cam=workspace.CurrentCamera
 if page==0 and cam:GetAttribute('PetPreviewOriginal') then
  cam.CFrame=cam:GetAttribute('PetPreviewOriginal');cam:SetAttribute('PetPreviewOriginal',nil)
+ if cam:GetAttribute('PetPreviewFocus') then cam.Focus=cam:GetAttribute('PetPreviewFocus');cam:SetAttribute('PetPreviewFocus',nil) end
+ if cam:GetAttribute('PetPreviewFov') then cam.FieldOfView=cam:GetAttribute('PetPreviewFov');cam:SetAttribute('PetPreviewFov',nil) end
 end
 if page>0 then
  if not cam:GetAttribute('PetPreviewOriginal') then cam:SetAttribute('PetPreviewOriginal',cam.CFrame) end
+ if not cam:GetAttribute('PetPreviewFocus') then cam:SetAttribute('PetPreviewFocus',cam.Focus) end
+ if not cam:GetAttribute('PetPreviewFov') then cam:SetAttribute('PetPreviewFov',cam.FieldOfView) end
+ cam.FieldOfView=38
  stage=Instance.new('Folder');stage.Name='PetAnimationPreviewStage';stage.Parent=workspace
  local origin=Vector3.new(10000,1000,10000)
  cam.CFrame=CFrame.lookAt(origin+Vector3.new(0,26,-43),origin+Vector3.new(0,0,7))
+ cam.Focus=CFrame.new(origin+Vector3.new(0,0,7))
  local gui=Instance.new('ScreenGui');gui.Name='PetAnimationPreview';gui.DisplayOrder=999;gui.IgnoreGuiInset=true
  for i=(page-1)*6+1,math.min(page*6,#available) do
   local name=available[i];local cell=(i-1)%6
@@ -56,7 +62,7 @@ if page>0 then
   local model=templates[name]:Clone();model.Parent=stage
   local _,originalSize=model:GetBoundingBox();model:ScaleTo(model:GetScale()*9/originalSize.Magnitude)
   model:PivotTo(CFrame.new(origin+Vector3.new((cell%3-1)*14,0,math.floor(cell/3)*15)))
-  local state=Pose.Bind(model,Profiles[name]);Pose.Step(state,.3,1)
+  local state=Pose.Bind(model,Profiles[name]);Pose.Step(state,sampleTime,walk)
   local cf,size=model:GetBoundingBox()
   local camera=Instance.new('Camera');camera.FieldOfView=35
   camera.CFrame=CFrame.lookAt(cf.Position+Vector3.new(1,.65,-1.5).Unit*size.Magnitude*1.3,cf.Position)

@@ -6,8 +6,10 @@ local Species=require(Storage.Shared.Config.PetConfig).Species
 local FolderName=require(Storage.Shared.Config.PlacementConfig).VisualFolderName
 local Pose=require(script.Parent.Parent.UI.PetPose)
 local Controller={}
+local started=false
 function Controller.Start()
-	if not Config.Enabled then return end
+	if not Config.Enabled or started then return end
+	started=true
 	local plots=workspace:WaitForChild("PlayerPlots")
 	local states={}
 	local function track(model)
@@ -18,7 +20,7 @@ function Controller.Start()
 		if not profile then return end
 		local state=Pose.Bind(model,profile)
 		if state then
-			state.Last=state.Root.Position;state.Walk=0;state.Time=math.random()*5
+			state.Last=state.Root.Position;state.Walk=0;state.Time=math.random()*5;state.MovingUntil=0
 			states[model]=state
 		end
 	end
@@ -34,9 +36,11 @@ function Controller.Start()
 			end
 			local pos=state.Root.Position
 			local delta=pos-state.Last;state.Last=pos
-			local moving=Vector3.new(delta.X,0,delta.Z).Magnitude>dt*.15
-			state.Walk+=( (if moving then 1 else 0)-state.Walk)*math.min(1,dt*8)
 			state.Time+=math.min(dt,.1)
+			-- Replication arrives in packets, not on every render frame.
+			if Vector3.new(delta.X,0,delta.Z).Magnitude>dt*.15 then state.MovingUntil=state.Time+.15 end
+			local moving=state.Time<state.MovingUntil
+			state.Walk+=( (if moving then 1 else 0)-state.Walk)*math.min(1,dt*8)
 			if camera and (camera.CFrame.Position-pos).Magnitude<350 then
 				Pose.Step(state,state.Time,state.Walk)
 			end

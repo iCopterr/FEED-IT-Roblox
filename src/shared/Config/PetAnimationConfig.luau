@@ -39,5 +39,5 @@ add("Godly Behemoth","Heavy",.85,12)
 add("Galaxy Dragon","Winged",1.1,15)
 add("Cosmic Hydra","Heavy",1,14)
 add("World Eater","Swimmer",.8,10)
--- Keep off until a visible Studio motion review passes; structural tests are not visual QA.
-return table.freeze({Enabled=false,Profiles=table.freeze(profiles)})
+-- Prototype motion; per-species cadence/stride remain editable above.
+return table.freeze({Enabled=true,Profiles=table.freeze(profiles)})

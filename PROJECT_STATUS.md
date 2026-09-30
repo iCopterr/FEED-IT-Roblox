@@ -6,6 +6,27 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — animation retry / first-pass activation
+
+- Studio 3D capture recovered after explicit camera Focus setup. Inspected
+  Chicken close-up and all 36 pets in six-group walk and idle pose screenshots;
+  no separated rig/detail geometry observed. These are sampled poses, not
+  full frame-by-frame motion or ground-contact approval.
+- Enabled first-pass procedural animations for placed pets in config. Added
+  duplicate-start protection and a .15s movement latch to avoid blending back
+  to idle between network movement packets. No pet geometry or server economy
+  changes. Held pets, feed animations and UI previews remain untouched.
+- Tests: all 36 idle/walk/rig/reset tests pass. New actual-controller mock checks
+  all 36 with simulated 20Hz movement vs 60Hz render, steady walking, smooth
+  stopping, distance culling, resume, removal and duplicate Start. Build passes.
+- Full multiplayer Play, long-running motion, mobile performance, detailed foot
+  contact and streaming still unverified. Treat as prototype first pass, not
+  bespoke polished uploaded clips. Owner should Play-test placed pets next.
+- Preview tool now accepts time/walk arguments and saves/restores Focus/FOV.
+  Temporary stage clones removed. No original model changed/deleted.
+- Files: PetAnimationConfig, PetAnimationController, test-pet-animations.ps1,
+  new test-pet-animation-controller.ps1, handoff. Previous commit 4d4f870.
+
 ### Latest session — pet idle/walk foundation (NOT visually approved / disabled)
 
 - Request: idle and walk for every pet, reviewed one by one. Built a procedural
