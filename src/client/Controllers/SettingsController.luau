@@ -3,6 +3,7 @@ local Input=game:GetService("UserInputService")
 local SoundService=game:GetService("SoundService")
 local Config=require(game.ReplicatedStorage.Shared.Config.SettingsConfig)
 local Motion=require(script.Parent.Parent.UI.Motion)
+local VolumeGroups=require(script.Parent.Parent.Audio.VolumeGroups)
 local Controller={}
 function Controller.Start()
 	local player=Players.LocalPlayer
@@ -11,8 +12,8 @@ function Controller.Start()
 	local remote=game.ReplicatedStorage:WaitForChild("PrototypeUI"):WaitForChild("Request")
 	local values=table.clone(Config.Defaults);local loaded=false
 	player:SetAttribute("SettingsPanelOpen",false)
-	local music=SoundService:WaitForChild("MusicVolumeGroup")
-	local sfx=SoundService:WaitForChild("SFXVolumeGroup")
+	local music=VolumeGroups.Ensure(SoundService,"MusicVolumeGroup")
+	local sfx=VolumeGroups.Ensure(SoundService,"SFXVolumeGroup")
 	local function route(sound)
 		if sound:IsA("Sound") then sound.SoundGroup=if sound.Name=="BackgroundMusic" then music else sfx end
 	end

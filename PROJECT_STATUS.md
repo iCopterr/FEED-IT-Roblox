@@ -6,6 +6,18 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — Settings missing audio-group startup fix
+
+- Replaced unbounded MusicVolumeGroup/SFXVolumeGroup waits with client-local
+  VolumeGroups.Ensure. Missing authored groups no longer stall Settings startup;
+  existing correctly typed groups/volumes are reused, wrong-class siblings are
+  preserved. No UI/economy changes. Project-authored groups remain supported.
+- Verified real Instance checks for creation, reuse, volume preservation and
+  wrong-class handling; Settings suite, Rojo build and diff checks pass. Confirmed
+  updated SettingsController source synced in Studio. Restart Play required for
+  already-waiting controller. Full audio/input Play still not verified.
+- Files: Audio/VolumeGroups, SettingsController, handoff. Previous fa2a09d.
+
 ### Latest session — Settings page
 
 - Added authored SettingsUI below Index, reference-style Music/SFX yellow
