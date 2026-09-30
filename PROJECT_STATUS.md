@@ -6,6 +6,17 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — teleport-style Shop shine
+
+- Added authored TeleportShine CanvasGroups to Shop header and eight offer
+  cards, cloning the actual Base teleport button's two diagonal shine stripes.
+  Clipped to card corners, behind text/art, with softer .55 group transparency
+  for large surfaces. Existing purchase-button shine retained. No new animation
+  loop, prices, interactions or payment logic changed.
+- Files: ShopUI.rbxmx, shop-shine.luau, handoff. Existing live Studio UI captured
+  before editing. Studio preview reviewed; shop tests/build pass. Full Play not
+  run. Preview restored; next: owner artwork IDs. Previous commit 0a6e056.
+
 ### Latest session — reference-style scrollable Shop
 
 - Completed: ShopUI restyled to approved mockup without pictures: fixed green
