@@ -39,14 +39,13 @@ function FeedController.Start()
 		latest = state
 		if state.PetId then
 			panel.PetName.Text = state.PetName
-			panel.PetDetails.Text = string.format("%s  •  Feed Level %d", state.Rarity, state.FeedLevel)
+			panel.PetDetails.Text = string.format("%s  •  Lv. %d", state.Rarity, state.FeedLevel)
 		end
-		if state.Food then panel.Food.Text = string.format("FOOD  %s   •   COST  %s", numberText(state.Food), if state.Cost then numberText(state.Cost) else "—") end
+		-- Quantities live on food cards; cost stays on the Feed button.
 		panel.Feed.Text = if state.MaxLevel then "MAX LEVEL 40" else if state.Cost then "FEED  •  "..numberText(state.Cost).." FOOD" else "FEED"
 		panel.Notice.Text = if state.MaxLevel then "MAX LEVEL"
-			elseif state.FoodId and Foods.Types[state.FoodId].GuaranteedSuccess then "GUARANTEED SUCCESS\nNormal critical chances"
-			else string.format("EXPLOSION: %s%%\nFailure → Rescue or Lv.%d",
-				numberText((state.Risk or 0)*100),Config.ExplosionResetLevel)
+			elseif state.FoodId and Foods.Types[state.FoodId].GuaranteedSuccess then "GUARANTEED SUCCESS"
+			else string.format("EXPLOSION RISK: %s%%",numberText((state.Risk or 0)*100))
 		local canFeed = state.Ok and state.Cost and not state.MaxLevel and not state.Busy
 			and state.PetId == player:GetAttribute("FeedPlatePetId") and state.Food >= state.Cost and not busy
 		panel.Feed.Active = canFeed == true

@@ -6,6 +6,23 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — readable feed summary
+
+- Completed: feed panel pet name enlarged to 36 (bounded scaling for long names),
+  rarity/level to 26, and risk to 28. Kept existing font/stroke style and authored
+  the spacing in ScreenGui. Shortened details to Rarity / Lv. X and retained a
+  clear EXPLOSION RISK percentage, GUARANTEED SUCCESS or MAX LEVEL.
+- Removed duplicate center Food/Cost row and failure/critical explanatory copy.
+  Quantity remains on food cards; spending cost remains on Feed. Gameplay,
+  probabilities, food selection and transaction validation unchanged.
+- Saved current live FeedYourPetUI (436 instances), preserving other owner edits.
+  Text hierarchy visually reviewed on a disposable GUI clone in Studio 58741;
+  clone removed and original Enabled restored. Text spacing/size assertions,
+  controller compilation, Rojo build and diff passed. Full Play not run.
+- Files: FeedController, FeedYourPetUI, docs/studio/style-feed-summary.luau,
+  handoff. Overall progress: complete; next owner Play review. Previous commit
+  7402070. No new blockers; unrelated model files remain untouched.
+
 ### Latest session — teleport button hover tweens
 
 - Completed: Base and Merchant HUD buttons now use existing Motion.BindButton
