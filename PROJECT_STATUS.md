@@ -6,6 +6,26 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — Grow All / paid Restock placeholders and quotes
+
+- Added authored teleport-style GrowAll button in egg remote panel (shares the
+  EquipBest footer position, visible only for Eggs) and RestockBuy in merchant.
+  Scroll lists reserve footer space. Both remain disabled and labelled SOON;
+  owner has no Developer Product IDs. No payment prompts or reward mutations.
+- MonetizationConfig centralizes 39 Robux restock and grow time tiers:
+  <=60s 29, <=600s 39, <=1800s 59, <=3600s 79, <=10800s 119, longer 149.
+  Grow All displays sum capped at 199, counting only placed unfinished eggs;
+  ready/unplaced eggs excluded. Zero eligible eggs displays NO GROWING EGGS.
+- Component checks in Studio 58741 passed all tier boundaries, cap/exclusions,
+  empty quote, unique disabled authored buttons and client compilation. Rojo
+  build/diff pass. Full Play/visual button review pending. No transaction tested.
+- Scope complete for ID-less UI/quote setup, not live monetization. Supplying IDs
+  alone must NOT enable purchases: still needs server quotes, stock/timer receipt
+  fulfillment, idempotent durable grants and paid-product policy review.
+- Files: MonetizationConfig, PenManagerController, MerchantController, MerchantUI,
+  PenManagerUI, paid-grow-restock-buttons recipe, handoff. Previous commit 791d788.
+  Next: owner review; provide product IDs before paid fulfillment implementation.
+
 ### Latest session — notification font/outline and invalid placement feedback
 
 - Fixed Notification's inherited Denk One/no-outline style: now copies the HUD

@@ -3,6 +3,7 @@ local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local Prompts=game:GetService("ProximityPromptService")
 local NumberFormat=require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("NumberFormat"))
 local Shop=require(ReplicatedStorage.Shared.Config.MerchantConfig)
+local Monetization=require(ReplicatedStorage.Shared.Config.MonetizationConfig)
 local RarityColors=require(ReplicatedStorage.Shared.Config.InventoryConfig).RarityColors
 local Controller={}
 local Sounds=require(script.Parent.Parent.Audio.GameSounds)
@@ -23,6 +24,8 @@ function Controller.Start()
 	-- replaced by that copy, leaving the controller bound to a detached screen.
 	local gui=assert(playerGui:WaitForChild("MerchantUI",30),"MerchantUI missing; check Rojo")
 	local panel=gui.Panel
+	panel.RestockBuy.Active=false;panel.RestockBuy.AutoButtonColor=false
+	panel.RestockBuy.ButtonText.Text="RESTOCK • "..Monetization.PersonalRestockRobux.." ROBUX • SOON"
 	local remote=ReplicatedStorage:WaitForChild("PrototypeMerchant")
 	local state,receivedAt,busy=nil,0,false
 	local displayed={}

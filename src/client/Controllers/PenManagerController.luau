@@ -4,6 +4,7 @@ local Pets=require(Shared.Config.PetConfig)
 local Variants=require(Shared.Config.VariantConfig)
 local Income=require(Shared.PetIncome)
 local Number=require(Shared.NumberFormat).Money
+local Monetization=require(Shared.Config.MonetizationConfig)
 local Motion=require(script.Parent.Parent.UI.Motion)
 local Preview=require(script.Parent.Parent.UI.ItemPreview)
 local Controller={}
@@ -49,6 +50,10 @@ function Controller.Start()
 		table.sort(list,function(a,b) if a.Name==b.Name then return a.Id<b.Id end;return a.Name<b.Name end)
 		panel.Title.Text=if mode=="Eggs" then "GROWING EGGS • "..#list else string.format("PETS • %d / %d",snapshot.PlacedCount,snapshot.MaxPetSlots)
 		panel.EquipBest.Visible=mode=="Pets"
+		panel.GrowAll.Visible=mode=="Eggs"
+		panel.GrowAll.Active=false;panel.GrowAll.AutoButtonColor=false
+		local price,count=Monetization.GrowAllQuote(snapshot.Eggs or {},snapshot.ServerNow)
+		panel.GrowAll.ButtonText.Text=if count==0 then "GROW ALL • NO GROWING EGGS" else "GROW ALL • "..price.." ROBUX • SOON"
 		panel.EquipBest.Active=mode=="Pets" and not busy and not snapshot.Busy
 		panel.EquipBest.BackgroundColor3=if panel.EquipBest.Active then Color3.fromRGB(78,227,51) else Color3.fromRGB(90,94,108)
 		local shown={}
@@ -105,6 +110,9 @@ function Controller.Start()
 		end
 		panel.Title.Text=if mode=="Pets" then "PLACED PETS" else "GROWING EGGS"
 		panel.EquipBest.Visible=mode=="Pets"
+		panel.GrowAll.Visible=mode=="Eggs"
+		panel.GrowAll.Active=false
+		panel.GrowAll.ButtonText.Text="GROW ALL • SOON"
 		panel.Status.Text="Loading…";panel.Visible=true;task.spawn(refresh)
 	end
 	gui.Dock.Eggs.Activated:Connect(function() open("Eggs") end)
