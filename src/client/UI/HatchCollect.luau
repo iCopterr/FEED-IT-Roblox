@@ -45,7 +45,7 @@ function Collect.Play(result)
 			sparks.Size=NumberSequence.new(.25,0);sparks.SpreadAngle=Vector2.new(180,180);sparks.Parent=a
 			local revealStart=result.RevealEndsAt-Timing.PetRevealSeconds
 			if workspace:GetServerTimeNow()<result.CollectStartsAt then reveal=PetReveal.Create(result,origin,color) end
-			-- Only the presentation waits. The server has already safely granted the pet.
+			-- The server keeps this pet reserved in its egg until light arrival.
 			while workspace:GetServerTimeNow()<result.CollectStartsAt do
 				if Players.LocalPlayer.Character~=character or not root.Parent or not orb.Parent then return end
 				local now=workspace:GetServerTimeNow()

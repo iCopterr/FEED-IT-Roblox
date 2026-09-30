@@ -133,18 +133,26 @@ function Service.HandleRequest(player,action,id,position)
 	assert(Locks.Begin(player,egg.Pet.PetId))
 	local origin=if model then model:GetPivot() else root.CFrame*CFrame.new(0,0,-5)
 	if model then model:SetAttribute("Hatching",true) end
-	-- Keep the reserved pet in the saved egg until the server's reveal deadline.
-	-- Leaving during this wait preserves the egg for a safe retry on reconnect.
-	local endsAt=workspace:GetServerTimeNow()+HatchAnimation.Duration
+	-- The already-saved egg reserves this exact pet through the entire animation.
+	-- Reveal it at pop, but transfer ownership to inventory only at light arrival.
+	local pet=egg.Pet
+	local definition=PetConfig.Species[pet.SpeciesId]
+	local start=workspace:GetServerTimeNow()
+	local result={Ok=true,Code="Hatched",EggUid=id,EggId=egg.EggId,SpeciesId=pet.SpeciesId,PetId=pet.PetId,Rarity=pet.Rarity,
+		Variant=pet.Variant,PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant),
+		HatchOrigin=origin,RevealEndsAt=start+HatchAnimation.BurstAt+HatchAnimation.PetRevealSeconds}
+	result.CollectStartsAt=result.RevealEndsAt+HatchAnimation.PetDissolveSeconds
+	result.CollectEndsAt=result.CollectStartsAt+HatchAnimation.CollectSeconds
 	if hatchStarted then hatchStarted:FireClient(player,{Ok=true,Code="HatchStarted",EggUid=id,
-		EggId=egg.EggId,HatchOrigin=origin,EndsAt=endsAt}) end
-	repeat task.wait(math.max(.01,endsAt-workspace:GetServerTimeNow())) until workspace:GetServerTimeNow()>=endsAt
+		EggId=egg.EggId,HatchOrigin=origin,EndsAt=start+HatchAnimation.Duration,Reward=result}) end
+	-- No client arrival message can accelerate the grant. Leaving keeps the same
+	-- reserved egg/result for retry; an autosave during the wait also keeps the egg.
+	repeat task.wait(math.max(.01,result.CollectEndsAt-workspace:GetServerTimeNow())) until workspace:GetServerTimeNow()>=result.CollectEndsAt
 	if player.Parent~=Players or Data.GetData(player)~=profile or profile.IncubatingEggs[id]~=egg then
 		if model and model.Parent then model:SetAttribute("Hatching",nil) end
 		Locks.Finish(player)
 		return {Ok=false,Code="Loading"}
 	end
-	local pet=egg.Pet
 	local previousIndex=profile.PetIndex[pet.SpeciesId]
 	profile.IncubatingEggs[id]=nil
 	profile.Inventory[pet.PetId]=pet
@@ -155,29 +163,16 @@ function Service.HandleRequest(player,action,id,position)
 		if model and model.Parent then model:SetAttribute("Hatching",nil) end
 		return {Ok=false,Code="InvalidData"}
 	end
-	local definition=PetConfig.Species[pet.SpeciesId]
-	local result={Ok=true,Code="Hatched",EggUid=id,EggId=egg.EggId,SpeciesId=pet.SpeciesId,PetId=pet.PetId,Rarity=pet.Rarity,
-		Variant=pet.Variant,PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant),
-		HatchOrigin=origin}
 	state.LastHatch=table.clone(result)
 	require(script.Parent.TutorialProgress).Record(profile,"Hatched",id,pet.PetId)
 	Visuals.Reconcile(player,profile)
 	save(player,profile,function()
-		-- Reveal deadline passed; disclose the result only after persistence.
-		local revealStart=workspace:GetServerTimeNow()
-		result.RevealEndsAt=revealStart+HatchAnimation.PetRevealSeconds
-		result.CollectStartsAt=result.RevealEndsAt+HatchAnimation.PetDissolveSeconds
-		result.CollectEndsAt=result.CollectStartsAt+HatchAnimation.CollectSeconds
+		-- This is confirmation, not the start of another visual reveal.
 		if hatchOutcome then hatchOutcome:FireClient(player,result) end
-		-- Ownership is already safely saved; only automatic carrying waits for the
-		-- reward trail. No client acknowledgement can grant or duplicate the pet.
-		local character=player.Character
-		task.delay(result.CollectEndsAt-revealStart,function()
-			if player.Parent~=Players or player.Character~=character or Data.GetData(player)~=profile
-				or profile.Inventory[pet.PetId]~=pet or pet.Placed then return end
-			if require(script.Parent.PedestalService).GetPetId(player)==pet.PetId then return end
-			if not Carry.GetPetId(player) and not Carry.GetEggId(player) then Carry.Equip(player,pet.PetId) end
-		end)
+		if player.Parent~=Players or player.Character~=character or Data.GetData(player)~=profile
+			or profile.Inventory[pet.PetId]~=pet or pet.Placed then return end
+		if require(script.Parent.PedestalService).GetPetId(player)==pet.PetId then return end
+		if not Carry.GetPetId(player) and not Carry.GetEggId(player) then Carry.Equip(player,pet.PetId) end
 	end)
 	return result
 end

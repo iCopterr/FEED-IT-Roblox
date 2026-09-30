@@ -170,8 +170,9 @@ local ok,failure=xpcall(function()
 		and carry.GetPetId(a)~=petId,"Pet remains reserved during hatch animation")
 	check(eggs.HandleRequest(a,"Hatch",uid).Code=="Busy","Duplicate hatch during reveal is blocked")
 	waitFor(function() return hatched~=nil end)
-	check(os.clock()-hatchStart>=require(game.ReplicatedStorage.Shared.Config.HatchAnimationConfig).Duration,
-		"Pet grant waits for full reveal duration")
+	local hatchTiming=require(game.ReplicatedStorage.Shared.Config.HatchAnimationConfig)
+	check(os.clock()-hatchStart>=hatchTiming.BurstAt+hatchTiming.PetRevealSeconds+hatchTiming.PetDissolveSeconds+hatchTiming.CollectSeconds,
+		"Pet grant waits until reward light arrival")
 	-- Manual E route remains covered above and by the later tier hatches.
 	check(hatched.Ok and hatched.PetId==petId and count(profile.Inventory)==inventoryCount+1
 		and profile.IncubatingEggs[uid]==nil,"Ready egg atomically becomes original reserved pet")

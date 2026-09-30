@@ -4,6 +4,7 @@ local Debris = game:GetService("Debris")
 local Eggs = require(Storage.Shared.Config.EggConfig)
 local Timing = require(Storage.Shared.Config.HatchAnimationConfig)
 local Sounds = require(script.Parent.Parent.Audio.GameSounds)
+local Collect = require(script.Parent.Parent.UI.HatchCollect)
 local Controller = {}
 local seen = {}
 local started, active = false, 0
@@ -12,7 +13,13 @@ local function play(result)
 	local definition = Eggs.Definitions[result.EggId]
 	local templates = workspace:FindFirstChild("EggTemplates")
 	local template = templates and templates:FindFirstChild(definition and definition.TemplateName or result.EggId)
-	if not template then return end
+	if not template then
+		-- Missing shell art must not hide an otherwise valid hatch result.
+		task.delay(math.max(0,result.EndsAt-Timing.Duration+Timing.BurstAt-workspace:GetServerTimeNow()),function()
+			Collect.Play(result.Reward)
+		end)
+		return
+	end
 	local egg = template:Clone()
 	egg.Name = "HatchReveal_" .. result.EggUid
 	for _, item in egg:GetDescendants() do
@@ -124,6 +131,7 @@ local function play(result)
 					if item:IsA("BasePart") then item.Transparency = 1 end
 					if item:IsA("ParticleEmitter") and item ~= burst and item ~= sparks and item ~= shock then item.Enabled = false; item:Clear() end
 				end
+				Collect.Play(result.Reward)
 			end
 			if revealed and not aftershock and t>=Timing.BurstAt+Timing.AftershockDelay then
 				aftershock=true;sparks:Emit(16);shock:Emit(1)
@@ -174,6 +182,5 @@ function Controller.Start()
 	if started then return end
 	started = true
 	Storage:WaitForChild("HatchStarted").OnClientEvent:Connect(Controller.Enqueue)
-	Storage:WaitForChild("HatchOutcome").OnClientEvent:Connect(require(script.Parent.Parent.UI.HatchCollect).Play)
 end
 return Controller

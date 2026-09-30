@@ -1,5 +1,5 @@
 return table.freeze({
-	Duration = 4.2, -- Shared server grant deadline: presentation must not extend it.
+	Duration = 4.2, -- Shell VFX lifetime; inventory grant is at the later light arrival.
 	RiseSeconds = 1,
 	BurstAt = 3.2,
 	RiseHeight = 2.6,

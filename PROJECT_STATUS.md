@@ -6,6 +6,32 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — reveal at egg pop; inventory grant at light arrival
+
+- Current feature / completed: corrected the preceding implementation's gap.
+  HatchController starts the pet reveal in the same frame it hides the shell and
+  plays HatchFinish. The result remains visible for 2 seconds, dissolves for
+  0.3 seconds, then travels to the player for 0.8 seconds in rarity-colored light.
+- EggService now retains the original reserved pet in IncubatingEggs through
+  that entire timeline (6.3 seconds from start). Only at the server arrival
+  deadline does it atomically move into Inventory and update PetIndex/tutorial.
+  No client acknowledgment controls ownership. Start payload supplies the already
+  reserved result for presentation; HatchOutcome is post-save confirmation only.
+- Leaving before arrival preserves the same egg/result for retry. Save retries
+  retain the transaction lock; auto-carry happens after successful persistence,
+  and will not equip onto a replaced character. No data schema migration needed.
+- Verification: actual-source EggService mock tests pass for no early grant,
+  identity, duplicate requests, disconnect/retry, schema rollback and save retry.
+  Actual HatchController test confirms reveal on the shell-pop frame and dedupe;
+  all 9 rarity collection/cleanup tests pass. Five synced modules compile in
+  Studio 58741; Rojo build and diff checks pass. Full multiplayer/latency Play
+  testing remains pending; tests used edit-mode mocks, not live player saves.
+- Overall progress: implementation/component verification complete. Next: Play
+  check the complete sequence, especially under latency. Files: EggService,
+  HatchController, HatchCollect, HatchAnimationConfig, ConveyorVerification,
+  test-hatch-reward-reveal.ps1, new test-hatch-grant-timing.ps1, handoff.
+  Previous working commit: 933ccee. Unrelated assets and paused Sakura work intact.
+
 ### Latest session — hatch pet reveal before collection
 
 - Current feature / completed: successful hatch shows the actual species model
