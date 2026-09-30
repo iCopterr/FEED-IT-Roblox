@@ -141,7 +141,10 @@ local ok,failure=xpcall(function()
 	for _,size in {Vector2.new(1280,720),Vector2.new(390,844),Vector2.new(844,390),Vector2.new(360,640)} do
 		layout.Apply(gui,cards,buttons,size)
 		local panel=gui.Inventory.Panel.Layout
-		check(gui.Inventory.Size.X.Offset<=size.X and gui.Inventory.Size.Y.Offset<=size.Y,"Inventory fits "..tostring(size))
+		local authored=gui.Inventory.Size
+		local fit=gui.Inventory.InventoryFitScale.Scale
+		check((authored.X.Scale*size.X+authored.X.Offset)*fit<=size.X
+			and (authored.Y.Scale*size.Y+authored.Y.Offset)*fit<=size.Y,"Authored inventory fits "..tostring(size))
 		check(gui.Hotbar.Size.X.Offset<=size.X,"Hotbar fits "..tostring(size))
 		check(panel.Pets.Size.Y.Offset>0 and panel.Pets.Grid.CellSize.X.Offset>=90,"Scrollable cards fit "..tostring(size))
 	end

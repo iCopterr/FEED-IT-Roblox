@@ -6,6 +6,30 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — preserve authored inventory layout
+
+- Cause: InventoryLayout.Apply rewrote the owner's ScreenGui frame, tabs, text,
+  cards and detail geometry on every render/resize (e.g. toolbar Y=75 became 62).
+- Completed: captured the live FeedYourPetUI before editing, saved it back to
+  its Rojo asset, removed inventory child geometry/font overrides, and authored
+  InventoryFitScale under Inventory. Only that whole-panel scale shrinks to fit
+  small screens; inventory Size/Position and card-template layout stay authored.
+  Dynamic hotbar wrapping/square slots remain unchanged. No other menus edited.
+- Backup before modification: local Temp/FeedUIBackup_
+  8f167372674f4e518a4cdaff45fd7c67. Final captured UI has 423 instances (one added
+  UIScale). Export helper now accepts -ScreenGui to avoid unrelated asset writes.
+- Verification: actual layout module on cloned authored UI passed 15 viewport /
+  hotbar combinations, repeated refreshes, invariant geometry/fonts/grid and new
+  manual edits. Mobile fit and 0/1/10 hotbar states pass; Rojo build/diff pass.
+  Updated existing inventory verification for scaled bounds. Full Play pending.
+- Known authored issue: Egg and Food tabs both occupy (534,75) in Studio. Kept
+  those owner-authored positions unchanged and informed owner. Small screens now
+  scale the composition instead of switching to the former stacked layout.
+- Overall progress: fix complete; next verify a fresh Play session and optionally
+  separate the overlapping tabs. Files: InventoryLayout, InventoryVerification,
+  FeedYourPetUI asset, save-studio-ui, new test-authored-inventory-layout, handoff.
+  Previous working commit 110a574; unrelated model assets remain untouched.
+
 ### Latest session — reveal at egg pop; inventory grant at light arrival
 
 - Current feature / completed: corrected the preceding implementation's gap.

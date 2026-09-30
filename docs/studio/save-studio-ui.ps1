@@ -1,4 +1,4 @@
-param([int]$Port=58741)
+param([int]$Port=58741,[string]$ScreenGui)
 $ErrorActionPreference='Stop'
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $snapshot=Join-Path ([IO.Path]::GetTempPath()) ('FeedUIBackup_'+[guid]::NewGuid().ToString('N'))
@@ -21,6 +21,10 @@ for _,ui in game.StarterGui:GetChildren() do
 end
 return game:GetService('HttpService'):JSONEncode(entries)
 '@ | ConvertFrom-Json
+if ($ScreenGui) {
+ $inventory=@($inventory | Where-Object name -eq $ScreenGui)
+ if ($inventory.Count -ne 1) {throw "ScreenGui not found: $ScreenGui"}
+}
 $tree=@{'$className'='DataModel';StarterGui=@{'$className'='StarterGui'}}
 foreach($entry in $inventory) {
  if($entry.name -notmatch '^[A-Za-z][A-Za-z0-9_]*$') {throw 'Unexpected UI name; manual review required'}
