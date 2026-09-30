@@ -6,6 +6,27 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — waiting eggs open Grow Now
+
+- Completed: remote egg rows show enabled HATCH while growing (subject to busy
+  state); ready eggs still hatch normally. World HatchEgg prompts are enabled
+  while growing, with Growing Egg text; hatching-in-progress prompts stay hidden.
+- Waiting hatch requests pass normal ownership, placed state, character and
+  distance validation (remote route intentionally permits distance), then return
+  GrowNowUnavailable and send an owner-only GrowNowOffer with server price.
+  No timer, egg, inventory, money or save mutation occurs for this quote.
+- Added authored GrowNow dialog in PenManagerUI and GrowNowController. Both
+  manual and remote waiting-egg actions open it; priced buy control says SOON
+  and remains disabled with no payment/fulfillment hook. Close button works.
+- Tests: actual EggService mock suite still passes ready hatch safety plus new
+  waiting manual/remote price, no-grant/no-lock and too-far checks. Synced client/
+  EggVisuals modules compile; unique disabled authored dialog checked. Build/diff
+  pass. Full proximity/input Play and visual review remain pending.
+- Files: EggService, EggVisuals, CarryController, PenManagerController, new
+  GrowNowController, client init, PenManagerUI, grow-now-dialog recipe, hatch
+  timing test, ConveyorVerification, handoff. Previous commit a72bc7e.
+  Overall: ID-less interaction complete; paid functionality awaits product setup.
+
 ### Latest session — Grow All / paid Restock placeholders and quotes
 
 - Added authored teleport-style GrowAll button in egg remote panel (shares the

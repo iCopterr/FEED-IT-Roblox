@@ -18,6 +18,8 @@ local saving,sessions={},{}
 local rng=Random.new()
 local hatchOutcome
 local hatchStarted
+local growNowOffer
+local Monetization=require(game.ReplicatedStorage.Shared.Config.MonetizationConfig)
 
 local function save(player,profile,afterSave)
 	local token={};saving[player]=token
@@ -122,7 +124,6 @@ function Service.HandleRequest(player,action,id,position)
 		return {Ok=true,Code="Placed",EggUid=id,ReadyAt=egg.ReadyAt}
 	end
 	if not egg.PenPosition then return {Ok=false,Code="NotPlaced"} end
-	if os.time()<egg.ReadyAt then return {Ok=false,Code="NotReady"} end
 	local character=player.Character
 	local humanoid=character and character:FindFirstChildOfClass("Humanoid")
 	local root=character and character:FindFirstChild("HumanoidRootPart")
@@ -130,6 +131,13 @@ function Service.HandleRequest(player,action,id,position)
 	local body=model and model:FindFirstChildWhichIsA("BasePart",true)
 	if not humanoid or humanoid.Health<=0 or not root then return {Ok=false,Code="CharacterUnavailable"} end
 	if not remoteHatch and (not body or (root.Position-body.Position).Magnitude>Config.HatchDistance) then return {Ok=false,Code="TooFar"} end
+	local remaining=egg.ReadyAt-os.time()
+	if remaining>0 then
+		local offer={Ok=false,Code="GrowNowUnavailable",EggUid=id,Name=Config.Definitions[egg.EggId].DisplayName,
+			Robux=Monetization.GrowPrice(remaining),Remaining=remaining}
+		if growNowOffer then growNowOffer:FireClient(player,offer) end
+		return offer
+	end
 	assert(Locks.Begin(player,egg.Pet.PetId))
 	local origin=if model then model:GetPivot() else root.CFrame*CFrame.new(0,0,-5)
 	if model then model:SetAttribute("Hatching",true) end
@@ -178,6 +186,7 @@ function Service.HandleRequest(player,action,id,position)
 end
 
 function Service.Start()
+	growNowOffer=Instance.new("RemoteEvent");growNowOffer.Name="GrowNowOffer";growNowOffer.Parent=game.ReplicatedStorage
 	hatchStarted=Instance.new("RemoteEvent");hatchStarted.Name="HatchStarted";hatchStarted.Parent=game.ReplicatedStorage
 	hatchOutcome=Instance.new("RemoteEvent");hatchOutcome.Name="HatchOutcome";hatchOutcome.Parent=game.ReplicatedStorage
 	Visuals.OnHatch=function(player,id) return Service.HandleRequest(player,"Hatch",id) end

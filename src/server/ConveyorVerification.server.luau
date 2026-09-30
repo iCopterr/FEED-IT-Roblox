@@ -112,7 +112,7 @@ local ok,failure=xpcall(function()
 	local readyAt=egg.ReadyAt
 	waitFor(function() return not locks.IsLocked(a) end);task.wait(.3)
 	check(eggs.HandleRequest(a,"Place",uid,position).Code=="AlreadyPlaced" and egg.ReadyAt==readyAt,"Placement replay cannot restart incubation")
-	check(eggs.HandleRequest(a,"Hatch",uid).Code=="NotReady","Early placed hatch rejected")
+	check(eggs.HandleRequest(a,"Hatch",uid).Code=="GrowNowUnavailable","Early placed hatch offers disabled Grow Now")
 	visuals.Clear(a);visuals.Reconcile(a,profile)
 	check(plots.GetPlot(a).Pen:FindFirstChild("Egg_"..uid)~=nil and egg.ReadyAt==readyAt,"Visual reconstruction preserves timer and identity")
 	local old=assert(schema.Migrate(profile));old.DataVersion=5

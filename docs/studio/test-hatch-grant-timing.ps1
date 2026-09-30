@@ -104,6 +104,15 @@ local saving=table.remove(jobs,1);local retryDelay=resume(saving)
 assert(locked and not carried and profile.Inventory[pet.PetId]==pet and #records==0)
 now+=retryDelay;resume(saving)
 assert(not locked and carried==pet.PetId and #records==1 and records[1].egg==nil)
+reset();egg.ReadyAt=1010
+local offer=Service.HandleRequest(player,'HatchRemote','egg')
+assert(offer.Code=='GrowNowUnavailable' and offer.Robux==29 and offer.EggUid=='egg')
+assert(events.GrowNowOffer==offer and not locked and #jobs==0);reserved()
+now+=1
+offer=Service.HandleRequest(player,'Hatch','egg')
+assert(offer.Code=='GrowNowUnavailable' and offer.Robux==29);reserved()
+now+=1;root.Position=Vector3.new(1000,0,0)
+assert(Service.HandleRequest(player,'Hatch','egg').Code=='TooFar');reserved()
 character:Destroy();shell:Destroy()
 return 'PASS actual EggService: pop result, no grant before light arrival, exact reserved identity, duplicates, disconnect/retry, rollback, save retry'
 '@

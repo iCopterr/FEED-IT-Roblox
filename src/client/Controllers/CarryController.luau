@@ -95,7 +95,7 @@ function CarryController.Start()
 				if prompt:IsA("ProximityPrompt") and (prompt.Name == "PickupPet" or prompt.Name == "OpenFeedUI" or prompt.Name == "HatchEgg") then
 					local model = prompt:FindFirstAncestorOfClass("Model")
 					prompt.Enabled = model:GetAttribute("OwnerUserId") == player.UserId
-						and (prompt.Name ~= "HatchEgg" or model:GetAttribute("HatchReady") == true)
+						and (prompt.Name ~= "HatchEgg" or model:GetAttribute("Hatching") ~= true)
 						and not player:GetAttribute("RevivePanelOpen")
 						and not player:GetAttribute("DebugPanelOpen")
 						and not player:GetAttribute("MerchantPanelOpen")

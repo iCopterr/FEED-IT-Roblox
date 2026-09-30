@@ -93,7 +93,8 @@ function Visuals.Reconcile(player,profile)
 			if prompt then
 				local ready=os.time()>=egg.ReadyAt
 				state[id]:SetAttribute("HatchReady",ready)
-				prompt.Enabled=ready and not state[id]:GetAttribute("Hatching")
+				prompt.Enabled=not state[id]:GetAttribute("Hatching")
+				prompt.ObjectText=if ready then "Ready Egg" else "Growing Egg"
 			end
 			if label then
 				local seconds=math.max(0,egg.ReadyAt-os.time())

@@ -21,7 +21,7 @@ function Controller.Start()
 	local refreshing=false
 	local revision=0
 	local refresh
-	local messages={Busy="",Cooldown="",NotReady="Egg is still growing.",
+	local messages={Busy="",Cooldown="",GrowNowUnavailable="",NotReady="Egg is still growing.",
 		Unavailable="Already collected or unavailable.",CharacterUnavailable="Wait for your character.",
 		Loading="Your pen is still loading.",PlacementFailed="Could not update your pen.",
 		TemplateUnavailable="A pet model is unavailable."}
@@ -79,8 +79,8 @@ function Controller.Start()
 				end)
 			end
 			row.LayoutOrder=index;row.ItemName.Text=entry.Name;row.Details.Text=entry.Details
-			row.Action.Label.Text=if mode=="Pets" then "PICK UP" elseif entry.Ready then "HATCH" else "GROWING"
-			row.Action.Active=entry.Ready and not busy and not snapshot.Busy
+			row.Action.Label.Text=if mode=="Pets" then "PICK UP" else "HATCH"
+			row.Action.Active=not busy and not snapshot.Busy
 			row.Action.BackgroundColor3=if row.Action.Active then Color3.fromRGB(78,227,51) else Color3.fromRGB(90,94,108)
 			Preview.Set(row.Preview,entry)
 		end
