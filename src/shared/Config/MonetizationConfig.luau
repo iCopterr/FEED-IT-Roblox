@@ -1,4 +1,4 @@
--- Display quotes only until Developer Products and durable receipt fulfillment exist.
+-- Owner catalog. Rewards are fulfilled only by the server receipt handler.
 local Config={
 	WelcomePack=table.freeze({Robux=9,ProductId=3715613361,OncePerPlayer=true,Hearty=2,Royal=1,Revive=1}),
 	DoubleMoney=table.freeze({Robux=249,GamePassId=2003036427,Multiplier=2}), -- Pet income only.
@@ -36,10 +36,10 @@ function Config.GrowPrice(seconds)
 	return 0
 end
 function Config.GrowAllQuote(eggs,now)
-	local count,total=0,0
+	local count=0
 	for _,egg in eggs do
 		if egg.Placed and egg.ReadyAt>now then
-			count+=1;total+=Config.GrowPrice(egg.ReadyAt-now)
+			count+=1
 		end
 	end
 	return if count>0 then Config.GrowAllCapRobux else 0,count

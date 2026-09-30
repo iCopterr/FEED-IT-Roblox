@@ -4,6 +4,7 @@ local PetIncome = require(game.ReplicatedStorage.Shared.PetIncome)
 local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
+local Monetization = require(script.Parent.MonetizationService)
 local MoneyService = {}
 local started = false
 local payoutEvent
@@ -21,6 +22,7 @@ function MoneyService.GetRate(player)
 		local pet = data.Inventory[id]
 		if pet and pet.Placed then rate += MoneyService.GetPetRate(pet) end
 	end
+	rate *= Monetization.Multiplier(player)
 	return if rate < math.huge then rate else 0
 end
 
@@ -36,7 +38,7 @@ function MoneyService.Tick(player)
 	if payoutEvent then
 		local entries = {}
 		for id in data.PlacedPetIds do
-			local petAmount = MoneyService.GetPetRate(data.Inventory[id]) * Config.TickSeconds
+			local petAmount = MoneyService.GetPetRate(data.Inventory[id]) * Config.TickSeconds * Monetization.Multiplier(player)
 			if petAmount > 0 then table.insert(entries, {PetId = id, Amount = petAmount}) end
 		end
 		payoutEvent:FireClient(player, {Money = nextMoney, IncomePerSecond = rate, MoneyAt = os.clock(), Pets = entries})

@@ -5,6 +5,7 @@ local Preview=require(script.Parent.Parent.UI.ItemPreview)
 local Motion=require(script.Parent.Parent.UI.Motion)
 local Compact=require(Storage.Shared.NumberFormat).Compact
 local Controller={}
+local Purchases=require(script.Parent.Parent.UI.Purchases)
 local function clockText(seconds)
  seconds=math.max(0,math.floor(seconds))
  return string.format("%02d:%02d:%02d",math.floor(seconds/3600),math.floor(seconds/60)%60,seconds%60)
@@ -49,7 +50,8 @@ function Controller.Start()
   panel.Revive.Active=enabled==true;panel.Revive.AutoButtonColor=enabled==true
   panel.Revive.BackgroundColor3=if enabled then Color3.fromRGB(70,190,110) else Color3.fromRGB(90,95,105)
   panel.Revive.Text="USE 1 REVIVE • "..Compact(snapshot and snapshot.ReviveCharges or 0)
-  panel.Robux.Active=false;panel.Robux.AutoButtonColor=false;panel.Robux.Text="ROBUX • SOON"
+  panel.Robux.Active=r~=nil and remaining(r)>0 and snapshot.NearMachine and not snapshot.Busy and not acting
+  panel.Robux.Text="149 ROBUX"
  end
  local function refresh()
   if requesting or acting or not panel.Visible then return end
@@ -92,6 +94,11 @@ function Controller.Start()
   acting=false
   panel.Status.Text=if ok and result.Ok then "Pet returned to your inventory." else if ok then messages[result.Code] or "Unable to restore." else "Reply lost. Checking recovery…"
   selected=nil;snapshot=nil;render();task.spawn(refresh)
+ end)
+ panel.Robux:SetAttribute("SuppressClickSound",true)
+ panel.Robux.Activated:Connect(function()
+  local r=selectedRecord()
+  if r and panel.Robux.Active then Purchases.Request("Revive",r.PetId,r.AttemptId) end
  end)
  panel.Close.Activated:Connect(function() Motion.Close(panel) end)
  panel:GetPropertyChangedSignal("Visible"):Connect(function()

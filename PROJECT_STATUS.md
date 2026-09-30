@@ -6,6 +6,33 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — server-authoritative monetization implementation
+
+- Added CommerceState + MonetizationService; connected startup and all Shop,
+  Merchant, Grow Now/All and Revive buttons through shared Purchases helper.
+  Existing 13 uploaded pictures and 24 product/one pass mappings retained.
+- Durable pending context saved before prompting; rewards + receipt markers
+  share the session-locked profile. Detached reward validation, idempotent
+  receipts, retrying saves, prompt-token cancellation and once-only Welcome.
+- Food Money/Robux share stock reservations; personal restock resets only caller.
+  Grow All flat 199. Grow Now already-ready/collected = no extra reward.
+  Paid Revive started within window protects exact PetId/AttemptId beyond expiry
+  and restores pre-failure pet. No credits, duplicate pet or failed-food refund.
+- Server pass ownership doubles pet payouts only. Memory Studio blocks payments.
+- Tests: docs/studio/test-commerce.luau passes all 24 handlers, duplicate/rejoin,
+  save retry, cancellation, Welcome once, pass, stock, timers and delayed Revive.
+  Rojo build, syntax and diff pass. Tests use mocks, NOT real DataStore/Robux.
+- Blocker/next: live checkout/client Play testing unverified. MCP start reported
+  success, runtime targets timed out, and subsequent edit inspection said not
+  running. No publication or real purchase performed. Metadata queries only
+  partially returned, so do not claim full live price/ownership verification.
+- Operational caveats: context products and Welcome should not use external
+  sales; interrupted ambiguous intents require payment-history support, not
+  automatic clearing. Receipt history cap 10k. See MONETIZATION_OPERATIONS.md.
+- Files: commerce services/helper, 5 purchase controllers, Money/Merchant/Revive
+  services, server init, MonetizationConfig cleanup, tests and operations docs.
+  Prior commit 71ebcca. Existing assets/Monetization untracked and untouched.
+
 ### Latest session — uploaded artwork and owner catalog IDs
 
 - Applied all 13 owner-uploaded image IDs to authored Shop, Settings, Grow Now,

@@ -6,6 +6,7 @@ local Income=require(Shared.PetIncome)
 local Number=require(Shared.NumberFormat).Money
 local Monetization=require(Shared.Config.MonetizationConfig)
 local Motion=require(script.Parent.Parent.UI.Motion)
+local Purchases=require(script.Parent.Parent.UI.Purchases)
 local Preview=require(script.Parent.Parent.UI.ItemPreview)
 local Controller={}
 function Controller.Start()
@@ -51,9 +52,9 @@ function Controller.Start()
 		panel.Title.Text=if mode=="Eggs" then "GROWING EGGS • "..#list else string.format("PETS • %d / %d",snapshot.PlacedCount,snapshot.MaxPetSlots)
 		panel.EquipBest.Visible=mode=="Pets"
 		panel.GrowAll.Visible=mode=="Eggs"
-		panel.GrowAll.Active=false;panel.GrowAll.AutoButtonColor=false
 		local price,count=Monetization.GrowAllQuote(snapshot.Eggs or {},snapshot.ServerNow)
-		panel.GrowAll.ButtonText.Text=if count==0 then "GROW ALL • NO GROWING EGGS" else "GROW ALL • "..price.." ROBUX • SOON"
+		panel.GrowAll.Active=count>0 and not snapshot.Busy
+		panel.GrowAll.ButtonText.Text=if count==0 then "GROW ALL • NO GROWING EGGS" else "GROW ALL • "..price.." ROBUX"
 		panel.EquipBest.Active=mode=="Pets" and not busy and not snapshot.Busy
 		panel.EquipBest.BackgroundColor3=if panel.EquipBest.Active then Color3.fromRGB(78,227,51) else Color3.fromRGB(90,94,108)
 		local shown={}
@@ -112,10 +113,14 @@ function Controller.Start()
 		panel.EquipBest.Visible=mode=="Pets"
 		panel.GrowAll.Visible=mode=="Eggs"
 		panel.GrowAll.Active=false
-		panel.GrowAll.ButtonText.Text="GROW ALL • SOON"
+		panel.GrowAll.ButtonText.Text="GROW ALL • 199 ROBUX"
 		panel.Status.Text="Loading…";panel.Visible=true;task.spawn(refresh)
 	end
 	gui.Dock.Eggs.Activated:Connect(function() open("Eggs") end)
+	panel.GrowAll:SetAttribute("SuppressClickSound",true)
+	panel.GrowAll.Activated:Connect(function()
+		if panel.GrowAll.Active then Purchases.Request("GrowAll") end
+	end)
 	gui.Dock.Pets.Activated:Connect(function() open("Pets") end)
 	panel.EquipBest.Activated:Connect(function()
 		if busy or mode~="Pets" or not panel.EquipBest.Active then return end

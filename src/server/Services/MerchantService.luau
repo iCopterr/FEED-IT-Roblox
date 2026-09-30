@@ -4,10 +4,12 @@ local Schema=require(script.Parent.Parent.Data.PlayerDataSchema)
 local Locks=require(script.Parent.FeedLocks)
 local Config=require(game.ReplicatedStorage.Shared.Config.MerchantConfig)
 local FoodConfig=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
+local Commerce=require(script.Parent.CommerceState)
 local Service={}
 local sessions,saving={},{}
 
 local function purchaseCount(data,restockId,slot,item)
+	if Commerce.Reserved(data,restockId,slot) then return item.StockLimit end
 	if data.MerchantRestockId~=restockId then return 0 end
 	local key=tostring(slot)
 	if item.StockLimit==1 then return if data.MerchantPurchases[key] then 1 else 0 end
@@ -43,7 +45,7 @@ end
 local function snapshot(player,state)
 	local data=Data.GetData(player)
 	if not data or not Schema.Validate(data) then return {Ok=false,Code="Loading"} end
-	local now=os.time();local restockId=Config.GetRestockId(now);local stock=Config.GetStock(restockId)
+	local now=os.time();local restockId,restocksAt=Commerce.RestockId(data,now);local stock=Config.GetStock(restockId)
 	local items={}
 	for slot,id in stock do
 		local item=Config.Items[id]
@@ -53,7 +55,7 @@ local function snapshot(player,state)
 			Purchased=purchased>=item.StockLimit,Remaining=item.StockLimit-purchased,StockLimit=item.StockLimit})
 	end
 	return {Ok=true,Money=data.Money,RestockId=restockId,
-		RestocksAt=(restockId+1)*Config.RestockSeconds,ServerNow=now,Items=items,NextSequence=state.Sequence+1,
+		RestocksAt=restocksAt,ServerNow=now,Items=items,NextSequence=state.Sequence+1,
 		Busy=Locks.IsLocked(player) or saving[player]~=nil}
 end
 
@@ -78,7 +80,7 @@ function Service.HandleRequest(player,action,slot,expectedRestock,sequence)
 	if saving[player] or Locks.IsLocked(player) then return {Ok=false,Code="Busy"} end
 	local data=Data.GetData(player)
 	if not data or not Schema.Validate(data) then return {Ok=false,Code="Loading"} end
-	local current=Config.GetRestockId(os.time())
+	local current=Commerce.RestockId(data,os.time())
 	-- Reserve the one-time starting balance for the first egg; spending it on
 	-- food before owning an income-producing pet would strand a fresh account.
 	if data.Settings.TutorialStep=="BuyEgg" then return {Ok=false,Code="TutorialBuyEgg"} end

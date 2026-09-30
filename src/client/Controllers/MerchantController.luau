@@ -4,6 +4,7 @@ local Prompts=game:GetService("ProximityPromptService")
 local NumberFormat=require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("NumberFormat"))
 local Shop=require(ReplicatedStorage.Shared.Config.MerchantConfig)
 local Monetization=require(ReplicatedStorage.Shared.Config.MonetizationConfig)
+local Purchases=require(script.Parent.Parent.UI.Purchases)
 local RarityColors=require(ReplicatedStorage.Shared.Config.InventoryConfig).RarityColors
 local Controller={}
 local Sounds=require(script.Parent.Parent.Audio.GameSounds)
@@ -24,8 +25,10 @@ function Controller.Start()
 	-- replaced by that copy, leaving the controller bound to a detached screen.
 	local gui=assert(playerGui:WaitForChild("MerchantUI",30),"MerchantUI missing; check Rojo")
 	local panel=gui.Panel
-	panel.RestockBuy.Active=false;panel.RestockBuy.AutoButtonColor=false
-	panel.RestockBuy.ButtonText.Text="RESTOCK • "..Monetization.PersonalRestockRobux.." ROBUX • SOON"
+	panel.RestockBuy.Active=true
+	panel.RestockBuy.ButtonText.Text="RESTOCK • "..Monetization.PersonalRestockRobux.." ROBUX"
+	panel.RestockBuy:SetAttribute("SuppressClickSound",true)
+	panel.RestockBuy.Activated:Connect(function() Purchases.Request("Restock") end)
 	local remote=ReplicatedStorage:WaitForChild("PrototypeMerchant")
 	local state,receivedAt,busy=nil,0,false
 	local displayed={}
@@ -75,10 +78,9 @@ function Controller.Start()
 				button.Active=false;button.BackgroundColor3=Color3.fromRGB(62,65,73)
 				button.BuyMoney.Active=false;button.BuyMoney.ButtonText.Text="—"
 			end
-			-- No product IDs/receipt handler are configured yet. Never prompt a
-			-- paid purchase that cannot be safely fulfilled on the server.
-			button.BuyRobux.Active=false;button.BuyRobux.AutoButtonColor=false
-			button.BuyRobux.ButtonText.Text="ROBUX • SOON"
+			local product=item and Monetization.FoodProducts[item.ItemId]
+			button.BuyRobux.Active=product~=nil and not item.Purchased
+			button.BuyRobux.ButtonText.Text=if not product then "MONEY ONLY" elseif item.Purchased then "SOLD OUT" else product.Robux.." ROBUX"
 		end
 	end
 	local function refresh()
@@ -140,6 +142,12 @@ function Controller.Start()
 		panel.Offers["Slot"..i]:SetAttribute("SuppressClickSound",true)
 		panel.Offers["Slot"..i].BuyMoney:SetAttribute("SuppressClickSound",true)
 		panel.Offers["Slot"..i].BuyRobux:SetAttribute("SuppressClickSound",true)
+		panel.Offers["Slot"..i].BuyRobux.Activated:Connect(function()
+			local item=displayed[i]
+			if state and item and not item.Purchased and Monetization.FoodProducts[item.ItemId] then
+				Purchases.Request("Food",item.Slot,state.RestockId)
+			end
+		end)
 		panel.Offers["Slot"..i].BuyMoney.Activated:Connect(function()
 			local current=state;local item=displayed[i]
 			if not current or not item or item.Purchased or not panel.Visible or #pending>=20 then return end

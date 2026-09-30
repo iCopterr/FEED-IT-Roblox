@@ -3,6 +3,7 @@ local Input=game:GetService("UserInputService")
 local Config=require(game.ReplicatedStorage.Shared.Config.MonetizationConfig)
 local Numbers=require(game.ReplicatedStorage.Shared.NumberFormat)
 local Motion=require(script.Parent.Parent.UI.Motion)
+local Purchases=require(script.Parent.Parent.UI.Purchases)
 local Controller={}
 function Controller.Start()
 	local player=Players.LocalPlayer
@@ -10,17 +11,24 @@ function Controller.Start()
 	local gui=assert(pg:WaitForChild("ShopUI",30),"ShopUI missing")
 	local panel=gui.Panel
 	local others={}
-	local function price(card,value)
-		card.Buy.ButtonText.Text=tostring(value).." ROBUX • SOON"
-		-- IDs alone must never enable purchases before durable receipt fulfillment exists.
-		card.Buy.Active=false;card.Buy.AutoButtonColor=false
+	local function price(card,value,kind,id,attribute)
+		local function refresh()
+			local owned=attribute and player:GetAttribute(attribute)==true
+			card.Buy.ButtonText.Text=if owned then "OWNED" else tostring(value).." ROBUX"
+			card.Buy.Active=not owned
+		end
+		refresh()
+		card.Buy:SetAttribute("SuppressClickSound",true)
+		card.Buy.Activated:Connect(function() if card.Buy.Active then Purchases.Request(kind,id) end end)
+		if attribute then player:GetAttributeChangedSignal(attribute):Connect(refresh) end
+		Motion.BindButton(card.Buy,card)
 	end
-	price(panel.Offers.Welcome,Config.WelcomePack.Robux)
-	price(panel.Offers.DoubleMoney,Config.DoubleMoney.Robux)
+	price(panel.Offers.Welcome,Config.WelcomePack.Robux,"Product",Config.WelcomePack.ProductId,"WelcomePackOwned")
+	price(panel.Offers.DoubleMoney,Config.DoubleMoney.Robux,"Pass",nil,"DoubleMoneyOwned")
 	for i,pack in Config.MoneyPacks do
 		local card=panel.Offers["Money"..i]
 		card.Title.Text="$"..Numbers.Money(pack.Money)
-		price(card,pack.Robux)
+		price(card,pack.Robux,"Product",pack.ProductId)
 	end
 	gui.Open.Activated:Connect(function()
 		if panel.Visible then Motion.Close(panel);return end

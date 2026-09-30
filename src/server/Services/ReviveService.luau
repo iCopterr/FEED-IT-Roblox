@@ -5,6 +5,7 @@ local Locks = require(script.Parent.FeedLocks)
 local MoneyService = require(script.Parent.MoneyService)
 local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
 local Config = require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
+local Commerce = require(script.Parent.CommerceState)
 local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local Variants = require(game.ReplicatedStorage.Shared.Config.VariantConfig)
 local sessions = {}
@@ -62,6 +63,7 @@ function Service.HandleRequest(player, action, petId, attemptId)
 	-- explosion of the same pet. Consuming the record is the durable replay guard.
 	if not record then return {Ok=false, Code="Unavailable"} end
 	if record.AttemptId ~= attemptId then return {Ok=false, Code="PetChanged"} end
+	if Commerce.ReviveReserved(data,petId,attemptId) then return {Ok=false,Code="Busy"} end
 	local expired = os.time() >= expiresAt(record)
 	if expired then action = "KeepBase" end
 	-- Expired pets return to base without travel; restoring growth requires the machine.
@@ -118,7 +120,7 @@ function Service.Start()
 				local data = DataService.GetData(player)
 				if data and not Locks.IsLocked(player) then
 					for id, record in data.PendingRecovery do
-						if os.time() >= expiresAt(record) then
+						if os.time() >= expiresAt(record) and not Commerce.ReviveReserved(data,id,record.AttemptId) then
 							-- Client request spam cannot postpone automatic expiry.
 							if sessions[player] then sessions[player].LastRequest = nil end
 							Service.HandleRequest(player,"KeepBase",id,record.AttemptId)
