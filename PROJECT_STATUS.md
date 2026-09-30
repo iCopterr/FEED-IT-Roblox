@@ -6,6 +6,17 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — compact Index/Inventory row
+
+- Index and Inventory now 72x72 like Settings, side by side on the left at
+  the same screen Y with 12px scaled gap. Icons above bottom labels; Inventory
+  uses existing uploaded pets image. Settings remains top-right, Shop above.
+- HUD aligns to Index AbsolutePosition to compensate different ScreenGui inset
+  behavior; resize observers keep alignment. Studio preview exposed/fixed inset
+  offset; final exact Y/size assertion passes. Rojo build/diff pass.
+- Files: IndexUI, FeedYourPetUI, HUDController, compact-index-inventory recipe,
+  handoff. Previous 7fa0840. Full Play/mobile input not rerun.
+
 ### Latest session — launcher positions
 
 - Moved Settings square to top-right; Inventory now below Index in the left
