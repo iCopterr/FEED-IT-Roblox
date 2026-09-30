@@ -6,6 +6,32 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — Settings page
+
+- Added authored SettingsUI below Index, reference-style Music/SFX yellow
+  sliders and own/other placed-pet ON/OFF controls. Uses existing font, borders,
+  stud texture, popup/button motion and green header. Responsive 820x610 page.
+- SettingsController supports mouse/touch slider input, wheel adjustment,
+  independent SoundGroups (preserves authored individual sound volumes),
+  exclusive menus, Escape/Close, blur/zoom and placement blocking while open.
+  Local pet hiding changes LocalTransparencyModifier, labels and visual effects;
+  no income, ownership, inventory or server placement changes. Defaults show
+  pets and use 100% of authored audio volume. Held pets/eggs unaffected.
+- Server GetSettings/SetSetting reuse caller profile and existing rate limit;
+  allowlist validates booleans and finite 0..1 volumes. Existing Settings field
+  autosave/leave-save persists accepted changes without overwriting tutorial
+  state. Client coalesces/retries pending changes every .4s (not per-frame saves).
+- Verified Studio screenshot; actual server-handler mock tests cover defaults,
+  bounds/types/NaN, missing profile, tutorial preservation, authored controls and
+  client syntax. Rojo build/diff pass. Full mouse/touch/audio playback, live
+  multiplayer visibility and datastore reconnect testing remain unverified.
+- Files: SettingsConfig, SettingsController, SettingsUI, UIService, CarryController,
+  PageFocusController, client init, project mappings/SoundGroups, settings-page
+  recipe, test-settings.ps1, handoff. Previous commit 240141d.
+- Next: owner Play-test settings including rejoin. Controls wait for profile load;
+  latest changes may be lost if disconnect occurs before pending request reaches
+  server. No paid/gameplay scope changes.
+
 ### Latest session — animation retry / first-pass activation
 
 - Studio 3D capture recovered after explicit camera Focus setup. Inspected

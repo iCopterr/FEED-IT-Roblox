@@ -7,6 +7,7 @@ local Carry=require(Config.CarryConfig)
 local Revive=require(Config.ReviveConfig)
 local Controller={}
 local pages={
+	SettingsUI={"Panel"},
 	ShopUI={"Panel"},
 	FeedYourPetUI={"Inventory","FeedPanel"}, MerchantUI={"Panel"},
 	ReviveUI={"Panel"}, DebugUI={"Panel"}, IndexUI={"Panel"},

@@ -5,6 +5,8 @@
     "$className": "DataModel",
     "SoundService": {
       "$className": "SoundService",
+      "MusicVolumeGroup": { "$className": "SoundGroup", "$properties": { "Volume": 1 } },
+      "SFXVolumeGroup": { "$className": "SoundGroup", "$properties": { "Volume": 1 } },
       "Hatching": { "$className": "Sound", "$properties": { "Looped": true, "Volume": 0.35 } },
       "HatchFinish": { "$className": "Sound", "$properties": { "Volume": 0.5 } },
       "Click": { "$className": "Sound", "$properties": { "Volume": 0.25 } },
@@ -52,6 +54,7 @@
       }
     },
     "StarterGui": {
+      "SettingsUI": { "$path": "src/ui/SettingsUI.rbxmx" },
       "ShopUI": {
         "$path": "src/ui/ShopUI.rbxmx"
       },

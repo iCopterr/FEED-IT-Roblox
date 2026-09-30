@@ -11,6 +11,7 @@ local Config = require(ReplicatedStorage.Shared.Config.UIConfig)
 local EggConfig = require(ReplicatedStorage.Shared.Config.EggConfig)
 local Locks = require(script.Parent.FeedLocks)
 local UIService = {}
+local Settings=require(ReplicatedStorage.Shared.Config.SettingsConfig)
 local lastRequest = {}
 local lastSnapshot = {}
 local lastIndexSnapshot = {}
@@ -30,6 +31,12 @@ function UIService.HandleRequest(player, action, petId, locked)
 		-- Discovery is permanent save data, independent of bag/pen membership.
 		-- Never send reserved hatch results or accept client unlock claims.
 		return { Ok = true, PetIndex = table.clone(data.PetIndex) }
+	end
+	if action=="GetSettings" then return {Ok=true,Settings=Settings.Read(data.Settings)} end
+	if action=="SetSetting" then
+		if type(petId)~="string" or not Settings.Valid(petId,locked) then return {Ok=false,Code="InvalidRequest"} end
+		data.Settings[petId]=locked -- Existing profile autosave and leave-save own persistence.
+		return {Ok=true}
 	end
 	if action == "SetLocked" then
 		if type(petId) ~= "string" or #petId > 64 or type(locked) ~= "boolean" then
