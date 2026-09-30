@@ -7,7 +7,7 @@ local ok,failure=xpcall(function()
  local Data=require(s.DataService);local Pets=require(s.PetService);local Carry=require(s.CarryService)
  local Plots=require(s.PlotService);local Plate=require(s.PedestalService)
  local Income=require(game.ReplicatedStorage.Shared.PetIncome)
- local Compact=require(game.ReplicatedStorage.Shared.NumberFormat).Compact
+ local Compact=require(game.ReplicatedStorage.Shared.NumberFormat).Money
  local function check(v,n) assert(v,n);table.insert(checks,n) end
  local function waitFor(fn) local untilTime=os.clock()+90;repeat if fn() then return end;task.wait(.1) until os.clock()>untilTime;error("Label test timed out") end
  check(require(script.Parent.Data.DataStoreAdapter).IsMemory(),"Memory-only test")

@@ -6,6 +6,24 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — decimal money displays
+
+- Completed: added NumberFormat.Money with fixed two decimal places, retaining
+  K/M/B/T (10.50, 1.00K, 1.25M). Applied to HUD/merchant balances, prices,
+  income popups, pet labels, inventory/index/remote-pen income, feed outcomes,
+  plot upgrades and debug/tutorial monetary displays. Counts/levels/food/risk
+  still use the existing Compact formatter; Robux/revive counts unchanged.
+- MoneyService, schema and save migration already support fractional balances.
+  No balance rounding, economy changes, migration version or UI geometry edits.
+- Verification: actual formatter tests passed in Studio 58741 for decimals,
+  suffix boundaries, invalid values and unchanged Compact/Parse behavior;
+  actual schema validates and migrates 1234.56 without changing it. Build/diff
+  pass. Full Play/persistent DataStore roundtrip not run in this display-only task.
+- Files: NumberFormat; money-facing controllers/views and pet/conveyor labels;
+  NumberFormatVerification, IndexVerification, LabelVerification, handoff.
+  Overall progress: complete. Next: fresh Play visual review of decimal labels.
+  Previous working commit ec5d951. Unrelated authored assets untouched.
+
 ### Latest session — readable feed summary
 
 - Completed: feed panel pet name enlarged to 36 (bounded scaling for long names),

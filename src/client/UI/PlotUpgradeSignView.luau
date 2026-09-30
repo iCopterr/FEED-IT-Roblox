@@ -1,5 +1,5 @@
 local Config = require(game.ReplicatedStorage.Shared.Config.PlotUpgradeConfig)
-local Number = require(game.ReplicatedStorage.Shared.NumberFormat).Compact
+local Number = require(game.ReplicatedStorage.Shared.NumberFormat).Money
 local View = {Number=Number}
 function View.Render(gui, state, owner, near, busy, message)
  gui.Title.Text="UPGRADE PEN"

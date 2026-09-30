@@ -12,7 +12,7 @@ local ok,failure=xpcall(function()
 	local view=require(script.Parent.UI.IndexView)
 	local eggs=require(storage.Shared.Config.EggConfig)
 	local pets=require(storage.Shared.Config.PetConfig)
-	local number=require(storage.Shared.NumberFormat).Compact
+	local number=require(storage.Shared.NumberFormat).Money
 	local untilReady=os.clock()+10
 	repeat if controller.Open then break end;task.wait(.1) until os.clock()>untilReady
 	assert(controller.Open,"Index controller started")

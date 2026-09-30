@@ -33,7 +33,7 @@ function Controller.Start()
 		InventoryLimit="Debug spawn limit: 200 inventory pets.",Loading="Loading player data…"}
 	local function render()
 		panel.Species.Text=species[speciesIndex].Name.." • "..species[speciesIndex].Rarity.." • "
-			..NumberFormat.Compact(species[speciesIndex].Income).."/s (click to cycle)"
+			..NumberFormat.Money(species[speciesIndex].Income).."/s (click to cycle)"
 		panel.Mode.Text=Config.Modes[modeIndex].." (click to cycle)"
 		local pets=state and state.Pets or {}
 		petIndex=math.clamp(petIndex,1,math.max(1,#pets))
@@ -41,7 +41,7 @@ function Controller.Start()
 		selected=pet and pet.PetId
 		panel.Pet.Text=if pet then string.format("%d/%d • %s • Lv.%d • %s [%s]",petIndex,#pets,pet.Name,pet.FeedLevel,
 			if pet.Placed then "PLACED" else "STORED/HELD/PLATE",string.sub(pet.PetId,1,8)) else "No pets — spawn one above"
-		panel.Summary.Text=if state then string.format("Money %s • Basic Food %s\nNext override: %s",NumberFormat.Compact(state.Money),NumberFormat.Compact(state.Food),
+		panel.Summary.Text=if state then string.format("Money %s • Basic Food %s\nNext override: %s",NumberFormat.Money(state.Money),NumberFormat.Compact(state.Food),
 			if state.Forced then state.Forced.Mode.." ["..string.sub(state.Forced.PetId,1,8).."]" else "None (normal odds)") else "Loading…"
 		for _,name in {"AddMoney","AddFood","Spawn","SetPetLevel","Force"} do
 			panel[name].Active=state~=nil and not busy and not state.Busy

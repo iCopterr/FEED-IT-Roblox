@@ -8,6 +8,7 @@ local Model=require(script.Parent.Parent.UI.InventoryModel)
 local Preview=require(script.Parent.Parent.UI.ItemPreview)
 local Responsive=require(script.Parent.Parent.UI.InventoryLayout)
 local numberText=require(ReplicatedStorage.Shared.NumberFormat).Compact
+local moneyText=require(ReplicatedStorage.Shared.NumberFormat).Money
 local Controller={}
 local keys={Enum.KeyCode.One,Enum.KeyCode.Two,Enum.KeyCode.Three,Enum.KeyCode.Four,Enum.KeyCode.Five,Enum.KeyCode.Six,Enum.KeyCode.Seven,Enum.KeyCode.Eight,Enum.KeyCode.Nine,Enum.KeyCode.Zero}
 local errors={Busy="",
@@ -123,7 +124,7 @@ function Controller.Start(gui,onSnapshot)
 		if not entry then detail.ItemName.Text="SELECT AN ITEM";detail.Stats.Text="";return end
 		local state=stateOf(entry)
 		detail.ItemName.Text=entry.Name
-		detail.Stats.Text=if entry.Kind=="Pet" then string.format("%s • LEVEL %s\n%s Money / sec\n%s%s",entry.Rarity,numberText(entry.Level),numberText(entry.Income),state,if entry.Locked then " • LOCKED" else "")
+		detail.Stats.Text=if entry.Kind=="Pet" then string.format("%s • LEVEL %s\n%s Money / sec\n%s%s",entry.Rarity,numberText(entry.Level),moneyText(entry.Income),state,if entry.Locked then " • LOCKED" else "")
 			elseif entry.Kind=="Food" then if entry.Description then "×"..numberText(entry.Quantity).." owned\n"..entry.Description
 				else string.format("%s servings\n%s%% explosion risk reduction\nSelect this food at your feed plate.",numberText(entry.Quantity),numberText(entry.Reduction*100))
 			else "EGG • "..state.."\n"..(if state=="INCUBATING" then numberText(math.max(0,entry.ReadyAt-snapshot.ServerNow)).."s remaining"
@@ -153,7 +154,7 @@ function Controller.Start(gui,onSnapshot)
 			card:SetAttribute("Selected",selected==entry.Key)
 			card.ImageColor3=tint
 			card.BackgroundColor3=card.ImageColor3
-			card.ItemName.Text=entry.Name;card.Stats.Text=if entry.Kind=="Pet" then "Lv. "..numberText(entry.Level).." • "..numberText(entry.Income).."/s" elseif entry.Kind=="Food" then "×"..numberText(entry.Quantity).." • "..(entry.Effect or ("-"..numberText(entry.Reduction*100).."% risk")) else "EGG"
+			card.ItemName.Text=entry.Name;card.Stats.Text=if entry.Kind=="Pet" then "Lv. "..numberText(entry.Level).." • "..moneyText(entry.Income).."/s" elseif entry.Kind=="Food" then "×"..numberText(entry.Quantity).." • "..(entry.Effect or ("-"..numberText(entry.Reduction*100).."% risk")) else "EGG"
 			card.State.Text=stateOf(entry)..(if entry.Locked then " • LOCKED" else "");card.LockMark.Text=""
 			Preview.Set(card.Preview,entry)
 		end

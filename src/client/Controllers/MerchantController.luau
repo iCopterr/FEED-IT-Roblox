@@ -32,7 +32,7 @@ function Controller.Start()
 		Restocked="",Busy="",StaleRequest="",Loading="",Cooldown=""}
 	local function render()
 		local remaining=state and state.RestocksAt-(state.ServerNow+os.clock()-receivedAt) or 0
-		panel.Money.Text="YOUR $"..(state and NumberFormat.Compact(state.Money) or "—")
+		panel.Money.Text="YOUR $"..(state and NumberFormat.Money(state.Money) or "—")
 		panel.Restock.Text="NEW FOOD IN "..clockText(remaining)
 		local items={}
 		if state then
@@ -49,7 +49,7 @@ function Controller.Start()
 				button.ItemName.Text=item.Name
 				button.Stock.Text=if item.Purchased then "SOLD OUT"
 					else string.format("×%d %s  •  %d/%d STOCK",item.Amount,if item.RewardType=="Revive" then "CHARM" else "FOOD",item.Remaining,item.StockLimit)
-				button.Price.Text="$"..NumberFormat.Compact(item.Price)
+				button.Price.Text="$"..NumberFormat.Money(item.Price)
 				button.Effect.Text=definition.Effect
 				button.Art.Emoji.Text=definition.Icon
 				Art.Set(button.Art.Picture,button.Art.Emoji,Images[item.ItemId] or Images.empty)

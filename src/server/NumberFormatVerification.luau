@@ -13,6 +13,18 @@ function Verification.Run()
 		{-1250,"-1.25K"},{-.001,"0"},{999.999,"1K"},{999999999,"1B"},
 		{999999999999,"1T"},{math.huge,"—"},{-math.huge,"—"},{0/0,"—"},
 	} do check(format.Compact(case[1])==case[2], "Format "..tostring(case[1]).." -> "..case[2]) end
+	for _,case in {{0,"0.00"},{10,"10.00"},{10.5,"10.50"},{.01,"0.01"},
+		{12.3456,"12.35"},{1000,"1.00K"},{1250,"1.25K"},{999999,"1.00M"},
+		{1e9,"1.00B"},{1e12,"1.00T"},{-12.5,"-12.50"},{-.001,"0.00"},
+		{math.huge,"—"},{0/0,"—"}} do
+		check(format.Money(case[1])==case[2],"Money format "..tostring(case[1]).." -> "..case[2])
+	end
+	-- Money precision is already supported by save validation and migration.
+	local schema=require(script.Parent.Data.PlayerDataSchema)
+	local data=schema.CreateDefault();data.Money=1234.56
+	check(schema.Validate(data),"Fractional balance validates")
+	local restored=assert(schema.Migrate(data))
+	check(restored.Money==1234.56 and data.Money==1234.56,"Migration preserves fractional balance")
 	for _,case in {{"1K",1000},{" 1.25m ",1250000},{"2B",2e9},{"1000T",1e15},
 		{".5K",500},{"1e6",1e6},{"123",123},{"-2k",-2000}} do
 		check(format.Parse(case[1])==case[2],"Parse "..case[1])

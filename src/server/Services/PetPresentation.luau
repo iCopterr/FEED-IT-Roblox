@@ -3,7 +3,7 @@ local Pets=require(Storage.Shared.Config.PetConfig)
 local Variants=require(Storage.Shared.Config.VariantConfig)
 local Colors=require(Storage.Shared.Config.InventoryConfig).RarityColors
 local Income=require(Storage.Shared.PetIncome)
-local Compact=require(Storage.Shared.NumberFormat).Compact
+local Compact=require(Storage.Shared.NumberFormat).Money
 local Presentation={}
 function Presentation.Update(model,pet)
  local income=Income(pet)

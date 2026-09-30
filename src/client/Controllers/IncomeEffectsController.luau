@@ -4,7 +4,7 @@ local TweenService = game:GetService("TweenService")
 local Debris = game:GetService("Debris")
 local Config = require(ReplicatedStorage.Shared.Config.MoneyConfig)
 local IncomeEffectsController = {}
-local numberText = require(ReplicatedStorage.Shared.NumberFormat).Compact
+local numberText = require(ReplicatedStorage.Shared.NumberFormat).Money
 
 function IncomeEffectsController.Start()
 	local player = Players.LocalPlayer

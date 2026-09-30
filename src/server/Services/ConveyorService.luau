@@ -9,7 +9,7 @@ local PlotService=require(script.Parent.PlotService)
 local MoneyService=require(script.Parent.MoneyService)
 local Schema=require(script.Parent.Parent.Data.PlayerDataSchema)
 local Service={}
-local numberText=require(game.ReplicatedStorage.Shared.NumberFormat).Compact
+local numberText=require(game.ReplicatedStorage.Shared.NumberFormat).Money
 local offers,lastRequest,lastPurchase={},{},{}
 local rng=Random.new()
 local conveyor,visuals,changed

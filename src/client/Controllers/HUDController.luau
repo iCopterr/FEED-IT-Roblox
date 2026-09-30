@@ -3,7 +3,7 @@ local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local Config=require(ReplicatedStorage.Shared.Config.UIConfig)
 local GuiBootstrap=require(script.Parent.Parent.UI.GuiBootstrap)
 local Motion=require(script.Parent.Parent.UI.Motion)
-local numberText=require(ReplicatedStorage.Shared.NumberFormat).Compact
+local numberText=require(ReplicatedStorage.Shared.NumberFormat).Money
 local Controller={}
 
 function Controller.Start()

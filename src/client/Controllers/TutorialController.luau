@@ -2,7 +2,7 @@ local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
 local Storage=game:GetService("ReplicatedStorage")
 local Config=require(Storage.Shared.Config.TutorialConfig)
-local Number=require(Storage.Shared.NumberFormat).Compact
+local Number=require(Storage.Shared.NumberFormat).Money
 local Controller={}
 
 local function position(object)
