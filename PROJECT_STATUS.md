@@ -6,6 +6,27 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — shared notifications above hotbar
+
+- Completed: authored transparent Notification text in FeedYourPetUI; shared
+  Notifications module positions it 12px above hotbar with a minimum bottom
+  clearance. Responsive width, 14–26 text scaling, no background/border.
+- NotificationController hides and relays transient Status text from Inventory,
+  Feed, Merchant, Revive, PenManager, Index and Debug. Feed outcome banners use
+  the same destination. Permanent risk/help/tutorial content stays in its UI.
+  Duplicate messages within 5 seconds and common progress labels suppressed;
+  replacement message token prevents old timeout hiding newer text.
+- CarryController emits Egg/Pet is now in your pen only on accepted placement
+  responses (not feed-plate placement). Errors show notifications rather than
+  opening inventory. Removed stale hardcoded five-slot/error pickup wording.
+- Tests: actual notification source with cloned GUI and mocked player/timer
+  passed display, transparency, dedupe, stale timeout and progress suppression.
+  All 50 synced client scripts compile; Rojo build/diff pass. Full Play and
+  end-to-end placement/notification visual verification remain pending.
+- Files: new UI/Notifications, NotificationController, client init, CarryController,
+  FeedEffects, FeedYourPetUI, notification-label recipe, handoff. Previous commit
+  021fee0. Overall: implemented/component checked; next fresh Play review.
+
 ### Latest session — food rarities and simplified merchant rows
 
 - Completed: plain risk/effect text left-aligned with food name, no badge

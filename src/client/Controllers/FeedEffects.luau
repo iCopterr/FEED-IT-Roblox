@@ -9,7 +9,7 @@ local VFX = require(script.Parent.VFXController)
 local FeedCharge = require(script.Parent.Parent.UI.FeedCharge)
 local Sounds = require(script.Parent.Parent.Audio.GameSounds)
 local seen = {}
-local bannerToken = 0
+local Notice=require(script.Parent.Parent.UI.Notifications)
 
 local function animate(seconds, update)
 	local start = os.clock()
@@ -23,10 +23,6 @@ end
 
 local function banner(gui, result)
 	if not gui then return end
-	local label = gui:FindFirstChild("FeedBanner")
-	if not label then return end
-	bannerToken += 1
-	local token = bannerToken
 	local presentation = P[result.Code]
 	local color, text
 	if result.Code == "Explosion" then
@@ -41,10 +37,7 @@ local function banner(gui, result)
 		text ..= string.format("\n+%d LEVEL • LEVEL %d • %s MONEY/SEC",result.Gain,result.FeedLevel,numberText(result.Income))
 	end
 	if result.Protected then text = "🛡 PROTECTED\n" .. text end
-	label.Text, label.TextColor3, label.Visible = text, color, true
-	label.UIScale.Scale = .8
-	TweenService:Create(label.UIScale,TweenInfo.new(.3,Enum.EasingStyle.Back),{Scale=1}):Play()
-	task.delay(presentation.BannerSeconds,function() if token==bannerToken then label.Visible=false end end)
+	Notice.Show(text,color,presentation.BannerSeconds)
 end
 
 function FeedEffects.Play(result, gui)

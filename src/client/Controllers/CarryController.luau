@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local Input = game:GetService("UserInputService")
 local CarryController = {}
+local Notice=require(script.Parent.Parent.UI.Notifications)
 
 function CarryController.Start()
 	require(script.Parent.Parent.UI.CarryPose).Start()
@@ -58,14 +59,15 @@ function CarryController.Start()
 		if ok and response.Ok then
 			local inventory=require(script.Parent.InventoryController)
 			if inventory.Placed then inventory.Placed(if action=="Place" then "Egg" else "Pet",id) end
+			if action=="Place" then Notice.Show("Egg is now in your pen!",Color3.fromRGB(161,255,101))
+			elseif action=="PlaceHeldPet" then Notice.Show("Pet is now in your pen!",Color3.fromRGB(161,255,101)) end
 		end
 		if (not ok or not response.Ok) and gui then
-			gui.Inventory.Visible = true
-			gui.Inventory.Panel.Layout.Status.Text = if action=="Place" and ok and response.Code=="Busy" then "Saving your egg. Please try again shortly."
+			Notice.Show(if action=="Place" and ok and response.Code=="Busy" then "Saving your egg. Please try again shortly."
 				elseif action=="Place" then "Move closer and click inside your own fenced Pen."
-				elseif ok and response.Code == "PenFull" then "Your Pen is full (5 pets)."
-				elseif ok and response.Code == "PlateOccupied" then "Your feed plate already has a pet. Hold E near it to pick it up."
-				else "Move closer to your own Pen or feed plate and try again."
+				elseif ok and response.Code == "PenFull" then "Your pen is full."
+				elseif ok and response.Code == "PlateOccupied" then "Your feed plate already has a pet. Open the feed UI to pick it up."
+				else "Move closer to your own Pen or feed plate and try again.")
 		end
 		task.wait(.3)
 		busy = false
