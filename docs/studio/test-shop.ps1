@@ -29,6 +29,14 @@ for _,card in gui.Panel.Offers:GetChildren() do
  end
 end
 assert(count==8)
+assert(gui.Panel.Offers.ScrollingEnabled and gui.Panel.Offers.Active)
+assert(gui.Panel.Offers.CanvasSize.Y.Offset>gui.Panel.Offers.AbsoluteSize.Y)
+for _,name in {'Welcome','DoubleMoney','Money1','Money2','Money3','Money4','Money5','Money6'} do
+ local card=gui.Panel.Offers[name]
+ assert(card.Artwork:IsA('ImageLabel') and card.Artwork.Image=='')
+end
+assert(gui.Panel.Offers.Money3.Position.Y==gui.Panel.Offers.Money1.Position.Y)
+assert(gui.Panel.Offers.Money4.Position.Y.Offset>gui.Panel.Offers.Money1.Position.Y.Offset)
 for _,o in gui:GetDescendants() do assert(not o:IsA('LuaSourceContainer')) end
 return 'PASS: six ascending capped money packs, starter rewards, pass quote, disabled eight controls, authored layout and client syntax'
 '@

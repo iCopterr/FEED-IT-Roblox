@@ -6,6 +6,26 @@
 
 **Last Updated:** 2026-09-30
 
+### Latest session — reference-style scrollable Shop
+
+- Completed: ShopUI restyled to approved mockup without pictures: fixed green
+  header, FEATURED purple full-width starter banner, PASSES gold x2 banner,
+  MONEY green 3-column/two-row cards, green price buttons. Existing launcher,
+  offer paths, prices and disabled payment behavior preserved.
+- All eight cards have empty transparent Artwork ImageLabels (Fit) for future
+  uploaded image IDs. No new image assets generated or uploaded this session.
+- Offers scroll vertically with a 1080px canvas, clipping and scrollbar; header
+  and close remain outside scrolling content. Existing responsive controller
+  and blur/motion unchanged. UI is authored in StarterGui, not runtime generated.
+- Verified: top/bottom Studio screenshots reviewed; bottom cards reachable by
+  setting scroll position. test-shop.ps1 checks blank art, 3-column rows,
+  scroll enablement, offers/config and disabled buys; passes. Rojo build and
+  diff checks pass. Full mouse/touch Play interaction remains untested.
+- Files: ShopUI.rbxmx, shop-scroll-redesign.luau, test-shop.ps1, handoff.
+  Previous working commit 3c88ed9. Next: add owner-provided artwork IDs; paid
+  fulfillment still requires product IDs and durable server receipt handling.
+  Preview visibility, scale and scroll restored after inspection.
+
 ### Latest session — main paid Shop page
 
 - Completed: authored ShopUI ScreenGui and matching Index-style SHOP launcher
