@@ -53,6 +53,7 @@ function FeedEffects.Play(result, gui)
 	task.spawn(function()
 		local model
 		local own = result.OwnerUserId == game.Players.LocalPlayer.UserId
+		local critical=result.Code=="Success" and result.Critical=="Critical"
 		local stopEating, stopFeeding = function() end, function() end
 		local ok, failure = xpcall(function()
 			local template = PetModels.GetTemplate(result.SpeciesId)
@@ -74,7 +75,7 @@ function FeedEffects.Play(result, gui)
 				end
 			end
 			model.Parent = workspace
-			game:GetService("Debris"):AddItem(model,10)
+			game:GetService("Debris"):AddItem(model,Config.GetPresentationSeconds(result.Code,result.Critical)+3)
 			local charge=FeedCharge.Create(model)
 			local signature=Signature.Create(model,model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart",true),result.Variant)
 			local function updateSignature()
@@ -90,21 +91,34 @@ function FeedEffects.Play(result, gui)
 				updateSignature()
 			end)
 			stopEating()
-			if own then stopFeeding = Sounds.Play("Feeding", P.SpinSeconds + .5) end
+			if own then stopFeeding = Sounds.Play("Feeding", Config.GetSpinSeconds(result.Code,result.Critical) + .5) end
+			local lastSpinDegrees=0
 			animate(P.SpinSeconds,function(a)
 				local degrees = P.SpinSeconds*(P.SpinStartDegreesPerSecond*a
 					+(P.SpinEndDegreesPerSecond-P.SpinStartDegreesPerSecond)*a^(P.SpinAccelerationExponent+1)/(P.SpinAccelerationExponent+1))
+				lastSpinDegrees=degrees
 				local tremble=math.max(0,(a-.75)/.25)
 				model:PivotTo((raised+Vector3.new(0,math.sin(a*math.pi*6)*.12,0))
 					*CFrame.Angles(math.sin(a*60)*tremble*.035,math.rad(degrees),math.sin(a*75)*tremble*.04))
 				charge.Update(.15+.85*a,model:GetPivot().Position)
 				updateSignature()
 			end)
+			if critical then
+				-- Same opening as normal, then a visibly longer charged spin BEFORE
+				-- the result burst/popup. Rotation continues without snapping back.
+				animate(P.Critical.ExtraSpinSeconds,function(a)
+					local degrees=lastSpinDegrees+P.Critical.ExtraSpinSeconds*(P.SpinEndDegreesPerSecond*a
+						+(P.Critical.SpinEndDegreesPerSecond-P.SpinEndDegreesPerSecond)*a*a/2)
+					model:PivotTo((raised+Vector3.new(0,math.sin(a*math.pi*4)*.12,0))
+						*CFrame.Angles(math.sin(a*60)*.035*(1-a),math.rad(degrees),math.sin(a*75)*.04*(1-a)))
+					charge.Critical(a,model:GetPivot().Position)
+					updateSignature()
+				end)
+			end
 			charge.Finish()
 			stopFeeding()
 			if own then Sounds.Play(if result.Code == "Explosion" then "Failed" else "Complete") end
 			banner(gui,result)
-			local critical=result.Code=="Success" and result.Critical=="Critical"
 			VFX.Burst(raised.Position,if critical then "Critical" else result.Code)
 			if critical then
 				local glow=Instance.new("Highlight");glow.Adornee=model;glow.DepthMode=Enum.HighlightDepthMode.Occluded

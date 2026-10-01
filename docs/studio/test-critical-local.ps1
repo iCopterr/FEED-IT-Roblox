@@ -39,7 +39,10 @@ end
 local calls=0
 local guaranteed=Resolver.Roll(20,function()calls+=1;return if calls==1 then 0 else .999 end,0)
 assert(guaranteed.Code=="Success" and guaranteed.Critical=="Critical" and guaranteed.Gain==2)
-assert(math.abs(FeedConfig.GetPresentationSeconds("Success","Critical")-4.85)<1e-8)
+assert(math.abs(FeedConfig.GetSpinSeconds("Success","Critical")-4)<1e-8)
+assert(math.abs(FeedConfig.GetSpinSeconds("Success","Normal")-2.4)<1e-8)
+assert(math.abs(FeedConfig.GetSpinSeconds("Explosion","Critical")-2.4)<1e-8)
+assert(math.abs(FeedConfig.GetPresentationSeconds("Success","Critical")-6.45)<1e-8)
 assert(math.abs(FeedConfig.GetPresentationSeconds("Success","Normal")-3.9)<1e-8)
 assert(math.abs(FeedConfig.GetPresentationSeconds("Explosion")-3.9)<1e-8)
 assert(math.abs(FeedConfig.GetPresentationSeconds("MiracleSave")-3.9)<1e-8)

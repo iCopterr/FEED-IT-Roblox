@@ -6,6 +6,27 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — Critical extended spin before finish
+
+- Current feature / completed locally: normal keeps its lift and 2.4-second spin.
+  Server-confirmed Critical follows the identical opening, then continues spinning
+  for 1.6 extra seconds (4 seconds total), accelerating to 1440 degrees/second.
+  Its three existing orbit emitters build rising gold particles up to 42/sec each
+  before the finish burst, Complete sound and CRITICAL popup. No extra geometry.
+- Shared GetSpinSeconds drives feeding sound duration and server presentation
+  lock/visibility timing. Critical presentation is now 6.45 seconds; non-critical
+  remains 3.9. Effect cleanup lifetime follows configuration. Odds/rewards unchanged.
+- Files: FeedConfig, FeedEffects, FeedCharge, local/Studio Critical tests, GDD,
+  handoff. Authored UI/assets and other gameplay untouched. Prior commit 2311818.
+- Verification: local production resolver/config regression passes (10,000 Critical
+  and 100,000 variant tickets, timing, cap, explosion order); changed Luau compiles;
+  Rojo build and diff checks pass. Studio test now asserts bounded charge particles.
+- Overall progress / next: code ready; rendered animation acceptance still pending.
+  Both Studio MCP ports 58741/58742 refused connection. Reconnect/sync and force
+  Normal/Critical in Studio memory mode; run test-critical-variants.luau and inspect
+  longer continuous spin, particles before popup and model return. No live visual
+  test claimed. Owner's untracked assets/Monetization preserved; no push.
+
 ### Latest session — one-percent Critical and distinct variant presentation
 
 - Current feature / implemented locally: server config is Normal 99% (+1) and

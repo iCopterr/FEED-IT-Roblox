@@ -957,6 +957,11 @@ Lv.17 → Lv.19
 
 Use stronger audio/VFX than normal success.
 
+2026-10-01 presentation: both outcomes lift and spin for the same opening
+2.4 seconds. Critical continues spinning for another 1.6 seconds with escalating
+gold particles, then plays its finish burst and popup. Normal does not get this
+extra spin. Server presentation locks follow the same configured duration.
+
 ## 21.3 Explosion
 
 Sequence:

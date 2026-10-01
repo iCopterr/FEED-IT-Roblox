@@ -28,7 +28,8 @@ for _,case in {{0,"MiracleSave"},{.9,"Explosion"}} do
 	local result=resolver.Roll(20,function()calls+=1;assert(calls<=2);return if calls==1 then 0 else case[1] end)
 	assert(result.Code==case[2] and result.Gain==0 and not result.Critical)
 end
-assert(math.abs(config.GetPresentationSeconds("Success","Critical")-4.85)<1e-8)
+assert(math.abs(config.GetSpinSeconds("Success","Critical")-4)<1e-8)
+assert(math.abs(config.GetPresentationSeconds("Success","Critical")-6.45)<1e-8)
 assert(math.abs(config.GetPresentationSeconds("Success","Normal")-3.9)<1e-8)
 assert(not table.find(require(game.ReplicatedStorage.Shared.Config.DebugConfig:Clone()).Modes,"Mega"))
 local variants=require(game.ReplicatedStorage.Shared.Config.VariantConfig:Clone())
@@ -40,6 +41,20 @@ local signature=require(game.StarterPlayer.StarterPlayerScripts.Client.UI.Varian
 local model=Instance.new("Model")
 local part=Instance.new("Part");part.Anchored=true;part.Parent=model;model.PrimaryPart=part
 local ok,err=xpcall(function()
+	local charge=require(game.StarterPlayer.StarterPlayerScripts.Client.UI.FeedCharge:Clone()).Create(model)
+	charge.Update(1,Vector3.zero)
+	local before=#model:GetDescendants()
+	charge.Critical(1,Vector3.zero)
+	assert(#model:GetDescendants()==before,"Critical charge reuses its emitters")
+	local count=0
+	for _,item in model:GetDescendants() do
+		if item:IsA("ParticleEmitter") then
+			count+=1;assert(item.Rate==config.Presentation.Critical.ChargeParticleRate and item.Acceleration.Y>0)
+		end
+	end
+	assert(count==3,"Bounded pre-finish Critical particles")
+	charge.Finish()
+	for _,item in part:GetChildren() do item:Destroy() end
 	for _,variant in {"Shiny","Rainbow","Celestial"} do
 		local effect=assert(signature.Create(model,part,variant))
 		effect.Update(1,Vector3.zero,Vector3.new(3,5,3),false)

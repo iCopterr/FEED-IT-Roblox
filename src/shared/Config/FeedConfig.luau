@@ -31,7 +31,8 @@ local FeedConfig = {
 		SpinEndDegreesPerSecond = 1080,
 		SpinAccelerationExponent = 2,
 		Success = table.freeze({ReturnSeconds=0.6, FlashSeconds=0.35, BannerSeconds=2.5, BannerText="FEED SUCCESS!"}),
-		Critical = table.freeze({HoldSeconds=.85, ReturnSeconds=1, BannerSeconds=3.5}),
+		Critical = table.freeze({ExtraSpinSeconds=1.6, SpinEndDegreesPerSecond=1440, ChargeParticleRate=42,
+			HoldSeconds=.85, ReturnSeconds=1, BannerSeconds=3.5}),
 		Explosion = table.freeze({BurstSeconds=0.5, FadeSeconds=0.4, BannerSeconds=3, BannerText="YOUR PET EXPLODED!"}),
 		MiracleSave = table.freeze({ReturnSeconds=0.8, BannerSeconds=3, BannerText="MIRACLE SAVE!"}),
 	}),
@@ -44,6 +45,10 @@ local FeedConfig = {
 }
 
 -- Server visibility/locks and client presentation use the same timing.
+function FeedConfig.GetSpinSeconds(code: string, critical: string?): number
+	return FeedConfig.Presentation.SpinSeconds + (if code=="Success" and critical=="Critical" then FeedConfig.Presentation.Critical.ExtraSpinSeconds else 0)
+end
+
 function FeedConfig.GetPresentationSeconds(code: string, critical: string?): number
 	local ending = if code == "Explosion" then FeedConfig.Presentation.Explosion.BurstSeconds + FeedConfig.Presentation.Explosion.FadeSeconds
 		else if code == "MiracleSave" then FeedConfig.Presentation.MiracleSave.ReturnSeconds
@@ -52,7 +57,7 @@ function FeedConfig.GetPresentationSeconds(code: string, critical: string?): num
 	-- Preserve the existing non-critical visibility window; Critical extends it.
 	ending=math.max(ending,FeedConfig.Presentation.Success.ReturnSeconds,FeedConfig.Presentation.MiracleSave.ReturnSeconds,
 		FeedConfig.Presentation.Explosion.BurstSeconds+FeedConfig.Presentation.Explosion.FadeSeconds)
-	return FeedConfig.Presentation.FloatSeconds + FeedConfig.Presentation.SpinSeconds + ending
+	return FeedConfig.Presentation.FloatSeconds + FeedConfig.GetSpinSeconds(code,critical) + ending
 end
 
 -- Every configured level remains visually distinct through level 40.
