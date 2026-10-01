@@ -5,6 +5,7 @@ local RunService=game:GetService("RunService")
 local Config=require(game.ReplicatedStorage.Shared.Config.MonetizationConfig)
 local Shop=require(game.ReplicatedStorage.Shared.Config.MerchantConfig)
 local Revive=require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
+local Food=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 local Data=require(script.Parent.DataService)
 local Adapter=require(script.Parent.Parent.Data.DataStoreAdapter)
 local Schema=require(script.Parent.Parent.Data.PlayerDataSchema)
@@ -12,6 +13,7 @@ local Locks=require(script.Parent.FeedLocks)
 local State=require(script.Parent.CommerceState)
 local Service={}
 local busy,last,prompted,passes={},{},{},{}
+local noticeReady,pendingNotices={},{}
 local notices
 local function persistenceBlocked()
  -- Studio checkout tests use the isolated in-memory profile. Never allow
@@ -26,6 +28,37 @@ for _,p in Config.GrowTiers do catalog[p.ProductId]={Kind="Grow"} end
 catalog[Config.GrowAllProductId]={Kind="GrowAll"}
 catalog[Config.PersonalRestockProductId]={Kind="Restock"}
 catalog[Config.DirectReviveProductId]={Kind="Revive"}
+
+local function noticePayload(p,productId)
+ local payload={Title="THANK YOU!",Subtitle="PURCHASE COMPLETE",Kind=p.Kind,ProductId=productId}
+ if p.Kind=="Money" then
+  payload.Amount=p.Money;payload.Reward="MONEY"
+ elseif p.Kind=="Welcome" then
+  payload.Reward="WELCOME TREAT PACK";payload.Hearty=Config.WelcomePack.Hearty
+  payload.Royal=Config.WelcomePack.Royal;payload.Revive=Config.WelcomePack.Revive
+ elseif p.Kind=="Food" then
+  payload.ItemId=p.ItemId
+  if p.ItemId=="revive" then payload.Reward="REVIVE CHARM"
+  else
+   local definition=Food.Types[p.ItemId]
+   payload.Reward=definition.Name;payload.Rarity=definition.Rarity
+   payload.Shards=Revive.Shards.ByRarity[definition.Rarity]
+  end
+ elseif p.Kind=="Grow" then payload.Reward="EGG READY TO HATCH"
+ elseif p.Kind=="GrowAll" then payload.Reward="ALL EGGS READY";payload.Amount=#p.Eggs
+ elseif p.Kind=="Restock" then payload.Reward="MERCHANT STOCK REFILLED"
+ elseif p.Kind=="Revive" then payload.Reward="PET REVIVED"
+ else payload.Reward="PURCHASE RECEIVED" end
+ return payload
+end
+
+local function sendNotice(player,payload)
+ if not notices then return end
+ if noticeReady[player] then notices:FireClient(player,payload);return end
+ local queue=pendingNotices[player]
+ if not queue then queue={};pendingNotices[player]=queue end
+ if #queue<10 then table.insert(queue,payload) end
+end
 
 local function near(player,model,distance)
  local root=player.Character and player.Character:FindFirstChild("HumanoidRootPart")
@@ -49,7 +82,7 @@ end
 local function refreshPass(player)
  local ok,owns=pcall(Market.UserOwnsGamePassAsync,Market,player.UserId,Config.DoubleMoney.GamePassId)
  if ok and player.Parent==Players then passes[player]=owns==true;player:SetAttribute("DoubleMoneyOwned",owns==true) end
- return ok
+ return ok,owns==true
 end
 function Service.Multiplier(player) return if passes[player] then Config.DoubleMoney.Multiplier else 1 end
 
@@ -134,6 +167,7 @@ function Service.ProcessReceipt(receipt)
  local data=Data.GetData(player)
  if not data or player.Parent~=Players or not Locks.Begin(player,"PaidReceipt") then return retry end
  busy[player]=true
+ local grantedNotice
  local ok,result=xpcall(function()
   local state=State.Read(data)
   if not state.Receipts[receipt.PurchaseId] then
@@ -146,6 +180,7 @@ function Service.ProcessReceipt(receipt)
    end
    local draft=assert(Schema.Migrate(data))
    if not State.Grant(draft,state,p,os.time()) then return retry end
+   grantedNotice=noticePayload(p,receipt.ProductId)
    state.Receipts[receipt.PurchaseId]=true
    if p==state.Pending then state.Pending=nil end
    State.Write(draft,state)
@@ -156,7 +191,7 @@ function Service.ProcessReceipt(receipt)
   end
   if not save(player,data) then return retry end
   player:SetAttribute("WelcomePackOwned",state.WelcomeClaimed==true)
-  if notices then notices:FireClient(player,"Purchase received!") end
+  if grantedNotice then sendNotice(player,grantedNotice) end
   return Enum.ProductPurchaseDecision.PurchaseGranted
  end,debug.traceback)
  release(player)
@@ -168,6 +203,12 @@ function Service.Start()
  local remote=Instance.new("RemoteFunction");remote.Name="MonetizationRequest"
  remote.OnServerInvoke=Service.Request;remote.Parent=game.ReplicatedStorage
  notices=Instance.new("RemoteEvent");notices.Name="MonetizationNotice";notices.Parent=game.ReplicatedStorage
+ notices.OnServerEvent:Connect(function(player,action)
+  if action~="Ready" or player.Parent~=Players then return end
+  noticeReady[player]=true
+  local queue=pendingNotices[player];pendingNotices[player]=nil
+  if queue then for _,payload in queue do notices:FireClient(player,payload) end end
+ end)
  Market.PromptProductPurchaseFinished:Connect(function(userId,id,purchased)
   -- Completion is NOT proof of payment. Only cancellation clears a reservation.
   local player=Players:GetPlayerByUserId(userId)
@@ -188,7 +229,11 @@ function Service.Start()
   end)
  end)
  Market.PromptGamePassPurchaseFinished:Connect(function(player,id,purchased)
-  if id==Config.DoubleMoney.GamePassId and purchased then task.spawn(refreshPass,player) end
+  if id==Config.DoubleMoney.GamePassId and purchased then task.spawn(function()
+   local ok,owns=refreshPass(player)
+   if ok and owns then sendNotice(player,{Title="THANK YOU!",Subtitle="PURCHASE COMPLETE",Kind="Pass",
+    ProductId=id,Reward="×2 MONEY UNLOCKED"}) end
+  end) end
  end)
  local function joined(player)
   task.spawn(function()
@@ -201,7 +246,9 @@ function Service.Start()
   end)
  end
  Players.PlayerAdded:Connect(joined)
- Players.PlayerRemoving:Connect(function(player) last[player]=nil;prompted[player]=nil;passes[player]=nil end)
+ Players.PlayerRemoving:Connect(function(player)
+  last[player]=nil;prompted[player]=nil;passes[player]=nil;noticeReady[player]=nil;pendingNotices[player]=nil
+ end)
  for _,player in Players:GetPlayers() do joined(player) end
 end
 return Service

@@ -1,14 +1,29 @@
 -- Run in Studio edit mode. Uses detached profiles and mocked payment/data services.
 local root=game.ServerScriptService.Server
 local realRequire=require
-local Schema=realRequire(root.Data.PlayerDataSchema)
-local State=realRequire(root.Services.CommerceState:Clone())
-local Config=realRequire(game.ReplicatedStorage.Shared.Config.MonetizationConfig)
-local Revive=realRequire(game.ReplicatedStorage.Shared.Config.ReviveConfig)
-local Foods=realRequire(game.ReplicatedStorage.Shared.Config.FoodConfig)
-local Shop=realRequire(game.ReplicatedStorage.Shared.Config.MerchantConfig)
+local shared=game.ReplicatedStorage.Shared.Config
+-- Load changed sources directly so Rojo edits are not hidden by Studio's
+-- edit-mode require cache from an earlier test run.
+local Config=assert(loadstring(shared.MonetizationConfig.Source))()
+local Revive=assert(loadstring(shared.ReviveConfig.Source))()
+local Foods=assert(loadstring(shared.FoodConfig.Source))()
+local configModules={
+ [shared.MonetizationConfig]=Config,[shared.ReviveConfig]=Revive,
+ [shared.FoodConfig]=Foods,
+}
+local freshRequire=function(module)return configModules[module] or realRequire(module)end
+local shopFn=assert(loadstring(shared.MerchantConfig.Source))
+setfenv(shopFn,setmetatable({script=shared.MerchantConfig,require=freshRequire},{__index=getfenv()}))
+local Shop=shopFn();configModules[shared.MerchantConfig]=Shop
+local schemaFn=assert(loadstring(root.Data.PlayerDataSchema.Source))
+setfenv(schemaFn,setmetatable({require=freshRequire},{__index=getfenv()}))
+local Schema=schemaFn()
+local stateFn=assert(loadstring(root.Services.CommerceState.Source))
+setfenv(stateFn,setmetatable({require=freshRequire},{__index=getfenv()}))
+local State=stateFn()
 local profiles={}
 local events={}
+local clientNotices={}
 local function signal(name)
  return {Connect=function(_,callback) events[name]=callback end}
 end
@@ -31,6 +46,11 @@ profiles[player]=data
 local memory=false
 local studio=false
 local deps={
+	[shared.MonetizationConfig]=Config,
+	[shared.ReviveConfig]=Revive,
+	[shared.FoodConfig]=Foods,
+	[shared.MerchantConfig]=Shop,
+	[root.Data.PlayerDataSchema]=Schema,
  [root.Services.DataService]={
  GetData=function(p)return profiles[p] end,
  IsLoaded=function(p)return profiles[p]~=nil end,
@@ -55,7 +75,15 @@ local env=setmetatable({
  end},
  os={time=os.time,clock=function()clock+=2;return clock end},
  task={wait=function()end,spawn=function(f,...)f(...)end},
- Instance={new=function()return {FireClient=function()end} end},
+ Instance={new=function(className)
+  if className=="RemoteEvent" then return {
+   OnServerEvent=signal("NoticeReady"),
+   FireClient=function(_,target,payload)
+    assert(target==player);table.insert(clientNotices,payload)
+   end,
+  } end
+  return {}
+ end},
 },{__index=getfenv()})
 local fn=assert(loadstring(root.Services.MonetizationService.Source))
 setfenv(fn,env)
@@ -75,18 +103,25 @@ assert(State.Read(data).Pending.ProductId==cash.ProductId and persisted.Settings
 assert(not service.Request(player,"Product",cash.ProductId).Ok)
 failures=1
 assert(receipt("cash-one",cash.ProductId)==yes)
+assert(#clientNotices==0) -- Receipt completed before the client listener was ready.
+events.NoticeReady(player,"ignored")
+assert(#clientNotices==0)
+events.NoticeReady(player,"Ready")
+assert(#clientNotices==1 and clientNotices[1].Kind=="Money" and clientNotices[1].Amount==cash.Money)
 events.ProductFinished(123,cash.ProductId,true)
 assert(data.Money==30000 and saves>=3 and not locked)
-assert(receipt("cash-one",cash.ProductId)==yes and data.Money==30000)
+assert(receipt("cash-one",cash.ProductId)==yes and data.Money==30000 and #clientNotices==1)
 profiles[player]=assert(Schema.Migrate(persisted));data=profiles[player]
 assert(receipt("cash-one",cash.ProductId)==yes and data.Money==30000)
 assert(receipt("unknown",999)==no)
 assert(service.Request(player,"Product",Config.WelcomePack.ProductId).Ok)
 assert(receipt("welcome",Config.WelcomePack.ProductId)==yes)
+assert(clientNotices[#clientNotices].Kind=="Welcome" and clientNotices[#clientNotices].Hearty==2
+ and clientNotices[#clientNotices].Royal==1 and clientNotices[#clientNotices].Revive==1)
 events.ProductFinished(123,Config.WelcomePack.ProductId,true)
 assert(not service.Request(player,"Product",Config.WelcomePack.ProductId).Ok)
 assert(data.Foods.hearty==2 and data.Foods.royal==1 and data.ReviveCharges==1)
-assert(data.ReviveShards==0)
+assert(data.ReviveShards==0,"Welcome unexpectedly granted shards: "..tostring(data.ReviveShards))
 assert(receipt("welcome",Config.WelcomePack.ProductId)==yes and data.ReviveCharges==1)
 assert(receipt("second-welcome",Config.WelcomePack.ProductId)==no)
 reset()
@@ -108,6 +143,7 @@ memory=false;studio=false
 assert(service.Multiplier(player)==1)
 events.PassFinished(player,Config.DoubleMoney.GamePassId,true)
 assert(service.Multiplier(player)==2 and attrs.DoubleMoneyOwned)
+assert(clientNotices[#clientNotices].Kind=="Pass" and clientNotices[#clientNotices].Reward=="×2 MONEY UNLOCKED")
 -- Reserved food shares the same purchase history and remains grantable after rotation.
 reset()
 local stock=State.RestockId(data,os.time())
@@ -117,8 +153,11 @@ State.Write(data,state)
 assert(State.Reserved(data,stock,2))
 assert(receipt("food",Config.FoodProducts.hearty.ProductId)==yes)
 assert(data.Foods.hearty==1 and data.ReviveShards==Revive.Shards.ByRarity.Rare and data.MerchantPurchases["2"]==true)
+assert(clientNotices[#clientNotices].Kind=="Food" and clientNotices[#clientNotices].ItemId=="hearty"
+ and clientNotices[#clientNotices].Shards==Revive.Shards.ByRarity.Rare)
 assert(not State.Reserved(data,stock,2))
-assert(receipt("food",Config.FoodProducts.hearty.ProductId)==yes and data.Foods.hearty==1)
+local noticeCount=#clientNotices
+assert(receipt("food",Config.FoodProducts.hearty.ProductId)==yes and data.Foods.hearty==1 and #clientNotices==noticeCount)
 -- A received food from an old cycle must never overwrite new-cycle purchases.
 reset()
 data.MerchantRestockId=stock;data.MerchantPurchases["3"]=true
@@ -191,7 +230,10 @@ for id,product in Config.FoodProducts do
  assert(receipt("food-"..id,product.ProductId)==yes)
  assert(if id=="revive" then data.ReviveCharges==1 else data.Foods[id]==1)
  assert(data.ReviveShards==(if id=="revive" then 0 else Revive.Shards.ByRarity[Foods.Types[id].Rarity]))
+ local notice=clientNotices[#clientNotices]
+ assert(notice.Kind=="Food" and notice.ItemId==id)
+ assert((notice.Shards or 0)==(if id=="revive" then 0 else Revive.Shards.ByRarity[Foods.Types[id].Rarity]))
  assert(Schema.Validate(data))
 end
-print("PASS: all 24 products; duplicate/rejoin receipts, guaranteed paid-food shards, save retries, welcome once, cancellation, pass entitlement, food reservations/rotation, grow no-op/timers, expired reserved revive, personal restock, profile validation.")
+print("PASS: all 24 products; queued structured thank-you notices, no duplicate notice, guaranteed paid-food shards, save retries, welcome once, cancellation, pass entitlement, food reservations/rotation, grow no-op/timers, expired reserved revive, personal restock, profile validation.")
 

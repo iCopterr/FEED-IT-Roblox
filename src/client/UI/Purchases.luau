@@ -1,7 +1,6 @@
 local Notice=require(script.Parent.Notifications)
 local Purchases={}
 local busy=false
-local listening=false
 local messages={
  Owned="Already owned.",Unavailable="This offer is no longer available.",
  PurchasePending="Your previous purchase is still being resolved.",
@@ -17,13 +16,6 @@ function Purchases.Request(kind,arg,extra)
  local ok,result=pcall(function()
   local remote=storage:WaitForChild("MonetizationRequest",10)
   assert(remote,"Purchase service unavailable")
-  if not listening then
-   local notice=storage:FindFirstChild("MonetizationNotice")
-   if notice then
-    listening=true
-    notice.OnClientEvent:Connect(function(message) Notice.Show(message) end)
-   end
-  end
   return remote:InvokeServer(kind,arg,extra)
  end)
  busy=false

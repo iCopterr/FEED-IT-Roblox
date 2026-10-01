@@ -9,5 +9,7 @@ return table.freeze({
 	royal = "rbxassetid://77276289439345",
 	blessed = "rbxassetid://104592447471173",
 	revive = "rbxassetid://133373414506019",
+	-- Local source: assets/ui/revive-shard.png.
+	reviveShard = "rbxassetid://82838242551952",
 	empty = "rbxassetid://110660797048747",
 })

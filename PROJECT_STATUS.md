@@ -4,7 +4,32 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-10-01
+**Last Updated:** 2026-10-02
+
+### Latest session — Robux purchase thank-you popup
+
+- Completed: every successfully fulfilled Developer Product now sends a
+  structured reward summary only after the server-authoritative grant, receipt
+  marker and durable save succeed. Duplicate receipt callbacks do not repeat the
+  popup. An explicit client-ready handshake queues startup receipts until the
+  global listener is connected; receipt fulfillment never depends on the UI.
+- Completed: a responsive game-styled `THANK YOU! / FOR YOUR PURCHASE` overlay
+  with stud texture, thick dark-purple borders, rotating shop shine, matching
+  monetization/food art, Buy sound, close/Awesome actions and an eight-second
+  auto-close. Purchases queue one-by-one. Paid food prominently shows the exact
+  `BONUS +N REVIVE SHARDS`; Revive Charm correctly has no shard bonus.
+- Art: generated and visually inspected `assets/ui/revive-shard.png` (1254px
+  RGBA with transparent corners). Owner supplied Roblox image ID
+  `82838242551952`, now installed in `IconImages.reviveShard`.
+- Verification: Rojo build and diff checks pass; all changed Luau sources compile.
+  Studio commerce harness passes all 24 product paths, queued notification,
+  exact shard summaries and no duplicate popup. The constructed UI harness passes
+  real food art, shard art/copy, sound and close behavior. No Robux was spent.
+- Files: MonetizationService, purchase listener/controller/UI, IconImages,
+  Purchases, client bootstrap, commerce/UI tests, monetization operations, shard
+  PNG and this handoff. Existing untracked owner monetization images were
+  preserved. Overall progress: requested popup and shard artwork are complete;
+  next is a real Play purchase/cancel visual review on desktop and phone.
 
 ### Latest session — Revive Shards and machine exchange
 

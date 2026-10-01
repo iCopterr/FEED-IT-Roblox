@@ -10,6 +10,18 @@ Failed/ambiguous saves retain the in-memory reward/marker and retry while
 gameplay mutation is locked. Duplicate callbacks never re-grant. No reward is
 granted by a client or PromptProductPurchaseFinished.
 
+After the same durable save succeeds, the server emits a structured receipt
+summary for the thank-you popup. The client announces its listener readiness;
+summaries completed earlier in startup are queued until then. Duplicate receipt
+callbacks do not emit a second popup. This acknowledgement is presentation only
+and never participates in fulfillment.
+
+The popup uses the game's Fredoka/stud styling, responsive scaling, rotating
+shine and the matching offer artwork. Paid food summaries show the exact food
+and guaranteed Revive Shards granted by its rarity. Revive Charm itself shows no
+shard bonus. The Revive Shard artwork is `rbxassetid://82838242551952`; its local
+source is `assets/ui/revive-shard.png`.
+
 CommerceState stores a versioned JSON object in Settings.CommerceV1. This is
 server-only despite its location: SetSetting uses an unrelated fixed allowlist.
 Existing schema cloning, migration and profile saving preserve this scalar.
@@ -69,7 +81,12 @@ Run docs/studio/test-commerce.luau through environment-mcp.ps1 in edit mode.
 It tests the actual service source with payment/data mocks, all 24 product
 handlers, repeat receipts, simulated rejoin, failed-save retry, cancellation,
 Welcome once, pass entitlement, shared food reservation and old-stock delivery,
-Grow no-op and timer schema, protected expired Revive and personal Restock.
+Grow no-op and timer schema, protected expired Revive and personal Restock. It
+also checks listener-ready queueing, structured reward payloads, exact food shard
+counts and that duplicate receipts do not repeat the thank-you popup.
+
+Run `docs/studio/test-purchase-thanks-ui.ps1` for construction of the real popup
+module, food artwork, exact shard bonus copy/image, purchase sound and close path.
 Rojo build, Luau syntax checks and git diff checks pass.
 
 Roblox API reference checked:
