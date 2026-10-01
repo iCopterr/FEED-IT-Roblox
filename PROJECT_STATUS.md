@@ -6,6 +6,31 @@
 
 **Last Updated:** 2026-10-02
 
+### Latest session — PolicyService Money Pack restriction
+
+- Completed: new centralized server `PolicyEligibilityService` queries and caches
+  `ArePaidRandomItemsRestricted` per player session. Money Packs are allowed only
+  after an explicit unrestricted result. Loading, API failure and malformed data
+  fail closed; the query retries four times and clears its cache on leave.
+- Server authority: MonetizationService rejects restricted/unknown Money Pack
+  requests before cooldown, intent saving or checkout. Client attributes are
+  presentation only. Valid already-charged receipts remain idempotently fulfilled
+  so a policy/API change cannot consume Robux without granting the purchased pack.
+- Shop: all six Money Pack buttons show `CHECKING…` while loading, restore their
+  Robux prices only when allowed, and become grey/non-interactable with a readable
+  unavailable explanation when restricted or unverifiable. Other offers are
+  unchanged and no guaranteed alternative was added.
+- Verification: isolated policy harness passes unrestricted, restricted, API
+  failure, malformed response, fail-closed attributes, retries and cleanup.
+  Shop-card harness passes all four presentation states. Full commerce harness
+  passes all 24 product routes plus restricted Money Pack prompt rejection with
+  no prompt, saved intent or balance change. Rojo build and diff checks pass.
+- Scope warning: this requested Money Pack gate is not complete paid-random launch
+  compliance. Existing paid Money balances, x2 Money earnings, Welcome rewards
+  and Robux foods that modify Feed odds still need policy treatment. Next task
+  should reuse this centralized decision at those gameplay boundaries. No real
+  policy lookup or Robux purchase was made.
+
 ### Latest session — Robux purchase thank-you popup
 
 - Completed: every successfully fulfilled Developer Product now sends a

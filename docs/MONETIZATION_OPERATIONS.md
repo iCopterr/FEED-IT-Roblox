@@ -56,6 +56,28 @@ and income payout effects, not money packs. Welcome is prompted only once;
 a second distinct externally bought Welcome receipt remains unresolved rather
 than acknowledging payment for no reward.
 
+## Per-player PolicyService restriction
+
+`PolicyEligibilityService` queries
+`PolicyService:GetPolicyInfoForPlayerAsync()` on the server and caches the result
+for the player's server session. Money Pack prompts require an explicit
+`ArePaidRandomItemsRestricted == false`. Restricted, still-loading, malformed and
+failed API results all block the prompt; failures retry four times before the
+session becomes `Unavailable`. The replicated status only drives presentation.
+`MonetizationService` independently enforces the decision before saving a prompt
+intent or opening Roblox checkout.
+
+The six Money Pack cards remain visible but become grey and non-interactable with
+a clear account/eligibility message. Welcome Pack, x2 Money and unrelated direct
+products are unchanged by this narrow gate. ProcessReceipt still fulfills any
+already-charged valid Money Pack receipt; policy errors never consume a purchase.
+
+This does not by itself finish paid-random compliance. Existing paid balances,
+x2 Money earnings, Welcome rewards and Robux foods that modify Feed probability
+need review with the same centralized policy decision before launch. Roblox
+requires restricted users to be blocked from both direct and indirect
+paid-random generators.
+
 ## Deployment and support limitations
 
 - Keep food, Grow Now/All, Restock and direct Revive products off external-store
@@ -87,7 +109,15 @@ counts and that duplicate receipts do not repeat the thank-you popup.
 
 Run `docs/studio/test-purchase-thanks-ui.ps1` for construction of the real popup
 module, food artwork, exact shard bonus copy/image, purchase sound and close path.
+Run `docs/studio/test-policy-restrictions.luau` for allowed, restricted, failed,
+malformed, retry and cleanup paths. Run
+`docs/studio/test-money-pack-policy-view.luau` for Shop loading, allowed,
+restricted and unavailable states.
 Rojo build, Luau syntax checks and git diff checks pass.
 
 Roblox API reference checked:
 https://create.roblox.com/docs/reference/engine/classes/MarketplaceService
+
+Policy API and paid-random guidance:
+https://create.roblox.com/docs/reference/engine/classes/PolicyService/GetPolicyInfoForPlayerAsync
+https://create.roblox.com/docs/production/monetization/paid-random-items

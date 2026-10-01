@@ -6,6 +6,9 @@ local messages={
  PurchasePending="Your previous purchase is still being resolved.",
  PersistenceRequired="Purchases require a saved-data server.",
  SupportRequired="Please contact support before another purchase.",
+	PolicyRestricted="Money packs aren't available for this account.",
+	PolicyLoading="Checking whether Money Packs are available…",
+	PolicyUnavailable="Money Pack eligibility couldn't be verified. Please rejoin and try again.",
  Loading="Your data is still loading.",
  Busy="Finish your current action before buying.",
 }

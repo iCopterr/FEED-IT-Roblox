@@ -1412,6 +1412,20 @@ Instead sell:
 Money can increase opportunity, but it should not directly certify
 prestige.
 
+## PolicyService Rule
+
+The server queries `PolicyService:GetPolicyInfoForPlayerAsync()` once per player
+session and caches the result. If `ArePaidRandomItemsRestricted` is true, Money
+Pack Developer Product prompts are unavailable because purchased Money can fund
+random Egg outcomes. An unknown or failed policy response also disables Money
+Packs for that session. The client may present this status, but only the server
+authorizes the prompt.
+
+An already-issued Developer Product receipt must still be fulfilled and recorded
+idempotently; policy checks must never discard a charged receipt. Money Pack
+blocking is the first policy boundary, not proof that every current/future paid
+random or probability-modifying path is launch-compliant.
+
 ------------------------------------------------------------------------
 
 # 34. Emotional Loop

@@ -11,6 +11,7 @@ local Adapter=require(script.Parent.Parent.Data.DataStoreAdapter)
 local Schema=require(script.Parent.Parent.Data.PlayerDataSchema)
 local Locks=require(script.Parent.FeedLocks)
 local State=require(script.Parent.CommerceState)
+local Policy=require(script.Parent.PolicyEligibilityService)
 local Service={}
 local busy,last,prompted,passes={},{},{},{}
 local noticeReady,pendingNotices={},{}
@@ -127,6 +128,13 @@ function Service.Request(player,kind,arg,extra)
  local data=Data.GetData(player)
  if not data or player.Parent~=Players then return {Ok=false,Code="Loading"} end
  if persistenceBlocked() then return {Ok=false,Code="PersistenceRequired"} end
+ if kind=="Product" and type(arg)=="number" then
+  local item=catalog[arg]
+  if item and item.Kind=="Money" then
+   local allowed,code=Policy.MoneyPacksAllowed(player)
+   if not allowed then return {Ok=false,Code=code} end
+  end
+ end
  if os.clock()-(last[player] or -math.huge)<1 then return {Ok=false,Code="Cooldown"} end
  last[player]=os.clock()
  if busy[player] or prompted[player] or Locks.IsLocked(player) then return {Ok=false,Code="Busy"} end

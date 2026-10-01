@@ -5,6 +5,7 @@ local Numbers=require(game.ReplicatedStorage.Shared.NumberFormat)
 local Motion=require(script.Parent.Parent.UI.Motion)
 local Purchases=require(script.Parent.Parent.UI.Purchases)
 local ShopShine=require(script.Parent.Parent.UI.ShopShine)
+local MoneyPackPolicyView=require(script.Parent.Parent.UI.MoneyPackPolicyView)
 local Controller={}
 local DeviceLayout=require(script.Parent.Parent.UI.DeviceLayout)
 function Controller.Start()
@@ -14,15 +15,20 @@ function Controller.Start()
 	local panel=gui.Panel
 	ShopShine.Bind(gui)
 	local others={}
-	local function price(card,value,kind,id,attribute)
+	local function price(card,value,kind,id,attribute,moneyPack)
 		local normalBackground=card.Buy.BackgroundColor3
 		local normalImage=card.Buy.ImageColor3
 		local gradient=card.Buy:FindFirstChildOfClass("UIGradient")
 		local normalGradient=gradient and gradient.Color
 		local function refresh()
+			if moneyPack then
+				MoneyPackPolicyView.Apply(card,value,player:GetAttribute("MoneyPacksPolicyStatus"))
+				return
+			end
 			local owned=attribute and player:GetAttribute(attribute)==true
 			card.Buy.ButtonText.Text=if owned then "OWNED" else tostring(value).." ROBUX"
 			card.Buy.Active=not owned
+			card.Buy.Interactable=not owned
 			card.Buy.AutoButtonColor=not owned
 			card.Buy.BackgroundColor3=if owned then Color3.fromRGB(110,114,124) else normalBackground
 			card.Buy.ImageColor3=if owned then Color3.fromRGB(110,114,124) else normalImage
@@ -32,6 +38,7 @@ function Controller.Start()
 		card.Buy:SetAttribute("SuppressClickSound",true)
 		card.Buy.Activated:Connect(function() if card.Buy.Active then Purchases.Request(kind,id) end end)
 		if attribute then player:GetAttributeChangedSignal(attribute):Connect(refresh) end
+		if moneyPack then player:GetAttributeChangedSignal("MoneyPacksPolicyStatus"):Connect(refresh) end
 		Motion.BindButton(card.Buy,card)
 	end
 	price(panel.Offers.Welcome,Config.WelcomePack.Robux,"Product",Config.WelcomePack.ProductId,"WelcomePackOwned")
@@ -39,7 +46,7 @@ function Controller.Start()
 	for i,pack in Config.MoneyPacks do
 		local card=panel.Offers["Money"..i]
 		card.Title.Text="$"..Numbers.Money(pack.Money)
-		price(card,pack.Robux,"Product",pack.ProductId)
+		price(card,pack.Robux,"Product",pack.ProductId,nil,true)
 	end
 	gui.Open.Activated:Connect(function()
 		if panel.Visible then Motion.Close(panel);return end

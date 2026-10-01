@@ -6,6 +6,7 @@ local PetService = require(script.Services.PetService)
 
 print(string.format("[%s] server started (%s)", ProjectInfo.Name, ProjectInfo.Phase))
 DataService.Start()
+require(script.Services.PolicyEligibilityService).Start()
 require(script.Services.MonetizationService).Start()
 PetService.Start()
 require(script.Services.PlotService).Start()

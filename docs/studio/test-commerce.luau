@@ -45,12 +45,16 @@ local data=Schema.CreateDefault()
 profiles[player]=data
 local memory=false
 local studio=false
+local moneyPacksAllowed=true
 local deps={
 	[shared.MonetizationConfig]=Config,
 	[shared.ReviveConfig]=Revive,
 	[shared.FoodConfig]=Foods,
 	[shared.MerchantConfig]=Shop,
 	[root.Data.PlayerDataSchema]=Schema,
+	[root.Services.PolicyEligibilityService]={MoneyPacksAllowed=function()
+		return moneyPacksAllowed,if moneyPacksAllowed then nil else "PolicyRestricted"
+	end},
  [root.Services.DataService]={
  GetData=function(p)return profiles[p] end,
  IsLoaded=function(p)return profiles[p]~=nil end,
@@ -124,6 +128,13 @@ assert(data.Foods.hearty==2 and data.Foods.royal==1 and data.ReviveCharges==1)
 assert(data.ReviveShards==0,"Welcome unexpectedly granted shards: "..tostring(data.ReviveShards))
 assert(receipt("welcome",Config.WelcomePack.ProductId)==yes and data.ReviveCharges==1)
 assert(receipt("second-welcome",Config.WelcomePack.ProductId)==no)
+reset()
+moneyPacksAllowed=false
+local promptsBeforePolicy=promptCount
+local restricted=service.Request(player,"Product",cash.ProductId)
+assert(not restricted.Ok and restricted.Code=="PolicyRestricted")
+assert(promptCount==promptsBeforePolicy and State.Read(data).Pending==nil and data.Money==5000)
+moneyPacksAllowed=true
 reset()
 assert(service.Request(player,"Product",cash.ProductId).Ok)
 events.ProductFinished(123,cash.ProductId,false)
@@ -235,5 +246,5 @@ for id,product in Config.FoodProducts do
  assert((notice.Shards or 0)==(if id=="revive" then 0 else Revive.Shards.ByRarity[Foods.Types[id].Rarity]))
  assert(Schema.Validate(data))
 end
-print("PASS: all 24 products; queued structured thank-you notices, no duplicate notice, guaranteed paid-food shards, save retries, welcome once, cancellation, pass entitlement, food reservations/rotation, grow no-op/timers, expired reserved revive, personal restock, profile validation.")
+print("PASS: all 24 products; restricted Money Pack prompt blocking, queued structured thank-you notices, no duplicate notice, guaranteed paid-food shards, save retries, welcome once, cancellation, pass entitlement, food reservations/rotation, grow no-op/timers, expired reserved revive, personal restock, profile validation.")
 
