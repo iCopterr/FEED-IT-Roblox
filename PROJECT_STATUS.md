@@ -6,6 +6,29 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — Starter Pack Buy button activation
+
+- Current feature / completed: fixed confirmed inactive Starter Pack Buy button.
+  Authored XML and live StarterGui both had Buy.Active=false inherited from the
+  exported shop card. ShopController enables its own cards; StarterPackController
+  previously bound Activated without enabling the copied button.
+- Controller now explicitly updates Active, Interactable and AutoButtonColor
+  when server-replicated WelcomePackOwned changes: enabled only when false,
+  disabled while unknown/already owned. Click still requires visible panel and
+  validated availability; existing Purchases.Request and receipt system unchanged.
+  Saved StarterPackUI and its initial creation recipe also enable the button.
+- Verification: local controller regression starts with BOTH flags disabled and
+  verifies enabling, explicit Buy request, owned disabling and late ownership.
+  XML Active assertion, Luau compilation and Rojo build pass. On MCP port 58741,
+  updated only the existing StarterGui Buy.Active/Interactable, verified both
+  true and corrected controller synced. Product ID remains 3715613361.
+- Files: StarterPackController, StarterPackUI.rbxmx, create-starter-pack-ui.ps1,
+  test-starter-pack.ps1, handoff. No other buttons or UI layout changed.
+- Overall progress: fix committed locally and applied to edit Studio. No further
+  implementation in progress. Next: fresh Play, finish tutorial, click Buy to
+  check native prompt and cancel. Runtime checkout remains unverified; Studio
+  reports edit mode. Save Studio place; no purchase was made. Prior commit baf7cb1.
+
 ### Latest session — missing Settings / Starter Pack UI startup recovery
 
 - Current feature / completed: bounded authored-UI recovery for Settings and

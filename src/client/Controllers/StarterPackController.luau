@@ -45,20 +45,28 @@ function Controller.Start()
 	card.Description.Text = string.format("%d Hearty Food + %d Royal Food\n%d Revive Charm\nOnce per player", Pack.Hearty, Pack.Royal, Pack.Revive)
 	buy.ButtonText.Text = "BUY • " .. tostring(Pack.Robux) .. " ROBUX"
 	buy:SetAttribute("SuppressClickSound", true)
+	local function refreshPurchase()
+		-- The shop template may be exported with its runtime-owned button disabled.
+		local owned = player:GetAttribute("WelcomePackOwned")
+		local available = owned == false
+		buy.Active = available
+		buy.Interactable = available
+		buy.AutoButtonColor = available
+		if owned == true then panel.Visible = false end
+	end
+	refreshPurchase()
 	Motion.BindPopup(panel)
 	Motion.BindButton(panel.Close, panel)
 	Motion.BindButton(buy, card)
 	Shine.Bind(gui)
 	connect(panel.Close.Activated, function() Motion.Close(panel) end)
 	connect(buy.Activated, function()
-		if panel.Visible and player:GetAttribute("WelcomePackOwned") == false then
+		if panel.Visible and buy.Active and buy.Interactable and player:GetAttribute("WelcomePackOwned") == false then
 			-- Explicit player action only; cancellation leaves the offer available.
 			Purchases.Request("Product", Pack.ProductId)
 		end
 	end)
-	connect(player:GetAttributeChangedSignal("WelcomePackOwned"), function()
-		if player:GetAttribute("WelcomePackOwned") == true then panel.Visible = false end
-	end)
+	connect(player:GetAttributeChangedSignal("WelcomePackOwned"), refreshPurchase)
 	connect(Input.InputBegan, function(key, processed)
 		if not processed and key.KeyCode == Enum.KeyCode.Escape and panel.Visible then Motion.Close(panel) end
 	end)

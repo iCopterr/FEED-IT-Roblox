@@ -48,6 +48,8 @@ Prop $description 'TextSize' 23
 Rect $description 'Position' 0 282 0 74
 Rect $description 'Size' 0 406 0 108
 $buy=Child $card 'Buy'
+Prop $buy 'Active' 'true'
+Prop $buy 'Interactable' 'true'
 Rect $buy 'Position' 0 282 0 202
 Rect $buy 'Size' 0 406 0 48
 Prop (Child $buy 'ButtonText') 'Text' 'BUY • 9 ROBUX'

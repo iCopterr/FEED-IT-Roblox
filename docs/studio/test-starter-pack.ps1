@@ -8,6 +8,7 @@ if($panel.Properties.SelectSingleNode('bool[@name="Visible"]').InnerText -ne 'fa
 if((Child $gui 'Open') -or (Child $offers 'DoubleMoney') -or !$card -or !(Child $panel 'Close')){throw 'Not a standalone offer'}
 if($card.SelectNodes('Item[Properties/string[@name="Name"]="Artwork"]').Count -ne 1){throw 'Duplicate artwork'}
 if(!(Child $card 'ItemShine')){throw 'Missing shine'}
+if((Child $card 'Buy').Properties.SelectSingleNode('bool[@name="Active"]').InnerText -ne 'true'){throw 'Buy button disabled in authored asset'}
 if((Child $card 'Artwork').Properties.SelectSingleNode('Content[@name="ImageContent"]/uri').InnerText -ne 'rbxassetid://73142330309053'){throw 'Wrong pack image'}
 $config=Get-Content default.project.json -Raw | ConvertFrom-Json
 if($config.tree.StarterGui.StarterPackUI.'$path' -ne 'src/ui/StarterPackUI.rbxmx'){throw 'Missing Rojo mapping'}
@@ -42,7 +43,7 @@ local function node(fields)
  function fields:GetChildren() return self.children or {} end
  return fields
 end
-local buy=node({Activated=signal(),ButtonText={}})
+local buy=node({Activated=signal(),ButtonText={},Active=false,Interactable=false})
 local close=node({Activated=signal()})
 local panel=node({Visible=false,UIScale={},Close=close,Offers={Welcome={Artwork={},Description={},Buy=buy}}})
 local gui=node({Name='StarterPackUI',Panel=panel,Enabled=true,AbsoluteSize={X=1000,Y=650},Destroying=signal()})
@@ -70,6 +71,7 @@ $suffix=@'
 end)()
 Controller.Start();Controller.Start()
 assert(binds==1 and purchases==0 and not panel.Visible)
+assert(buy.Active and buy.Interactable and buy.AutoButtonColor,'Controller must enable an exported disabled Buy button')
 assert(buy.ButtonText.Text=='BUY • 9 ROBUX' and buy:GetAttribute('SuppressClickSound'))
 assert(panel.Offers.Welcome.Description.Text=='2 Hearty Food + 1 Royal Food\n1 Revive Charm\nOnce per player')
 assert(panel.Offers.Welcome.Artwork.Image=='testImage')
@@ -81,8 +83,12 @@ assert(panel.Visible and not shopPanel.Visible and purchases==0,'Offer opens, NO
 buy.Activated:Fire();assert(purchases==1 and panel.Visible,'Only Buy opens checkout; cancel can retry')
 buy.Activated:Fire();assert(purchases==2)
 player:SetAttribute('WelcomePackOwned',true);assert(not panel.Visible,'Receipt closes offer')
+assert(not buy.Active and not buy.Interactable,'Owned pack cannot be purchased again')
 buy.Activated:Fire();assert(purchases==2,'Do not prompt owned pack')
 player:SetAttribute('WelcomePackOwned',false);heartbeat:Fire(.2);assert(not panel.Visible,'Cannot reopen automatically')
+assert(buy.Active and buy.Interactable)
+player:SetAttribute('WelcomePackOwned',nil);assert(not buy.Active and not buy.Interactable,'Wait for ownership')
+player:SetAttribute('WelcomePackOwned',false);assert(buy.Active and buy.Interactable,'Late ownership enables Buy')
 panel.Visible=true;close.Activated:Fire();assert(closed==1 and not panel.Visible)
 panel.Visible=true;input:Fire({KeyCode='Escape'},false);assert(closed==2 and not panel.Visible)
 panel.Visible=true;shopPanel.Visible=true;shopPanel:GetPropertyChangedSignal('Visible'):Fire();assert(not panel.Visible)
