@@ -1,6 +1,7 @@
 local Models = require(game.ReplicatedStorage.Shared.PetModels)
 local Timing = require(game.ReplicatedStorage.Shared.Config.HatchAnimationConfig)
 local Reveal = {}
+local Signature = require(script.Parent.VariantSignature)
 
 function Reveal.Create(result, origin: Vector3, color: Color3)
 	local template = Models.GetTemplate(result.SpeciesId)
@@ -31,6 +32,7 @@ function Reveal.Create(result, origin: Vector3, color: Color3)
 	highlight.Name="HatchRarityGlow";highlight.Adornee=model;highlight.FillColor=color;highlight.OutlineColor=color
 	highlight.FillTransparency=1;highlight.OutlineTransparency=.35;highlight.DepthMode=Enum.HighlightDepthMode.Occluded;highlight.Parent=model
 	local effect={Model=model}
+	local signature=Signature.Create(model,model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart",true),result.Variant)
 	function effect.Update(elapsed,fade)
 		if not model.Parent then return end
 		fade=math.clamp(fade,0,1)
@@ -41,6 +43,10 @@ function Reveal.Create(result, origin: Vector3, color: Color3)
 		for _,entry in parts do entry.Part.Transparency=entry.Transparency+(1-entry.Transparency)*fade end
 		highlight.FillTransparency=1-fade*.85
 		highlight.OutlineTransparency=.35+.65*fade
+		if signature then
+			if fade>0 then signature.Destroy();signature=nil
+			else local b,s=model:GetBoundingBox();signature.Update(elapsed,b.Position,s,false) end
+		end
 	end
 	function effect.Destroy() model:Destroy() end
 	model.Parent=workspace

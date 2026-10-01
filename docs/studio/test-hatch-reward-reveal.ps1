@@ -6,6 +6,7 @@ $controller=[IO.File]::ReadAllText((Resolve-Path 'src/client/Controllers/HatchCo
 $prefix=@'
 assert(not game:GetService('RunService'):IsRunning())
 local realGame,realRequire=game,require
+local uiModules=realGame.StarterPlayer.StarterPlayerScripts.Client.UI
 local now=0
 local function testNow() return now end
 local player={}
@@ -36,14 +37,14 @@ local function configRequire(module)
  if module==realGame.ReplicatedStorage.Shared.Config.HatchAnimationConfig then return Timing end
  return realRequire(module)
 end
-local PetReveal=(function(game,require)
-'@+"`n"+$reveal+"`nend)(fakeGame,configRequire)`n"+@'
+local PetReveal=(function(game,require,script)
+'@+"`n"+$reveal+"`nend)(fakeGame,configRequire,{Parent=uiModules})`n"+@'
 local function collectRequire(module)
  if module=='PetReveal' then return PetReveal end
  return configRequire(module)
 end
 local Collect=(function(game,require,task,script)
-'@+"`n"+$collect+"`nend)(fakeGame,collectRequire,fakeTask,{Parent={HatchPetReveal='PetReveal'}})`n"+@'
+'@+"`n"+$collect+"`nend)(fakeGame,collectRequire,fakeTask,{Parent={HatchPetReveal='PetReveal',VariantSignature=uiModules.VariantSignature,CriticalPopup=uiModules.CriticalPopup}})`n"+@'
 local colors=realRequire(realGame.ReplicatedStorage.Shared.Config.InventoryConfig).RarityColors
 local tested=0
 for _,rarity in {'Common','Uncommon','Rare','Epic','Legendary','Mythic','Fabled','Divine','Celestial'} do
@@ -84,7 +85,7 @@ local function controllerRequire(module)
  return configRequire(module)
 end
 local Controller=(function(game,require,task,script)
-'@+"`n"+$controller+"`nend)(fakeGame,controllerRequire,fakeTask,{Parent={Parent={Audio={GameSounds='Sounds'},UI={HatchCollect='Collect'}}}})`n"+@'
+'@+"`n"+$controller+"`nend)(fakeGame,controllerRequire,fakeTask,{Parent={Parent={Audio={GameSounds='Sounds'},UI={HatchCollect='Collect',VariantSignature=uiModules.VariantSignature}}}})`n"+@'
 now=0;interrupt=false
 local started={Ok=true,Code='HatchStarted',EggUid='pop_timing_test',EggId='prototype_egg',HatchOrigin=CFrame.new(0,3,0),EndsAt=Timing.Duration,Reward={PetId='pop-test-pet'}}
 assert(Controller.Enqueue(started),'Hatch rejected')

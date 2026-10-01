@@ -2,6 +2,7 @@
 return table.freeze({
 	Distance = 100, MaxAuras = 18, MaxBursts = 8,
 	LightDistance = 45, MaxLights = 6, ReducedDetailDistance = 55,
+	VariantOrbitRate = 30,
 	GlowTexture = "rbxasset://textures/particles/flare_main.dds",
 	-- Total continuous particle rates rise by rarity: 3, 7, 12, 20, 34, 52.
 	AuraProfiles = {
@@ -22,6 +23,7 @@ return table.freeze({
 		Shiny = Color3.fromRGB(255, 243, 145), Rainbow = Color3.fromRGB(120, 255, 240),
 		Celestial = Color3.fromRGB(165, 185, 255),
 		Success = Color3.fromRGB(135, 255, 100), Explosion = Color3.fromRGB(255, 110, 45),
+		Critical = Color3.fromRGB(255, 215, 65),
 		MiracleSave = Color3.fromRGB(110, 240, 255), Placement = Color3.fromRGB(255, 240, 165),
 	},
 })

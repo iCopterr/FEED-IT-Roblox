@@ -11,10 +11,8 @@ local FeedConfig = {
 	MaxVisualScale = 5,
 	MiracleSaveChance = 0.05,
 	CriticalResults = table.freeze({
-		table.freeze({Id="Normal", Chance=0.94, LevelGain=1}),
-		table.freeze({Id="Critical", Chance=0.05, LevelGain=2}),
-		table.freeze({Id="Mega", Chance=0.009, LevelGain=3}),
-		table.freeze({Id="Insane", Chance=0.001, LevelGain=5}),
+		table.freeze({Id="Normal", Chance=0.99, LevelGain=1}),
+		table.freeze({Id="Critical", Chance=0.01, LevelGain=2}),
 	}),
 	ExplosionChance = table.freeze({
 		0, 0, 0, .02, .02, .04, .04, .07, .07, .10,
@@ -33,6 +31,7 @@ local FeedConfig = {
 		SpinEndDegreesPerSecond = 1080,
 		SpinAccelerationExponent = 2,
 		Success = table.freeze({ReturnSeconds=0.6, FlashSeconds=0.35, BannerSeconds=2.5, BannerText="FEED SUCCESS!"}),
+		Critical = table.freeze({HoldSeconds=.85, ReturnSeconds=1, BannerSeconds=3.5}),
 		Explosion = table.freeze({BurstSeconds=0.5, FadeSeconds=0.4, BannerSeconds=3, BannerText="YOUR PET EXPLODED!"}),
 		MiracleSave = table.freeze({ReturnSeconds=0.8, BannerSeconds=3, BannerText="MIRACLE SAVE!"}),
 	}),
@@ -43,6 +42,18 @@ local FeedConfig = {
 		250000, 350000, 475000, 625000, 800000, 1000000, 1400000, 2000000, 2800000, 3800000, 5000000,
 	}),
 }
+
+-- Server visibility/locks and client presentation use the same timing.
+function FeedConfig.GetPresentationSeconds(code: string, critical: string?): number
+	local ending = if code == "Explosion" then FeedConfig.Presentation.Explosion.BurstSeconds + FeedConfig.Presentation.Explosion.FadeSeconds
+		else if code == "MiracleSave" then FeedConfig.Presentation.MiracleSave.ReturnSeconds
+		else if critical == "Critical" then FeedConfig.Presentation.Critical.HoldSeconds + FeedConfig.Presentation.Critical.ReturnSeconds
+		else FeedConfig.Presentation.Success.ReturnSeconds
+	-- Preserve the existing non-critical visibility window; Critical extends it.
+	ending=math.max(ending,FeedConfig.Presentation.Success.ReturnSeconds,FeedConfig.Presentation.MiracleSave.ReturnSeconds,
+		FeedConfig.Presentation.Explosion.BurstSeconds+FeedConfig.Presentation.Explosion.FadeSeconds)
+	return FeedConfig.Presentation.FloatSeconds + FeedConfig.Presentation.SpinSeconds + ending
+end
 
 -- Every configured level remains visually distinct through level 40.
 function FeedConfig.GetScale(level: number): number

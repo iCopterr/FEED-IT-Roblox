@@ -111,6 +111,7 @@ function Controller.Start()
 					for _,model in folder:GetChildren() do
 						local own=model:GetAttribute("OwnerUserId")==player.UserId
 						local hidden=not values[if own then "ShowOwnPets" else "ShowOtherPets"]
+						model:SetAttribute("ClientPetsHidden",hidden)
 						for _,o in model:GetDescendants() do
 							if o:IsA("BasePart") then o.LocalTransparencyModifier=if hidden then 1 else 0
 							elseif o:IsA("BillboardGui") or o:IsA("ParticleEmitter") or o:IsA("Trail") or o:IsA("Beam") or o:IsA("Highlight") then

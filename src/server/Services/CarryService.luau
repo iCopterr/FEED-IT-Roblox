@@ -72,6 +72,10 @@ local function equip(player, id, isEgg)
 		model.Name = if isEgg then "HeldEgg" else "HeldPet"
 		model:SetAttribute(if isEgg then "EggUid" else "PetId", id)
 		model:SetAttribute("OwnerUserId", player.UserId)
+		if isEgg then
+			model:SetAttribute("Variant", egg.Pet.Variant)
+			game:GetService("CollectionService"):AddTag(model,"VariantEggVisual")
+		end
 		local heldScale = Config.HeldScale
 		if not isEgg then heldScale *= PetModels.GetScale(pet.SpeciesId,pet.FeedLevel) end
 		model:ScaleTo(heldScale)

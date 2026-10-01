@@ -21,7 +21,8 @@ local ok,failure=xpcall(function()
   previousScale=scale
  end
  check(math.abs(previousScale-config.MaxVisualScale)<1e-5,"Level 40 reaches configured visual scale")
- for _,case in {{0,.1,"Normal",1},{0,.945,"Critical",2},{17,.995,"Mega",20},{38,.9995,"Insane",40},{39,.945,"Critical",40}} do
+ check(#config.CriticalResults==2,"Only Normal and Critical outcomes")
+ for _,case in {{0,.1,"Normal",1},{0,.989999,"Normal",1},{0,.99,"Critical",2},{17,.995,"Critical",19},{38,.9995,"Critical",40},{39,.99,"Critical",40}} do
   local result=resolver.Roll(case[1],random({.99,case[2]}))
   check(result.Critical==case[3] and result.FeedLevel==case[4],"Critical outcome "..case[3].." at "..case[1])
  end

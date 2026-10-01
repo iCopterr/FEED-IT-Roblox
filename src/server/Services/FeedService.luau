@@ -41,7 +41,7 @@ local function snapshot(player, state, foodId)
 		FoodId=foodId, FoodName=food.Name, FoodReduction=food.Reduction,
 		Ok=pet ~= nil, Code=reason, PetId=pet and pet.PetId,
 		PetName=pet and Variants.Name(definition and definition.DisplayName or pet.SpeciesId,pet.Variant),
-		Rarity=pet and pet.Rarity, FeedLevel=pet and pet.FeedLevel,
+		Rarity=pet and pet.Rarity, Variant=pet and pet.Variant, FeedLevel=pet and pet.FeedLevel,
 		Food=FoodConfig.Count(data,foodId), FoodAt=os.clock(), Cost=pet and FoodConfig.ServingsPerFeed,
 		Risk=risk,
 		BaseRisk=pet and Config.ExplosionChance[pet.FeedLevel+1],
@@ -132,8 +132,7 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	state.Sequence = sequence
 	result.NextSequence = sequence+1
 	state.LastResult = table.clone(result)
-	local p = Config.Presentation
-	local duration = p.FloatSeconds + p.SpinSeconds + math.max(p.Success.ReturnSeconds,p.MiracleSave.ReturnSeconds,p.Explosion.BurstSeconds+p.Explosion.FadeSeconds)
+	local duration = Config.GetPresentationSeconds(result.Code, result.Critical)
 	local function releaseIfReady()
 		if state.Saved and state.PresentationDone and sessions[player]==state then Locks.Finish(player) end
 	end
@@ -159,7 +158,7 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 		outcomeChanged:FireAllClients({Accepted=true, AttemptId=result.AttemptId, OwnerUserId=result.OwnerUserId,
 			PetId=petId, SpeciesId=result.SpeciesId, Origin=result.Origin, StartedAt=result.StartedAt,
 			OldLevel=result.OldLevel, FeedLevel=result.FeedLevel, Gain=result.Gain,
-			Code=result.Code, Critical=result.Critical, Income=result.Income,
+			Code=result.Code, Critical=result.Critical, Income=result.Income, Variant=result.Variant, Rarity=result.Rarity,
 			AppliedRisk=result.AppliedRisk})
 	end
 	return result

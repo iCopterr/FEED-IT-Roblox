@@ -1,5 +1,6 @@
 local Collection = game:GetService("CollectionService")
 local Config = require(game.ReplicatedStorage.Shared.Config.VFXConfig)
+local Signature = require(script.Parent.Parent.UI.VariantSignature)
 local Controller = {}
 local auras, bursts = {}, {}
 local started = false
@@ -51,6 +52,13 @@ function Controller.Burst(position, kind)
 	effect.Parent = anchor
 	bursts[anchor] = true
 	effect:Emit(if kind == "Explosion" then 32 else 18)
+	if kind=="Critical" then
+		local flash=emitter(Config.Colors.Critical)
+		flash.Name="CriticalShockwave";flash.Texture=Config.GlowTexture;flash.Speed=NumberRange.new(0)
+		flash.Lifetime=NumberRange.new(.6);flash.LightEmission=1
+		flash.Size=NumberSequence.new({NumberSequenceKeypoint.new(0,1),NumberSequenceKeypoint.new(.3,9),NumberSequenceKeypoint.new(1,15)})
+		flash.Transparency=NumberSequence.new(.35,1);flash.Parent=anchor;flash:Emit(2)
+	end
 	task.delay(1.5, function() bursts[anchor] = nil; anchor:Destroy() end)
 	return true
 end
@@ -63,7 +71,8 @@ end
 
 local function makeAura(entry)
 	local anchor=attachment("PremiumPetVFX",entry.Body)
-	local state={Anchor=anchor, Body=entry.Body, Rank=entry.Profile.Rank, Emitters={}}
+	local state={Anchor=anchor, Body=entry.Body, Rank=entry.Profile.Rank, Emitters={}, Variant=entry.Model:GetAttribute("Variant")}
+	state.Signature=Signature.Create(entry.Model,anchor,state.Variant)
 	local function add(parent,name,rate,kind)
 		local effect=emitter(entry.Color);effect.Name=name;effect.Parent=parent
 		table.insert(state.Emitters,{Effect=effect,Rate=rate,Kind=kind})
@@ -106,6 +115,8 @@ local function updateAura(state,entry,lit)
 	if state.Crown then state.Crown.Position=Vector3.new(0,extent.Y*.47,0) end
 	local color=if entry.Model:GetAttribute("Variant")=="Rainbow" then Color3.fromHSV((os.clock()*.15)%1,.65,1) else entry.Color
 	local detail=if entry.Distance>Config.ReducedDetailDistance then .4 else 1
+	state.Reduced=detail<1
+	if state.Signature then state.Signature.Update(os.clock(),entry.Body.CFrame:PointToWorldSpace(state.Offset),extent,state.Reduced) end
 	for _,layer in state.Emitters do
 		local effect=layer.Effect
 		effect.Color=ColorSequence.new(color,color:Lerp(Color3.new(1,1,1),.5))
@@ -141,11 +152,14 @@ end
 function Controller.Refresh()
 	local selected, candidates = {}, {}
 	local camera=workspace.CurrentCamera
-	for _, model in Collection:GetTagged("PetVisual") do
-		local body = model:IsA("Model") and model.PrimaryPart
+	local models=Collection:GetTagged("PetVisual")
+	for _,egg in Collection:GetTagged("VariantEggVisual") do if not table.find(models,egg) then table.insert(models,egg) end end
+	for _, model in models do
+		local body = model:IsA("Model") and (model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart",true))
 		local profile=Controller.PremiumProfile(model)
 		local color = Controller.PremiumColor(model)
-		if body and profile and color and model:IsDescendantOf(workspace) and not model:GetAttribute("Presenting") and nearby(body.Position) then
+		if body and profile and color and model:IsDescendantOf(workspace) and not model:GetAttribute("Presenting")
+			and not model:GetAttribute("Hatching") and not model:GetAttribute("ClientPetsHidden") and nearby(body.Position) then
 			table.insert(candidates, {Model=model, Body=body, Profile=profile, Color=color, Distance=(camera.CFrame.Position-body.Position).Magnitude})
 		end
 	end
@@ -155,7 +169,7 @@ function Controller.Refresh()
 		local entry=candidates[i]; local model=entry.Model
 		selected[model]=true
 		local state=auras[model]
-		if state and (state.Rank~=entry.Profile.Rank or state.Body~=entry.Body or state.Anchor.Parent~=entry.Body) then
+		if state and (state.Rank~=entry.Profile.Rank or state.Body~=entry.Body or state.Anchor.Parent~=entry.Body or state.Variant~=model:GetAttribute("Variant")) then
 			state.Anchor:Destroy();auras[model]=nil;state=nil
 		end
 		if not state then state=makeAura(entry);auras[model]=state end
@@ -176,5 +190,16 @@ function Controller.Start()
 		end)
 	end)
 	task.spawn(function() while true do Controller.Refresh(); task.wait(.5) end end)
+	local elapsed=0
+	game:GetService("RunService").RenderStepped:Connect(function(dt)
+		elapsed+=dt
+		if elapsed<1/Config.VariantOrbitRate then return end
+		elapsed=0
+		for model,state in auras do
+			if state.Signature and state.Extent and state.Anchor.Parent and not model:GetAttribute("ClientPetsHidden") then
+				state.Signature.Update(os.clock(),state.Body.CFrame:PointToWorldSpace(state.Offset),state.Extent,state.Reduced)
+			end
+		end
+	end)
 end
 return Controller

@@ -411,6 +411,12 @@ One primary visual/status category, for example:
 
 ## 10.2 Traits / Mutations
 
+2026-10-01 presentation update: owned eggs expose only their reserved Variant
+through a name prefix and effects; species and pet rarity remain hidden until
+hatch. Shiny uses gold glints, Rainbow orbit ribbons, and Celestial a star halo.
+These cosmetic effects also follow the pet. Variant odds and income multipliers
+are unchanged; no new Trait or Variant economy is introduced.
+
 Optional independent rare modifiers.
 
 A pet may eventually look like:
@@ -496,16 +502,16 @@ The server resolves a Feed in this order:
 
 # 13. Critical Feed
 
-Current prototype candidate:
+Current prototype rule (owner update, 2026-10-01):
 
   Result       Chance   Feed Gain
   ---------- -------- -----------
-  Normal          94%          +1
-  Critical         5%          +2
-  Mega           0.9%          +3
-  Insane         0.1%          +5
+  Normal          99%          +1
+  Critical         1%          +2
 
-These values are **balance candidates, not final**.
+Critical grants one additional level on top of the normal +1. Mega and Insane
+are retired. Gains still cap at level 40; at level 39 the actual gain is +1.
+The 1% roll occurs only after surviving Explosion; Miracle Save is not eligible.
 
 ## 13.1 Important Rule
 
@@ -516,11 +522,11 @@ Example:
 ``` text
 Current: Lv.17
 Explosion roll: Survived
-Critical result: +3
-New level: Lv.20
+Critical result: +2
+New level: Lv.19
 ```
 
-The player does not separately roll survival for Lv.18 or Lv.19.
+The player does not roll a second Explosion check for the skipped level.
 
 This makes Critical Feed especially valuable at extreme levels and must
 therefore be included in final probability simulations.
@@ -658,7 +664,10 @@ Miracle Save is a universal built-in rule, not a paid perk. It should be present
 
 ## 16.3 Natural Distribution Including Critical Feed + Miracle Save
 
-Using the current Critical Feed candidate (94% +1 / 5% +2 / 0.9% +3 / 0.1% +5), the 5% Miracle Save rule, and no Revive or Protection:
+Historical analysis, not current balance: the figures below used the retired
+94% +1 / 5% +2 / 0.9% +3 / 0.1% +5 table. Recalculate before relying on these
+estimates with the 2026-10-01 99% +1 / 1% +2 rule.
+The historical calculation used the 5% Miracle Save rule and no Revive or Protection:
 
 - expected natural terminal Feed ≈ **Lv.12.38**;
 - skipped Critical levels do not receive additional Explosion rolls;
@@ -942,8 +951,8 @@ Use a distinctive recovery flash, sound cue, and reaction-friendly timing. The e
 
 ``` text
 CRITICAL FEED!
-+3 LEVELS
-Lv.17 → Lv.20
++2 LEVELS
+Lv.17 → Lv.19
 ```
 
 Use stronger audio/VFX than normal success.
@@ -2438,7 +2447,7 @@ permanently fixed before launch.
 - Feed Food base costs: 30 at Lv.1 → 2.3B at Lv.40
 - Rarity Food multipliers: **1.00 / 1.15 / 1.35 / 1.65 / 2.00 / 2.50**
 - candidate post-Lv.20 Explosion: **55% / 64% / 76% / 88%** by five-level bands
-- with current Critical candidate, natural mean terminal Feed ≈ **12.18**
+- historical, retired Critical candidate: natural mean terminal Feed ≈ **12.18** (not recalculated for the 2026-10-01 rule)
 - natural Lv.30 ≈ **1 in 48K**
 - natural Lv.35 ≈ **1 in 16.7M**
 - natural Lv.40 ≈ **1 in 34B**

@@ -5,5 +5,5 @@ return table.freeze({
 	MaxSpawnedInventory = 200,
 	DefaultGrant = 1000000,
 	RefreshSeconds = 1,
-	Modes = table.freeze({"Success", "Critical", "Mega", "Insane", "Explosion", "Clear"}),
+	Modes = table.freeze({"Success", "Critical", "Explosion", "Clear"}),
 })

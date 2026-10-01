@@ -7,6 +7,8 @@ local numberText = require(game.ReplicatedStorage.Shared.NumberFormat).Money
 local PetModels = require(game.ReplicatedStorage.Shared.PetModels)
 local VFX = require(script.Parent.VFXController)
 local FeedCharge = require(script.Parent.Parent.UI.FeedCharge)
+local CriticalPopup = require(script.Parent.Parent.UI.CriticalPopup)
+local Signature = require(script.Parent.Parent.UI.VariantSignature)
 local Sounds = require(script.Parent.Parent.Audio.GameSounds)
 local seen = {}
 local Notice=require(script.Parent.Parent.UI.Notifications)
@@ -23,6 +25,8 @@ end
 
 local function banner(gui, result)
 	if not gui then return end
+	if result.OwnerUserId ~= game.Players.LocalPlayer.UserId then return end
+	if result.Code=="Success" and result.Critical=="Critical" then CriticalPopup.Show(gui,result);return end
 	local presentation = P[result.Code]
 	local color, text
 	if result.Code == "Explosion" then
@@ -72,6 +76,10 @@ function FeedEffects.Play(result, gui)
 			model.Parent = workspace
 			game:GetService("Debris"):AddItem(model,10)
 			local charge=FeedCharge.Create(model)
+			local signature=Signature.Create(model,model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart",true),result.Variant)
+			local function updateSignature()
+				if signature then local bounds,size=model:GetBoundingBox();signature.Update(os.clock(),bounds.Position,size,false) end
+			end
 			local origin = result.Origin
 			local raised = origin + Vector3.new(0,P.FloatHeight,0)
 			if own then stopEating = Sounds.Play("Eating", P.FloatSeconds + .1) end
@@ -79,6 +87,7 @@ function FeedEffects.Play(result, gui)
 				local eased=1-(1-a)^3
 				model:PivotTo(origin:Lerp(raised,eased)+Vector3.new(0,math.sin(a*math.pi)*.25,0))
 				charge.Update(a*.15,model:GetPivot().Position)
+				updateSignature()
 			end)
 			stopEating()
 			if own then stopFeeding = Sounds.Play("Feeding", P.SpinSeconds + .5) end
@@ -89,12 +98,30 @@ function FeedEffects.Play(result, gui)
 				model:PivotTo((raised+Vector3.new(0,math.sin(a*math.pi*6)*.12,0))
 					*CFrame.Angles(math.sin(a*60)*tremble*.035,math.rad(degrees),math.sin(a*75)*tremble*.04))
 				charge.Update(.15+.85*a,model:GetPivot().Position)
+				updateSignature()
 			end)
 			charge.Finish()
 			stopFeeding()
 			if own then Sounds.Play(if result.Code == "Explosion" then "Failed" else "Complete") end
 			banner(gui,result)
-			VFX.Burst(raised.Position,result.Code)
+			local critical=result.Code=="Success" and result.Critical=="Critical"
+			VFX.Burst(raised.Position,if critical then "Critical" else result.Code)
+			if critical then
+				local glow=Instance.new("Highlight");glow.Adornee=model;glow.DepthMode=Enum.HighlightDepthMode.Occluded
+				glow.FillColor=Color3.fromRGB(255,215,65);glow.OutlineColor=Color3.new(1,1,1)
+				glow.FillTransparency=.25;glow.OutlineTransparency=0;glow.Parent=model
+				local start=model:GetPivot()
+				local secondBurst=false
+				animate(P.Critical.HoldSeconds,function(a)
+					model:ScaleTo(oldScale*(1+.16*math.sin(a*math.pi)))
+					model:PivotTo(start+Vector3.new(0,math.sin(a*math.pi)*.7,0))
+					glow.FillTransparency=.25+.75*a
+					glow.OutlineTransparency=a
+					if a>.4 and not secondBurst then secondBurst=true;VFX.Burst(model:GetPivot().Position,"Critical") end
+					updateSignature()
+				end)
+				glow:Destroy()
+			end
 			if result.Code == "Explosion" then
 				for i, entry in parts do
 					local part = entry.Part
@@ -109,7 +136,7 @@ function FeedEffects.Play(result, gui)
 				task.wait(P.Explosion.BurstSeconds+P.Explosion.FadeSeconds)
 			else
 				local miracle = result.Code == "MiracleSave"
-				local seconds = if miracle then P.MiracleSave.ReturnSeconds else P.Success.ReturnSeconds
+				local seconds = if miracle then P.MiracleSave.ReturnSeconds else if critical then P.Critical.ReturnSeconds else P.Success.ReturnSeconds
 				local start = model:GetPivot()
 				animate(seconds,function(a)
 					local smooth = a*a*(3-2*a)
@@ -119,9 +146,10 @@ function FeedEffects.Play(result, gui)
 					model:PivotTo(start:Lerp(origin+Vector3.new(0,lift,0),smooth))
 					for _, entry in parts do
 						local flash = if miracle and a<.2 then Color3.fromRGB(255,80,60)
-							else if miracle then Color3.fromRGB(110,245,255) else Color3.fromRGB(191,255,99)
+							else if miracle then Color3.fromRGB(110,245,255) else if critical then Color3.fromRGB(255,215,65) else Color3.fromRGB(191,255,99)
 						entry.Part.Color = flash:Lerp(entry.Color,a)
 					end
+					updateSignature()
 				end)
 			end
 		end,debug.traceback)

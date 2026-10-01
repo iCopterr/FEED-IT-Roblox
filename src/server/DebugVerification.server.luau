@@ -61,7 +61,8 @@ local ok,failure=xpcall(function()
 	assert(placement.PlacePet(a,id))
 	check(command("SetPetLevel",5,id).Code=="PickupFirst","Placed pet level edit requires pickup")
 	assert(placement.PickupPet(a,id))
-	check(command("ForceFeed","Insane",id).Ok,"One-use Insane override armed")
+	check(not command("ForceFeed","Insane",id).Ok and not command("ForceFeed","Mega",id).Ok,"Retired critical tiers rejected")
+	check(command("ForceFeed","Critical",id).Ok,"One-use Critical override armed")
 	check(not feed.HandleRequest(a,"Feed",id,1).Accepted and overrides.Get(a)~=nil,"Invalid Feed does not consume override")
 	local root=a.Character.HumanoidRootPart
 	root:SetNetworkOwner(nil);root.Anchored=true
@@ -74,11 +75,11 @@ local ok,failure=xpcall(function()
 	check(feed.HandleRequest(a,"Feed",id,1).Code=="NotEnoughFood" and overrides.Get(a)~=nil,"Unaffordable Feed retains override")
 	assert(command("AddFood",1e12).Ok);task.wait(.55)
 	local result=feed.HandleRequest(a,"Feed",id,1)
-	check(result.Accepted and result.Critical=="Insane" and result.FeedLevel==40,"Forced Insane uses normal Feed transaction and cap")
+	check(result.Accepted and result.Critical=="Critical" and result.FeedLevel==40,"Forced Critical uses normal Feed transaction and cap")
 	check(overrides.Get(a)==nil,"Accepted Feed consumes override once")
 	check(command("AddMoney",100).Code=="Busy","Debug mutation blocked during Feed transaction")
 	waitFor(function() return not locks.IsLocked(a) end)
-	for i,mode in {"Success","Critical","Mega"} do
+	for i,mode in {"Success","Critical"} do
 		assert(command("SetPetLevel",10,id).Ok)
 		assert(command("ForceFeed",mode,id).Ok)
 		result=feed.HandleRequest(a,"Feed",id,i+1)
@@ -87,7 +88,7 @@ local ok,failure=xpcall(function()
 	end
 	assert(command("SetPetLevel",0,id).Ok)
 	assert(command("ForceFeed","Explosion",id).Ok)
-	result=feed.HandleRequest(a,"Feed",id,5)
+	result=feed.HandleRequest(a,"Feed",id,4)
 	check(result.Accepted and result.Code=="Explosion" and result.FeedLevel==0
 		and profile.PendingRecovery[id]~=nil and profile.Inventory[id]==nil,
 		"Force Explosion offers recovery or level zero even at zero natural risk")

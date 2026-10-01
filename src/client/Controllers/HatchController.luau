@@ -5,6 +5,7 @@ local Eggs = require(Storage.Shared.Config.EggConfig)
 local Timing = require(Storage.Shared.Config.HatchAnimationConfig)
 local Sounds = require(script.Parent.Parent.Audio.GameSounds)
 local Collect = require(script.Parent.Parent.UI.HatchCollect)
+local Signature = require(script.Parent.Parent.UI.VariantSignature)
 local Controller = {}
 local seen = {}
 local started, active = false, 0
@@ -43,7 +44,8 @@ local function play(result)
 				table.insert(originals,original)
 				for _, item in original:GetDescendants() do
 				if item:IsA("BasePart") then hidden[item]=item.LocalTransparencyModifier;item.LocalTransparencyModifier=1 end
-				if item:IsA("ParticleEmitter") or item:IsA("Light") or item:IsA("BillboardGui") or item:IsA("ProximityPrompt") then
+				if item:IsA("ParticleEmitter") or item:IsA("Light") or item:IsA("BillboardGui") or item:IsA("ProximityPrompt")
+					or item:IsA("Trail") or item:IsA("Beam") or item:IsA("Highlight") then
 					disabled[item]=item.Enabled;item.Enabled=false
 				end
 			end end
@@ -55,7 +57,9 @@ local function play(result)
 		local baseScale=egg:GetScale()
 		local _,boundsSize=egg:GetBoundingBox()
 		local radius=math.clamp(math.max(boundsSize.X,boundsSize.Z)*.65,1.5,5)
-		local tint=shell.Color:Lerp(Color3.fromRGB(255,220,130),.55)
+		local variant=result.Reward and result.Reward.Variant
+		local signature=Signature.Create(egg,shell,variant)
+		local tint=Signature.Color(variant) or shell.Color:Lerp(Color3.fromRGB(255,220,130),.55)
 		local glow=Instance.new("Highlight")
 		glow.Name="HatchEnergy";glow.Adornee=egg;glow.DepthMode=Enum.HighlightDepthMode.Occluded
 		glow.FillColor=tint;glow.OutlineColor=Color3.new(1,1,1)
@@ -109,6 +113,7 @@ local function play(result)
 			local pulse=math.max(0,math.sin(charge*math.pi*6))
 			local position = result.HatchOrigin * CFrame.new(0,Timing.RiseHeight*(1-(1-rise)^3)+math.sin(t*8)*.1*(1-charge),0)
 			if not revealed then
+				if signature then local bounds,size=egg:GetBoundingBox();signature.Update(t,bounds.Position,size,false) end
 				egg:ScaleTo(baseScale*(1+.045*pulse*charge-.08*math.clamp((charge-.88)/.12,0,1)))
 				egg:PivotTo(position*CFrame.Angles(math.sin(t*34)*shake*.13,charge*charge*math.pi*2,math.sin(t*47)*shake*.23))
 				glow.FillTransparency=1-charge*.65;glow.OutlineTransparency=1-charge*.85
@@ -125,6 +130,7 @@ local function play(result)
 			if t >= Timing.BurstAt and not revealed then
 				stopHatching()
 				Sounds.Play("HatchFinish")
+				if signature then signature.Destroy();signature=nil end
 				revealed = true; egg:SetAttribute("Stage", "Light");burst:Emit(12);sparks:Emit(Timing.SparkCount);shock:Emit(2)
 				glow.Enabled=false
 				for _, item in egg:GetDescendants() do

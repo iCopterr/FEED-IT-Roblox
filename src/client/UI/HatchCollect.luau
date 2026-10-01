@@ -4,6 +4,8 @@ local Debris=game:GetService("Debris")
 local Timing=require(game.ReplicatedStorage.Shared.Config.HatchAnimationConfig)
 local Colors=require(game.ReplicatedStorage.Shared.Config.InventoryConfig).RarityColors
 local PetReveal=require(script.Parent.HatchPetReveal)
+local Signature=require(script.Parent.VariantSignature)
+local Popup=require(script.Parent.CriticalPopup)
 local Collect={}
 local seen={}
 local active=0
@@ -24,7 +26,7 @@ function Collect.Play(result)
 		local orb,reveal
 		local origin=result.HatchOrigin.Position+Vector3.new(0,Timing.RiseHeight,0)
 		local ok,failure=xpcall(function()
-			local color=Colors[result.Rarity] or Colors.Common
+			local color=Signature.Color(result.Variant) or Colors[result.Rarity] or Colors.Common
 			orb=Instance.new("Part")
 			orb.Name="HatchRewardTrail";orb.Shape=Enum.PartType.Ball
 			orb.Size=Vector3.one*.6;orb.Material=Enum.Material.Neon;orb.Color=color;orb.Transparency=1
@@ -44,6 +46,10 @@ function Collect.Play(result)
 			sparks.Lifetime=NumberRange.new(.2,.4);sparks.Speed=NumberRange.new(.5,1.5)
 			sparks.Size=NumberSequence.new(.25,0);sparks.SpreadAngle=Vector2.new(180,180);sparks.Parent=a
 			local revealStart=result.RevealEndsAt-Timing.PetRevealSeconds
+			if result.Variant and result.Variant~="Normal" and workspace:GetServerTimeNow()<result.RevealEndsAt then
+				local pg=Players.LocalPlayer:FindFirstChild("PlayerGui")
+				Popup.ShowVariant(pg and pg:FindFirstChild("FeedYourPetUI"),result,color)
+			end
 			if workspace:GetServerTimeNow()<result.CollectStartsAt then reveal=PetReveal.Create(result,origin,color) end
 			-- The server keeps this pet reserved in its egg until light arrival.
 			while workspace:GetServerTimeNow()<result.CollectStartsAt do
@@ -61,6 +67,10 @@ function Collect.Play(result)
 				if Players.LocalPlayer.Character~=character or not root.Parent then return end
 				local t=math.clamp((workspace:GetServerTimeNow()-start)/Timing.CollectSeconds,0,1)
 				local eased=t*t*(3-2*t)
+				if result.Variant=="Rainbow" then
+					orb.Color=Signature.Color("Rainbow");light.Color=orb.Color
+					trail.Color=ColorSequence.new(orb.Color,Color3.new(1,1,1));sparks.Color=trail.Color
+				end
 				local target=root.Position+Vector3.new(0,1,0)
 				orb.Position=origin:Lerp(target,eased)+Vector3.new(0,math.sin(t*math.pi)*2.5,0)
 				orb.Size=Vector3.one*(.6-.3*t)

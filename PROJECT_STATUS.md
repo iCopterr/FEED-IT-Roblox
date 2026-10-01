@@ -6,6 +6,40 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — one-percent Critical and distinct variant presentation
+
+- Current feature / implemented locally: server config is Normal 99% (+1) and
+  Critical 1% (+2 total). Mega/Insane removed from live debug choices. Explosion
+  still rolls first; Miracle Save does not roll Critical; level-40 cap unchanged.
+- Critical has gold shockwaves, lift/pulse, slower growth return and an animated
+  CRITICAL level-gain popup above the hotbar, cloned from the owner's notification
+  typography/stroke in the existing ScreenGui. Shows actual capped gain. Shared
+  timing extends server presentation/lock for Critical; ordinary timing retained.
+- Variants: Shiny gold glints/rim, Rainbow multicolor orbit trails, Celestial star
+  halo/rim. Client-only attachments/trails add no physical model parts; continuous
+  world effects share the existing 18-aura/100-stud budget and 30Hz orbit updates.
+  Settings-hidden pets and original hatching shells suppress their world effects.
+- Owned held/placed eggs expose only saved Variant (plus placed name prefix),
+  never reserved species/rarity. Hatch shell, revealed pet and collection light
+  use variant styling; rare variant hatch gets a celebration popup. Odds, income
+  multipliers, pet identity, save schema, hatch grant timing and receipts unchanged.
+- Files: Feed/Debug/VFX config; FeedService, EggVisuals, CarryService; FeedEffects,
+  VFX/Hatch/Settings controllers; HatchCollect/HatchPetReveal; new CriticalPopup
+  and VariantSignature helpers; feed/debug/VFX verification and local/Studio
+  regression recipes; GDD and handoff. No authored UI snapshots modified.
+- Tests passed: official Luau compilation; local execution of production resolver
+  and config over 10,000 tickets (9,900 Normal / 100 Critical), boundary/cap/order,
+  guaranteed food, presentation duration; all 100,000 variant tickets/multipliers;
+  Rojo build and diff checks. Run docs/studio/test-critical-local.ps1 to repeat.
+- In progress / blocker: Studio MCP timed out; localhost 58741 and 58742 refused
+  connection. New engine-instance tests and visual/mobile/play verification NOT
+  run. Reconnect Studio/Rojo, run test-critical-variants.luau, Feed/Debug/VFX suites
+  and test-hatch-reward-reveal.ps1, then visually review all three variants and
+  force Critical in Studio memory mode. Do not claim rendered polish verified.
+- Overall progress: implementation saved; in-Studio acceptance remains pending.
+  Prior working commit c1ac766. Owner's assets/Monetization left untouched;
+  no Roblox UI Director used, no purchase/publish/push performed.
+
 ### Latest session — save owner's Studio UI edits
 
 - Current feature / completed: captured all 11 StarterGui ScreenGuis from Studio

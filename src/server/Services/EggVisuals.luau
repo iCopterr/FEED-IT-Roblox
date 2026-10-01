@@ -1,5 +1,6 @@
 -- Runtime clones of the authored egg and label; no generated geometry or UI.
 local Config=require(game.ReplicatedStorage.Shared.Config.EggConfig)
+local Variants=require(game.ReplicatedStorage.Shared.Config.VariantConfig)
 local EggLabelAnchor=require(game.ReplicatedStorage.Shared.EggLabelAnchor)
 local Placement=require(script.Parent.PlacementService)
 local Plots=require(script.Parent.PlotService)
@@ -34,12 +35,15 @@ function Visuals.Prepare(player,egg,position)
 			if part:IsA("BasePart") then part.Anchored=true;part.CanCollide=false;part.CanTouch=false end
 		end
 		local label=game.ReplicatedStorage.ConveyorPetLabel:Clone()
-		label.NameLabel.Text=definition and definition.DisplayName or egg.EggId
+		label.NameLabel.Text=Variants.Name(definition and definition.DisplayName or egg.EggId,egg.Pet.Variant)
 		label.Price.Text=""
 		label.Price.Visible=false
 		label.Size=UDim2.fromOffset(240,56)
 		EggLabelAnchor.Bind(model,label)
 		model:SetAttribute("OwnerUserId",player.UserId)
+		-- Reveal only the saved variant, never the reserved species or rarity.
+		model:SetAttribute("Variant",egg.Pet.Variant)
+		game:GetService("CollectionService"):AddTag(model,"VariantEggVisual")
 	end)
 	if not ok then model:Destroy();return nil end
 	return model
