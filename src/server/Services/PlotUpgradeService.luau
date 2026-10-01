@@ -67,7 +67,7 @@ function PlotUpgradeService.HandleRequest(player, plotName, expectedLevel)
 	if (root.Position-board.Position).Magnitude>Config.UpgradeDistance then return {Ok=false,Code="TooFar"} end
 	local state = PlotUpgradeService.GetState(player)
 	if not state.Ok then return state end
-	-- The displayed level is a compare-and-swap token. Retried/stale clicks cannot
+	-- Level carries capacity as a compare-and-swap token (not the display tier). Retried/stale clicks cannot
 	-- buy another, more expensive level, even after the purchase has saved.
 	if expectedLevel~=state.Level then return {Ok=false,Code="LevelChanged"} end
 	if state.MaxLevel then return {Ok=false,Code="MaxLevel"} end

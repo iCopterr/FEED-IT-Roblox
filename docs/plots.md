@@ -16,6 +16,9 @@ The island floats over the empty sky/void.
 Each player starts with FIVE active pet slots. The matching world sign buys
 one additional slot per purchase, up to TEN for this prototype. Prices by
 target capacity: 6=20K, 7=100K, 8=500K, 9=2.5M, 10=10M Money.
+The upgrade sign displays tiers starting at Level 1 (five slots), so the first
+purchase reads Level 1 → Level 2 and the final tier is Level 6 (ten slots).
+The server's legacy Level field remains a capacity token for stale-click safety.
 Tune src/shared/Config/PlotUpgradeConfig.luau; these are initial test prices.
 Every upgrade adds one pet slot and changes the fence/cap accent color.
 Physical expansion occurs only at milestones: 5–6 slots use the base size;

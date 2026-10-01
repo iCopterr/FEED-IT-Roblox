@@ -6,6 +6,24 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — pen upgrade tiers start at Level 1
+
+- Completed: sign display converts capacity to tier using slots - StartingSlots
+  + 1. First upgrade is LEVEL 1 → LEVEL 2; final state LEVEL 6 • MAX. All six
+  authored sign labels updated in repository and connected Studio edit session.
+- No capacity/pricing/economy/save changes: still starts at five slots and buys
+  one slot up to ten. Server Level stays the legacy capacity compare-and-swap
+  token; controller still sends that token, not the displayed tier.
+- Files: PlotUpgradeSignView, PlotUpgradeSigns.rbxmx, server explanatory comment,
+  docs/plots.md, new test-pen-level-labels.ps1 and this handoff.
+- Verification: all five transitions, maximum/loading labels, unchanged input
+  state/prices and ownership/distance/busy guards pass locally. Six authored
+  labels verified, Luau compile and Rojo build pass. Actual view module on an
+  unparented cloned sign in Studio passed every transition and MAX; clone then
+  destroyed. Rojo source sync confirmed. No purchase or live data changes.
+- Overall progress: complete; no implementation in progress or blocker. Next:
+  fresh Play visual check if desired; save Studio place. Prior commit bd66df9.
+
 ### Latest session — Starter Pack Buy button activation
 
 - Current feature / completed: fixed confirmed inactive Starter Pack Buy button.
