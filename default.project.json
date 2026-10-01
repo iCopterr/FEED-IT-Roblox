@@ -55,6 +55,7 @@
     },
     "StarterGui": {
       "SettingsUI": { "$path": "src/ui/SettingsUI.rbxmx" },
+      "StarterPackUI": { "$path": "src/ui/StarterPackUI.rbxmx" },
       "ShopUI": {
         "$path": "src/ui/ShopUI.rbxmx"
       },

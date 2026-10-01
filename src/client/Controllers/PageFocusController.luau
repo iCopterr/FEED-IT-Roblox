@@ -9,6 +9,7 @@ local Controller={}
 local pages={
 	SettingsUI={"Panel"},
 	ShopUI={"Panel"},
+	StarterPackUI={"Panel"},
 	FeedYourPetUI={"Inventory","FeedPanel"}, MerchantUI={"Panel"},
 	ReviveUI={"Panel"}, DebugUI={"Panel"}, IndexUI={"Panel"},
 	-- Egg and pen remote side panels intentionally leave the world view unchanged.

@@ -6,6 +6,40 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — standalone Starter Pack offer after tutorial
+
+- Current feature / completed locally: new StarterPackUI opens after a player
+  finishes the tutorial in this session, NOT the full ShopUI or native checkout.
+  Waits for FeedBusy to clear (final animation and save) and ownership replication.
+  Existing completed accounts on login and owners of Welcome Pack are skipped.
+  One automatic offer per session transition; dismissing it does not reopen it.
+- Separate responsive 760x386 authored modal reuses the current shop header,
+  font/stroke, close button, Welcome artwork and rotating shine. Shows 2 Hearty,
+  1 Royal, 1 Revive Charm; explicit Buy opens existing product 3715613361 at
+  configured 9 Robux. Cancel can retry; receipt ownership closes the offer.
+  X/Escape/another menu dismiss it. Existing ShopUI asset is unchanged.
+- Architecture: client-only StarterPackOffer gate + StarterPackController; Rojo
+  ScreenGui mapping and PageFocus registration. Existing server receipt,
+  once-per-player persistence and rewards untouched. No automatic Robux prompt,
+  extra persisted flags, UI Director, uploads or image generation.
+- Files: new StarterPackUI.rbxmx, StarterPackController, UI/StarterPackOffer,
+  create-starter-pack-ui.ps1, test-starter-pack.ps1/.luau; client init,
+  PageFocusController, default.project.json and this handoff.
+- Verification: Luau compile and Rojo build pass. Local pure gate tests cover
+  initial completed accounts, delayed ownership, busy/dead player and repeat
+  suppression. Actual controller with mocked Roblox interfaces passes tutorial
+  completion -> final feed -> popup -> purchase -> owned; close, Escape, menu
+  replacement, mobile scaling and cleanup. XML checks standalone shape, single
+  artwork, shine, hidden initial panel and Rojo mapping. Shop shine regression
+  tests also pass. No paid transaction was executed.
+- Overall progress: implementation saved; no further code work in progress.
+  Known blocker: Studio MCP reports zero connected instances. Appearance, real
+  asset loading and native checkout in Play remain unverified. Next task: sync
+  Rojo, complete a fresh tutorial, confirm popup waits until final feed finishes,
+  inspect desktop/mobile and cancel checkout. Existing pack artwork ID remains
+  73142330309053 (new StarterPack-v2 image has no supplied replacement ID).
+  Last working commit before session: efffcc7. Unrelated owner assets preserved.
+
 ### Latest session — rotating shine behind every shop item
 
 - Current feature / completed locally: owner's image 119106720608654 added behind
