@@ -6,6 +6,15 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — raise teleport buttons
+
+- Completed: moved the authored HUD.Travel group (Base + Merchant) up 18 pixels,
+  Y offset 12 -> -6 relative to HUD's existing +10 offset. Final top is 4 pixels
+  inside the ScreenGui safe area. No size, hover, button or other HUD changes.
+- Files: FeedYourPetUI.rbxmx and handoff. Same property applied/verified in Studio;
+  Rojo build and XML comparison pass. Overall progress complete; no work in
+  progress. Next: owner visual approval. Prior commit 0ca69b7.
+
 ### Latest session — cross-device UI layout pass
 
 - Current feature / completed: shared DeviceLayout fits inset-aware ScreenGui
