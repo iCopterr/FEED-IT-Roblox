@@ -6,6 +6,17 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — shop radial shine picture
+
+- Completed: generated and visually inspected ShopShine-Green-v1.png, a clean
+  opaque green radial-ray backdrop for shop item artwork. Built-in imagegen used;
+  transparent attempts had visible edge artifacts and were not selected.
+- Files: assets/Monetization/ShopShine-Green-v1.png, companion prompt, handoff.
+  No runtime/UI changes, uploads or overwrite of owner assets. Original generated
+  drafts remain outside the repository. Final prompt recorded with selected art.
+- Overall progress: picture delivered; no implementation in progress. Next task
+  is owner-directed upload/integration if requested. Prior commit 323eaf0.
+
 ### Latest session — Starter Pack artwork from owner's item icons
 
 - Current feature / completed: built-in imagegen composited the supplied Hearty
