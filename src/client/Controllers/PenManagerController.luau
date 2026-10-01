@@ -152,10 +152,11 @@ function Controller.Start()
 	local function resize()
 		local size=gui.AbsoluteSize
 		-- Compact side card: approximately 22% wide / 34% tall on desktop.
-		local scale=math.min(.82,math.max(.45,math.min(size.X*.23/510,size.Y*.34/440)),(size.X-32)/510,(size.Y-40)/440)
+		local layout=require(script.Parent.Parent.UI.DeviceLayout)
+		local scale=if size.X<900 then math.min(layout.Fit(size,510,440),(size.X-32)/510) else math.min(.82,math.max(.45,math.min(size.X*.23/510,size.Y*.34/440)),(size.X-32)/510,(size.Y-40)/440)
 		panel.UIScale.Scale=scale
 		panel.Position=UDim2.new(1,-16,.5,-220*scale)
-		local dockScale=math.clamp(size.Y/1080,.65,1)
+		local dockScale=layout.LauncherScale(size)
 		gui.Dock.UIScale.Scale=dockScale
 		gui.Dock.Position=UDim2.new(1,-18,.5,-86*dockScale)
 	end

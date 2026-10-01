@@ -165,7 +165,7 @@ function Controller.Start()
 	end)
 	local function resize()
 		local size=gui.AbsoluteSize
-		panel.UIScale.Scale=math.max(.1,math.min(1,(size.X-24)/540,(size.Y-24)/510))
+		require(script.Parent.Parent.UI.DeviceLayout).Apply(panel,size,"Merchant")
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize();render();task.spawn(refresh)
 	task.spawn(function()

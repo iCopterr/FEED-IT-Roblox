@@ -6,6 +6,7 @@ local Motion=require(script.Parent.Parent.UI.Motion)
 local VolumeGroups=require(script.Parent.Parent.Audio.VolumeGroups)
 local GuiBootstrap=require(script.Parent.Parent.UI.GuiBootstrap)
 local Controller={}
+local DeviceLayout=require(script.Parent.Parent.UI.DeviceLayout)
 function Controller.Start()
 	local player=Players.LocalPlayer
 	local pg=player:WaitForChild("PlayerGui")
@@ -97,8 +98,8 @@ function Controller.Start()
 	Input.InputBegan:Connect(function(input,processed)if not processed and input.KeyCode==Enum.KeyCode.Escape and p.Visible then Motion.Close(p) end end)
 	Motion.BindPopup(p);Motion.BindButton(gui.Open,gui.Open);Motion.BindButton(p.Close,p)
 	local function resize()
-		p.UIScale.Scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/820,(gui.AbsoluteSize.Y-24)/610))
-		local scale=if gui.AbsoluteSize.X<760 then .7 else math.min(1,gui.AbsoluteSize.Y/650)
+		DeviceLayout.Apply(p,gui.AbsoluteSize,"Settings")
+		local scale=DeviceLayout.LauncherScale(gui.AbsoluteSize)
 		gui.Open.UIScale.Scale=scale
 		gui.Open.Position=UDim2.new(1,-18,0,if gui.AbsoluteSize.X<760 then 110*math.min(1,(gui.AbsoluteSize.X-24)/540) else 12)
 	end

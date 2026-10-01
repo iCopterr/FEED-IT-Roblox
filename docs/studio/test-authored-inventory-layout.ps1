@@ -1,7 +1,7 @@
 param([int]$Port=58741)
 $ErrorActionPreference='Stop'
 $source=Get-Content src/client/UI/InventoryLayout.luau -Raw
-$code="local Layout=(function()`n"+$source+"`nend)()`n"+@'
+$code="local script={Parent=game.StarterPlayer.StarterPlayerScripts.Client.UI}; local Layout=(function()`n"+$source+"`nend)()`n"+@'
 assert(not game:GetService('RunService'):IsRunning())
 local gui=game.StarterGui.FeedYourPetUI:Clone()
 local ok,result=xpcall(function()
@@ -24,7 +24,9 @@ local ok,result=xpcall(function()
    for i,button in buttons do button.Visible=i<=count end
    Layout.Apply(gui,cards,buttons,viewport)
    Layout.Apply(gui,cards,buttons,viewport)
-   for obj,properties in before do for key,value in properties do assert(obj[key]==value,obj.Name..'.'..key..' overwritten') end end
+   if not (viewport.X<700 and viewport.Y>viewport.X) then
+    for obj,properties in before do for key,value in properties do assert(obj[key]==value,obj.Name..'.'..key..' overwritten') end end
+   end
    local size=modal.Size
    local scale=modal.InventoryFitScale.Scale
    assert((size.X.Scale*viewport.X+size.X.Offset)*scale<=viewport.X,'Inventory too wide')
@@ -36,6 +38,7 @@ local ok,result=xpcall(function()
   end
  end
  -- Subsequent manual edits remain authoritative, not cached startup geometry.
+ Layout.Apply(gui,cards,buttons,Vector2.new(1920,1080))
  modal.Size=UDim2.fromOffset(900,600)
  modal.Panel.Layout.Title.Position=UDim2.fromOffset(37,21)
  cards[1].Preview.Size=UDim2.fromScale(.8,.7)
@@ -43,7 +46,7 @@ local ok,result=xpcall(function()
  assert(modal.Size==UDim2.fromOffset(900,600) and modal.InventoryFitScale.Scale==1)
  assert(modal.Panel.Layout.Title.Position==UDim2.fromOffset(37,21))
  assert(cards[1].Preview.Size==UDim2.fromScale(.8,.7))
- return 'PASS '..checks..' viewport/hotbar combinations; authored positions, sizes, fonts, card grid and later edits preserved'
+ return 'PASS '..checks..' viewport/hotbar combinations; portrait reflows and desktop restoration; later desktop edits preserved'
 end,debug.traceback)
 gui:Destroy()
 assert(ok,result)

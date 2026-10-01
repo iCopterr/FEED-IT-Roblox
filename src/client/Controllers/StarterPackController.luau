@@ -11,6 +11,7 @@ local Motion = require(UI.Motion)
 local Purchases = require(UI.Purchases)
 local Shine = require(UI.ShopShine)
 local GuiBootstrap = require(UI.GuiBootstrap)
+local DeviceLayout = require(UI.DeviceLayout)
 local Controller = {}
 local started = false
 local pages = {
@@ -90,7 +91,7 @@ function Controller.Start()
 	for _,screen in pg:GetChildren() do watch(screen) end
 	local function resize()
 		local size = gui.AbsoluteSize
-		panel.UIScale.Scale = math.max(.1, math.min(1, (size.X - 24) / 760, (size.Y - 24) / 386))
+		DeviceLayout.Apply(panel,size,"StarterPack")
 	end
 	connect(gui:GetPropertyChangedSignal("AbsoluteSize"), resize)
 	resize()

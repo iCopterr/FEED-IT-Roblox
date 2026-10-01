@@ -105,7 +105,8 @@ function Controller.Start()
   player:SetAttribute("RevivePanelOpen",panel.Visible)
   if not panel.Visible then Preview.Set(panel.PetPreview,nil) end
  end)
- local function resize() panel.UIScale.Scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/800,(gui.AbsoluteSize.Y-24)/500)) end
+ local DeviceLayout=require(script.Parent.Parent.UI.DeviceLayout)
+ local function resize() DeviceLayout.Apply(panel,gui.AbsoluteSize,"Revive") end
  gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize();render()
  task.spawn(function() while gui.Parent do refresh();task.wait(Config.RefreshSeconds) end end)
  return gui

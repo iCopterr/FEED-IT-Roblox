@@ -6,6 +6,37 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — cross-device UI layout pass
+
+- Current feature / completed: shared DeviceLayout fits inset-aware ScreenGui
+  dimensions and supplies portrait reflows for Shop, Starter Pack, Settings,
+  Inventory, Index, Feed and Revive. Wider views retain original authored layout;
+  orientation changes restore cached properties. Merchant/Debug also use common
+  fit math; Pen remote is larger on small devices; launcher scales consolidated.
+- Shop offers stack vertically with all six money packs reachable; Feed's food
+  list moves below the pet; collection/index/revive details stack below lists;
+  Index categories scroll horizontally; Settings controls sit below headings.
+  No authored files/world/economy changes or UI Director used. Existing buttons,
+  handlers, art, fonts, colors and purchase checks are reused.
+- Hotbar fixes column calculation to include padding; exported duplicate inventory
+  UIScales normalized at runtime (not deleted). Later desktop size edits retained.
+- Files: new UI/DeviceLayout, InventoryLayout, controller sizing in HUD, Settings,
+  Shop, StarterPack, Index, Feed, Revive, Merchant, Debug and PenManager; new
+  verify-device-layout.luau and responsive-ui.md, updated Starter Pack/inventory
+  regression tests, inventory documentation and handoff.
+- Verification: actual cloned Studio UI passes 63 panel/device cases across seven
+  sizes (320x568 through 2560x1080), desktop restoration, Shop canvas/Buy separation,
+  and hotbar 0–10 slots. Inventory 15 combinations + later edit preservation pass.
+  Starter Pack and shop shine regressions, Luau compile and Rojo build pass.
+  Edit-mode portrait previews of seven menus inspected, including final Shop
+  money cards. Temporary ResponsiveQA ScreenGui/clones removed. Sources synced.
+- Overall progress: layout implementation complete, runtime acceptance still
+  pending. No Play client was available; real touch scroll/drag, populated pet
+  previews, device notches and console focus not verified. Existing rotated shine
+  decorations spill in Studio edit previews; runtime CanvasGroup clipping still
+  needs verification (no decorative geometry rewritten). Next: Play/emulator pass
+  on phone portrait/landscape, tablet and desktop. Prior commit 7e23dbd.
+
 ### Latest session — pen upgrade tiers start at Level 1
 
 - Completed: sign display converts capacity to tier using slots - StartingSlots

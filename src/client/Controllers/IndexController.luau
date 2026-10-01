@@ -5,6 +5,7 @@ local Eggs=require(ReplicatedStorage.Shared.Config.EggConfig)
 local View=require(script.Parent.Parent.UI.IndexView)
 local Motion=require(script.Parent.Parent.UI.Motion)
 local Controller={}
+local DeviceLayout=require(script.Parent.Parent.UI.DeviceLayout)
 
 function Controller.Start()
 	local player=Players.LocalPlayer
@@ -88,8 +89,8 @@ function Controller.Start()
 	Motion.BindButton(gui.Open,gui.Open)
 	local function resize()
 		local size=gui.AbsoluteSize
-		panel.UIScale.Scale=math.max(.1,math.min(1,(size.X-24)/1020,(size.Y-24)/600))
-		gui.Open.UIScale.Scale=if size.X<760 then .7 else math.min(1,size.Y/650)
+		DeviceLayout.Apply(panel,size,"Index")
+		gui.Open.UIScale.Scale=DeviceLayout.LauncherScale(size)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()
 	task.spawn(function()

@@ -62,6 +62,7 @@ local realRequire=require
 local gate=realRequire('../src/client/UI/StarterPackOffer')
 local script={Parent={Parent={UI={StarterPackOffer=gate,Motion=motion,
  GuiBootstrap={Wait=function(_,_,name) assert(name=='StarterPackUI');return gui end},
+ DeviceLayout={Apply=function(p,size,kind) assert(kind=='StarterPack');p.UIScale.Scale=math.min(1,(size.X-24)/(if size.X<700 and size.Y>size.X then 460 else 760),(size.Y-24)/484) end},
  Purchases={Request=function(kind,id) assert(kind=='Product' and id==3715613361);purchases+=1 end},
  ShopShine={Bind=function(g) assert(g==gui);binds+=1 end}}}}}
 local require=function(value) return value end
@@ -93,7 +94,7 @@ panel.Visible=true;close.Activated:Fire();assert(closed==1 and not panel.Visible
 panel.Visible=true;input:Fire({KeyCode='Escape'},false);assert(closed==2 and not panel.Visible)
 panel.Visible=true;shopPanel.Visible=true;shopPanel:GetPropertyChangedSignal('Visible'):Fire();assert(not panel.Visible)
 gui.AbsoluteSize={X=390,Y=844};gui:GetPropertyChangedSignal('AbsoluteSize'):Fire()
-assert(math.abs(panel.UIScale.Scale-366/760)<.001,'Responsive layout')
+assert(math.abs(panel.UIScale.Scale-366/460)<.001,'Responsive portrait layout')
 gui.Destroying:Fire()
 for _,entry in heartbeat.callbacks do assert(not entry.c.live) end
 print('PASS: controller tutorial -> final feed -> independent offer -> purchase -> owned, close, escape, other menu, resize, cleanup')

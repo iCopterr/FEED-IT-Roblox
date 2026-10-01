@@ -5,6 +5,7 @@ local GuiBootstrap=require(script.Parent.Parent.UI.GuiBootstrap)
 local Motion=require(script.Parent.Parent.UI.Motion)
 local numberText=require(ReplicatedStorage.Shared.NumberFormat).Money
 local Controller={}
+local DeviceLayout=require(script.Parent.Parent.UI.DeviceLayout)
 
 function Controller.Start()
 	local playerGui=Players.LocalPlayer:WaitForChild("PlayerGui",10)
@@ -60,7 +61,7 @@ function Controller.Start()
 		hud.Money.UIScale.Scale=scale
 		hud.Travel.UIScale.Scale=math.min(1,(size.X-24)/540)
 		-- Match the Index stack's responsive spacing.
-		local launcherScale=if narrow then .7 else math.min(1,size.Y/650)
+		local launcherScale=DeviceLayout.LauncherScale(size)
 		hud.OpenInventory.UIScale.Scale=launcherScale
 		hud.OpenInventory.Position=UDim2.new(0,18+84*launcherScale,.5,0)
 	end

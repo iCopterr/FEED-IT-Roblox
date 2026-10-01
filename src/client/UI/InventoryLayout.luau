@@ -1,20 +1,16 @@
 -- Inventory geometry belongs to the authored ScreenGui, including card templates.
--- Fit the whole composition without rewriting its child layout on every refresh.
+-- Preserve desktop composition; use the shared portrait layout on narrow screens.
 local Layout={}
+local DeviceLayout=require(script.Parent.DeviceLayout)
 function Layout.Apply(gui,_cards,buttons,viewportOverride)
 	local modal=gui.Inventory
 	local bar=gui.Hotbar
 	local viewport=viewportOverride or gui.AbsoluteSize
-	local fit=modal:FindFirstChild("InventoryFitScale")
-	if fit and viewport.X>0 and viewport.Y>0 then
-		local width=modal.Size.X.Scale*viewport.X+modal.Size.X.Offset
-		local height=modal.Size.Y.Scale*viewport.Y+modal.Size.Y.Offset
-		fit.Scale=math.max(.01,math.min(1,(viewport.X-24)/math.max(1,width),(viewport.Y-24)/math.max(1,height)))
-	end
+	DeviceLayout.Apply(modal,viewport,"Inventory","InventoryFitScale")
 	-- Hotbar slots still flow dynamically; they are independent of the inventory.
 	local count=0
 	for _,button in buttons do if button.Visible then count+=1 end end
-	local columns=math.max(1,math.min(count,math.floor((viewport.X-24)/60)))
+	local columns=math.max(1,math.min(count,math.floor((viewport.X-24+8)/68)))
 	local side=math.min(66,math.floor((viewport.X-24-(columns-1)*8)/columns))
 	local rows=math.ceil(count/columns)
 	bar.Size=UDim2.fromOffset(if count==0 then 0 else columns*(side+8)-8,if count==0 then 0 else rows*(side+8)-8)

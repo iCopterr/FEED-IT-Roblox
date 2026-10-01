@@ -12,6 +12,10 @@ ViewportFrames with clones of existing pet/egg models. It never builds the UI
 hierarchy from code. Each viewport binds a local Camera render helper because
 the cameras stored in StarterGui do not reliably replicate to clients.
 
+2026-10-01: narrow portrait devices reflow the existing collection controls,
+list and selected-item details through UI/DeviceLayout. Desktop geometry is
+restored on rotation back; see `docs/responsive-ui.md` for tests and limits.
+
 - Backquote or INVENTORY toggles the collection. Gamepad Y opens it;
   B closes it. Buttons also support touch and gamepad selection.
 - All/Pets/Eggs tabs, name/rarity search, and Newest/Income/Level/Rarity sorting.

@@ -6,6 +6,7 @@ local Motion=require(script.Parent.Parent.UI.Motion)
 local Purchases=require(script.Parent.Parent.UI.Purchases)
 local ShopShine=require(script.Parent.Parent.UI.ShopShine)
 local Controller={}
+local DeviceLayout=require(script.Parent.Parent.UI.DeviceLayout)
 function Controller.Start()
 	local player=Players.LocalPlayer
 	local pg=player:WaitForChild("PlayerGui")
@@ -67,8 +68,8 @@ function Controller.Start()
 	Motion.BindPopup(panel);Motion.BindButton(gui.Open,gui.Open);Motion.BindButton(panel.Close,panel)
 	local function resize()
 		local size=gui.AbsoluteSize
-		panel.UIScale.Scale=math.max(.1,math.min(1,(size.X-24)/880,(size.Y-24)/620))
-		local scale=if size.X<760 then .7 else math.min(1,size.Y/650)
+		DeviceLayout.Apply(panel,size,"Shop")
+		local scale=DeviceLayout.LauncherScale(size)
 		gui.Open.UIScale.Scale=scale
 		gui.Open.Position=UDim2.new(0,18,.5,-76*scale)
 	end

@@ -1,0 +1,147 @@
+-- Responsive geometry for existing authored UI only. No duplicate screens/art.
+local Layout = {}
+local originals = setmetatable({}, {__mode="k"})
+local overrides = setmetatable({}, {__mode="k"})
+local function set(panel, object, property, value)
+	if not object then return end
+	local saved = overrides[panel]
+	saved[object] = saved[object] or {}
+	if saved[object][property] == nil then saved[object][property] = object[property] end
+	object[property] = value
+end
+local function rect(panel, object, x, y, w, h)
+	set(panel, object, "Position", UDim2.fromOffset(x,y))
+	set(panel, object, "Size", UDim2.fromOffset(w,h))
+end
+function Layout.Fit(viewport, width, height)
+	return math.max(.01, math.min(1, (viewport.X-24)/math.max(1,width), (viewport.Y-24)/math.max(1,height)))
+end
+function Layout.LauncherScale(viewport)
+	return math.min(1, math.max(.68, math.min(viewport.X/760,viewport.Y/650)))
+end
+function Layout.Portrait(viewport)
+	return viewport.X < 700 and viewport.Y > viewport.X
+end
+local function offer(panel, card, width, y, pack)
+	rect(panel,card,8,y,width,if pack then 360 else 294)
+	for _,child in card:GetChildren() do
+		if child.Name=="Artwork" then rect(panel,child,(width-160)/2,12,160,140)
+		elseif child.Name=="Title" then
+			rect(panel,child,12,154,width-24,40);set(panel,child,"TextSize",26)
+		elseif child.Name=="Description" then
+			rect(panel,child,12,if pack then 198 else 194,width-24,if pack then 88 else 26);set(panel,child,"TextSize",22)
+		end
+	end
+	rect(panel,card.Buy,16,if pack then 298 else 228,width-32,50)
+end
+
+function Layout.Apply(panel, viewport, kind, scaleName)
+	if viewport.X<=0 or viewport.Y<=0 then return end
+	if not originals[panel] then originals[panel]=panel.Size;overrides[panel]={} end
+	local portrait = Layout.Portrait(viewport)
+	if not portrait then
+		for object,properties in overrides[panel] do
+			if object.Parent then for key,value in properties do object[key]=value end end
+		end
+		overrides[panel]={}
+		-- Preserve subsequent owner-authored desktop size edits too.
+		originals[panel]=panel.Size
+	end
+	local base=originals[panel]
+	local width=base.X.Scale*viewport.X+base.X.Offset
+	local height=base.Y.Scale*viewport.Y+base.Y.Offset
+	if portrait and kind=="Settings" then
+		width,height=460,610
+		for _,name in {"MusicVolume","SFXVolume","ShowOtherPets","ShowOwnPets"} do
+			local row=panel[name]
+			rect(panel,row.Title,16,8,390,40);set(panel,row.Title,"TextSize",28)
+			if row:FindFirstChild("Slider") then
+				rect(panel,row.Description,16,48,290,26);set(panel,row.Description,"TextSize",20)
+				rect(panel,row.Value,300,46,104,28)
+				rect(panel,row.Slider,24,82,374,24)
+			else rect(panel,row.Toggle,222,52,180,50) end
+		end
+	elseif portrait and (kind=="Shop" or kind=="StarterPack") then
+		width,height=460,if kind=="Shop" then 720 else 484
+		local offers=panel.Offers
+		if kind=="StarterPack" then
+			rect(panel,offers,18,88,424,378);offer(panel,offers.Welcome,408,8,true)
+		else
+			offer(panel,offers.Welcome,408,58,true)
+			offer(panel,offers.DoubleMoney,408,488,true)
+			for i=1,6 do
+				local card=offers["Money"..i]
+				offer(panel,card,408,920+(i-1)*310,false)
+			end
+			for _,child in offers:GetChildren() do
+				local y=({FeaturedHeading=4,PassesHeading=432,MoneyHeading=864})[child.Name]
+				if y then rect(panel,child,8,y,408,46) end
+			end
+			set(panel,offers,"CanvasSize",UDim2.fromOffset(0,2780))
+		end
+	elseif portrait and kind=="Feed" then
+		width,height=560,980
+		-- Put food below the pet instead of shrinking an 884px-wide two-panel group.
+		rect(panel,panel.FoodCards,0,636,560,344)
+		rect(panel,panel.FoodCards.List,20,70,520,250)
+		set(panel,panel.FoodCards.Hint,"Visible",false)
+	elseif portrait and kind=="Index" then
+		width,height=540,930
+		rect(panel,panel.Title,18,10,440,50);set(panel,panel.Title,"TextSize",32)
+		rect(panel,panel.Close,478,13,44,44)
+		rect(panel,panel.Categories,16,84,508,86)
+		set(panel,panel.Categories.Layout,"FillDirection",Enum.FillDirection.Horizontal)
+		set(panel,panel.Categories,"ScrollingDirection",Enum.ScrollingDirection.X)
+		set(panel,panel.Categories,"CanvasSize",UDim2.fromOffset(1080,0))
+		rect(panel,panel.CategoryName,16,182,508,36)
+		rect(panel,panel.Pets,16,228,508,390)
+		rect(panel,panel.Detail,16,632,508,246)
+		local d=panel.Detail
+		rect(panel,d.Preview,10,12,200,210)
+		for _,entry in {{"ItemName",12,58},{"Rarity",74,30},{"Level",110,28},{"Income",148,37},{"Source",192,36}} do
+			rect(panel,d[entry[1]],218,entry[2],278,entry[3])
+		end
+		rect(panel,panel.Progress,16,890,508,28)
+	elseif portrait and kind=="Inventory" then
+		width,height=560,900
+		local p=panel.Panel.Layout
+		rect(panel,p.Title,18,12,410,40);set(panel,p.Title,"TextSize",30)
+		rect(panel,p.PenSlots,382,66,155,30)
+		rect(panel,p.Search,18,66,350,40)
+		for i,name in {"All","Pet","Egg","Food"} do rect(panel,p[name],18+(i-1)*78,118,70,48) end
+		rect(panel,p.Sort,336,118,206,48)
+		rect(panel,p.Pets,18,182,524,370)
+		rect(panel,p.EmptyState,30,270,500,90)
+		rect(panel,p.Details,18,568,524,308)
+		local d=p.Details
+		rect(panel,d.Preview,12,12,200,168)
+		rect(panel,d.ItemName,220,12,288,50)
+		rect(panel,d.Stats,220,68,288,112)
+		rect(panel,d.Lock,12,190,200,48);rect(panel,d.Pin,224,190,288,48)
+		rect(panel,d.Equip,12,248,500,48)
+	elseif portrait and kind=="Revive" then
+		width,height=540,890
+		rect(panel,panel.PageHeader,0,0,width,66);rect(panel,panel.PageTexture,0,0,width,height)
+		rect(panel,panel.Title,18,8,450,48);set(panel,panel.Title,"TextSize",32)
+		rect(panel,panel.Close,486,12,40,40)
+		rect(panel,panel.Pets,16,84,508,240);rect(panel,panel.Empty,20,140,500,80)
+		rect(panel,panel.PetPreview,16,338,508,224)
+		rect(panel,panel.PetName,16,572,508,42)
+		rect(panel,panel.Details,16,624,508,58)
+		rect(panel,panel.Notice,16,690,508,32)
+		rect(panel,panel.Revive,16,738,508,56);rect(panel,panel.Robux,16,806,508,56)
+	end
+	if portrait and kind~="Feed" then set(panel,panel,"Size",UDim2.fromOffset(width,height)) end
+	local scale=Layout.Fit(viewport,width,height)
+	local scaleObject=panel:FindFirstChild(scaleName or "UIScale")
+	if scaleObject then
+		-- Some Studio exports contain duplicate UIScales; only one owns fitting.
+		for _,child in panel:GetChildren() do if child:IsA("UIScale") then child.Scale=if child==scaleObject then scale else 1 end end
+	end
+	if kind=="Feed" then
+		if not portrait then scale=Layout.Fit(viewport,884,620);scaleObject.Scale=scale end
+		panel.Position=UDim2.new(.5,if portrait then 0 else -162*scale,.5,if portrait then -180*scale else 0)
+	end
+	return scale
+end
+return Layout

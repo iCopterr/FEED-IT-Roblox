@@ -93,7 +93,7 @@ function Controller.Start()
 	end)
 	panel.Close.Activated:Connect(function() require(script.Parent.Parent.UI.Motion).Close(panel) end)
 	panel:GetPropertyChangedSignal("Visible"):Connect(function() player:SetAttribute("DebugPanelOpen",panel.Visible) end)
-	local function resize() panel.UIScale.Scale=math.max(.1,math.min(1,(gui.AbsoluteSize.X-24)/540,(gui.AbsoluteSize.Y-24)/500)) end
+	local function resize() require(script.Parent.Parent.UI.DeviceLayout).Apply(panel,gui.AbsoluteSize,"Debug") end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
 	resize(); render()
 	task.spawn(function() while gui.Parent do if panel.Visible then refresh() end; task.wait(Config.RefreshSeconds) end end)
