@@ -6,6 +6,30 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — rotating shine behind every shop item
+
+- Current feature / completed locally: owner's image 119106720608654 added behind
+  all eight ShopUI offers (Welcome, DoubleMoney, Money1–6). Authored ItemShine
+  CanvasGroup clips rotating Rays to each card's rounded bounds, below artwork,
+  titles and purchase buttons; image transparency .4. Existing UI nodes unchanged.
+- ShopShine client helper aligns a square shine to the actual artwork bounds,
+  continuously rotates one turn per 24 seconds with a linear repeating tween,
+  pauses while shop/card is hidden, resumes on reopen and cancels on destruction.
+  Duplicate binding is guarded. ShopController binds it; ID centralized in
+  MonetizationImages.ShopShine. No pricing, purchases or other menus changed.
+- Files: ShopUI.rbxmx, ShopController, new UI/ShopShine, MonetizationImages,
+  add-shop-item-shine.ps1, test-shop-item-shine.ps1 and handoff.
+- Verification: Rojo build and Luau compilation pass; XML asserts all eight IDs,
+  clipping/layers; stripped-layer comparison confirms every original UI node and
+  property preserved; authoring script rerun adds zero duplicates. Local mocked
+  tests pass tween repetition, duplicate guard, pause/resume and cleanup.
+- Overall progress: saved implementation ready for sync; no further code underway.
+  Blocker: Studio ports 58741/58742 refused connection. Asset loading, rounded
+  clipping and appearance in live Play not verified. Next: reconnect Rojo/Studio,
+  inspect all eight cards at desktop/mobile sizes and scroll/open/close shop.
+  Prior commit 5b9595e. Owner's untracked image files left untouched. No UI Director,
+  image generation, upload, gameplay changes or push performed this session.
+
 ### Latest session — shop radial shine picture
 
 - Completed: generated and visually inspected ShopShine-Green-v1.png, a clean

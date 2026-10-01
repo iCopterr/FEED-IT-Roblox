@@ -4,12 +4,14 @@ local Config=require(game.ReplicatedStorage.Shared.Config.MonetizationConfig)
 local Numbers=require(game.ReplicatedStorage.Shared.NumberFormat)
 local Motion=require(script.Parent.Parent.UI.Motion)
 local Purchases=require(script.Parent.Parent.UI.Purchases)
+local ShopShine=require(script.Parent.Parent.UI.ShopShine)
 local Controller={}
 function Controller.Start()
 	local player=Players.LocalPlayer
 	local pg=player:WaitForChild("PlayerGui")
 	local gui=assert(pg:WaitForChild("ShopUI",30),"ShopUI missing")
 	local panel=gui.Panel
+	ShopShine.Bind(gui)
 	local others={}
 	local function price(card,value,kind,id,attribute)
 		local normalBackground=card.Buy.BackgroundColor3

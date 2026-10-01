@@ -1,4 +1,5 @@
 return table.freeze({
+	ShopShine="rbxassetid://119106720608654",
 	DoubleMoney="rbxassetid://95919368095777",
 	Settings="rbxassetid://135207090414972",
 	MoneyTreasury="rbxassetid://114752335997381",
