@@ -10,9 +10,9 @@
 
 - Completed: Index pet cards now disclose the configured species hatch
   percentage, name and rarity before discovery while retaining black locked
-  silhouettes and hidden income. Selected details show hatch chance plus the
-  combined final Normal/Shiny/Rainbow/Celestial odds for that pet. Values are calculated from
-  EggConfig/VariantConfig, not duplicated constants.
+  silhouettes and hidden income. Selected details show hatch chance and the
+  source Egg. The cramped inline Variant-odds row was removed by owner request;
+  values shown are calculated from EggConfig, not duplicated constants.
 - Completed: the 39-Robux merchant action is now **Refill Stock**. A successful
   receipt restores the exact three offers visible when checkout began, clears
   their personal limits and grants a fresh five-minute persisted window. It no
@@ -30,9 +30,12 @@
   Revive Shard benefit. Blocking restricted users from future Money packs alone
   does not resolve existing paid balances or other paid-random paths; server-side
   egg/feed eligibility treatment is still required before monetized launch.
-- Next: decide the restricted-player guaranteed alternative and shard balance,
-  then implement one centralized fail-closed PolicyService cache used by every
-  affected server purchase/action. Base implementation commit: `4225d53`.
+- Owner decision: do not offer restricted players a guaranteed alternative.
+  The intended direction is to block affected Money/paid-random interactions.
+  A readable pre-purchase Variant Details disclosure remains required elsewhere.
+- Next: decide shard balance, then implement one centralized fail-closed
+  PolicyService cache used by every affected server purchase/action. Base
+  implementation commits: `4225d53`, `ab2d5e9`.
 
 ### Latest session — raise teleport buttons
 

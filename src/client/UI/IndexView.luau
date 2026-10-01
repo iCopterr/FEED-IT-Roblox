@@ -5,7 +5,6 @@ local Number = require(Shared.NumberFormat).Money
 local Preview = require(script.Parent.ItemPreview)
 local View = {}
 local rarityColors = require(Shared.Config.InventoryConfig).RarityColors
-local Variants = require(Shared.Config.VariantConfig)
 
 local function percent(value)
 	local text=string.format("%.6f",value):gsub("0+$",""):gsub("%.$","")
@@ -20,15 +19,6 @@ end
 
 local function eggChance(results, entry)
 	return percent(chanceValue(results,entry)*100)
-end
-
-local function finalVariantOdds(results, entry)
-	local values={}
-	for _,name in Variants.Order do
-		local finalChance=chanceValue(results,entry)*Variants.Types[name].Tickets/Variants.Tickets*100
-		table.insert(values,string.upper(name).." "..percent(finalChance))
-	end
-	return table.concat(values,"  •  ")
 end
 
 function View.Count(discovered, eggId)
@@ -93,7 +83,7 @@ function View.Render(panel, discovered, eggId, speciesId)
 	local selectedChance=selectedEntry and eggChance(results,selectedEntry) or "—"
 	detail.Level.Text=(if unlocked then "LEVEL 0" else "UNDISCOVERED").."  •  HATCH "..selectedChance
 	detail.Income.Text=if unlocked then "$"..Number(pet.BaseIncome).."/s" else "—"
-	detail.Source.Text=if selectedEntry then finalVariantOdds(results,selectedEntry) else "—"
+	detail.Source.Text=Eggs.Definitions[eggId].DisplayName
 	petPreview(detail.Preview,speciesId,unlocked)
 end
 

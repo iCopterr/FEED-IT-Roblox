@@ -46,10 +46,7 @@ local ok,failure=xpcall(function()
 			assert(card.Preview.ImageColor3==Color3.new(0,0,0),"Undiscovered model is a black silhouette")
 		end
 		assert(panel.Detail.Preview.ImageColor3==Color3.new(0,0,0),"Locked detail is also a silhouette")
-		assert(panel.Detail.Level.Text:find("HATCH") and panel.Detail.Source.Text:find("NORMAL") and panel.Detail.Source.Text:find("CELESTIAL"),"Detail discloses selected pet and variant odds")
-		if eggId=="prototype_egg" then
-			assert(panel.Detail.Source.Text:find("CELESTIAL 0.00036%%"),"Variant disclosure uses combined final pet odds")
-		end
+		assert(panel.Detail.Level.Text:find("HATCH") and panel.Detail.Source.Text==eggs.Definitions[eggId].DisplayName,"Detail discloses selected pet chance and source egg")
 	end
 	assert(covered==36 and #eggs.Order==6,"All thirty-six pets and six eggs covered")
 	view.Clear(panel)
