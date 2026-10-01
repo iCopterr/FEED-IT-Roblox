@@ -11,7 +11,7 @@
 - Completed: Index pet cards now disclose the configured species hatch
   percentage, name and rarity before discovery while retaining black locked
   silhouettes and hidden income. Selected details show hatch chance plus the
-  independent Normal/Shiny/Rainbow/Celestial odds. Values are calculated from
+  combined final Normal/Shiny/Rainbow/Celestial odds for that pet. Values are calculated from
   EggConfig/VariantConfig, not duplicated constants.
 - Completed: the 39-Robux merchant action is now **Refill Stock**. A successful
   receipt restores the exact three offers visible when checkout began, clears
@@ -32,7 +32,7 @@
   egg/feed eligibility treatment is still required before monetized launch.
 - Next: decide the restricted-player guaranteed alternative and shard balance,
   then implement one centralized fail-closed PolicyService cache used by every
-  affected server purchase/action. Prior commit: `7f61993`.
+  affected server purchase/action. Base implementation commit: `4225d53`.
 
 ### Latest session — raise teleport buttons
 

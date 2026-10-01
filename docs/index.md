@@ -9,8 +9,9 @@ Every pet card discloses its configured hatch percentage, name and rarity,
 including before discovery. Selecting a discovered pet also shows normal level-0
 income from PetConfig.BaseIncome; this value intentionally excludes feed growth
 and variants. Undiscovered species keep the black model silhouette and hidden
-income, while the selected detail discloses the pet chance and the independent
-Normal, Shiny, Rainbow and Celestial percentages. Percentages are calculated
+income, while the selected detail discloses the pet chance and the combined
+final Normal, Shiny, Rainbow and Celestial outcome percentages for that pet.
+Percentages are calculated
 from EggConfig and VariantConfig at render time rather than copied UI constants.
 Viewport tinting preserves the original templates.
 

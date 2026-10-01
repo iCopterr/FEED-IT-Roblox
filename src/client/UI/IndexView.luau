@@ -12,16 +12,21 @@ local function percent(value)
 	return text.."%"
 end
 
-local function eggChance(results, entry)
+local function chanceValue(results, entry)
 	local total=0
 	for _,result in results do total+=result.Weight end
-	return percent(entry.Weight/total*100)
+	return entry.Weight/total
 end
 
-local function variantOdds()
+local function eggChance(results, entry)
+	return percent(chanceValue(results,entry)*100)
+end
+
+local function finalVariantOdds(results, entry)
 	local values={}
 	for _,name in Variants.Order do
-		table.insert(values,string.upper(name).." "..percent(Variants.Types[name].Tickets/Variants.Tickets*100))
+		local finalChance=chanceValue(results,entry)*Variants.Types[name].Tickets/Variants.Tickets*100
+		table.insert(values,string.upper(name).." "..percent(finalChance))
 	end
 	return table.concat(values,"  •  ")
 end
@@ -88,7 +93,7 @@ function View.Render(panel, discovered, eggId, speciesId)
 	local selectedChance=selectedEntry and eggChance(results,selectedEntry) or "—"
 	detail.Level.Text=(if unlocked then "LEVEL 0" else "UNDISCOVERED").."  •  HATCH "..selectedChance
 	detail.Income.Text=if unlocked then "$"..Number(pet.BaseIncome).."/s" else "—"
-	detail.Source.Text=variantOdds()
+	detail.Source.Text=if selectedEntry then finalVariantOdds(results,selectedEntry) else "—"
 	petPreview(detail.Preview,speciesId,unlocked)
 end
 
