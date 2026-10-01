@@ -6,6 +6,38 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — Revive Shards and machine exchange
+
+- Completed: paid food Developer Product receipts now grant guaranteed persisted
+  Revive Shards by food rarity: Common 1, Uncommon 2, Rare 5, Epic 10,
+  Legendary 20, Mythic 35, Fabled 60 and Celestial 100. Money food purchases,
+  Welcome Treat Pack, Revive Charm, direct pet Revive, Money packs, Grow and
+  Restock grant no shards. The existing receipt ledger makes rewards idempotent.
+- Completed: schema v12 adds non-negative integer ReviveShards with a zero-value
+  migration for every existing profile. Revive Machine now creates two matching
+  styled tabs: Broken Pets and Shard Exchange. The exchange view shows shard and
+  charm balances plus the revive-charm art; 100 shards buys one charm.
+- Safety: exchange requires machine proximity, affordability, shared transaction
+  lock, schema validation and durable save retry. Per-session request sequencing
+  replays a lost duplicate response without spending twice and rejects skipped
+  sequences. Shard deduction and charm grant are one profile mutation.
+- Verification: Rojo build and diff checks pass; all 11 changed Studio scripts
+  analyze clean. Edit-mode commerce suite passes all 24 product paths including
+  exact rarity rewards and duplicate receipts. The isolated exchange harness
+  passes distance, insufficient balance, save, duplicate and stale-sequence
+  checks. ReviveController construction and portrait/desktop layout harnesses
+  pass. Studio multiplayer launch remained stuck with zero connected instances,
+  so the updated multiplayer ReviveVerification is present but not counted as a
+  live pass this session.
+- Files: Game/Revive config, schema, CommerceState, ReviveService/controller,
+  DeviceLayout, revive/food/roster verifications, two edit-mode transaction tests,
+  revive/merchant/design docs and this handoff. Untracked user image assets were
+  preserved and are not part of this work.
+- Overall progress: requested shard reward and machine exchange are implemented;
+  no feature work remains in progress. Next: fresh one/two-player Studio run to
+  visually approve the tabs and rerun ReviveVerification when Studio test clients
+  connect. PolicyService launch blocking remains separate and unimplemented.
+
 ### Latest session — paid-random disclosure and deterministic merchant refill
 
 - Completed: Index pet cards now disclose the configured species hatch

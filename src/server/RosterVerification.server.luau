@@ -47,7 +47,7 @@ local ok,failure=xpcall(function()
  original.IncubatingEggs.egg={EggId="supreme_egg",Pet=oldPet("reserved","supreme_pet_3","Mythic",32000,0),StartedAt=1000,ReadyAt=2800,PricePaid=50000000000,HatchSeconds=1800,PenPosition={X=1,Z=2}}
  original.PetIndex.supreme_pet_1=true
  local migrated,err=schema.Migrate(original);assert(migrated,err)
- check(migrated.DataVersion==11 and original.DataVersion==10,"Migration does not mutate source")
+ check(migrated.DataVersion==schema.CURRENT_VERSION and migrated.ReviveShards==0 and original.DataVersion==10,"Migration does not mutate source")
  check(original.Inventory.owned.BaseIncome==8500 and original.PendingRecovery.recovery.Pet.Rarity=="Legendary","Old nested records unchanged")
  local p=migrated.Inventory.owned
  check(p.PetId=="owned" and p.FeedLevel==12 and p.Variant=="Shiny" and p.Locked and p.Placed and p.PlotSlot==1 and p.PenPosition.X==2 and p.Traits[1]=="MigrationSentinel" and p.CreatedAt==123,"Pet identity / growth / placement preserved")
@@ -56,7 +56,7 @@ local ok,failure=xpcall(function()
  check(r.Pet.Rarity=="Fabled" and r.Pet.BaseIncome==220000 and r.Pet.FeedLevel==8 and r.FoodSpent==4 and r.AttemptId=="attempt" and r.ExplodedAt==1000,"Pending revive preserves recovery state")
  local e=migrated.IncubatingEggs.egg
  check(e.EggId=="supreme_egg" and e.Pet.SpeciesId=="supreme_pet_3" and e.Pet.PetId=="reserved" and e.Pet.BaseIncome==320000 and e.Pet.Rarity=="Fabled" and e.ReadyAt==2800 and e.StartedAt==1000 and e.PricePaid==50000000000 and e.HatchSeconds==1800,"Paid egg retains original outcome / price / timer")
- check(migrated.Money==123456 and migrated.Foods.fresh==3 and migrated.PetIndex.supreme_pet_1,"Currencies / index preserved")
+ check(migrated.Money==123456 and migrated.Foods.fresh==3 and migrated.ReviveShards==0 and migrated.PetIndex.supreme_pet_1,"Currencies / index preserved")
  local again=assert(schema.Migrate(migrated))
  check(again.Inventory.owned.PetId==p.PetId and again.Inventory.owned.BaseIncome==p.BaseIncome and again.IncubatingEggs.egg.Pet.PetId==e.Pet.PetId,"Migration idempotent")
  original.PendingRecovery.recovery.Pet=false

@@ -120,16 +120,26 @@ function Layout.Apply(panel, viewport, kind, scaleName)
 		rect(panel,d.Lock,12,190,200,48);rect(panel,d.Pin,224,190,288,48)
 		rect(panel,d.Equip,12,248,500,48)
 	elseif portrait and kind=="Revive" then
-		width,height=540,890
+		width,height=540,930
 		rect(panel,panel.PageHeader,0,0,width,66);rect(panel,panel.PageTexture,0,0,width,height)
 		rect(panel,panel.Title,18,8,450,48);set(panel,panel.Title,"TextSize",32)
 		rect(panel,panel.Close,486,12,40,40)
-		rect(panel,panel.Pets,16,84,508,240);rect(panel,panel.Empty,20,140,500,80)
-		rect(panel,panel.PetPreview,16,338,508,224)
-		rect(panel,panel.PetName,16,572,508,42)
-		rect(panel,panel.Details,16,624,508,58)
-		rect(panel,panel.Notice,16,690,508,32)
-		rect(panel,panel.Revive,16,738,508,56);rect(panel,panel.Robux,16,806,508,56)
+		rect(panel,panel.BrokenTab,16,74,246,44);rect(panel,panel.ExchangeTab,278,74,246,44)
+		rect(panel,panel.Pets,16,130,508,218);rect(panel,panel.Empty,20,190,500,80)
+		rect(panel,panel.PetPreview,16,360,508,200)
+		rect(panel,panel.PetName,16,568,508,42)
+		rect(panel,panel.Details,16,616,508,58)
+		rect(panel,panel.Notice,16,680,508,32)
+		rect(panel,panel.Revive,16,722,508,56);rect(panel,panel.Robux,16,788,508,56)
+		rect(panel,panel.Status,16,854,508,38)
+		local exchange=panel.ExchangePanel
+		rect(panel,exchange,16,130,508,714)
+		rect(panel,exchange.ShardTitle,20,24,468,48)
+		rect(panel,exchange.RewardIcon,154,82,200,180)
+		rect(panel,exchange.ShardBalance,20,278,468,52)
+		rect(panel,exchange.Description,20,344,468,76)
+		rect(panel,exchange.Exchange,32,442,444,62)
+		rect(panel,exchange.CharmCount,20,520,468,32)
 	end
 	if portrait and kind~="Feed" then set(panel,panel,"Size",UDim2.fromOffset(width,height)) end
 	local scale=Layout.Fit(viewport,width,height)

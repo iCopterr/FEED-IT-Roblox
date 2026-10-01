@@ -40,7 +40,10 @@ local ok, failure = xpcall(function()
 	local original = pets.GetPet(a,pet.PetId)
 	profile.Food = 1e12
 	profile.ReviveCharges = 2
+	profile.ReviveShards = 200
 	local beforeFood, beforeMoney = profile.Food, profile.Money
+	check(revive.HandleRequest(a,"Exchange",1).Code=="TooFar","Shard exchange requires the Revive Machine")
+	task.wait(.3)
 	local function legacyRecovery()
 		-- Fixture for a record saved under the previous broken-pet rule.
 		-- Existing saves must retain the same recovery choices as new failures.
@@ -57,6 +60,16 @@ local ok, failure = xpcall(function()
 	check(revive.HandleRequest(a,"Revive",pet.PetId,outcome.AttemptId).Code=="TooFar","Cannot revive away from machine")
 	task.wait(.3)
 	root.CFrame=workspace.ReviveMachine.InteractionPoint.CFrame+Vector3.new(0,3,0)
+	local exchange=revive.HandleRequest(a,"Exchange",1)
+	check(exchange.Ok and exchange.Code=="Exchanged" and profile.ReviveShards==100 and profile.ReviveCharges==3,
+		"100 shards exchange for exactly one Revive Charm")
+	local replay=revive.HandleRequest(a,"Exchange",1)
+	check(replay.Ok and profile.ReviveShards==100 and profile.ReviveCharges==3 and replay.NextExchangeSequence==2,
+		"Repeated exchange sequence replays without another charge")
+	check(revive.HandleRequest(a,"Exchange",3).Code=="StaleRequest" and profile.ReviveShards==100,
+		"Out-of-order exchange sequence is rejected")
+	waitFor(function() return not locks.IsLocked(a) end)
+	task.wait(.3)
 	local attempt = outcome.AttemptId
 	check(profile.PendingRecovery[pet.PetId] ~= nil and profile.Inventory[pet.PetId] == nil, "Legacy broken recovery remains supported")
 	check(not carry.Equip(a,pet.PetId) and not placement.PlacePet(a,pet.PetId), "Broken pet cannot equip or place")
@@ -68,7 +81,9 @@ local ok, failure = xpcall(function()
 	local food = profile.Food
 	check(food < beforeFood, "Failed Food consumed")
 	local own = revive.HandleRequest(a,"Snapshot")
-	check(own.Ok and own.CanRevive and own.ReviveCharges==2 and #own.Records == 1 and own.Records[1].FeedLevel == 20, "Owner sees previous level and charm eligibility")
+	check(own.Ok and own.CanRevive and own.ReviveCharges==3 and own.ReviveShards==100 and own.ShardExchangeCost==100
+		and own.CanExchange and own.NextExchangeSequence==2 and #own.Records == 1 and own.Records[1].FeedLevel == 20,
+		"Owner sees recovery and shard exchange balances")
 	check(own.Records[1].ExpiresAt==outcome.ExplodedAt+86400 and own.NearMachine and not own.RobuxEnabled,"24-hour deadline and machine-only disabled Robux snapshot")
 	check(own.Records[1].SpeciesId==original.SpeciesId,"Selected pet preview receives species")
 	report:FireClient(a,outcome.AttemptId)
@@ -83,7 +98,7 @@ local ok, failure = xpcall(function()
 	check(revive.HandleRequest(a,"Revive",pet.PetId,"wrong-attempt").Code == "PetChanged", "Wrong explosion ID rejected")
 	task.wait(.3)
 	local result = revive.HandleRequest(a,"Revive",pet.PetId,attempt)
-	check(result.Ok and result.FeedLevel == 20 and profile.ReviveCharges==1, "One charm restores previous level, not level one")
+	check(result.Ok and result.FeedLevel == 20 and profile.ReviveCharges==2, "One charm restores previous level, not level one")
 	check(profile.PendingRecovery[pet.PetId] == nil and profile.Inventory[pet.PetId].PetId == pet.PetId, "Recovery consumed and original identity restored")
 	local restored = profile.Inventory[pet.PetId]
 	check(restored.Locked and restored.CreatedAt == original.CreatedAt and restored.SpeciesId == original.SpeciesId

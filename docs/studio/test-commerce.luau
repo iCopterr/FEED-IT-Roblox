@@ -4,6 +4,8 @@ local realRequire=require
 local Schema=realRequire(root.Data.PlayerDataSchema)
 local State=realRequire(root.Services.CommerceState:Clone())
 local Config=realRequire(game.ReplicatedStorage.Shared.Config.MonetizationConfig)
+local Revive=realRequire(game.ReplicatedStorage.Shared.Config.ReviveConfig)
+local Foods=realRequire(game.ReplicatedStorage.Shared.Config.FoodConfig)
 local Shop=realRequire(game.ReplicatedStorage.Shared.Config.MerchantConfig)
 local profiles={}
 local events={}
@@ -84,6 +86,7 @@ assert(receipt("welcome",Config.WelcomePack.ProductId)==yes)
 events.ProductFinished(123,Config.WelcomePack.ProductId,true)
 assert(not service.Request(player,"Product",Config.WelcomePack.ProductId).Ok)
 assert(data.Foods.hearty==2 and data.Foods.royal==1 and data.ReviveCharges==1)
+assert(data.ReviveShards==0)
 assert(receipt("welcome",Config.WelcomePack.ProductId)==yes and data.ReviveCharges==1)
 assert(receipt("second-welcome",Config.WelcomePack.ProductId)==no)
 reset()
@@ -113,7 +116,7 @@ state.Pending={Kind="Food",ItemId="hearty",Slot=2,Stock=stock,ProductId=Config.F
 State.Write(data,state)
 assert(State.Reserved(data,stock,2))
 assert(receipt("food",Config.FoodProducts.hearty.ProductId)==yes)
-assert(data.Foods.hearty==1 and data.MerchantPurchases["2"]==true)
+assert(data.Foods.hearty==1 and data.ReviveShards==Revive.Shards.ByRarity.Rare and data.MerchantPurchases["2"]==true)
 assert(not State.Reserved(data,stock,2))
 assert(receipt("food",Config.FoodProducts.hearty.ProductId)==yes and data.Foods.hearty==1)
 -- A received food from an old cycle must never overwrite new-cycle purchases.
@@ -123,7 +126,7 @@ state=State.Read(data)
 state.Pending={Kind="Food",ItemId="royal",Slot=2,Stock=stock-1,ProductId=Config.FoodProducts.royal.ProductId}
 State.Write(data,state)
 assert(receipt("old-food",Config.FoodProducts.royal.ProductId)==yes)
-assert(data.Foods.royal==1 and data.MerchantPurchases["3"] and not data.MerchantPurchases["2"])
+assert(data.Foods.royal==1 and data.ReviveShards==Revive.Shards.ByRarity.Fabled and data.MerchantPurchases["3"] and not data.MerchantPurchases["2"])
 -- Grow target may already have been collected; payment is acknowledged without extra reward.
 reset()
 state=State.Read(data);state.Pending={Kind="Grow",EggUid="gone",ProductId=Config.GrowTiers[1].ProductId}
@@ -152,6 +155,7 @@ assert(State.ReviveReserved(data,pet.PetId,"explosion"))
 assert(receipt("revive",Config.DirectReviveProductId)==yes)
 assert(data.Inventory[pet.PetId].FeedLevel==12 and data.PendingRecovery[pet.PetId]==nil)
 assert(data.ReviveCharges==0 and data.Food==0)
+assert(data.ReviveShards==0)
 assert(receipt("revive",Config.DirectReviveProductId)==yes)
 assert(Schema.Validate(data))
 reset()
@@ -186,7 +190,8 @@ for id,product in Config.FoodProducts do
  assert(receipt("food-"..id,product.ProductId)==yes)
  assert(receipt("food-"..id,product.ProductId)==yes)
  assert(if id=="revive" then data.ReviveCharges==1 else data.Foods[id]==1)
+ assert(data.ReviveShards==(if id=="revive" then 0 else Revive.Shards.ByRarity[Foods.Types[id].Rarity]))
  assert(Schema.Validate(data))
 end
-print("PASS: all 24 products; duplicate/rejoin receipts, save retries, welcome once, cancellation, pass entitlement, food reservations/rotation, grow no-op/timers, expired reserved revive, personal restock, profile validation.")
+print("PASS: all 24 products; duplicate/rejoin receipts, guaranteed paid-food shards, save retries, welcome once, cancellation, pass entitlement, food reservations/rotation, grow no-op/timers, expired reserved revive, personal restock, profile validation.")
 

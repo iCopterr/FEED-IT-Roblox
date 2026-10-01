@@ -16,7 +16,8 @@ Fortified (22%), Gourmet (30%), Enchanted (38%) and Royal (45%). The rare except
 is Blessed Food: $10M, zero explosion risk for one Feed, ordinary critical odds,
 and level-40 cap. Its stock weight is 0.25. Revive Charm costs $5M, weight 0.5,
 and restores pre-failure growth only within the existing timed Rescue offer.
-Both have one personal purchase per restock if offered. Neither is Robux-paid.
+Both have one personal purchase per restock if offered. Their Money purchases do
+not grant Revive Shards; only fulfilled Robux food receipts do.
 Across 100,000 seeded restocks (IDs 1–100,000), Blessed appeared in 0.22% and
 Revive in 0.504%; these are measured samples, not exact configured probabilities.
 Only two weighted specials appear each restock; Feed has eight authored food
@@ -29,7 +30,8 @@ No farm drops or Token currency remain.
 
 The server validates player proximity, personal remaining stock, affordability,
 restock ID, sequence and transaction lock. Per-restock purchase markers use the
-existing boolean save map. Schema v10 adds ReviveCharges, migrating v9 to zero
+existing boolean save map. Schema v10 added ReviveCharges, and schema v12 adds
+ReviveShards with a zero migration for existing profiles
 without changing balances, food, pets, recovery deadlines or tutorial state. Replays do
 not charge twice. FoodShopVerification covers all food definitions, Basic's
 five-purchase limit, special limits, feeding and client startup.

@@ -10,6 +10,28 @@ local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local Variants = require(game.ReplicatedStorage.Shared.Config.VariantConfig)
 local sessions = {}
 local Service = {}
+
+local function exchangeResult(state, data, code, ok)
+	return {
+		Ok = ok,
+		Code = code,
+		ReviveCharges = data.ReviveCharges,
+		ReviveShards = data.ReviveShards,
+		NextExchangeSequence = (state.ExchangeSequence or 0) + 1,
+	}
+end
+
+local function saveWhileLocked(player, state, data)
+	task.spawn(function()
+		while sessions[player] == state and DataService.GetData(player) == data do
+			local ok, saved, reason = pcall(DataService.Save, player)
+			if ok and saved then Locks.Finish(player); return end
+			warn("[ReviveService] State save pending:", reason or saved)
+			task.wait(Config.SaveRetrySeconds)
+		end
+	end)
+end
+
 local function expiresAt(record)
 	return record.ExplodedAt + Config.WindowSeconds
 end
@@ -26,9 +48,24 @@ end
 
 function Service.HandleRequest(player, action, petId, attemptId)
 	if player.Parent ~= Players then return {Ok=false, Code="Loading"} end
-	if action ~= "Snapshot" and action ~= "Revive" and action ~= "KeepBase" then return {Ok=false, Code="InvalidRequest"} end
+	if action ~= "Snapshot" and action ~= "Revive" and action ~= "KeepBase" and action ~= "Exchange" then
+		return {Ok=false, Code="InvalidRequest"}
+	end
 	local state = sessions[player]
 	if not state then state = {}; sessions[player] = state end
+	if action == "Exchange" then
+		if type(petId) ~= "number" or petId % 1 ~= 0 or petId < 1 then
+			return {Ok=false, Code="InvalidRequest"}
+		end
+		if petId == state.ExchangeSequence and state.LastExchange then
+			return table.clone(state.LastExchange)
+		end
+		if petId ~= (state.ExchangeSequence or 0) + 1 then
+			local data = DataService.GetData(player)
+			if not data or not Schema.Validate(data) then return {Ok=false, Code="Loading"} end
+			return exchangeResult(state, data, "StaleRequest", false)
+		end
+	end
 	local now = os.clock()
 	local key = if action == "Snapshot" then "LastSnapshot" else "LastRequest"
 	local cooldown = if action == "Snapshot" then Config.SnapshotCooldown else Config.RequestCooldown
@@ -51,8 +88,29 @@ function Service.HandleRequest(player, action, petId, attemptId)
 			return a.PetId < b.PetId
 		end)
 		return {Ok=true, Records=records, CanRevive=data.ReviveCharges>0, ReviveCharges=data.ReviveCharges,
+			ReviveShards=data.ReviveShards, ShardExchangeCost=Config.Shards.ExchangeCost,
+			CanExchange=data.ReviveShards>=Config.Shards.ExchangeCost,
+			NextExchangeSequence=(state.ExchangeSequence or 0)+1,
 			NearMachine=nearMachine(player), RobuxEnabled=false,
 			ServerNow=os.time(), ResetLevel=FeedConfig.ExplosionResetLevel, Busy=Locks.IsLocked(player)}
+	end
+	if action == "Exchange" then
+		if not nearMachine(player) then return exchangeResult(state,data,"TooFar",false) end
+		if data.ReviveShards < Config.Shards.ExchangeCost then return exchangeResult(state,data,"NotEnoughShards",false) end
+		if not Locks.Begin(player,"ReviveShardExchange") then return exchangeResult(state,data,"Busy",false) end
+		local oldShards,oldCharges=data.ReviveShards,data.ReviveCharges
+		data.ReviveShards-=Config.Shards.ExchangeCost
+		data.ReviveCharges+=1
+		if not Schema.Validate(data) then
+			data.ReviveShards,data.ReviveCharges=oldShards,oldCharges
+			Locks.Finish(player)
+			return exchangeResult(state,data,"InvalidData",false)
+		end
+		state.ExchangeSequence=petId
+		local result=exchangeResult(state,data,"Exchanged",true)
+		state.LastExchange=table.clone(result)
+		saveWhileLocked(player,state,data)
+		return result
 	end
 	if type(petId) ~= "string" or #petId == 0 or #petId > 64
 		or type(attemptId) ~= "string" or #attemptId == 0 or #attemptId > 64 then
@@ -91,14 +149,7 @@ function Service.HandleRequest(player, action, petId, attemptId)
 	-- or automatic Feed. KeepBase is irreversible, including after a reconnect.
 	-- Save the inventory/recovery transition together; never roll it back after
 	-- an ambiguous write. Feed/placement/pickup remain locked until confirmation.
-	task.spawn(function()
-		while sessions[player] == state and DataService.GetData(player) == data do
-			local ok, saved, reason = pcall(DataService.Save, player)
-			if ok and saved then Locks.Finish(player); return end
-			warn("[ReviveService] Recovery save pending:", reason or saved)
-			task.wait(Config.SaveRetrySeconds)
-		end
-	end)
+	saveWhileLocked(player,state,data)
 	return {Ok=true, Expired=expired, Code=if action=="KeepBase" then "KeptBase" else "Revived",
 		PetId=petId, AttemptId=attemptId, FeedLevel=restored.FeedLevel}
 end

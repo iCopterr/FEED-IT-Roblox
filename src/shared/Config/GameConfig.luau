@@ -1,7 +1,7 @@
 --!strict
 
 local GameConfig = {
-	PlayerDataVersion = 11,
+	PlayerDataVersion = 12,
 	PetDataVersion = 2,
 
 	StartingMoney = require(script.Parent.TutorialConfig).StartingMoney,

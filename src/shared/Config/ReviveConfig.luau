@@ -10,4 +10,17 @@ return table.freeze({
 	SnapshotCooldown = 0.25,
 	SaveRetrySeconds = 5,
 	RefreshSeconds = 1,
+	Shards = table.freeze({
+		ExchangeCost = 100,
+		ByRarity = table.freeze({
+			Common = 1,
+			Uncommon = 2,
+			Rare = 5,
+			Epic = 10,
+			Legendary = 20,
+			Mythic = 35,
+			Fabled = 60,
+			Celestial = 100,
+		}),
+	}),
 })

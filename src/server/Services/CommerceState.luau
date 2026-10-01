@@ -4,6 +4,7 @@ local Http=game:GetService("HttpService")
 local Config=require(game.ReplicatedStorage.Shared.Config.MonetizationConfig)
 local Shop=require(game.ReplicatedStorage.Shared.Config.MerchantConfig)
 local Food=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
+local Revive=require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
 local State={}
 function State.Read(data)
  local raw=data.Settings.CommerceV1
@@ -57,7 +58,15 @@ function State.Grant(data,state,p,now)
   Food.Add(data,"royal",Config.WelcomePack.Royal)
   data.ReviveCharges+=Config.WelcomePack.Revive;state.WelcomeClaimed=true
  elseif p.Kind=="Food" then
-  if p.ItemId=="revive" then data.ReviveCharges+=1 else Food.Add(data,p.ItemId,1) end
+  if p.ItemId=="revive" then
+   data.ReviveCharges+=1
+  else
+   Food.Add(data,p.ItemId,1)
+   local definition=Food.Types[p.ItemId]
+   local shards=definition and Revive.Shards.ByRarity[definition.Rarity]
+   assert(type(shards)=="number" and shards>0,"Missing paid food shard reward")
+   data.ReviveShards+=shards
+  end
   if data.MerchantRestockId~=p.Stock then
    -- A paid old reservation must not replace newer-cycle purchase history.
    local current=State.RestockId(data,now)

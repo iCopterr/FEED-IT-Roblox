@@ -59,11 +59,14 @@ local ok,failure=xpcall(function()
 	local legacy=Schema.CreateDefault();legacy.DataVersion=9;legacy.ReviveCharges=nil
 	legacy.Money=12345;legacy.Food=25;legacy.Foods={royal=2};legacy.Settings={}
 	local migrated=assert(Schema.Migrate(legacy))
-	check(migrated.DataVersion==10 and migrated.ReviveCharges==0 and migrated.Money==12345
+	check(migrated.DataVersion==Schema.CURRENT_VERSION and migrated.ReviveCharges==0 and migrated.ReviveShards==0 and migrated.Money==12345
 		and migrated.Food==25 and migrated.Foods.royal==2 and migrated.Settings.TutorialStep==nil,"v9 migration preserves purchased balances without grants or tutorial enrollment")
 	local bad=Schema.CreateDefault();bad.ReviveCharges=-1
 	check(not Schema.Validate(bad),"Negative charm inventory rejected")
 	bad.ReviveCharges=.5;check(not Schema.Validate(bad),"Fractional charm inventory rejected")
+	bad=Schema.CreateDefault();bad.ReviveShards=-1
+	check(not Schema.Validate(bad),"Negative shard inventory rejected")
+	bad.ReviveShards=.5;check(not Schema.Validate(bad),"Fractional shard inventory rejected")
 	local purchase=Merchant.HandleRequest(a,"Purchase",1,restock,1)
 	check(purchase.Ok and purchase.Remaining==4 and profile.Food==1 and profile.Money==1e9-100,"Basic purchase uses Money and grants one serving")
 	check(Merchant.HandleRequest(a,"Purchase",1,restock,1).Ok and profile.Food==1,"Duplicate purchase never charges twice")

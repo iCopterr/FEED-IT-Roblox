@@ -51,7 +51,8 @@ Farm, Protection, currency and permanent-loss rules in GDD v0.5.
 - Save/load uses versioned records, validated migrations, bounded retry/backoff,
   autosave, shutdown saves and per-player session leases. Same-server reconnect
   preserves its original recovery timestamp.
-- Schema v10 adds ReviveCharges (v9 migrates to zero); v9 added Foods for special servings; Food holds Basic servings. Old token
+- Schema v10 added ReviveCharges (v9 migrates to zero); v12 adds ReviveShards
+  (v11 migrates to zero); v9 added Foods for special servings; Food holds Basic servings. Old token
   and farm fields are inactive compatibility data. The current migration policy
   was reviewed before production persistence was enabled on 2026-09-25.
 

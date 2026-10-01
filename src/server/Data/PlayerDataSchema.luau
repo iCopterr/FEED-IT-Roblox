@@ -34,6 +34,7 @@ export type PlayerData = {
 	Food: number,
 	Foods: { [string]: number },
 	ReviveCharges: number,
+	ReviveShards: number,
 	FarmLevel: number,
 	FeedPlateLevel: number,
 	FarmPower: number,
@@ -62,6 +63,12 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+migrations[11] = function(source)
+	local result = table.clone(source)
+	result.ReviveShards = 0
+	return result, nil
+end
 
 migrations[10] = function(source)
 	local definitions = require(ReplicatedStorage.Shared.Config.PetConfig).Species
@@ -397,6 +404,7 @@ local function clonePlayerData(data: PlayerData): PlayerData
 		Food = data.Food,
 		Foods = table.clone(data.Foods),
 		ReviveCharges = data.ReviveCharges,
+		ReviveShards = data.ReviveShards,
 		FarmLevel = data.FarmLevel,
 		FeedPlateLevel = data.FeedPlateLevel,
 		FarmPower = data.FarmPower,
@@ -422,6 +430,7 @@ function PlayerDataSchema.CreateDefault(): PlayerData
 		Food = GameConfig.StartingFood,
 		Foods = {},
 		ReviveCharges = 0,
+		ReviveShards = 0,
 		FarmLevel = GameConfig.StartingFarmLevel,
 		FeedPlateLevel = GameConfig.StartingFeedPlateLevel,
 		FarmPower = GameConfig.StartingFarmPower,
@@ -465,6 +474,7 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 		return false, "Food must be a non-negative finite number"
 	end
 	if not isNonNegativeInteger(data.ReviveCharges) then return false, "ReviveCharges must be a non-negative integer" end
+	if not isNonNegativeInteger(data.ReviveShards) then return false, "ReviveShards must be a non-negative integer" end
 	if type(data.Foods) ~= "table" then return false, "Foods must be a map" end
 	for id, amount in data.Foods do
 		if id == "basic" or not FoodConfig.Types[id] or not isNonNegativeInteger(amount) then
