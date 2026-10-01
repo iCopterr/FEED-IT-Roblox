@@ -27,7 +27,7 @@ local ok,failure=xpcall(function()
 			local card=panel.Pets["Pet"..i]
 			local species=pets.Species[entry.SpeciesId]
 			assert(card.ItemName.Text==species.DisplayName and card.Rarity.Text==species.Rarity,"Unlocked card identifies species")
-			assert(card.Income.Text=="$"..number(species.BaseIncome).."/s","Card shows normal level-zero income")
+			assert(card.Income.Text:find("%%") and card.Income.Text:find("$"..number(species.BaseIncome).."/s",1,true),"Card shows hatch percentage and normal level-zero income")
 			local model=assert(card.Preview.World:FindFirstChildOfClass("Model"),"Every pet has a preview")
 			for _,object in model:GetDescendants() do
 				assert(not object:IsA("JointInstance") and not object:IsA("WeldConstraint") and not object:IsA("Constraint"),"Static previews omit rig joints")
@@ -41,10 +41,12 @@ local ok,failure=xpcall(function()
 		view.Render(panel,{},eggId,results[1].SpeciesId)
 		for i=1,#results do
 			local card=panel.Pets["Pet"..i]
-			assert(card.ItemName.Text=="???" and card.Rarity.Text=="UNDISCOVERED" and card.Income.Text=="—","Undiscovered identity and income are hidden")
+			local species=pets.Species[results[i].SpeciesId]
+			assert(card.ItemName.Text==species.DisplayName and card.Rarity.Text==species.Rarity and card.Income.Text:find("%% HATCH"),"Undiscovered card discloses identity, rarity and hatch percentage")
 			assert(card.Preview.ImageColor3==Color3.new(0,0,0),"Undiscovered model is a black silhouette")
 		end
 		assert(panel.Detail.Preview.ImageColor3==Color3.new(0,0,0),"Locked detail is also a silhouette")
+		assert(panel.Detail.Level.Text:find("HATCH") and panel.Detail.Source.Text:find("NORMAL") and panel.Detail.Source.Text:find("CELESTIAL"),"Detail discloses selected pet and variant odds")
 	end
 	assert(covered==36 and #eggs.Order==6,"All thirty-six pets and six eggs covered")
 	view.Clear(panel)

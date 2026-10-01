@@ -5,6 +5,26 @@ local Number = require(Shared.NumberFormat).Money
 local Preview = require(script.Parent.ItemPreview)
 local View = {}
 local rarityColors = require(Shared.Config.InventoryConfig).RarityColors
+local Variants = require(Shared.Config.VariantConfig)
+
+local function percent(value)
+	local text=string.format("%.6f",value):gsub("0+$",""):gsub("%.$","")
+	return text.."%"
+end
+
+local function eggChance(results, entry)
+	local total=0
+	for _,result in results do total+=result.Weight end
+	return percent(entry.Weight/total*100)
+end
+
+local function variantOdds()
+	local values={}
+	for _,name in Variants.Order do
+		table.insert(values,string.upper(name).." "..percent(Variants.Types[name].Tickets/Variants.Tickets*100))
+	end
+	return table.concat(values,"  •  ")
+end
 
 function View.Count(discovered, eggId)
 	local count = 0
@@ -44,13 +64,16 @@ function View.Render(panel, discovered, eggId, speciesId)
 		local id=entry.SpeciesId
 		local pet=Pets.Species[id]
 		local unlocked=discovered[id]==true
+		local chance=eggChance(results,entry)
 		card:SetAttribute("SpeciesId",id)
 		card:SetAttribute("Unlocked",unlocked)
 		card:SetAttribute("Selected",speciesId==id)
-		card.ItemName.Text=if unlocked then pet.DisplayName else "???"
-		card.Rarity.Text=if unlocked then pet.Rarity else "UNDISCOVERED"
-		card.Rarity.TextColor3=if unlocked then rarityColors[pet.Rarity] else Color3.fromRGB(168,176,193)
-		card.Income.Text=if unlocked then "$"..Number(pet.BaseIncome).."/s" else "—"
+		-- Paid-random disclosures remain visible before discovery. The preview
+		-- stays silhouetted, while identity, rarity and configured odds do not.
+		card.ItemName.Text=pet.DisplayName
+		card.Rarity.Text=pet.Rarity
+		card.Rarity.TextColor3=rarityColors[pet.Rarity]
+		card.Income.Text=if unlocked then chance.."  •  $"..Number(pet.BaseIncome).."/s" else chance.." HATCH"
 		card.Border.Color=if id==speciesId then Color3.fromRGB(255,221,89) else Color3.fromRGB(25,28,38)
 		petPreview(card.Preview,id,unlocked)
 	end
@@ -60,9 +83,12 @@ function View.Render(panel, discovered, eggId, speciesId)
 	detail.ItemName.Text=if unlocked then pet.DisplayName else "UNDISCOVERED"
 	detail.Rarity.Text=if unlocked then pet.Rarity else "???"
 	detail.Rarity.TextColor3=if unlocked then rarityColors[pet.Rarity] else Color3.fromRGB(168,176,193)
-	detail.Level.Text=if unlocked then "LEVEL 0" else "Hatch this egg to discover it"
+	local selectedEntry
+	for _,entry in results do if entry.SpeciesId==speciesId then selectedEntry=entry;break end end
+	local selectedChance=selectedEntry and eggChance(results,selectedEntry) or "—"
+	detail.Level.Text=(if unlocked then "LEVEL 0" else "UNDISCOVERED").."  •  HATCH "..selectedChance
 	detail.Income.Text=if unlocked then "$"..Number(pet.BaseIncome).."/s" else "—"
-	detail.Source.Text=Eggs.Definitions[eggId].DisplayName
+	detail.Source.Text=variantOdds()
 	petPreview(detail.Preview,speciesId,unlocked)
 end
 

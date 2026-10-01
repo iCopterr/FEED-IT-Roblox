@@ -2,13 +2,17 @@
 
 The blue stud-style INDEX book button sits at the left-middle of the screen,
 opposite the egg and pen remote controls. It opens the authored
-`StarterGui.IndexUI` ScreenGui. Categories show the five configured egg models
+`StarterGui.IndexUI` ScreenGui. Categories show the six configured egg models
 and their discovery counts. Each category displays its six configured pets.
 
-Selecting a discovered pet shows its model, name, rarity, and normal level-0
-income from PetConfig.BaseIncome. This value intentionally excludes feed growth
-and variants. Undiscovered species show a black model silhouette with hidden
-name, rarity, and income. Viewport tinting preserves the original templates.
+Every pet card discloses its configured hatch percentage, name and rarity,
+including before discovery. Selecting a discovered pet also shows normal level-0
+income from PetConfig.BaseIncome; this value intentionally excludes feed growth
+and variants. Undiscovered species keep the black model silhouette and hidden
+income, while the selected detail discloses the pet chance and the independent
+Normal, Shiny, Rainbow and Celestial percentages. Percentages are calculated
+from EggConfig and VariantConfig at render time rather than copied UI constants.
+Viewport tinting preserves the original templates.
 
 Discovery uses the existing saved PetIndex species flags, set by server pet
 creation and completed hatches. Buying or placing an egg does not discover its
@@ -28,7 +32,7 @@ are released when the page closes. Buttons do not capture WASD navigation.
 ## Preview performance
 
 Only the current egg's six pet cards and selected detail are cloned, not all
-thirty pets. Repeated discovery refreshes reuse unchanged previews. Closing
+thirty-six pets. Repeated discovery refreshes reuse unchanged previews. Closing
 the page releases both models and cameras. The shared ItemPreview helper strips
 joints, constraints, Humanoids and animation controllers from its anchored UI
 copies, with collision/touch/query disabled. Original pet templates and their
@@ -56,5 +60,5 @@ Reference: [Roblox performance guidance](https://create.roblox.com/docs/performa
 Verification: defer ExecuteMultiplayerTestAsync(2, "IndexVerification") from an
 idle Studio MCP command, following the launch pattern in merchant.md. The suite
 uses memory profiles, checks server hatch/discovery isolation and save behavior,
-and exercises the five categories, all thirty previews, silhouettes, selection,
+and exercises the six categories, all thirty-six previews, odds, silhouettes, selection,
 and modal close behavior on two clients.

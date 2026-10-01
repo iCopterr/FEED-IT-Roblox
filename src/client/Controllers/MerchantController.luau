@@ -25,12 +25,14 @@ function Controller.Start()
 	-- replaced by that copy, leaving the controller bound to a detached screen.
 	local gui=assert(playerGui:WaitForChild("MerchantUI",30),"MerchantUI missing; check Rojo")
 	local panel=gui.Panel
-	panel.RestockBuy.Active=true
-	panel.RestockBuy.ButtonText.Text="RESTOCK • "..Monetization.PersonalRestockRobux.." ROBUX"
-	panel.RestockBuy:SetAttribute("SuppressClickSound",true)
-	panel.RestockBuy.Activated:Connect(function() Purchases.Request("Restock") end)
-	local remote=ReplicatedStorage:WaitForChild("PrototypeMerchant")
 	local state,receivedAt,busy=nil,0,false
+	panel.RestockBuy.Active=true
+	panel.RestockBuy.ButtonText.Text="REFILL STOCK • "..Monetization.PersonalRestockRobux.." ROBUX"
+	panel.RestockBuy:SetAttribute("SuppressClickSound",true)
+	panel.RestockBuy.Activated:Connect(function()
+		if state then Purchases.Request("Restock",state.RestockId) end
+	end)
+	local remote=ReplicatedStorage:WaitForChild("PrototypeMerchant")
 	local displayed={}
 	local pending={}
 	local processing=false

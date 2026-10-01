@@ -6,6 +6,34 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — paid-random disclosure and deterministic merchant refill
+
+- Completed: Index pet cards now disclose the configured species hatch
+  percentage, name and rarity before discovery while retaining black locked
+  silhouettes and hidden income. Selected details show hatch chance plus the
+  independent Normal/Shiny/Rainbow/Celestial odds. Values are calculated from
+  EggConfig/VariantConfig, not duplicated constants.
+- Completed: the 39-Robux merchant action is now **Refill Stock**. A successful
+  receipt restores the exact three offers visible when checkout began, clears
+  their personal limits and grants a fresh five-minute persisted window. It no
+  longer rerolls stock; repeated refills preserve the same source selection.
+  Legacy paid personal stock remains valid until its old cycle ends.
+- Verification: Rojo build and diff check pass; Studio analysis reports 0 errors
+  across 155 scripts. Actual Index rendering produced Chicken/Common/36% with a
+  black silhouette and all four exact Variant percentages. Two-player
+  IndexVerification passed all 18 checks. The edit-mode commerce receipt suite
+  passed all 24 product routes, duplicate/rejoin receipts and repeated refills.
+- Files: IndexView, IndexVerification client, CommerceState, MerchantService,
+  MonetizationService, MerchantController, commerce test, merchant/index docs,
+  and this handoff.
+- Not implemented: PolicyService eligibility blocking and the proposed guaranteed
+  Revive Shard benefit. Blocking restricted users from future Money packs alone
+  does not resolve existing paid balances or other paid-random paths; server-side
+  egg/feed eligibility treatment is still required before monetized launch.
+- Next: decide the restricted-player guaranteed alternative and shard balance,
+  then implement one centralized fail-closed PolicyService cache used by every
+  affected server purchase/action. Prior commit: `7f61993`.
+
 ### Latest session — raise teleport buttons
 
 - Completed: moved the authored HUD.Travel group (Base + Merchant) up 18 pixels,

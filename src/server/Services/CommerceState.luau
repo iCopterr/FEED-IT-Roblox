@@ -18,10 +18,22 @@ function State.Write(data,value)
 end
 function State.RestockId(data,now)
  local cycle=Shop.GetRestockId(now)
- if data.Settings.PersonalStockCycle==cycle then
+ if type(data.Settings.PersonalStockExpiresAt)=="number" and now<data.Settings.PersonalStockExpiresAt
+  and type(data.Settings.PersonalStockId)=="number" then
+  return data.Settings.PersonalStockId, data.Settings.PersonalStockExpiresAt
+ elseif data.Settings.PersonalStockCycle==cycle and type(data.Settings.PersonalStockId)=="number" then
+  -- Preserve an already-paid legacy restock until its original cycle ends.
   return data.Settings.PersonalStockId, (cycle+1)*Shop.RestockSeconds
  end
  return cycle,(cycle+1)*Shop.RestockSeconds
+end
+function State.Stock(data,now)
+ local id,expiresAt=State.RestockId(data,now)
+ local source=id
+ if id==data.Settings.PersonalStockId and type(data.Settings.PersonalStockSourceId)=="number" then
+  source=data.Settings.PersonalStockSourceId
+ end
+ return id,expiresAt,Shop.GetStock(source),source
 end
 function State.Reserved(data,stock,slot)
  local p=State.Read(data).Pending
@@ -55,12 +67,12 @@ function State.Grant(data,state,p,now)
  elseif p.Kind=="Grow" then ready(data.IncubatingEggs[p.EggUid],now)
  elseif p.Kind=="GrowAll" then for _,id in p.Eggs do ready(data.IncubatingEggs[id],now) end
  elseif p.Kind=="Restock" then
-  local cycle=Shop.GetRestockId(now)
   local revision=(data.Settings.PersonalStockRevision or 0)+1
   data.Settings.PersonalStockRevision=revision
-  data.Settings.PersonalStockCycle=cycle
   -- Separate namespace from global timestamp cycles; persists through rejoin.
   data.Settings.PersonalStockId=1000000000+revision
+  data.Settings.PersonalStockSourceId=p.SourceStockId
+  data.Settings.PersonalStockExpiresAt=now+Shop.RestockSeconds
   data.MerchantRestockId=data.Settings.PersonalStockId;data.MerchantPurchases={}
  elseif p.Kind=="Revive" then
   local record=data.PendingRecovery[p.PetId]

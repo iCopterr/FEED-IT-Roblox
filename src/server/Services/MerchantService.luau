@@ -45,7 +45,7 @@ end
 local function snapshot(player,state)
 	local data=Data.GetData(player)
 	if not data or not Schema.Validate(data) then return {Ok=false,Code="Loading"} end
-	local now=os.time();local restockId,restocksAt=Commerce.RestockId(data,now);local stock=Config.GetStock(restockId)
+	local now=os.time();local restockId,restocksAt,stock=Commerce.Stock(data,now)
 	local items={}
 	for slot,id in stock do
 		local item=Config.Items[id]
@@ -80,13 +80,13 @@ function Service.HandleRequest(player,action,slot,expectedRestock,sequence)
 	if saving[player] or Locks.IsLocked(player) then return {Ok=false,Code="Busy"} end
 	local data=Data.GetData(player)
 	if not data or not Schema.Validate(data) then return {Ok=false,Code="Loading"} end
-	local current=Commerce.RestockId(data,os.time())
+	local current,_,stock=Commerce.Stock(data,os.time())
 	-- Reserve the one-time starting balance for the first egg; spending it on
 	-- food before owning an income-producing pet would strand a fresh account.
 	if data.Settings.TutorialStep=="BuyEgg" then return {Ok=false,Code="TutorialBuyEgg"} end
 	if expectedRestock~=current then return {Ok=false,Code="Restocked"} end
 	if not aliveAndNear(player) then return {Ok=false,Code="TooFar"} end
-	local itemId=Config.GetStock(current)[slot];local item=itemId and Config.Items[itemId]
+	local itemId=stock[slot];local item=itemId and Config.Items[itemId]
 	if not item then return {Ok=false,Code="Unavailable"} end
 	local purchased=purchaseCount(data,current,slot,item)
 	if purchased>=item.StockLimit then return {Ok=false,Code="Sold"} end

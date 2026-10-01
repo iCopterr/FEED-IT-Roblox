@@ -6,6 +6,11 @@ each player can buy one serving at a time, at most five servings per restock. Tw
 distinct special offers can each be purchased once per player per restock.
 Every purchase grants exactly one food or one charm. Existing owned food is not reduced.
 
+The 39-Robux **Refill Stock** restores the exact three offers currently shown,
+clears their personal purchase limits, and starts a fresh five-minute personal
+window. It does not reroll the selection. The source selection, personal expiry,
+purchase intent and receipt remain server-authoritative and persisted.
+
 The standard risk-reduction lineup is Basic (0%), Fresh (8%), Hearty (15%),
 Fortified (22%), Gourmet (30%), Enchanted (38%) and Royal (45%). The rare exception
 is Blessed Food: $10M, zero explosion risk for one Feed, ordinary critical odds,

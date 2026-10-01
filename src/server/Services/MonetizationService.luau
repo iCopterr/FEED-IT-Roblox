@@ -61,14 +61,16 @@ local function prepare(player,data,kind,arg,extra)
   p=table.clone(item);p.ProductId=arg
  elseif kind=="Food" and type(arg)=="number" and arg%1==0 and arg>=1 and arg<=Shop.StockSlots then
   if not near(player,"MysteryMerchant",Shop.PurchaseDistance) then return end
-  local stock=State.RestockId(data,os.time())
+  local stock,_,items=State.Stock(data,os.time())
   if stock~=extra then return end
-  local id=Shop.GetStock(stock)[arg];local product=Config.FoodProducts[id]
+  local id=items[arg];local product=Config.FoodProducts[id]
   if not product or (data.MerchantRestockId==stock and data.MerchantPurchases[tostring(arg)]) then return end
   p={Kind="Food",ItemId=id,Stock=stock,Slot=arg,ProductId=product.ProductId}
- elseif kind=="Restock" then
+ elseif kind=="Restock" and type(arg)=="number" then
   if not near(player,"MysteryMerchant",Shop.PurchaseDistance) then return end
-  p={Kind="Restock",ProductId=Config.PersonalRestockProductId}
+  local stock,_,_,source=State.Stock(data,os.time())
+  if stock~=arg then return end
+  p={Kind="Restock",SourceStockId=source,ProductId=Config.PersonalRestockProductId}
  elseif kind=="Grow" and type(arg)=="string" then
   local egg=data.IncubatingEggs[arg]
   if not egg or not egg.PenPosition or egg.ReadyAt<=os.time() then return end

@@ -164,12 +164,21 @@ assert(receipt("all",Config.GrowAllProductId)==yes)
 assert(data.IncubatingEggs.e.ReadyAt<=os.time() and data.Inventory[pet.PetId]==nil)
 assert(Schema.Validate(data))
 reset()
-s=State.Read(data);s.Pending={Kind="Restock",ProductId=Config.PersonalRestockProductId}
+local sourceStock=State.RestockId(data,os.time())
+local sourceOffers=Shop.GetStock(sourceStock)
+s=State.Read(data);s.Pending={Kind="Restock",SourceStockId=sourceStock,ProductId=Config.PersonalRestockProductId}
 State.Write(data,s)
 assert(receipt("restock",Config.PersonalRestockProductId)==yes)
-local personal=State.RestockId(data,os.time())
+local personal,expires,refilled=State.Stock(data,os.time())
 assert(personal>=1000000000 and data.MerchantRestockId==personal)
+assert(expires==os.time()+Shop.RestockSeconds and table.concat(refilled,"|")==table.concat(sourceOffers,"|"))
 assert(receipt("restock",Config.PersonalRestockProductId)==yes and State.RestockId(data,os.time())==personal)
+local _,_,_,personalSource=State.Stock(data,os.time())
+s=State.Read(data);s.Pending={Kind="Restock",SourceStockId=personalSource,ProductId=Config.PersonalRestockProductId}
+State.Write(data,s)
+assert(receipt("restock-again",Config.PersonalRestockProductId)==yes)
+local personalAgain,_,refilledAgain=State.Stock(data,os.time())
+assert(personalAgain>personal and table.concat(refilledAgain,"|")==table.concat(sourceOffers,"|"))
 for id,product in Config.FoodProducts do
  reset()
  s=State.Read(data);s.Pending={Kind="Food",ItemId=id,Slot=2,Stock=State.RestockId(data,os.time()),ProductId=product.ProductId}
