@@ -6,6 +6,40 @@
 
 **Last Updated:** 2026-10-01
 
+### Latest session — missing Settings / Starter Pack UI startup recovery
+
+- Current feature / completed: bounded authored-UI recovery for Settings and
+  Starter Pack. GuiBootstrap.Wait waits up to 3 seconds for PlayerGui, then up to
+  3 for StarterGui; clones the saved template only when the player's copy is
+  missing. Existing layouts are preserved and rechecked after yielding to prevent
+  duplicate cloning. If neither copy exists, reports the Rojo sync/restart action
+  and exits cleanly instead of waiting indefinitely. Legacy HUD Ensure API kept.
+- Diagnosis: user-reported SettingsUI infinite wait and StarterPackUI timeout.
+  Both files/mappings present locally; Rojo server live on localhost:34872. After
+  MCP plugin connected on 58741, edit inspection found SettingsUI present but
+  StarterPackUI missing everywhere, while latest controller sources had synced.
+  Exact reason Settings was absent in the earlier player's session is unconfirmed.
+- Studio repair: imported only missing StarterGui.StarterPackUI from the saved
+  rbxmx via normal plugin Instance/property creation. No managed source edits,
+  existing UI replacement or world changes. Import script refuses an existing
+  target or Play mode; export-only/internal metadata is omitted. Direct local
+  asset loading was unsupported; no permissions changed. Undo waypoint recorded.
+- Verification: Luau compilation, Rojo build, bootstrap and Starter Pack local
+  tests pass. In connected Studio, actual GuiBootstrap.Ensure clones SettingsUI
+  and StarterPackUI and reuses the existing copies without duplicates; verified
+  Panel/Close/Buy, artwork 73142330309053 and shine 119106720608654. Test clones
+  were unparented from the DataModel and destroyed. Settings has 118 descendants,
+  imported Starter Pack 57 including defaults created by Studio.
+- Files: UI/GuiBootstrap, SettingsController, StarterPackController,
+  test-starter-pack.ps1, new test-gui-bootstrap.luau and
+  import-starter-pack-ui.ps1, this handoff. No gameplay or purchases changed.
+- Overall progress: code and missing Studio asset repaired. Runtime verification
+  pending: MCP start_playtest reported success but actual RunService.IsRunning
+  remained false, with only the edit bridge connected and no PlayerGui. Owner
+  asked to press Play manually; next task is check both PlayerGui assets and
+  Output in a fresh session. Save the current Studio place to retain the imported
+  asset; repository asset/mapping already persisted. Prior commit: 4c5b3d6.
+
 ### Latest session — standalone Starter Pack offer after tutorial
 
 - Current feature / completed locally: new StarterPackUI opens after a player

@@ -60,6 +60,7 @@ local game={ReplicatedStorage={Shared={Config=config}},GetService=function(_,nam
 local realRequire=require
 local gate=realRequire('../src/client/UI/StarterPackOffer')
 local script={Parent={Parent={UI={StarterPackOffer=gate,Motion=motion,
+ GuiBootstrap={Wait=function(_,_,name) assert(name=='StarterPackUI');return gui end},
  Purchases={Request=function(kind,id) assert(kind=='Product' and id==3715613361);purchases+=1 end},
  ShopShine={Bind=function(g) assert(g==gui);binds+=1 end}}}}}
 local require=function(value) return value end

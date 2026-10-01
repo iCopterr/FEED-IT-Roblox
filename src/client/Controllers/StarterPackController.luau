@@ -10,6 +10,7 @@ local Offer = require(UI.StarterPackOffer)
 local Motion = require(UI.Motion)
 local Purchases = require(UI.Purchases)
 local Shine = require(UI.ShopShine)
+local GuiBootstrap = require(UI.GuiBootstrap)
 local Controller = {}
 local started = false
 local pages = {
@@ -31,10 +32,9 @@ function Controller.Start()
 	connect(player:GetAttributeChangedSignal("TutorialStep"), observe)
 	observe()
 	local pg = player:WaitForChild("PlayerGui")
-	local gui = pg:WaitForChild("StarterPackUI", 30)
+	local gui = GuiBootstrap.Wait(pg, game:GetService("StarterGui"), "StarterPackUI")
 	if not gui then
 		for _,connection in connections do connection:Disconnect() end
-		warn("StarterPackUI missing")
 		return
 	end
 	local panel = gui.Panel

@@ -4,11 +4,14 @@ local SoundService=game:GetService("SoundService")
 local Config=require(game.ReplicatedStorage.Shared.Config.SettingsConfig)
 local Motion=require(script.Parent.Parent.UI.Motion)
 local VolumeGroups=require(script.Parent.Parent.Audio.VolumeGroups)
+local GuiBootstrap=require(script.Parent.Parent.UI.GuiBootstrap)
 local Controller={}
 function Controller.Start()
 	local player=Players.LocalPlayer
 	local pg=player:WaitForChild("PlayerGui")
-	local gui=pg:WaitForChild("SettingsUI");local p=gui.Panel
+	local gui=GuiBootstrap.Wait(pg,game:GetService("StarterGui"),"SettingsUI")
+	if not gui then return end
+	local p=gui.Panel
 	local remote=game.ReplicatedStorage:WaitForChild("PrototypeUI"):WaitForChild("Request")
 	local values=table.clone(Config.Defaults);local loaded=false
 	player:SetAttribute("SettingsPanelOpen",false)
