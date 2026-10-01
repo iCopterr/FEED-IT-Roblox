@@ -53,8 +53,12 @@ function Controller.Start()
 		panel.EquipBest.Visible=mode=="Pets"
 		panel.GrowAll.Visible=mode=="Eggs"
 		local _,count=Monetization.GrowAllQuote(snapshot.Eggs or {},snapshot.ServerNow)
-		panel.GrowAll.Active=count>0 and not snapshot.Busy
-		panel.GrowAll.ButtonText.Text="GROW ALL"
+		local policyStatus=player:GetAttribute("PaidRandomPolicyStatus")
+		local policyAllowed=policyStatus=="Allowed"
+		panel.GrowAll.Active=count>0 and not snapshot.Busy and policyAllowed
+		panel.GrowAll.Interactable=panel.GrowAll.Active
+		panel.GrowAll.ButtonText.Text=if policyAllowed then "GROW ALL"
+			elseif policyStatus=="Loading" or policyStatus==nil then "CHECKING…" else "UNAVAILABLE"
 		panel.EquipBest.Active=mode=="Pets" and not busy and not snapshot.Busy
 		panel.EquipBest.BackgroundColor3=if panel.EquipBest.Active then Color3.fromRGB(78,227,51) else Color3.fromRGB(90,94,108)
 		local shown={}
@@ -121,6 +125,7 @@ function Controller.Start()
 	panel.GrowAll.Activated:Connect(function()
 		if panel.GrowAll.Active then Purchases.Request("GrowAll") end
 	end)
+	player:GetAttributeChangedSignal("PaidRandomPolicyStatus"):Connect(function() task.spawn(refresh) end)
 	gui.Dock.Pets.Activated:Connect(function() open("Pets") end)
 	panel.EquipBest.Activated:Connect(function()
 		if busy or mode~="Pets" or not panel.EquipBest.Active then return end

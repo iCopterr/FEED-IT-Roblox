@@ -15,6 +15,8 @@ local function publish(player, status, restricted)
 	}
 	player:SetAttribute("MoneyPacksPolicyStatus", status)
 	player:SetAttribute("MoneyPacksAllowed", status == "Allowed")
+	player:SetAttribute("PaidRandomPolicyStatus", status)
+	player:SetAttribute("PaidRandomPurchasesAllowed", status == "Allowed")
 	if type(restricted) == "boolean" then
 		player:SetAttribute("PaidRandomItemsRestricted", restricted)
 	else
@@ -44,16 +46,29 @@ local function load(player)
 	if player.Parent == Players then
 		-- Fail closed. A policy outage must never accidentally expose a prohibited offer.
 		publish(player, "Unavailable", nil)
-		warn(string.format("[Policy] Money packs disabled for %s: %s", player.Name, lastError or "unknown error"))
+		warn(string.format("[Policy] Paid-random purchases disabled for %s: %s", player.Name, lastError or "unknown error"))
 	end
 end
 
-function Service.MoneyPacksAllowed(player)
+function Service.PaidRandomPurchasesAllowed(player)
 	local record = records[player]
 	if record and record.Status == "Allowed" then return true, nil end
 	if record and record.Status == "Restricted" then return false, "PolicyRestricted" end
 	if record and record.Status == "Loading" then return false, "PolicyLoading" end
 	return false, "PolicyUnavailable"
+end
+
+function Service.MoneyPacksAllowed(player)
+	return Service.PaidRandomPurchasesAllowed(player)
+end
+
+function Service.RequiresPaidRandomPermission(purchase)
+	if type(purchase) ~= "table" then return false end
+	if purchase.Kind == "Pass" or purchase.Kind == "Money" or purchase.Kind == "Welcome"
+		or purchase.Kind == "Grow" or purchase.Kind == "GrowAll" then return true end
+	-- Revive Charm is a deterministic inventory reward. All other Robux foods
+	-- alter a later Feed probability and are paid-random probability modifiers.
+	return purchase.Kind == "Food" and purchase.ItemId ~= "revive"
 end
 
 function Service.Get(player)

@@ -51,7 +51,7 @@ local shopPanel=node({Visible=false})
 local shop=node({Name='ShopUI',Panel=shopPanel})
 local pg=node({StarterPackUI=gui,ChildAdded=signal(),children={gui,shop}})
 local player=node({PlayerGui=pg,Character={FindFirstChildOfClass=function() return {Health=100} end}})
-player.attributes={TutorialStep='Feed',WelcomePackOwned=false,FeedBusy=true}
+player.attributes={TutorialStep='Feed',WelcomePackOwned=false,FeedBusy=true,PaidRandomPolicyStatus='Allowed'}
 local heartbeat=signal();local input=signal()
 local services={Players={LocalPlayer=player},RunService={Heartbeat=heartbeat},UserInputService={InputBegan=input}}
 local Enum={KeyCode={Escape='Escape'}}
@@ -60,11 +60,17 @@ local config={MonetizationConfig={WelcomePack={Robux=9,ProductId=3715613361,Hear
 local game={ReplicatedStorage={Shared={Config=config}},GetService=function(_,name) return services[name] end}
 local realRequire=require
 local gate=realRequire('../src/client/UI/StarterPackOffer')
+local policyView={Apply=function(card,price,status,owned,ongoing,prefix)
+ local enabled=status=='Allowed' and not owned
+ card.Buy.Active=enabled;card.Buy.Interactable=enabled;card.Buy.AutoButtonColor=enabled
+ card.Buy.ButtonText.Text=if owned then 'OWNED' elseif enabled then (prefix or '')..price..' ROBUX' else 'UNAVAILABLE'
+ return enabled
+end}
 local script={Parent={Parent={UI={StarterPackOffer=gate,Motion=motion,
  GuiBootstrap={Wait=function(_,_,name) assert(name=='StarterPackUI');return gui end},
  DeviceLayout={Apply=function(p,size,kind) assert(kind=='StarterPack');p.UIScale.Scale=math.min(1,(size.X-24)/(if size.X<700 and size.Y>size.X then 460 else 760),(size.Y-24)/484) end},
  Purchases={Request=function(kind,id) assert(kind=='Product' and id==3715613361);purchases+=1 end},
- ShopShine={Bind=function(g) assert(g==gui);binds+=1 end}}}}}
+ PolicyOfferView=policyView,ShopShine={Bind=function(g) assert(g==gui);binds+=1 end}}}}}
 local require=function(value) return value end
 local Controller=(function()
 '@
@@ -90,6 +96,9 @@ player:SetAttribute('WelcomePackOwned',false);heartbeat:Fire(.2);assert(not pane
 assert(buy.Active and buy.Interactable)
 player:SetAttribute('WelcomePackOwned',nil);assert(not buy.Active and not buy.Interactable,'Wait for ownership')
 player:SetAttribute('WelcomePackOwned',false);assert(buy.Active and buy.Interactable,'Late ownership enables Buy')
+panel.Visible=true;player:SetAttribute('PaidRandomPolicyStatus','Restricted')
+assert(not panel.Visible and not buy.Active and not buy.Interactable,'Restricted account closes and disables Starter Pack')
+player:SetAttribute('PaidRandomPolicyStatus','Allowed');assert(buy.Active and buy.Interactable,'Allowed policy restores Starter Pack button')
 panel.Visible=true;close.Activated:Fire();assert(closed==1 and not panel.Visible)
 panel.Visible=true;input:Fire({KeyCode='Escape'},false);assert(closed==2 and not panel.Visible)
 panel.Visible=true;shopPanel.Visible=true;shopPanel:GetPropertyChangedSignal('Visible'):Fire();assert(not panel.Visible)

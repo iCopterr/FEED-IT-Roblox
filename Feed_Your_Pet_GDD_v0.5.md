@@ -1415,16 +1415,23 @@ prestige.
 ## PolicyService Rule
 
 The server queries `PolicyService:GetPolicyInfoForPlayerAsync()` once per player
-session and caches the result. If `ArePaidRandomItemsRestricted` is true, Money
-Pack Developer Product prompts are unavailable because purchased Money can fund
-random Egg outcomes. An unknown or failed policy response also disables Money
-Packs for that session. The client may present this status, but only the server
-authorizes the prompt.
+session and caches the result. Paid-random-related offers require an explicit
+`ArePaidRandomItemsRestricted == false`; restricted, loading, malformed and failed
+responses fail closed. The client may present this status, but only the server
+authorizes a prompt or applies an ongoing benefit.
+
+This gate covers Money Packs, Welcome Treat Pack, x2 Money, Robux Food that
+changes Feed probability, and Grow Now / Grow All. An owned x2 Money pass is
+paused for a restricted or unverifiable session. Deterministic direct Revive,
+Revive Charm and exact-stock Merchant Refill remain available. Earned Money and
+Money-purchased Food remain the unpaid gameplay path; no guaranteed paid
+alternative is offered.
 
 An already-issued Developer Product receipt must still be fulfilled and recorded
-idempotently; policy checks must never discard a charged receipt. Money Pack
-blocking is the first policy boundary, not proof that every current/future paid
-random or probability-modifying path is launch-compliant.
+idempotently; policy checks must never discard a charged receipt. Every new
+monetization feature must be classified through the centralized policy service
+before launch. Historical mixed Money balances predate source tracking, so their
+Robux-versus-earned provenance cannot be reconstructed from the current save.
 
 ------------------------------------------------------------------------
 

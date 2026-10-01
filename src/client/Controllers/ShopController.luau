@@ -5,7 +5,7 @@ local Numbers=require(game.ReplicatedStorage.Shared.NumberFormat)
 local Motion=require(script.Parent.Parent.UI.Motion)
 local Purchases=require(script.Parent.Parent.UI.Purchases)
 local ShopShine=require(script.Parent.Parent.UI.ShopShine)
-local MoneyPackPolicyView=require(script.Parent.Parent.UI.MoneyPackPolicyView)
+local PolicyOfferView=require(script.Parent.Parent.UI.PolicyOfferView)
 local Controller={}
 local DeviceLayout=require(script.Parent.Parent.UI.DeviceLayout)
 function Controller.Start()
@@ -15,14 +15,17 @@ function Controller.Start()
 	local panel=gui.Panel
 	ShopShine.Bind(gui)
 	local others={}
-	local function price(card,value,kind,id,attribute,moneyPack)
+	local function price(card,value,kind,id,attribute,paidRandom,ongoingBenefit)
 		local normalBackground=card.Buy.BackgroundColor3
 		local normalImage=card.Buy.ImageColor3
 		local gradient=card.Buy:FindFirstChildOfClass("UIGradient")
 		local normalGradient=gradient and gradient.Color
 		local function refresh()
-			if moneyPack then
-				MoneyPackPolicyView.Apply(card,value,player:GetAttribute("MoneyPacksPolicyStatus"))
+			if paidRandom then
+				local owned=if attribute then player:GetAttribute(attribute) else false
+				local status=player:GetAttribute("PaidRandomPolicyStatus")
+				if owned==nil then status="Loading" end
+				PolicyOfferView.Apply(card,value,status,owned==true,ongoingBenefit)
 				return
 			end
 			local owned=attribute and player:GetAttribute(attribute)==true
@@ -38,11 +41,11 @@ function Controller.Start()
 		card.Buy:SetAttribute("SuppressClickSound",true)
 		card.Buy.Activated:Connect(function() if card.Buy.Active then Purchases.Request(kind,id) end end)
 		if attribute then player:GetAttributeChangedSignal(attribute):Connect(refresh) end
-		if moneyPack then player:GetAttributeChangedSignal("MoneyPacksPolicyStatus"):Connect(refresh) end
+		if paidRandom then player:GetAttributeChangedSignal("PaidRandomPolicyStatus"):Connect(refresh) end
 		Motion.BindButton(card.Buy,card)
 	end
-	price(panel.Offers.Welcome,Config.WelcomePack.Robux,"Product",Config.WelcomePack.ProductId,"WelcomePackOwned")
-	price(panel.Offers.DoubleMoney,Config.DoubleMoney.Robux,"Pass",nil,"DoubleMoneyOwned")
+	price(panel.Offers.Welcome,Config.WelcomePack.Robux,"Product",Config.WelcomePack.ProductId,"WelcomePackOwned",true,false)
+	price(panel.Offers.DoubleMoney,Config.DoubleMoney.Robux,"Pass",nil,"DoubleMoneyOwned",true,true)
 	for i,pack in Config.MoneyPacks do
 		local card=panel.Offers["Money"..i]
 		card.Title.Text="$"..Numbers.Money(pack.Money)

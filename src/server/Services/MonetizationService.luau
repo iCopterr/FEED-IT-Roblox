@@ -85,7 +85,10 @@ local function refreshPass(player)
  if ok and player.Parent==Players then passes[player]=owns==true;player:SetAttribute("DoubleMoneyOwned",owns==true) end
  return ok,owns==true
 end
-function Service.Multiplier(player) return if passes[player] then Config.DoubleMoney.Multiplier else 1 end
+function Service.Multiplier(player)
+ local policyAllowed=Policy.PaidRandomPurchasesAllowed(player)
+ return if passes[player] and policyAllowed then Config.DoubleMoney.Multiplier else 1
+end
 
 local function prepare(player,data,kind,arg,extra)
  local p
@@ -128,12 +131,13 @@ function Service.Request(player,kind,arg,extra)
  local data=Data.GetData(player)
  if not data or player.Parent~=Players then return {Ok=false,Code="Loading"} end
  if persistenceBlocked() then return {Ok=false,Code="PersistenceRequired"} end
- if kind=="Product" and type(arg)=="number" then
-  local item=catalog[arg]
-  if item and item.Kind=="Money" then
-   local allowed,code=Policy.MoneyPacksAllowed(player)
-   if not allowed then return {Ok=false,Code=code} end
-  end
+ local preliminary
+ if kind=="Pass" then preliminary={Kind="Pass"}
+ elseif kind=="Product" and type(arg)=="number" then preliminary=catalog[arg]
+ elseif kind=="Grow" or kind=="GrowAll" then preliminary={Kind=kind} end
+ if Policy.RequiresPaidRandomPermission(preliminary) then
+  local allowed,code=Policy.PaidRandomPurchasesAllowed(player)
+  if not allowed then return {Ok=false,Code=code} end
  end
  if os.clock()-(last[player] or -math.huge)<1 then return {Ok=false,Code="Cooldown"} end
  last[player]=os.clock()
@@ -150,6 +154,10 @@ function Service.Request(player,kind,arg,extra)
  if count>=10000 then return {Ok=false,Code="SupportRequired"} end
  local p=prepare(player,data,kind,arg,extra)
  if not p then return {Ok=false,Code="Unavailable"} end
+ if Policy.RequiresPaidRandomPermission(p) then
+  local allowed,code=Policy.PaidRandomPurchasesAllowed(player)
+  if not allowed then return {Ok=false,Code=code} end
+ end
  if p.Kind=="Welcome" and state.WelcomeClaimed then return {Ok=false,Code="Owned"} end
  if not Locks.Begin(player,"PurchaseIntent") then return {Ok=false,Code="Busy"} end
  busy[player]=true

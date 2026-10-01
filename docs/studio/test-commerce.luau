@@ -46,15 +46,21 @@ profiles[player]=data
 local memory=false
 local studio=false
 local moneyPacksAllowed=true
+local function requiresPolicy(p)
+ return type(p)=="table" and (p.Kind=="Pass" or p.Kind=="Money" or p.Kind=="Welcome"
+  or p.Kind=="Grow" or p.Kind=="GrowAll" or (p.Kind=="Food" and p.ItemId~="revive"))
+end
 local deps={
 	[shared.MonetizationConfig]=Config,
 	[shared.ReviveConfig]=Revive,
 	[shared.FoodConfig]=Foods,
 	[shared.MerchantConfig]=Shop,
 	[root.Data.PlayerDataSchema]=Schema,
-	[root.Services.PolicyEligibilityService]={MoneyPacksAllowed=function()
-		return moneyPacksAllowed,if moneyPacksAllowed then nil else "PolicyRestricted"
-	end},
+	[root.Services.PolicyEligibilityService]={
+		MoneyPacksAllowed=function()return moneyPacksAllowed,if moneyPacksAllowed then nil else "PolicyRestricted" end,
+		PaidRandomPurchasesAllowed=function()return moneyPacksAllowed,if moneyPacksAllowed then nil else "PolicyRestricted" end,
+		RequiresPaidRandomPermission=requiresPolicy,
+	},
  [root.Services.DataService]={
  GetData=function(p)return profiles[p] end,
  IsLoaded=function(p)return profiles[p]~=nil end,
@@ -134,6 +140,13 @@ local promptsBeforePolicy=promptCount
 local restricted=service.Request(player,"Product",cash.ProductId)
 assert(not restricted.Ok and restricted.Code=="PolicyRestricted")
 assert(promptCount==promptsBeforePolicy and State.Read(data).Pending==nil and data.Money==5000)
+for _,request in {
+ {"Product",Config.WelcomePack.ProductId},{"Pass"},{"Grow","egg"},{"GrowAll"},
+} do
+ local denied=service.Request(player,table.unpack(request))
+ assert(not denied.Ok and denied.Code=="PolicyRestricted")
+end
+assert(promptCount==promptsBeforePolicy and State.Read(data).Pending==nil)
 moneyPacksAllowed=true
 reset()
 assert(service.Request(player,"Product",cash.ProductId).Ok)
@@ -154,6 +167,8 @@ memory=false;studio=false
 assert(service.Multiplier(player)==1)
 events.PassFinished(player,Config.DoubleMoney.GamePassId,true)
 assert(service.Multiplier(player)==2 and attrs.DoubleMoneyOwned)
+moneyPacksAllowed=false;assert(service.Multiplier(player)==1)
+moneyPacksAllowed=true;assert(service.Multiplier(player)==2)
 assert(clientNotices[#clientNotices].Kind=="Pass" and clientNotices[#clientNotices].Reward=="×2 MONEY UNLOCKED")
 -- Reserved food shares the same purchase history and remains grantable after rotation.
 reset()
@@ -246,5 +261,5 @@ for id,product in Config.FoodProducts do
  assert((notice.Shards or 0)==(if id=="revive" then 0 else Revive.Shards.ByRarity[Foods.Types[id].Rarity]))
  assert(Schema.Validate(data))
 end
-print("PASS: all 24 products; restricted Money Pack prompt blocking, queued structured thank-you notices, no duplicate notice, guaranteed paid-food shards, save retries, welcome once, cancellation, pass entitlement, food reservations/rotation, grow no-op/timers, expired reserved revive, personal restock, profile validation.")
+print("PASS: all 24 products; restricted paid-random prompt blocking, queued structured thank-you notices, no duplicate notice, guaranteed paid-food shards, save retries, welcome once, cancellation, pass entitlement, food reservations/rotation, grow no-op/timers, expired reserved revive, personal restock, profile validation.")
 

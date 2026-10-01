@@ -6,30 +6,34 @@
 
 **Last Updated:** 2026-10-02
 
-### Latest session — PolicyService Money Pack restriction
+### Latest session — complete paid-random PolicyService coverage
 
 - Completed: new centralized server `PolicyEligibilityService` queries and caches
-  `ArePaidRandomItemsRestricted` per player session. Money Packs are allowed only
-  after an explicit unrestricted result. Loading, API failure and malformed data
-  fail closed; the query retries four times and clears its cache on leave.
-- Server authority: MonetizationService rejects restricted/unknown Money Pack
-  requests before cooldown, intent saving or checkout. Client attributes are
-  presentation only. Valid already-charged receipts remain idempotently fulfilled
-  so a policy/API change cannot consume Robux without granting the purchased pack.
-- Shop: all six Money Pack buttons show `CHECKING…` while loading, restore their
-  Robux prices only when allowed, and become grey/non-interactable with a readable
-  unavailable explanation when restricted or unverifiable. Other offers are
-  unchanged and no guaranteed alternative was added.
+  `ArePaidRandomItemsRestricted` per player session. Paid-random-related offers
+  require an explicit unrestricted result. Loading, API failure and malformed
+  data fail closed; the query retries four times and clears its cache on leave.
+- Server authority: MonetizationService rejects restricted/unknown Money Packs,
+  Welcome Pack, x2 Money, probabilistic Robux Food and Grow Now/All before
+  intent saving or checkout. An owned x2 pass is paused in those
+  sessions. Deterministic direct Revive, Revive Charm and Merchant Refill remain
+  available. Client attributes are presentation only. Valid already-charged
+  receipts remain idempotently fulfilled so a policy/API change cannot consume
+  Robux without granting the purchased product.
+- UI: Shop, standalone Starter Pack, Merchant Robux Food and Pen Grow All show
+  checking/unavailable states and cannot prompt until policy and ownership are
+  positively resolved. Grow Now reports the same server rejection. Earned Money
+  and Money-purchased Food remain available; no guaranteed alternative was added.
 - Verification: isolated policy harness passes unrestricted, restricted, API
-  failure, malformed response, fail-closed attributes, retries and cleanup.
-  Shop-card harness passes all four presentation states. Full commerce harness
-  passes all 24 product routes plus restricted Money Pack prompt rejection with
-  no prompt, saved intent or balance change. Rojo build and diff checks pass.
-- Scope warning: this requested Money Pack gate is not complete paid-random launch
-  compliance. Existing paid Money balances, x2 Money earnings, Welcome rewards
-  and Robux foods that modify Feed odds still need policy treatment. Next task
-  should reuse this centralized decision at those gameplay boundaries. No real
-  policy lookup or Robux purchase was made.
+  failure, malformed response, fail-closed attributes, retries, cleanup and a
+  leave-during-query race. Offer-state and Starter Pack harnesses pass. Full
+  commerce harness passes all 24 products plus restricted Money, Welcome, Pass,
+  Grow and Grow All rejection with no prompt, intent or balance mutation. Rojo
+  build, Luau compilation and diff checks pass. No real policy lookup or Robux
+  purchase was made.
+- Known limitation: existing mixed Money balances predate currency-source
+  tracking, so historical Robux-versus-earned provenance cannot be reconstructed.
+  All new paid entry points are now gated; every future monetization feature must
+  be classified by the centralized policy helper before launch.
 
 ### Latest session — Robux purchase thank-you popup
 

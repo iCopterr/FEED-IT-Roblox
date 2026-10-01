@@ -12,6 +12,7 @@ local Purchases = require(UI.Purchases)
 local Shine = require(UI.ShopShine)
 local GuiBootstrap = require(UI.GuiBootstrap)
 local DeviceLayout = require(UI.DeviceLayout)
+local PolicyOfferView = require(UI.PolicyOfferView)
 local Controller = {}
 local started = false
 local pages = {
@@ -49,11 +50,10 @@ function Controller.Start()
 	local function refreshPurchase()
 		-- The shop template may be exported with its runtime-owned button disabled.
 		local owned = player:GetAttribute("WelcomePackOwned")
-		local available = owned == false
-		buy.Active = available
-		buy.Interactable = available
-		buy.AutoButtonColor = available
-		if owned == true then panel.Visible = false end
+		local status = player:GetAttribute("PaidRandomPolicyStatus")
+		if owned == nil then status = "Loading" end
+		PolicyOfferView.Apply(card, Pack.Robux, status, owned == true, false, "BUY • ")
+		if owned == true or status == "Restricted" or status == "Unavailable" then panel.Visible = false end
 	end
 	refreshPurchase()
 	Motion.BindPopup(panel)
@@ -68,6 +68,7 @@ function Controller.Start()
 		end
 	end)
 	connect(player:GetAttributeChangedSignal("WelcomePackOwned"), refreshPurchase)
+	connect(player:GetAttributeChangedSignal("PaidRandomPolicyStatus"), refreshPurchase)
 	connect(Input.InputBegan, function(key, processed)
 		if not processed and key.KeyCode == Enum.KeyCode.Escape and panel.Visible then Motion.Close(panel) end
 	end)
@@ -101,7 +102,7 @@ function Controller.Start()
 		if elapsed < .1 or gate.Consumed then return end
 		elapsed = 0
 		local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-		if not gui.Enabled then return end
+		if not gui.Enabled or player:GetAttribute("PaidRandomPolicyStatus") ~= "Allowed" then return end
 		if gate:Take(os.clock(), player:GetAttribute("WelcomePackOwned"), player:GetAttribute("FeedBusy"), humanoid and humanoid.Health > 0) then
 			for other in others do if other.Parent then other.Visible = false end end
 			panel.Visible = true

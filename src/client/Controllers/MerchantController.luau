@@ -34,12 +34,18 @@ function Controller.Start()
 	end)
 	local remote=ReplicatedStorage:WaitForChild("PrototypeMerchant")
 	local displayed={}
+	local robuxStyles={}
+	for i=1,3 do
+		local buy=panel.Offers["Slot"..i].BuyRobux
+		robuxStyles[i]={Background=buy.BackgroundColor3,Image=buy.ImageColor3}
+	end
 	local pending={}
 	local processing=false
 	local messages={TutorialBuyEgg="Buy your first Basic Egg before buying food.",TooFar="Move closer to the Mystery Merchant.",NotEnoughMoney="You need more Money.",
 		Sold="This food is sold out for you. Wait for restock.",
 		Restocked="",Busy="",StaleRequest="",Loading="",Cooldown=""}
 	local function render()
+		local policyStatus=player:GetAttribute("PaidRandomPolicyStatus")
 		local remaining=state and state.RestocksAt-(state.ServerNow+os.clock()-receivedAt) or 0
 		panel.Money.Text="YOUR $"..(state and NumberFormat.Money(state.Money) or "—")
 		panel.Restock.Text="NEW FOOD IN "..clockText(remaining)
@@ -81,10 +87,22 @@ function Controller.Start()
 				button.BuyMoney.Active=false;button.BuyMoney.ButtonText.Text="—"
 			end
 			local product=item and Monetization.FoodProducts[item.ItemId]
-			button.BuyRobux.Active=product~=nil and not item.Purchased
-			button.BuyRobux.ButtonText.Text=if not product then "MONEY ONLY" elseif item.Purchased then "SOLD OUT" else product.Robux.." ROBUX"
+			local needsPolicy=item and item.ItemId~="revive"
+			local policyAllowed=not needsPolicy or policyStatus=="Allowed"
+			local robuxEnabled=product~=nil and not item.Purchased and policyAllowed
+			button.BuyRobux.Active=robuxEnabled
+			button.BuyRobux.Interactable=robuxEnabled
+			button.BuyRobux.AutoButtonColor=robuxEnabled
+			button.BuyRobux.ButtonText.Text=if not product then "MONEY ONLY"
+				elseif item.Purchased then "SOLD OUT"
+				elseif not policyAllowed then (if policyStatus=="Loading" or policyStatus==nil then "CHECKING…" else "UNAVAILABLE")
+				else product.Robux.." ROBUX"
+			local style=robuxStyles[i]
+			button.BuyRobux.ImageColor3=if robuxEnabled then style.Image else Color3.fromRGB(100,100,108)
+			button.BuyRobux.BackgroundColor3=if robuxEnabled then style.Background else Color3.fromRGB(100,100,108)
 		end
 	end
+	player:GetAttributeChangedSignal("PaidRandomPolicyStatus"):Connect(render)
 	local function refresh()
 		if busy then return end
 		busy=true
@@ -146,7 +164,8 @@ function Controller.Start()
 		panel.Offers["Slot"..i].BuyRobux:SetAttribute("SuppressClickSound",true)
 		panel.Offers["Slot"..i].BuyRobux.Activated:Connect(function()
 			local item=displayed[i]
-			if state and item and not item.Purchased and Monetization.FoodProducts[item.ItemId] then
+			local policyAllowed=item and (item.ItemId=="revive" or player:GetAttribute("PaidRandomPolicyStatus")=="Allowed")
+			if state and item and policyAllowed and not item.Purchased and Monetization.FoodProducts[item.ItemId] then
 				Purchases.Request("Food",item.Slot,state.RestockId)
 			end
 		end)

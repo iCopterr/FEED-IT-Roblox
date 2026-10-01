@@ -60,23 +60,33 @@ than acknowledging payment for no reward.
 
 `PolicyEligibilityService` queries
 `PolicyService:GetPolicyInfoForPlayerAsync()` on the server and caches the result
-for the player's server session. Money Pack prompts require an explicit
-`ArePaidRandomItemsRestricted == false`. Restricted, still-loading, malformed and
-failed API results all block the prompt; failures retry four times before the
-session becomes `Unavailable`. The replicated status only drives presentation.
-`MonetizationService` independently enforces the decision before saving a prompt
-intent or opening Roblox checkout.
+for the player's server session. The following require an explicit
+`ArePaidRandomItemsRestricted == false` before the server opens checkout:
 
-The six Money Pack cards remain visible but become grey and non-interactable with
-a clear account/eligibility message. Welcome Pack, x2 Money and unrelated direct
-products are unchanged by this narrow gate. ProcessReceipt still fulfills any
-already-charged valid Money Pack receipt; policy errors never consume a purchase.
+- Money Packs;
+- Welcome Treat Pack;
+- x2 Money;
+- Robux Food other than deterministic Revive Charm;
+- Grow Now and Grow All.
 
-This does not by itself finish paid-random compliance. Existing paid balances,
-x2 Money earnings, Welcome rewards and Robux foods that modify Feed probability
-need review with the same centralized policy decision before launch. Roblox
-requires restricted users to be blocked from both direct and indirect
-paid-random generators.
+Restricted, still-loading, malformed and failed API results all block these
+offers; failures retry four times before the session becomes `Unavailable`. An
+owned x2 Money pass is also paused unless policy explicitly allows it. The
+replicated status only drives presentation. `MonetizationService` independently
+enforces the decision before intent saving or Roblox checkout.
+
+The Shop, standalone Starter Pack, Merchant Robux Food and Pen Grow All controls
+remain visible but become grey and non-interactable with a clear eligibility
+message. Grow Now has no persistent purchase card and returns the same readable
+server error. Deterministic direct Revive, Revive Charm and exact-stock Merchant
+Refill remain available. Earned Money and Money-purchased Food remain the unpaid
+gameplay path. No guaranteed paid alternative was added.
+
+`ProcessReceipt` still fulfills any already-charged valid receipt idempotently;
+policy errors never consume a purchase. Existing mixed Money balances created
+before this boundary do not record whether each unit was earned or purchased, so
+historical provenance cannot be reconstructed. New monetization features must be
+classified through `RequiresPaidRandomPermission` before launch.
 
 ## Deployment and support limitations
 
@@ -111,8 +121,10 @@ Run `docs/studio/test-purchase-thanks-ui.ps1` for construction of the real popup
 module, food artwork, exact shard bonus copy/image, purchase sound and close path.
 Run `docs/studio/test-policy-restrictions.luau` for allowed, restricted, failed,
 malformed, retry and cleanup paths. Run
-`docs/studio/test-money-pack-policy-view.luau` for Shop loading, allowed,
-restricted and unavailable states.
+`docs/studio/test-policy-offer-view.luau` for loading, allowed, restricted,
+unavailable, owned-benefit pause and restored offer states. Run
+`docs/studio/test-starter-pack.ps1` for the standalone offer's ownership and
+policy gates.
 Rojo build, Luau syntax checks and git diff checks pass.
 
 Roblox API reference checked:
