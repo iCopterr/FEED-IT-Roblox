@@ -1,5 +1,6 @@
 local Players=game:GetService("Players")
 local ReplicatedStorage=game:GetService("ReplicatedStorage")
+local Input=game:GetService("UserInputService")
 local Config=require(ReplicatedStorage.Shared.Config.UIConfig)
 local GuiBootstrap=require(script.Parent.Parent.UI.GuiBootstrap)
 local Motion=require(script.Parent.Parent.UI.Motion)
@@ -53,15 +54,16 @@ function Controller.Start()
 	local function resize()
 		local size=gui.AbsoluteSize
 		local narrow=size.X<760
-		local scale=if narrow then .68 else math.min(1,size.Y/650)
+		local compactLandscape=DeviceLayout.CompactLandscape(size,Input.TouchEnabled)
+		local scale=DeviceLayout.MoneyScale(size,Input.TouchEnabled)
 		hud.UIScale.Scale=1
 		-- Keep currency above the mobile hotbar/touch-control area.
-		local bottom=if narrow then math.min(190,size.Y*.35) else 22
+		local bottom=if narrow then math.min(190,size.Y*.35) elseif compactLandscape then 18 else 22
 		hud.Money.Position=UDim2.new(0,18,1,-bottom)
 		hud.Money.UIScale.Scale=scale
-		hud.Travel.UIScale.Scale=math.min(1,(size.X-24)/540)
+		hud.Travel.UIScale.Scale=DeviceLayout.TravelScale(size,Input.TouchEnabled)
 		-- Match the Index stack's responsive spacing.
-		local launcherScale=DeviceLayout.LauncherScale(size)
+		local launcherScale=DeviceLayout.LauncherScale(size,Input.TouchEnabled)
 		hud.OpenInventory.UIScale.Scale=launcherScale
 		hud.OpenInventory.Position=UDim2.new(0,18+84*launcherScale,.5,0)
 	end

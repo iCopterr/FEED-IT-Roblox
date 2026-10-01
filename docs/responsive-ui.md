@@ -13,6 +13,11 @@ authored UI. No new screens, assets, fonts, colors or economy changes.
 - Other orientations retain authored desktop geometry and scale down to fit a
   12px outer margin. Portrait overrides are restored on rotation back. Later
   desktop panel-size edits are read, not replaced by hard-coded dimensions.
+- Touch devices in phone landscape mode (inset-aware height at or below 720, or
+  a phone-wide aspect ratio of at least 1.8) use a dedicated compact HUD. Travel is capped at 62% scale; Shop,
+  Index, Inventory, Settings and the Egg/Pet dock share 44–45px square targets;
+  Money is reduced to 62%; the tutorial hint is narrower with 17px text. Desktop
+  windows with the same aspect ratio are unchanged because touch input is required.
 - Merchant/Debug share fitting; Pen remote gets a larger fitted panel on small
   screens. Shop/Index/Inventory/Settings launchers share scale rules. Existing
   notification/tutorial fitting and world-based hatch reveal remain unchanged.
@@ -24,6 +29,9 @@ Studio instances at 320x568, 390x844, 600x900, 844x390, 1024x768, 1920x1080 and
 2560x1080. Checks modal bounds, desktop restoration and last Shop offer reachability.
 `test-authored-inventory-layout.ps1` covers 15 viewport/hotbar combinations and
 preservation of desktop edits; Starter Pack and shine regression tests also pass.
+`docs/studio/test-mobile-landscape-hud.luau` checks a 1368x630 touch viewport
+against the authored HUD sizes, including touch-target minimums and caps for the
+travel, Shop, right-side, Money and tutorial elements.
 
 Studio edit-mode portrait previews of the seven adapted menus were inspected
 using temporary 390x700 frames (shown at .72 scale). Preview overlays were removed.

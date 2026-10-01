@@ -1,4 +1,5 @@
 local Players=game:GetService("Players")
+local Input=game:GetService("UserInputService")
 local Shared=game.ReplicatedStorage.Shared
 local Pets=require(Shared.Config.PetConfig)
 local Variants=require(Shared.Config.VariantConfig)
@@ -161,7 +162,7 @@ function Controller.Start()
 		local scale=if size.X<900 then math.min(layout.Fit(size,510,440),(size.X-32)/510) else math.min(.82,math.max(.45,math.min(size.X*.23/510,size.Y*.34/440)),(size.X-32)/510,(size.Y-40)/440)
 		panel.UIScale.Scale=scale
 		panel.Position=UDim2.new(1,-16,.5,-220*scale)
-		local dockScale=layout.LauncherScale(size)
+		local dockScale=layout.LauncherScale(size,Input.TouchEnabled)
 		gui.Dock.UIScale.Scale=dockScale
 		gui.Dock.Position=UDim2.new(1,-18,.5,-86*dockScale)
 	end

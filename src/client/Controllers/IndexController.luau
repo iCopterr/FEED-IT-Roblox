@@ -90,7 +90,7 @@ function Controller.Start()
 	local function resize()
 		local size=gui.AbsoluteSize
 		DeviceLayout.Apply(panel,size,"Index")
-		gui.Open.UIScale.Scale=DeviceLayout.LauncherScale(size)
+		gui.Open.UIScale.Scale=DeviceLayout.LauncherScale(size,Input.TouchEnabled)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()
 	task.spawn(function()

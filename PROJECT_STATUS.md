@@ -6,6 +6,28 @@
 
 **Last Updated:** 2026-10-02
 
+### Latest session — compact phone-landscape HUD
+
+- Fixed the oversized phone-landscape HUD shown by the owner. The cause was
+  viewport-only scaling: a high-density landscape phone looked wide enough to
+  receive desktop launcher sizes. DeviceLayout now requires touch input plus a
+  wide viewport with inset-aware height at or below 720, or phone-wide aspect
+  ratio of at least 1.8, for this compact mode. A 4:3 touch tablet stays unchanged.
+- Base/Merchant travel, Shop, Index, Inventory, Settings, Egg/Pet dock and Money
+  now use 62% scale in that mode. Square controls remain about 44–45px for touch.
+  The tutorial banner is capped at 460px / under half the tested screen width,
+  uses 17px text and sits 74px above the bottom. Desktop and portrait behavior
+  remain on their existing paths; no authored UI asset or game logic changed.
+- Verification: dedicated 1368x630 touch-landscape geometry regression passes;
+  all seven changed Luau sources compile; Rojo build and diff checks pass. The
+  broader cloned-layout test passed Shop, Starter Pack, Settings, Index,
+  Inventory and Feed, then stopped because connected Studio has a stale ReviveUI
+  without BrokenTab. Repository ReviveUI/build were not changed by this fix.
+- Files: DeviceLayout; HUD, Index, Shop, Settings, PenManager and Tutorial
+  controllers; responsive UI docs; mobile HUD and device-layout regressions.
+  Next: owner checks the same physical phone in a fresh session and confirms
+  safe-area placement. Existing untracked image assets remain preserved.
+
 ### Latest session — complete paid-random PolicyService coverage
 
 - Completed: new centralized server `PolicyEligibilityService` queries and caches

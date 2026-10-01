@@ -16,8 +16,30 @@ end
 function Layout.Fit(viewport, width, height)
 	return math.max(.01, math.min(1, (viewport.X-24)/math.max(1,width), (viewport.Y-24)/math.max(1,height)))
 end
-function Layout.LauncherScale(viewport)
+function Layout.CompactLandscape(viewport, touchEnabled)
+	-- Landscape phones can report either logical or physical pixels. Touch plus
+	-- a short logical height or phone-wide aspect separates them from desktops.
+	return touchEnabled == true and viewport.X > viewport.Y
+		and (viewport.Y <= 720 or viewport.X/viewport.Y >= 1.8)
+end
+function Layout.LauncherScale(viewport, touchEnabled)
+	if Layout.CompactLandscape(viewport, touchEnabled) then return .62 end
 	return math.min(1, math.max(.68, math.min(viewport.X/760,viewport.Y/650)))
+end
+function Layout.TravelScale(viewport, touchEnabled)
+	local fit = math.min(1, (viewport.X-24)/540)
+	return if Layout.CompactLandscape(viewport, touchEnabled) then math.min(.62, fit) else fit
+end
+function Layout.MoneyScale(viewport, touchEnabled)
+	if Layout.CompactLandscape(viewport, touchEnabled) then return .62 end
+	return if viewport.X < 760 then .68 else math.min(1, viewport.Y/650)
+end
+function Layout.TutorialHint(viewport, touchEnabled)
+	if Layout.CompactLandscape(viewport, touchEnabled) then
+		return math.min(460, viewport.X*.45), 58, 74, 17
+	end
+	local width = math.min(560, viewport.X-24)
+	return width, if width<450 then 82 else 66, 110, 21
 end
 function Layout.Portrait(viewport)
 	return viewport.X < 700 and viewport.Y > viewport.X

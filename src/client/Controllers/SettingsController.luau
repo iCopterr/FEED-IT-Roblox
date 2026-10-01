@@ -99,9 +99,10 @@ function Controller.Start()
 	Motion.BindPopup(p);Motion.BindButton(gui.Open,gui.Open);Motion.BindButton(p.Close,p)
 	local function resize()
 		DeviceLayout.Apply(p,gui.AbsoluteSize,"Settings")
-		local scale=DeviceLayout.LauncherScale(gui.AbsoluteSize)
+		local compactLandscape=DeviceLayout.CompactLandscape(gui.AbsoluteSize,Input.TouchEnabled)
+		local scale=DeviceLayout.LauncherScale(gui.AbsoluteSize,Input.TouchEnabled)
 		gui.Open.UIScale.Scale=scale
-		gui.Open.Position=UDim2.new(1,-18,0,if gui.AbsoluteSize.X<760 then 110*math.min(1,(gui.AbsoluteSize.X-24)/540) else 12)
+		gui.Open.Position=UDim2.new(1,-18,0,if compactLandscape then 12 elseif gui.AbsoluteSize.X<760 then 110*math.min(1,(gui.AbsoluteSize.X-24)/540) else 12)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize();render()
 	local originals=setmetatable({},{__mode="k"})

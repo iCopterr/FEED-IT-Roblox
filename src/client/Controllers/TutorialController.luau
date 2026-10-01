@@ -1,8 +1,10 @@
 local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
+local Input=game:GetService("UserInputService")
 local Storage=game:GetService("ReplicatedStorage")
 local Config=require(Storage.Shared.Config.TutorialConfig)
 local Number=require(Storage.Shared.NumberFormat).Money
+local DeviceLayout=require(script.Parent.Parent.UI.DeviceLayout)
 local Controller={}
 
 local function position(object)
@@ -139,10 +141,11 @@ function Controller.Start()
 		local main=playerGui:FindFirstChild("FeedYourPetUI")
 		local shop=playerGui:FindFirstChild("MerchantUI")
 		local modal=(main and main.FeedPanel.Visible) or (shop and shop.Panel.Visible)
-		local width=math.min(560,gui.AbsoluteSize.X-24)
+		local width,height,bottom,textSize=DeviceLayout.TutorialHint(gui.AbsoluteSize,Input.TouchEnabled)
 		gui.Hint.AnchorPoint=Vector2.new(.5,1)
-		gui.Hint.Size=UDim2.fromOffset(width,if width<450 then 82 else 66)
-		gui.Hint.Position=UDim2.new(.5,0,1,-110)
+		gui.Hint.Size=UDim2.fromOffset(width,height)
+		gui.Hint.Position=UDim2.new(.5,0,1,-bottom)
+		gui.Hint.Message.TextSize=textSize
 		if modal then
 			if gui.AbsoluteSize.X>=1200 then
 				gui.Hint.AnchorPoint=Vector2.new(0,.5)
