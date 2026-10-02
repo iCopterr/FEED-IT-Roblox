@@ -12,6 +12,9 @@ function View.Build(panel)
 	rounded(panel,16);panel.ClipsDescendants=true
 	panel.Title.Size=UDim2.fromOffset(350,48)
 	panel.Pets.ScrollingDirection=Enum.ScrollingDirection.Y
+	-- ScreenGui uses sibling stacking: raise the list above PageTexture too,
+	-- not just its cards, so background art cannot cover the list's subtree.
+	panel.Pets.ZIndex=3
 	panel.Pets.AutomaticCanvasSize=Enum.AutomaticSize.Y
 	panel.Pets.ScrollBarThickness=5
 	local padding=panel.Pets:FindFirstChildOfClass("UIPadding") or Instance.new("UIPadding",panel.Pets)

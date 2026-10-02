@@ -4,6 +4,7 @@ local Shared=game.ReplicatedStorage.Shared
 local Pets=require(Shared.Config.PetConfig)
 local Variants=require(Shared.Config.VariantConfig)
 local Income=require(Shared.PetIncome)
+local Repair=require(Shared.Config.ReviveConfig)
 local Number=require(Shared.NumberFormat).Money
 local Monetization=require(Shared.Config.MonetizationConfig)
 local Motion=require(script.Parent.Parent.UI.Motion)
@@ -45,7 +46,7 @@ function Controller.Start()
 			for id,pet in snapshot.Inventory do
 				if pet.Placed then local species=Pets.Species[pet.SpeciesId]
 					table.insert(list,{Id=id,Name=Variants.Name(species and species.DisplayName or pet.SpeciesId,pet.Variant),
-						Kind="Pet",SpeciesId=pet.SpeciesId,Details="$"..Number(Income(pet)).."/s"..(if pet.Broken then " • BROKEN (50%)" else ""),Ready=true})
+						Kind="Pet",SpeciesId=pet.SpeciesId,Details="$"..Number(Income(pet)).."/s"..(if pet.Broken then " • BROKEN ("..Repair.BrokenIncomeLabel..")" else ""),Ready=true})
 				end
 			end
 		end

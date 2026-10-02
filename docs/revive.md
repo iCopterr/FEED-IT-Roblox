@@ -5,7 +5,7 @@ Failed Feed leaves the pet in inventory with `Broken=true` and a stable
 Successful Feed increases its level normally. Repeated failures retain the
 damage ID and never stack penalties or reset progress.
 
-`PetIncome` applies `ReviveConfig.BrokenIncomeMultiplier` (0.5) to the normal
+`PetIncome` applies `ReviveConfig.BrokenIncomeMultiplier` (0.1, 90% less) to the normal
 rate at the pet's current level. Only pets placed in a pen earn Money;
 stored, carried and feeding-plate pets do not bypass pen capacity. Eligible
 x2 Money applies afterwards. No expiry, offline income or automatic reset.

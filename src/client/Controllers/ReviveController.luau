@@ -17,8 +17,14 @@ function Controller.Start()
  local remote=Storage:WaitForChild("PrototypeRevive")
  local snapshot,selected=nil,nil
  local requesting,acting=false,false
+ local refreshFailed=false
  local currentTab="Broken"
  local cards={}
+ local function setPreview(entry)
+  -- A streamed/missing model must never stop the damaged-pet list refreshing.
+  local ok,err=pcall(Preview.Set,panel.PetPreview,entry)
+  if not ok then warn("[RepairStation] Preview unavailable:",err) end
+ end
  local messages={TooFar="Visit the Pet Repair Station near the merchant.",NoRevive="Get a Repair Charm from the merchant or exchange shards.",
   NotEnoughShards="You need 100 Repair Shards.",StaleRequest="Exchange refreshed. Please try again.",
   Busy="",Unavailable="This pet no longer needs repair.",
@@ -34,7 +40,7 @@ function Controller.Start()
   exchangePanel.Visible=not broken
   brokenTab.BackgroundColor3=if broken then Color3.fromRGB(70,190,110) else Color3.fromRGB(40,150,205)
   exchangeTab.BackgroundColor3=if broken then Color3.fromRGB(40,150,205) else Color3.fromRGB(70,190,110)
-  if not broken then Preview.Set(panel.PetPreview,nil) end
+  if not broken then setPreview(nil) end
   if render then render() end
  end
  render=function()
@@ -48,7 +54,7 @@ function Controller.Start()
     card.Activated:Connect(function() if not acting then selected=key;render() end end)
    end
    card.Visible=broken;card.LayoutOrder=index
-   card.Text=r.PetName.."\nBROKEN • Lv. "..r.FeedLevel.."\n50% INCOME"
+   card.Text=r.PetName.."\nBROKEN • Lv. "..r.FeedLevel.."\n"..Config.BrokenIncomeLabel
    card.BackgroundColor3=if selected==key then Color3.fromRGB(45,145,115) else Color3.fromRGB(50,65,88)
   end
   for key,card in cards do if not seen[key] then card:Destroy();cards[key]=nil end end
@@ -56,11 +62,11 @@ function Controller.Start()
   panel.Empty.Text=if snapshot then "No broken pets\nYour pets are safe!" else "Loading broken pets…"
   brokenTab.Text="BROKEN PETS • "..tostring(snapshot and #snapshot.Records or 0)
   local r=selectedRecord()
-  Preview.Set(panel.PetPreview,if panel.Visible and broken and r then {Kind="Pet",SpeciesId=r.SpeciesId} else nil)
+  setPreview(if panel.Visible and broken and r then {Kind="Pet",SpeciesId=r.SpeciesId} else nil)
   panel.PetName.Text=if r then r.PetName else "SELECT A BROKEN PET"
   panel.Details.Text=if r then string.format("%s • LEVEL %d\n$%s/s → $%s/s AFTER REPAIR",r.Rarity,r.FeedLevel,
    Compact(r.Income),Compact(r.RestoredIncome)) else ""
-  panel.Notice.Text="Can still upgrade • 50% income until repaired"
+  panel.Notice.Text="Can still upgrade • "..Config.BrokenIncomeLabel.." until repaired"
   local enabled=r~=nil and snapshot.NearMachine and snapshot.CanRevive and not snapshot.Busy and not acting
   panel.Revive.Active=enabled==true;panel.Revive.AutoButtonColor=enabled==true
   panel.Revive.BackgroundColor3=if enabled then Color3.fromRGB(70,190,110) else Color3.fromRGB(90,95,105)
@@ -82,13 +88,17 @@ function Controller.Start()
   requesting=true
   local ok,result=pcall(function() return remote:InvokeServer("Snapshot") end)
   requesting=false
-  if ok and result.Ok then
+  if ok and type(result)=="table" and result.Ok and type(result.Records)=="table" then
+   if refreshFailed then panel.Status.Text="";refreshFailed=false end
    snapshot=result
    if not result.NearMachine then panel.Visible=false end
    if selected and not selectedRecord() then selected=nil end
    if not selected and result.Records[1] then selected=result.Records[1].AttemptId end
-  elseif not ok or result.Code~="Cooldown" then
-   snapshot=nil;panel.Status.Text=if ok then messages[result.Code] or "Unable to load pets." else "Connection interrupted. Retrying…"
+  elseif not (ok and type(result)=="table" and result.Code=="Cooldown") then
+   -- Retain the last good list while retrying; a dropped reply is not an empty
+   -- inventory. Never let a nil reply terminate the polling coroutine.
+   panel.Status.Text="Unable to refresh pets. Retrying…"
+   refreshFailed=true
   end
   render()
  end
@@ -101,7 +111,8 @@ function Controller.Start()
   end
   local main=player.PlayerGui:FindFirstChild("FeedYourPetUI")
   if main then main.Inventory.Visible=false;main.FeedPanel.Visible=false end
-  panel.Status.Text="";setTab("Broken");panel.Visible=true;task.spawn(refresh);return true
+  panel.Status.Text="";panel.Pets.CanvasPosition=Vector2.zero
+  setTab("Broken");panel.Visible=true;task.spawn(refresh);return true
  end
  function Controller.Select(attemptId)
   if not acting then selected=attemptId;render() end
@@ -149,12 +160,18 @@ function Controller.Start()
  panel.Close.Activated:Connect(function() Motion.Close(panel) end)
  panel:GetPropertyChangedSignal("Visible"):Connect(function()
   player:SetAttribute("RevivePanelOpen",panel.Visible)
-  if not panel.Visible then Preview.Set(panel.PetPreview,nil) end
+  if not panel.Visible then setPreview(nil) else task.spawn(refresh) end
  end)
  local DeviceLayout=require(script.Parent.Parent.UI.DeviceLayout)
  local function resize() DeviceLayout.Apply(panel,gui.AbsoluteSize,"Revive") end
  gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize();setTab("Broken");render()
- task.spawn(function() while gui.Parent do refresh();task.wait(Config.RefreshSeconds) end end)
+ task.spawn(function()
+  while gui.Parent do
+   local ok,err=pcall(refresh)
+   if not ok then requesting=false;warn("[RepairStation] Refresh failed; retrying:",err) end
+   task.wait(Config.RefreshSeconds)
+  end
+ end)
  return gui
 end
 return Controller

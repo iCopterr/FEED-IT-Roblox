@@ -1,6 +1,7 @@
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local Config = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
+local Repair = require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
 local P = Config.Presentation
 local FeedEffects = {}
 local numberText = require(game.ReplicatedStorage.Shared.NumberFormat).Money
@@ -31,7 +32,7 @@ local function banner(gui, result)
 	local color, text
 	if result.Code == "Explosion" then
 		color = Color3.fromRGB(255,108,73)
-		text = "YOUR PET BROKE!\n50% INCOME • Keep upgrading or visit Pet Repair Station"
+		text = "YOUR PET BROKE!\n"..Repair.BrokenIncomeLabel.." • Keep upgrading or visit Pet Repair Station"
 	elseif result.Code == "MiracleSave" then
 		color = Color3.fromRGB(101,239,255)
 		text = presentation.BannerText .. "\nPet survived at the same level • Food spent"

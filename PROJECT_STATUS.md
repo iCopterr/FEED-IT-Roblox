@@ -6,7 +6,36 @@
 
 **Last Updated:** 2026-10-02
 
-### Latest session — permanent broken pets and Pet Repair Station
+### Latest session — 90% broken-income penalty and repair-list refresh hardening
+
+- Completed: broken pets now earn 10% of current normal income (90% less).
+  ReviveConfig owns both the multiplier and derived label; inventory, Feed,
+  failure popup, pen remote and repair cards all read that label. Repair still
+  restores current-level full income, with no expiry or stacked penalties.
+- Repair-list safeguards: keep the last successful list through dropped/nil
+  responses, retry polling after exceptions, isolate preview failures from list
+  rendering, refresh when opened and reset scroll on reopening. Raise the list
+  above PageTexture for the authored sibling ZIndex behavior.
+- Verified: detached real-controller tests pass empty-first-visit -> broken
+  pet -> reopen, nil/error replies, failed preview -> recovery, list stacking,
+  10% labels and portrait/landscape geometry. Real-module lifecycle and local
+  runner pass 10% placed income, x2, upgrades/rebreaks, save migration and repair.
+  All 24 commerce tests pass. Changed Luau compiles; Rojo and diff checks pass.
+- Limitation / in progress: the owner's exact missing-pet state was not
+  reproduced. Studio reports a test already in progress while only its edit
+  instance is connected; runtime inspection was unavailable and screenshot
+  capture timed out. Stop requests were sent; temporary QA screen was removed.
+  Do not claim the reported live case visually verified. No real saves changed.
+  Continuation check: MCP now reports zero connected Studio instances. Local
+  lifecycle and diff checks passed again; reconnect is required for live QA.
+- Next task: restart Play, break a pet and check Broken Pets; if still missing,
+  obtain the owner's screenshot/status (empty vs loading vs hidden cards) and
+  inspect the connected runtime profile and Snapshot reply. Asked in chat.
+- Files: ReviveConfig, five affected UI controllers, ReviveView, recovery and
+  server verification tests, repair docs, GDD and this handoff. Prior working
+  commit: 33c2625. Untracked user artwork preserved; no publishing or push.
+
+### Previous session — permanent broken pets and Pet Repair Station
 
 - Current feature / overall progress: repair redesign implemented. This owner's
   newer design supersedes the timed-revive session below and historical GDD

@@ -4,6 +4,7 @@ local Input=game:GetService("UserInputService")
 local StarterGui=game:GetService("StarterGui")
 local GuiService=game:GetService("GuiService")
 local Config=require(ReplicatedStorage.Shared.Config.InventoryConfig)
+local Repair=require(ReplicatedStorage.Shared.Config.ReviveConfig)
 local Model=require(script.Parent.Parent.UI.InventoryModel)
 local Preview=require(script.Parent.Parent.UI.ItemPreview)
 local Responsive=require(script.Parent.Parent.UI.InventoryLayout)
@@ -131,8 +132,8 @@ function Controller.Start(gui,onSnapshot)
 				elseif state=="READY" then "Press E beside your egg to hatch."
 				else "Hold, then click inside your Pen.")
 		if entry.Broken then
-			detail.Stats.Text=string.format("%s • LEVEL %s\n%s / sec • 50%% INCOME\nBROKEN • Can still upgrade\nRepair at the Pet Repair Station",entry.Rarity,
-				numberText(entry.Level),moneyText(entry.Income))
+			detail.Stats.Text=string.format("%s • LEVEL %s\n%s / sec • %s\nBROKEN • Can still upgrade\nRepair at the Pet Repair Station",entry.Rarity,
+				numberText(entry.Level),moneyText(entry.Income),Repair.BrokenIncomeLabel)
 		end
 		detail.Equip.ButtonText.Text=if Model.SlotOf(slots,entry.Key) then "REMOVE FROM HOTBAR" else "ADD TO HOTBAR"
 		detail.Lock.ButtonText.Text=if entry.Locked then "UNLOCK" else "LOCK"

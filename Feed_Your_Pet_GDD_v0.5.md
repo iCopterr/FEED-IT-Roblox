@@ -1085,7 +1085,8 @@ When a pet explodes **and the 5% Miracle Save fails**, the player may receive an
 The **Pet Repair Station** replaces the Revive Machine. Failed Feed marks the
 same inventory pet BROKEN without resetting Feed level. Broken pets remain
 equippable, placeable and feedable, and successful Feed still upgrades them.
-Their income is always 50% of their current level's normal rate until repaired;
+Their income is always 10% of their current level's normal rate until repaired
+(90% less, latest owner balance update);
 repeat failures do not stack the penalty. As with healthy pets, income requires
 normal placement in the pen. No expiry timer, automatic reset or offline income.
 One Repair Charm or the existing direct paid repair clears damage in place,
