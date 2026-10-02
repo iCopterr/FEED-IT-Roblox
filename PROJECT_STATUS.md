@@ -6,6 +6,32 @@
 
 **Last Updated:** 2026-10-02
 
+### Latest session — native income leaderboard and pending merchant stock
+
+- Completed: Roblox built-in current-server leaderboard now has a numeric
+  Money/s primary stat. Server LeaderboardService refreshes every second and on
+  join using MoneyService.GetBaseRate. Placed pet levels, variants and broken
+  10% rate count; x2 monetization does not. Real payouts still use GetRate and
+  eligible x2 normally. No global datastore, custom UI or save migration added.
+- Merchant fix: purchaseCount now counts fulfilled purchases only. Snapshot
+  reports Reserved separately, keeping stock count, prices and normal colors
+  unchanged while Robux checkout is open. Both buy controls and queued clicks
+  respect reservations; server Money purchases also reject PurchasePending.
+  Cancellation releases availability; paid receipt consumes shared stock.
+- Verification: new detached production-source tests pass native leaderstats
+  creation/primary numeric column, idempotent startup, no x2 rank bonus, actual
+  x2 payouts, damage/repair/upgrades/removal/loading/plot availability; merchant
+  reservation/cancel/fulfillment/rotation plus real client render and click
+  guards. Broken-pet regression passes. Changed Luau compiles; Rojo build and
+  diff checks pass. No real purchases or live saves modified.
+- Files: LeaderboardService, MoneyService/MoneyConfig, server startup,
+  MerchantService/Controller; test-income-merchant and local test runner;
+  broken-pet regression, GDD, merchant docs and this handoff.
+- In progress: none in implementation. Next: reconnect Studio and verify the
+  native player list and real prompt visually in a fresh Play session. Port 58741
+  refused connection and 58742 timed out, so live visual QA remains unverified.
+  Previous commit 327c662; owner artwork remains untouched; no publish/push.
+
 ### Connection follow-up — direct MCP works despite empty registry
 
 - Owner screenshot correctly showed connected localhost:58741. Although

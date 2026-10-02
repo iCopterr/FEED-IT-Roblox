@@ -89,7 +89,9 @@ assert(Money.GetRate(player)==expected,"Broken income must equal 10% of the pre-
 local previous=profile.Money
 local paid=Money.Tick(player)
 assert(paid==expected*fresh(shared.Config.MoneyConfig).TickSeconds and profile.Money==previous+paid)
-multiplier=2;assert(Money.GetRate(player)==expected*2);multiplier=1
+multiplier=2;assert(Money.GetRate(player)==expected*2)
+assert(Money.GetBaseRate(player)==expected,"Leaderboard/base income includes x2 pass")
+multiplier=1
 local snap=Revive.HandleRequest(player,"Snapshot")
 assert(snap.Ok and #snap.Records==1 and snap.Records[1].Income==expected and snap.Records[1].RestoredIncome==expected/Config.BrokenIncomeMultiplier)
 local inventory=UI.HandleRequest(player,"Snapshot")

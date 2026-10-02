@@ -6,6 +6,13 @@ each player can buy one serving at a time, at most five servings per restock. Tw
 distinct special offers can each be purchased once per player per restock.
 Every purchase grants exactly one food or one charm. Existing owned food is not reduced.
 
+Robux checkout reserves the selected offer without consuming displayed stock.
+Snapshots keep `Remaining`/`Purchased` based on fulfilled purchases and expose
+`Reserved` separately. While checkout is pending, the row retains its stock,
+prices and colors but both purchase buttons are non-interactive. The server
+also rejects Money purchases of that reservation. Cancellation unlocks it;
+only receipt fulfillment changes it to SOLD OUT. No extra stock is granted.
+
 The 39-Robux **Refill Stock** restores the exact three offers currently shown,
 clears their personal purchase limits, and starts a fresh five-minute personal
 window. It does not reroll the selection. The source selection, personal expiry,

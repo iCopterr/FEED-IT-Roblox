@@ -43,7 +43,7 @@ function Controller.Start()
 	local processing=false
 	local messages={TutorialBuyEgg="Buy your first Basic Egg before buying food.",TooFar="Move closer to the Mystery Merchant.",NotEnoughMoney="You need more Money.",
 		Sold="This food is sold out for you. Wait for restock.",
-		Restocked="",Busy="",StaleRequest="",Loading="",Cooldown=""}
+		Restocked="",Busy="",PurchasePending="",StaleRequest="",Loading="",Cooldown=""}
 	local function render()
 		local policyStatus=player:GetAttribute("PaidRandomPolicyStatus")
 		local remaining=state and state.RestocksAt-(state.ServerNow+os.clock()-receivedAt) or 0
@@ -72,7 +72,8 @@ function Controller.Start()
 				button.Art.Emoji.Text=definition.Icon
 				Art.Set(button.Art.Picture,button.Art.Emoji,Images[item.ItemId] or Images.empty)
 				button.Active=false;button.AutoButtonColor=false
-				button.BuyMoney.Active=not item.Purchased
+				button.BuyMoney.Active=not item.Purchased and not item.Reserved
+				button.BuyMoney.Interactable=button.BuyMoney.Active
 				button.BuyMoney.ButtonText.Text=if item.Purchased then "SOLD OUT" else "$"..NumberFormat.Money(item.Price)
 				button.BuyMoney.ImageColor3=if item.Purchased then Color3.fromRGB(100,100,108) else Color3.fromRGB(78,227,51)
 				button.BuyMoney.BackgroundColor3=button.BuyMoney.ImageColor3
@@ -89,7 +90,7 @@ function Controller.Start()
 			local product=item and Monetization.FoodProducts[item.ItemId]
 			local needsPolicy=item and item.ItemId~="revive"
 			local policyAllowed=not needsPolicy or policyStatus=="Allowed"
-			local robuxEnabled=product~=nil and not item.Purchased and policyAllowed
+			local robuxEnabled=product~=nil and not item.Purchased and not item.Reserved and policyAllowed
 			button.BuyRobux.Active=robuxEnabled
 			button.BuyRobux.Interactable=robuxEnabled
 			button.BuyRobux.AutoButtonColor=robuxEnabled
@@ -98,8 +99,9 @@ function Controller.Start()
 				elseif not policyAllowed then (if policyStatus=="Loading" or policyStatus==nil then "CHECKING…" else "UNAVAILABLE")
 				else product.Robux.." ROBUX"
 			local style=robuxStyles[i]
-			button.BuyRobux.ImageColor3=if robuxEnabled then style.Image else Color3.fromRGB(100,100,108)
-			button.BuyRobux.BackgroundColor3=if robuxEnabled then style.Background else Color3.fromRGB(100,100,108)
+			local availableStyle=product~=nil and not item.Purchased and policyAllowed
+			button.BuyRobux.ImageColor3=if availableStyle then style.Image else Color3.fromRGB(100,100,108)
+			button.BuyRobux.BackgroundColor3=if availableStyle then style.Background else Color3.fromRGB(100,100,108)
 		end
 	end
 	player:GetAttributeChangedSignal("PaidRandomPolicyStatus"):Connect(render)
@@ -125,7 +127,7 @@ function Controller.Start()
 			if not current or current.Busy then refresh();task.wait(.3);continue end
 			local item
 			for _,offer in current.Items do if offer.Slot==request.Slot then item=offer;break end end
-			if current.RestockId~=request.RestockId or not item or item.ItemId~=request.ItemId or item.Purchased then
+			if current.RestockId~=request.RestockId or not item or item.ItemId~=request.ItemId or item.Purchased or item.Reserved then
 				table.remove(pending,1);continue
 			end
 			busy=true
@@ -165,13 +167,13 @@ function Controller.Start()
 		panel.Offers["Slot"..i].BuyRobux.Activated:Connect(function()
 			local item=displayed[i]
 			local policyAllowed=item and (item.ItemId=="revive" or player:GetAttribute("PaidRandomPolicyStatus")=="Allowed")
-			if state and item and policyAllowed and not item.Purchased and Monetization.FoodProducts[item.ItemId] then
+			if state and item and policyAllowed and not item.Purchased and not item.Reserved and Monetization.FoodProducts[item.ItemId] then
 				Purchases.Request("Food",item.Slot,state.RestockId)
 			end
 		end)
 		panel.Offers["Slot"..i].BuyMoney.Activated:Connect(function()
 			local current=state;local item=displayed[i]
-			if not current or not item or item.Purchased or not panel.Visible or #pending>=20 then return end
+			if not current or not item or item.Purchased or item.Reserved or not panel.Visible or #pending>=20 then return end
 			local count=0
 			for _,request in pending do if request.Slot==item.Slot then count+=1 end end
 			if count>=item.Remaining then return end

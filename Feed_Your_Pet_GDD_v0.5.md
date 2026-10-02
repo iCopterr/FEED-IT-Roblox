@@ -1355,6 +1355,12 @@ Trade.
 
 # 32. Leaderboards
 
+**Owner update (2026-10-02):** Use Roblox's built-in current-server player list
+with a numeric **Money/s** stat. Rank the sum of currently placed pets' income,
+including Feed/Variant/broken modifiers but excluding the x2 Money pass.
+Refresh every second. This is not a global or historical-best leaderboard.
+Actual payouts still apply eligible x2 Money normally.
+
 Primary prestige leaderboard:
 
 ## Highest Feed

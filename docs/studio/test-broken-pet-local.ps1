@@ -1,4 +1,5 @@
-param([string]$Luau = "$env:TEMP\FeedCriticalLuauTools\luau.exe")
+param([string]$Luau = "$env:TEMP\FeedCriticalLuauTools\luau.exe",
+ [string]$TestPath = 'docs/studio/test-broken-pet-recovery.luau')
 $ErrorActionPreference='Stop'
 # Bundle production modules into the same detached-profile integration test.
 # UI rendering still requires Studio; only engine values/services are stubbed.
@@ -32,9 +33,9 @@ foreach($mapping in @(@('src/shared/Config','shared.Config'),@('src/shared','sha
   [void]$builder.Append("`n$($mapping[1]).$key=node('$key',$($mapping[1]));$($mapping[1]).$key.Source=[==========[$source]==========]`n")
  }
 }
-$test=[IO.File]::ReadAllText((Resolve-Path 'docs/studio/test-broken-pet-recovery.luau'))
+$test=[IO.File]::ReadAllText((Resolve-Path $TestPath))
 [void]$builder.Append("`nlocal test=assert(loadstring([==========[$test]==========]));setfenv(test,setmetatable({RECOVERY_HEADLESS=true,game=game,workspace=workspace,Random=Random,Color3=Color3,CFrame=CFrame,Enum=Enum},{__index=getfenv()}));test()`n")
 $output=Join-Path (Resolve-Path build) 'broken-pet-local.luau'
 [IO.File]::WriteAllText($output,$builder.ToString(),[Text.UTF8Encoding]::new($false))
 & $Luau $output
-if($LASTEXITCODE -ne 0) {throw 'Broken pet integration test failed'}
+if($LASTEXITCODE -ne 0) {throw "Integration test failed: $TestPath"}

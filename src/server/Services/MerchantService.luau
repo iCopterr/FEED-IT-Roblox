@@ -9,7 +9,6 @@ local Service={}
 local sessions,saving={},{}
 
 local function purchaseCount(data,restockId,slot,item)
-	if Commerce.Reserved(data,restockId,slot) then return item.StockLimit end
 	if data.MerchantRestockId~=restockId then return 0 end
 	local key=tostring(slot)
 	if item.StockLimit==1 then return if data.MerchantPurchases[key] then 1 else 0 end
@@ -52,7 +51,8 @@ local function snapshot(player,state)
 		local purchased=purchaseCount(data,restockId,slot,item)
 		table.insert(items,{Slot=slot,ItemId=id,Name=item.DisplayName,Description=item.Description,Price=item.Price,
 			Amount=item.Amount,RewardType=item.RewardType,Owned=if item.RewardType=="Revive" then data.ReviveCharges else FoodConfig.Count(data,id),
-			Purchased=purchased>=item.StockLimit,Remaining=item.StockLimit-purchased,StockLimit=item.StockLimit})
+			Purchased=purchased>=item.StockLimit,Remaining=item.StockLimit-purchased,StockLimit=item.StockLimit,
+			Reserved=Commerce.Reserved(data,restockId,slot)})
 	end
 	return {Ok=true,Money=data.Money,RestockId=restockId,
 		RestocksAt=restocksAt,ServerNow=now,Items=items,NextSequence=state.Sequence+1,
@@ -90,6 +90,8 @@ function Service.HandleRequest(player,action,slot,expectedRestock,sequence)
 	if not item then return {Ok=false,Code="Unavailable"} end
 	local purchased=purchaseCount(data,current,slot,item)
 	if purchased>=item.StockLimit then return {Ok=false,Code="Sold"} end
+	-- An open Robux prompt reserves stock, but only its receipt consumes it.
+	if Commerce.Reserved(data,current,slot) then return {Ok=false,Code="PurchasePending"} end
 	if data.Money<item.Price then return {Ok=false,Code="NotEnoughMoney"} end
 	local oldMoney,oldFood,oldFoods=data.Money,data.Food,table.clone(data.Foods)
 	local oldRevives=data.ReviveCharges

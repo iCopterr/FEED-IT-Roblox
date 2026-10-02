@@ -14,7 +14,7 @@ function MoneyService.GetPetRate(pet)
 	return PetIncome(pet)
 end
 
-function MoneyService.GetRate(player)
+function MoneyService.GetBaseRate(player)
 	local data = DataService.GetData(player)
 	if player.Parent ~= Players or not data or not PlotService.GetPlot(player) or not Schema.Validate(data) then return 0 end
 	local rate = 0
@@ -22,7 +22,11 @@ function MoneyService.GetRate(player)
 		local pet = data.Inventory[id]
 		if pet and pet.Placed then rate += MoneyService.GetPetRate(pet) end
 	end
-	rate *= Monetization.Multiplier(player)
+	return if rate < math.huge then rate else 0
+end
+
+function MoneyService.GetRate(player)
+	local rate = MoneyService.GetBaseRate(player) * Monetization.Multiplier(player)
 	return if rate < math.huge then rate else 0
 end
 
