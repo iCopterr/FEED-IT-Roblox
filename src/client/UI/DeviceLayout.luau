@@ -56,6 +56,26 @@ function Layout.MoneyScale(viewport, touchEnabled)
 	if Layout.CompactLandscape(viewport, touchEnabled) then return .62 end
 	return if viewport.X < 760 then .68 else math.min(1, viewport.Y/650)
 end
+function Layout.BoostBadge(viewport, touchEnabled, jump)
+	local scale = if touchEnabled then .8 else 1
+	local width, height = 86*scale, 78*scale
+	local right, bottom = 18, 14
+	if touchEnabled then
+		-- Before TouchGui arrives, reserve its usual corner. When it arrives,
+		-- use the actual jump bounds (including device/control size changes).
+		right = 144
+		if jump then
+			right = 18
+			local left, top = viewport.X-right-width, viewport.Y-bottom-height
+			if left < jump.X+jump.Width+10 and viewport.X-right > jump.X-10
+				and top < jump.Y+jump.Height+10 and viewport.Y-bottom > jump.Y-10 then
+				right = viewport.X-jump.X+10
+			end
+		end
+	end
+	right = math.clamp(right, 12, math.max(12, viewport.X-width-12))
+	return scale, right, bottom
+end
 function Layout.TutorialHint(viewport, touchEnabled)
 	if Layout.CompactLandscape(viewport, touchEnabled) then
 		return math.min(460, viewport.X*.45), 58, 74, 17

@@ -6,6 +6,28 @@
 
 **Last Updated:** 2026-10-02
 
+### Latest session — active x2 Money HUD badge
+
+- Completed: small transparent bottom-right BoostUI badge uses existing x2
+  Money art, Fredoka One and purple stroke. Hidden in the authored asset and
+  until DoubleMoneyOwned=true plus PaidRandomPolicyStatus=Allowed, matching
+  current payout eligibility. Responds to both attributes, including purchases
+  during a session. No extra purchase button or gameplay multiplier added.
+- Responsive: desktop bottom-right anchor; smaller touch version uses actual
+  JumpButton bounds when available, with a fallback corner reserve before the
+  touch controls load. Safe-area ScreenGui survives respawn. Controller startup
+  is idempotent and subscriptions disconnect when the GUI is destroyed.
+- Files: BoostController, authored BoostUI, client startup, DeviceLayout,
+  default.project.json, boost regression and this handoff.
+- Verified: real controller headless tests pass hidden/active ownership and
+  policy transitions, repeated startup, cleanup, desktop positioning and four
+  phone viewport sizes with jump clearance. XML parses and starts hidden;
+  changed Luau compiles, Rojo build and diff checks pass.
+- In progress: none. Next: visually check the badge on a pass-owning player in
+  fresh Play. Direct port 58741 refused connection, so live rendering remains
+  unverified. No real purchase/save changes. Previous commit 2ae614c. Owner
+  artwork preserved, no publishing/push.
+
 ### Latest session — native income leaderboard and pending merchant stock
 
 - Completed: Roblox built-in current-server leaderboard now has a numeric

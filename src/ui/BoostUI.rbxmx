@@ -1,0 +1,53 @@
+<roblox version="4">
+  <Item class="ScreenGui" referent="BoostUI">
+    <Properties>
+      <string name="Name">BoostUI</string>
+      <bool name="Enabled">true</bool>
+      <bool name="ResetOnSpawn">false</bool>
+      <bool name="ClipToDeviceSafeArea">true</bool>
+      <token name="ScreenInsets">2</token>
+      <token name="ZIndexBehavior">1</token>
+      <int name="DisplayOrder">5</int>
+    </Properties>
+    <Item class="Frame" referent="MoneyBoost">
+      <Properties>
+        <string name="Name">MoneyBoost</string>
+        <bool name="Visible">false</bool>
+        <bool name="Active">false</bool>
+        <float name="BackgroundTransparency">1</float>
+        <int name="BorderSizePixel">0</int>
+        <Vector2 name="AnchorPoint"><X>1</X><Y>1</Y></Vector2>
+        <UDim2 name="Position"><XS>1</XS><XO>-18</XO><YS>1</YS><YO>-14</YO></UDim2>
+        <UDim2 name="Size"><XS>0</XS><XO>86</XO><YS>0</YS><YO>78</YO></UDim2>
+      </Properties>
+      <Item class="UIScale" referent="BoostScale"><Properties><string name="Name">UIScale</string><float name="Scale">1</float></Properties></Item>
+      <Item class="ImageLabel" referent="BoostIcon">
+        <Properties>
+          <string name="Name">Icon</string>
+          <float name="BackgroundTransparency">1</float>
+          <int name="BorderSizePixel">0</int>
+          <UDim2 name="Position"><XS>0</XS><XO>10</XO><YS>0</YS><YO>0</YO></UDim2>
+          <UDim2 name="Size"><XS>0</XS><XO>66</XO><YS>0</YS><YO>56</YO></UDim2>
+          <Content name="Image"><url>rbxassetid://95919368095777</url></Content>
+          <token name="ScaleType">3</token>
+        </Properties>
+      </Item>
+      <Item class="TextLabel" referent="BoostLabel">
+        <Properties>
+          <string name="Name">Label</string>
+          <float name="BackgroundTransparency">1</float>
+          <int name="BorderSizePixel">0</int>
+          <UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>56</YO></UDim2>
+          <UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>0</YS><YO>22</YO></UDim2>
+          <Font name="FontFace"><Family><url>rbxasset://fonts/families/FredokaOne.json</url></Family><Weight>400</Weight><Style>Normal</Style></Font>
+          <string name="Text">X2 MONEY</string>
+          <float name="TextSize">17</float>
+          <Color3 name="TextColor3"><R>1</R><G>0.94</G><B>0.45</B></Color3>
+        </Properties>
+        <Item class="UIStroke" referent="BoostStroke">
+          <Properties><string name="Name">UIStroke</string><float name="Thickness">3</float><Color3 name="Color"><R>0.19</R><G>0.045</G><B>0.26</B></Color3></Properties>
+        </Item>
+      </Item>
+    </Item>
+  </Item>
+</roblox>
