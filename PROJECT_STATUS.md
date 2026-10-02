@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-10-02
 
+### Connection follow-up — direct MCP works despite empty registry
+
+- Owner screenshot correctly showed connected localhost:58741. Although
+  get_connected_instances still returned zero, direct HTTP tools/call to
+  get_place_info and execute_luau succeeded. Do not equate an empty registry
+  with disconnected Studio: probe a read-only tool directly as fallback.
+- Confirmed place 127663486570625, schema13 and synced broken multiplier0.1.
+  StudioTestService.EditModeActive was true. Requested the existing memory-only
+  two-client ReviveVerification via ExecuteMultiplayerTestAsync; no completion
+  result received. Afterwards port58741 actively refused connections. Runtime
+  missing-pet case remains unverified; no gameplay code or player saves changed.
+- Next: restore direct MCP access, inspect test completion/output before starting
+  another test, then inspect the owner's actual missing-pet UI/profile. Latest
+  gameplay commit remains 8ef4c28. This follow-up only corrects connection handoff.
+
 ### Latest session — 90% broken-income penalty and repair-list refresh hardening
 
 - Completed: broken pets now earn 10% of current normal income (90% less).
