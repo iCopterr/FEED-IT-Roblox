@@ -27,6 +27,12 @@
   fresh Play. Direct port 58741 refused connection, so live rendering remains
   unverified. No real purchase/save changes. Previous commit 2ae614c. Owner
   artwork preserved, no publishing/push.
+- Owner reports badge invisible in Play. Read-only follow-up confirmed the
+  running Rojo server at34872 includes BoostUI, MoneyBoost and BoostController
+  in its live /api/read snapshot. This verifies server-side sync content, not
+  receipt by the Studio client. MCP58741 refuses connections;58742 times out.
+  Need live PlayerGui.BoostUI plus DoubleMoneyOwned/PaidRandomPolicyStatus or
+  confirmation that Shop shows the pass Owned; no root cause established yet.
 
 ### Latest session — native income leaderboard and pending merchant stock
 
