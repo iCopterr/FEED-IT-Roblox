@@ -14,10 +14,12 @@ authored UI. No new screens, assets, fonts, colors or economy changes.
   12px outer margin. Portrait overrides are restored on rotation back. Later
   desktop panel-size edits are read, not replaced by hard-coded dimensions.
 - Touch devices in phone landscape mode (inset-aware height at or below 720, or
-  a phone-wide aspect ratio of at least 1.8) use a dedicated compact HUD. Travel is capped at 62% scale; Shop,
-  Index, Inventory, Settings and the Egg/Pet dock share 44–45px square targets;
-  Money is reduced to 62%; the tutorial hint is narrower with 17px text. Desktop
-  windows with the same aspect ratio are unchanged because touch input is required.
+  a phone-wide aspect ratio of at least 1.8) use a dedicated compact HUD. Travel,
+  Settings and the Egg/Pet dock use 62% scale with 44–45px secondary square
+  targets. Shop, Index and Inventory use 93% scale—exactly 50% larger—with about
+  67px square primary targets. Money uses 62%; the tutorial hint is narrower with
+  17px text. Desktop windows with the same aspect ratio are unchanged because
+  touch input is required.
 - Merchant/Debug share fitting; Pen remote gets a larger fitted panel on small
   screens. Shop/Index/Inventory/Settings launchers share scale rules. Existing
   notification/tutorial fitting and world-based hatch reveal remain unchanged.

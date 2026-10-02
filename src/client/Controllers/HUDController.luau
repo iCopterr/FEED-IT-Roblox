@@ -63,7 +63,7 @@ function Controller.Start()
 		hud.Money.UIScale.Scale=scale
 		hud.Travel.UIScale.Scale=DeviceLayout.TravelScale(size,Input.TouchEnabled)
 		-- Match the Index stack's responsive spacing.
-		local launcherScale=DeviceLayout.LauncherScale(size,Input.TouchEnabled)
+		local launcherScale=DeviceLayout.LeftLauncherScale(size,Input.TouchEnabled)
 		hud.OpenInventory.UIScale.Scale=launcherScale
 		hud.OpenInventory.Position=UDim2.new(0,18+84*launcherScale,.5,0)
 	end

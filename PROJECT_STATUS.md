@@ -6,6 +6,29 @@
 
 **Last Updated:** 2026-10-02
 
+### Latest session — larger primary mobile buttons and restored pet animation
+
+- Owner follow-up: Shop, Index and Inventory are now exactly 50% larger than the
+  compact landscape-phone controls (scale 0.62 -> 0.93, about 67x67 for square
+  launchers). Settings and the Egg/Pet dock remain at 0.62; travel, Money and the
+  tutorial sizing from the prior phone fix remain unchanged. Desktop, portrait
+  and 4:3 tablet paths are unchanged.
+- Diagnosed missing placed-pet animation as a runtime replication-order gap, not
+  missing rigs/config. The client previously attempted binding once; a streamed
+  Model arriving before SpeciesId, PrimaryPart or all descendants could remain
+  permanently static. PetAnimationController now queues/retries incomplete
+  models, listens to the replicated PetVisual tag, rebinds streamed rig additions
+  and exposes local pending/active attributes for diagnosis. Server wandering and
+  authoritative pet position remain unchanged.
+- Verification: all 36 authored rigs still pass idle/walk/reset; the actual
+  controller passes all 36 plus incomplete-at-start and post-start tagged replica
+  cases, packeted movement, blend/idle, distance culling, resume and cleanup.
+  The updated 1368x630 phone geometry test passes exact 0.93 primary and 0.62
+  secondary scales. Next: fresh physical-phone session to visually approve the
+  larger buttons and actual streamed pet motion.
+- Files: DeviceLayout; HUD, Index, Shop and PetAnimation controllers; mobile and
+  animation controller regressions; responsive/placement docs; this handoff.
+
 ### Latest session — compact phone-landscape HUD
 
 - Fixed the oversized phone-landscape HUD shown by the owner. The cause was

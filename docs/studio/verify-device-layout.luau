@@ -20,12 +20,14 @@ local ok,err=xpcall(function()
 	assert(not Layout.CompactLandscape(Vector2.new(2048,1536),true),"Touch tablet incorrectly treated as phone")
 	assert(not Layout.CompactLandscape(phoneLandscape,false),"Desktop incorrectly treated as phone")
 	assert(Layout.LauncherScale(phoneLandscape,true)==.62,"Phone launcher is not compact")
+	assert(Layout.LeftLauncherScale(phoneLandscape,true)==.93,"Primary phone launchers are not 50% larger")
 	assert(Layout.TravelScale(phoneLandscape,true)==.62,"Phone travel bar is not compact")
 	assert(Layout.MoneyScale(phoneLandscape,true)==.62,"Phone money display is not compact")
 	local hintWidth,hintHeight,hintBottom,hintText=Layout.TutorialHint(phoneLandscape,true)
 	assert(hintWidth<=460 and hintHeight==58 and hintBottom==74 and hintText==17,"Phone tutorial hint is not compact")
 	assert(520*Layout.TravelScale(phoneLandscape,true)<=323,"Phone travel bar remains oversized")
-	assert(72*Layout.LauncherScale(phoneLandscape,true)>=44,"Phone launcher touch target is too small")
+	assert(72*Layout.LauncherScale(phoneLandscape,true)>=44,"Secondary phone launcher touch target is too small")
+	assert(72*Layout.LeftLauncherScale(phoneLandscape,true)>=66,"Primary phone launcher touch target is too small")
 	for _,case in cases do
 		local gui=assert(game.StarterGui:FindFirstChild(case[1]),case[1]):Clone();gui.Parent=folder
 		local panel=gui[case[2]]

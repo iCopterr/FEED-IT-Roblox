@@ -79,7 +79,7 @@ function Controller.Start()
 	local function resize()
 		local size=gui.AbsoluteSize
 		DeviceLayout.Apply(panel,size,"Shop")
-		local scale=DeviceLayout.LauncherScale(size,Input.TouchEnabled)
+		local scale=DeviceLayout.LeftLauncherScale(size,Input.TouchEnabled)
 		gui.Open.UIScale.Scale=scale
 		gui.Open.Position=UDim2.new(0,18,.5,-76*scale)
 	end

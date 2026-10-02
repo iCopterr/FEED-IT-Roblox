@@ -61,7 +61,10 @@ WanderingService chooses nearby destinations, walks at 3 studs/sec and pauses
 2–4 seconds. WanderingConfig centralizes presentation values. Destinations use
 Pen-floor local coordinates and a rotation-safe inset based on the grown model
 size. Near-edge placements walk inward before turning. Pets can overlap; this
-prototype does not add pathfinding, pet collision avoidance or rig animations.
+prototype does not add pathfinding or pet collision avoidance. Placed pets use
+client-side procedural idle/walk rig motion. The animation controller retries
+models whose replicated SpeciesId, PrimaryPart or rig arrives late, listens for
+the replicated `PetVisual` tag, and rebinds if streamed rig descendants appear.
 The saved PenPosition remains the original click, not every wandering step.
 Reconciliation does not reset a healthy moving model; reload/visual repair starts
 at the saved anchor. Pickup checks the current server model position and pauses

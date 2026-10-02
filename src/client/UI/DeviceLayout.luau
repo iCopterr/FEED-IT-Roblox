@@ -26,6 +26,12 @@ function Layout.LauncherScale(viewport, touchEnabled)
 	if Layout.CompactLandscape(viewport, touchEnabled) then return .62 end
 	return math.min(1, math.max(.68, math.min(viewport.X/760,viewport.Y/650)))
 end
+function Layout.LeftLauncherScale(viewport, touchEnabled)
+	-- Shop, Index and Inventory are the primary collection actions. Keep them
+	-- 50% larger than the secondary right-side buttons on landscape phones.
+	if Layout.CompactLandscape(viewport, touchEnabled) then return .93 end
+	return Layout.LauncherScale(viewport, touchEnabled)
+end
 function Layout.TravelScale(viewport, touchEnabled)
 	local fit = math.min(1, (viewport.X-24)/540)
 	return if Layout.CompactLandscape(viewport, touchEnabled) then math.min(.62, fit) else fit
