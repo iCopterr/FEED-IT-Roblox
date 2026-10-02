@@ -6,6 +6,26 @@
 
 **Last Updated:** 2026-10-02
 
+### Latest session — refined landscape-phone HUD spacing
+
+- Refined the owner's updated physical-phone layout without changing authored
+  images or any desktop/tablet path. Shop now has at least 20px clearance above
+  the Index/Inventory row; Index and Inventory have roughly 19px visible
+  separation instead of touching. Their 0.93 scale remains unchanged.
+- Settings is now independently reduced from 0.62 to 0.48 (about 35px square).
+  Settings and the Egg/Pet remote dock move approximately 38 logical pixels
+  closer to the right edge while still retaining part of the inset-safe margin.
+- Centralized these values in DeviceLayout so the controllers do not carry
+  separate phone magic numbers. No Roblox UI Director or Studio-authored UI
+  rewrite was used.
+- Verification: all five changed Luau sources compile in connected Studio; the
+  dedicated 1368x630 touch-landscape geometry regression passes exact sizes,
+  gaps and offsets; Rojo build and `git diff --check` pass. Next: open a fresh
+  physical-phone session and visually approve safe-area placement.
+- Files: DeviceLayout; HUD, Shop, Settings and PenManager controllers; mobile
+  layout regressions; responsive UI docs; this handoff. Existing untracked image
+  assets remain preserved.
+
 ### Latest session — larger primary mobile buttons and restored pet animation
 
 - Owner follow-up: Shop, Index and Inventory are now exactly 50% larger than the

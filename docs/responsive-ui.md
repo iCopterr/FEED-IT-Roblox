@@ -14,12 +14,15 @@ authored UI. No new screens, assets, fonts, colors or economy changes.
   12px outer margin. Portrait overrides are restored on rotation back. Later
   desktop panel-size edits are read, not replaced by hard-coded dimensions.
 - Touch devices in phone landscape mode (inset-aware height at or below 720, or
-  a phone-wide aspect ratio of at least 1.8) use a dedicated compact HUD. Travel,
-  Settings and the Egg/Pet dock use 62% scale with 44–45px secondary square
-  targets. Shop, Index and Inventory use 93% scale—exactly 50% larger—with about
-  67px square primary targets. Money uses 62%; the tutorial hint is narrower with
-  17px text. Desktop windows with the same aspect ratio are unchanged because
-  touch input is required.
+  a phone-wide aspect ratio of at least 1.8) use a dedicated compact HUD. Travel
+  and the Egg/Pet dock use 62% scale; Settings uses a smaller 48% scale. Shop,
+  Index and Inventory use 93% scale—exactly 50% larger than the secondary dock—
+  with about 67px square primary targets. The two lower primary buttons have a
+  roughly 19px visible gap, Shop has at least 20px clearance above them, and the
+  right-side controls enter only part of the safe-area margin so they sit closer
+  to the physical edge without touching it. Money uses 62%; the tutorial hint is
+  narrower with 17px text. Desktop windows with the same aspect ratio are
+  unchanged because touch input is required.
 - Merchant/Debug share fitting; Pen remote gets a larger fitted panel on small
   screens. Shop/Index/Inventory/Settings launchers share scale rules. Existing
   notification/tutorial fitting and world-based hatch reveal remain unchanged.
@@ -32,8 +35,9 @@ Studio instances at 320x568, 390x844, 600x900, 844x390, 1024x768, 1920x1080 and
 `test-authored-inventory-layout.ps1` covers 15 viewport/hotbar combinations and
 preservation of desktop edits; Starter Pack and shine regression tests also pass.
 `docs/studio/test-mobile-landscape-hud.luau` checks a 1368x630 touch viewport
-against the authored HUD sizes, including touch-target minimums and caps for the
-travel, Shop, right-side, Money and tutorial elements.
+against the authored HUD sizes, including exact primary/secondary/Settings
+scales, launcher gaps and offsets, plus caps for the travel, right-side, Money
+and tutorial elements.
 
 Studio edit-mode portrait previews of the seven adapted menus were inspected
 using temporary 390x700 frames (shown at .72 scale). Preview overlays were removed.

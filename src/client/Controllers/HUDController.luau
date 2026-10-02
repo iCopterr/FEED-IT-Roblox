@@ -75,7 +75,8 @@ function Controller.Start()
 		local function align()
 			local size=index.AbsoluteSize
 			local top=index.AbsolutePosition-hud.AbsolutePosition
-			hud.OpenInventory.Position=UDim2.fromOffset(top.X+size.X+12*index.UIScale.Scale,top.Y+size.Y*hud.OpenInventory.AnchorPoint.Y)
+			local gap=DeviceLayout.LeftLauncherGap(gui.AbsoluteSize,Input.TouchEnabled)
+			hud.OpenInventory.Position=UDim2.fromOffset(top.X+size.X+gap*index.UIScale.Scale,top.Y+size.Y*hud.OpenInventory.AnchorPoint.Y)
 		end
 		index:GetPropertyChangedSignal("AbsolutePosition"):Connect(align)
 		index:GetPropertyChangedSignal("AbsoluteSize"):Connect(align)

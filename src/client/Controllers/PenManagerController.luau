@@ -163,8 +163,9 @@ function Controller.Start()
 		panel.UIScale.Scale=scale
 		panel.Position=UDim2.new(1,-16,.5,-220*scale)
 		local dockScale=layout.LauncherScale(size,Input.TouchEnabled)
+		local right=layout.RightLauncherOffset(size,Input.TouchEnabled)
 		gui.Dock.UIScale.Scale=dockScale
-		gui.Dock.Position=UDim2.new(1,-18,.5,-86*dockScale)
+		gui.Dock.Position=UDim2.new(1,right,.5,-86*dockScale)
 	end
 	panel:GetPropertyChangedSignal("Visible"):Connect(function() gui.Dock.Visible=not panel.Visible end)
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()

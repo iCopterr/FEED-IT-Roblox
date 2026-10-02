@@ -100,9 +100,10 @@ function Controller.Start()
 	local function resize()
 		DeviceLayout.Apply(p,gui.AbsoluteSize,"Settings")
 		local compactLandscape=DeviceLayout.CompactLandscape(gui.AbsoluteSize,Input.TouchEnabled)
-		local scale=DeviceLayout.LauncherScale(gui.AbsoluteSize,Input.TouchEnabled)
+		local scale=DeviceLayout.SettingsLauncherScale(gui.AbsoluteSize,Input.TouchEnabled)
+		local right=DeviceLayout.RightLauncherOffset(gui.AbsoluteSize,Input.TouchEnabled)
 		gui.Open.UIScale.Scale=scale
-		gui.Open.Position=UDim2.new(1,-18,0,if compactLandscape then 12 elseif gui.AbsoluteSize.X<760 then 110*math.min(1,(gui.AbsoluteSize.X-24)/540) else 12)
+		gui.Open.Position=UDim2.new(1,right,0,if compactLandscape then 12 elseif gui.AbsoluteSize.X<760 then 110*math.min(1,(gui.AbsoluteSize.X-24)/540) else 12)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize();render()
 	local originals=setmetatable({},{__mode="k"})

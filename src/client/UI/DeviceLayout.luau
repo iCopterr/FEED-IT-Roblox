@@ -32,6 +32,22 @@ function Layout.LeftLauncherScale(viewport, touchEnabled)
 	if Layout.CompactLandscape(viewport, touchEnabled) then return .93 end
 	return Layout.LauncherScale(viewport, touchEnabled)
 end
+function Layout.SettingsLauncherScale(viewport, touchEnabled)
+	if Layout.CompactLandscape(viewport, touchEnabled) then return .48 end
+	return Layout.LauncherScale(viewport, touchEnabled)
+end
+function Layout.LeftLauncherGap(viewport, touchEnabled)
+	return if Layout.CompactLandscape(viewport, touchEnabled) then 20 else 12
+end
+function Layout.ShopLauncherOffset(viewport, touchEnabled)
+	return if Layout.CompactLandscape(viewport, touchEnabled) then 22 else 18,
+		if Layout.CompactLandscape(viewport, touchEnabled) then -90 else -76
+end
+function Layout.RightLauncherOffset(viewport, touchEnabled)
+	-- Enter only part of the device-safe margin; keeps controls clear of the
+	-- physical edge while avoiding the large double-margin seen on phones.
+	return if Layout.CompactLandscape(viewport, touchEnabled) then 20 else -18
+end
 function Layout.TravelScale(viewport, touchEnabled)
 	local fit = math.min(1, (viewport.X-24)/540)
 	return if Layout.CompactLandscape(viewport, touchEnabled) then math.min(.62, fit) else fit
