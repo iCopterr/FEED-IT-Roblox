@@ -39,7 +39,7 @@ function FeedController.Start()
 		latest = state
 		if state.PetId then
 			panel.PetName.Text = state.PetName
-			panel.PetDetails.Text = string.format("%s  •  Lv. %d", state.Rarity, state.FeedLevel)
+			panel.PetDetails.Text = string.format("%s  •  Lv. %d%s", state.Rarity, state.FeedLevel,if state.Broken then " • BROKEN (50% income)" else "")
 		end
 		-- Quantities live on food cards; cost stays on the Feed button.
 		panel.Feed.Text = if state.MaxLevel then "MAX LEVEL 40" else if state.Cost then "FEED  •  "..numberText(state.Cost).." FOOD" else "FEED"

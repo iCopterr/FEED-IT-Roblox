@@ -9,7 +9,7 @@ function Presentation.Update(model,pet)
  local income=Income(pet)
  local label=model:FindFirstChild("PetLabel",true)
  if label and model:GetAttribute("FeedLevel")==pet.FeedLevel and model:GetAttribute("IncomePerSecond")==income
-  and model:GetAttribute("Variant")==pet.Variant then return end
+  and model:GetAttribute("Variant")==pet.Variant and model:GetAttribute("Broken")== (pet.Broken==true) then return end
  local body=model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart",true)
  if not body then return end
  local anchor=body:FindFirstChild("PetLabelAnchor")
@@ -23,11 +23,12 @@ function Presentation.Update(model,pet)
  label.Adornee=anchor
  local species=Pets.Species[pet.SpeciesId]
  label.NameLabel.Text=Variants.Name(species and species.DisplayName or pet.SpeciesId,pet.Variant)
- label.Rarity.Text=pet.Rarity;label.Rarity.TextColor3=Colors[pet.Rarity] or Color3.new(1,1,1)
+ label.Rarity.Text=pet.Rarity..(if pet.Broken then " • BROKEN" else "");label.Rarity.TextColor3=Colors[pet.Rarity] or Color3.new(1,1,1)
  label.Income.Text="$"..Compact(income).."/s";label.Income.TextColor3=Color3.fromRGB(110,255,100)
  model:SetAttribute("SpeciesId",pet.SpeciesId);model:SetAttribute("Rarity",pet.Rarity)
  model:SetAttribute("Variant",pet.Variant);model:SetAttribute("FeedLevel",pet.FeedLevel)
  model:SetAttribute("IncomePerSecond",income)
+ model:SetAttribute("Broken",pet.Broken==true)
  game:GetService("CollectionService"):AddTag(model,"PetVisual")
 end
 return Presentation

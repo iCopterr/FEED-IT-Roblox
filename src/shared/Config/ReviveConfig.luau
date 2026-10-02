@@ -1,8 +1,8 @@
 return table.freeze({
-	Shop = table.freeze({Id="revive", Rarity="Divine", DisplayName="Revive Charm", Icon="💖", Effect="TIMED RESCUE",
-		Description="Restore a broken pet at the Revive Machine within 24 hours. Consumed once; food is not refunded.",
+	StationName = "Pet Repair Station",
+	Shop = table.freeze({Id="revive", Rarity="Divine", DisplayName="Repair Charm", Icon="💖", Effect="FULL REPAIR",
+		Description="Repair a broken pet at the Pet Repair Station. Restores full income at its current level. No expiry.",
 		Price=5000000, Weight=.5, RewardType="Revive", Amount=1, StockLimit=1}),
-	WindowSeconds = 24*60*60,
 	BrokenIncomeMultiplier = 0.5,
 	MachineDistance = 16,
 	PromptDistance = 12,

@@ -15,15 +15,9 @@ function Model.Entries(snapshot)
 		local definition=Pets.Species[pet.SpeciesId]
 		entries["pet:"..id]={Key="pet:"..id,Id=id,Kind="Pet",Variant=pet.Variant,Name=Variants.Name(definition and definition.DisplayName or pet.SpeciesId,pet.Variant),
 			SpeciesId=pet.SpeciesId,Rarity=pet.Rarity,Level=pet.FeedLevel,Locked=pet.Locked,
-			Income=PetIncome(pet),CreatedAt=pet.CreatedAt,
+			Income=PetIncome(pet),CreatedAt=pet.CreatedAt,Broken=pet.Broken==true,
 			State=if snapshot.CarriedPetId==id then "HELD" elseif snapshot.FeedPlatePetId==id then "FEED PLATE"
 				elseif pet.Placed then "IN PEN" else "STORED"}
-	end
-	for _,pet in snapshot.BrokenPets or {} do
-		local id=pet.PetId
-		entries["pet:"..id]={Key="pet:"..id,Id=id,Kind="Pet",Variant=pet.Variant,Name=pet.PetName,
-			SpeciesId=pet.SpeciesId,Rarity=pet.Rarity,Level=pet.FeedLevel,Locked=pet.Locked,
-			Income=pet.Income,CreatedAt=pet.CreatedAt,State="BROKEN",ExpiresAt=pet.ExpiresAt}
 	end
 	for _,egg in snapshot.Eggs or {} do
 		if egg.Placed then continue end
@@ -42,7 +36,7 @@ function Model.Entries(snapshot)
 	if (snapshot.ReviveCharges or 0)>0 then
 		entries["item:revive"]={Key="item:revive",Id="revive",Kind="Food",Name=Revive.DisplayName,
 			Rarity=Revive.Rarity,Quantity=snapshot.ReviveCharges,Reduction=0,Icon=Revive.Icon,
-			Effect="Timed Rescue",Description=Revive.Description,Level=0,Income=0,CreatedAt=0,State="CHARM"}
+			Effect="Full Repair",Description=Revive.Description,Level=0,Income=0,CreatedAt=0,State="CHARM"}
 	end
 	return entries
 end

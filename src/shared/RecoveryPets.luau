@@ -1,29 +1,22 @@
--- Display projections never become usable inventory records. The saved recovery
--- remains the single identity until a server-authoritative revive or expiry.
-local Config=require(script.Parent.Config.ReviveConfig)
+-- The station lists damaged pets directly from their single inventory identity.
 local Pets=require(script.Parent.Config.PetConfig)
 local Variants=require(script.Parent.Config.VariantConfig)
 local PetIncome=require(script.Parent.PetIncome)
 local Recovery={}
 
-function Recovery.Income(record,now)
-	if now>=record.ExplodedAt+Config.WindowSeconds then return 0 end
-	return PetIncome(record.Pet)*Config.BrokenIncomeMultiplier
-end
-
-function Recovery.List(data,now)
+function Recovery.List(data)
 	local records={}
-	for id,record in data.PendingRecovery do
-		local pet=record.Pet
+	for id,pet in data.Inventory do
+		if not pet.Broken then continue end
 		local definition=Pets.Species[pet.SpeciesId]
-		table.insert(records,{PetId=id,AttemptId=record.AttemptId,SpeciesId=pet.SpeciesId,
+		local repaired=table.clone(pet);repaired.Broken=nil
+		table.insert(records,{PetId=id,AttemptId=pet.BreakId,SpeciesId=pet.SpeciesId,
 			PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant),
 			Variant=pet.Variant,Rarity=pet.Rarity,FeedLevel=pet.FeedLevel,Locked=pet.Locked,CreatedAt=pet.CreatedAt,
-			Income=Recovery.Income(record,now),RestoredIncome=PetIncome(pet),
-			ExplodedAt=record.ExplodedAt,ExpiresAt=record.ExplodedAt+Config.WindowSeconds,FoodSpent=record.FoodSpent})
+			Income=PetIncome(pet),RestoredIncome=PetIncome(repaired),Placed=pet.Placed})
 	end
 	table.sort(records,function(a,b)
-		if a.ExplodedAt~=b.ExplodedAt then return a.ExplodedAt>b.ExplodedAt end
+		if a.CreatedAt~=b.CreatedAt then return a.CreatedAt>b.CreatedAt end
 		return a.PetId<b.PetId
 	end)
 	return records

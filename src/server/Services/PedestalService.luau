@@ -148,6 +148,8 @@ function PedestalService.Reconcile(player)
 	local plot = PlotService.GetPlot(player)
 	if player.Character ~= state.Character or (not pet and not state.Animating) or (pet and pet.Placed) or not plot or state.Plate.Parent ~= plot or state.Model.Parent ~= state.Plate then
 		PedestalService.Clear(player)
+	elseif pet and not state.Animating then
+		require(script.Parent.PetPresentation).Update(state.Model,pet)
 	end
 end
 

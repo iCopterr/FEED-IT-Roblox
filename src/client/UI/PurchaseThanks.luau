@@ -230,7 +230,7 @@ local function create()
 	shardFallback = text(shardBanner, "ShardFallback", "◆", 43, UDim2.fromOffset(8, 3), UDim2.fromOffset(50, 50))
 	shardFallback.TextColor3 = Color3.fromRGB(255, 125, 228)
 	shardFallback.ZIndex = 4
-	shardText = text(shardBanner, "ShardText", "+1 REVIVE SHARD", 25, UDim2.fromOffset(64, 7), UDim2.fromOffset(442, 44))
+	shardText = text(shardBanner, "ShardText", "+1 REPAIR SHARD", 25, UDim2.fromOffset(64, 7), UDim2.fromOffset(442, 44))
 	shardText.ZIndex = 4
 
 	awesomeButton = button(card, "Awesome", "AWESOME!", UDim2.fromOffset(156, 338), UDim2.fromOffset(288, 72), Color3.fromRGB(51, 211, 78))
@@ -270,7 +270,7 @@ local function content(payload)
 		end
 	elseif payload.Kind == "Welcome" then
 		image = Images.WelcomePack; fallback = "🎁"
-		detail = string.format("%d Hearty • %d Royal • %d Revive Charm", payload.Hearty or 0, payload.Royal or 0, payload.Revive or 0)
+		detail = string.format("%d Hearty • %d Royal • %d Repair Charm", payload.Hearty or 0, payload.Royal or 0, payload.Revive or 0)
 	elseif payload.Kind == "Pass" then
 		image = Images.DoubleMoney; fallback = "×2"
 		detail = "Your pet income is now doubled!"
@@ -281,7 +281,7 @@ local function content(payload)
 	elseif payload.Kind == "Restock" then
 		image = Images.Restock; fallback = "🔄"; detail = "Your personal offers are full again"
 	elseif payload.Kind == "Revive" then
-		image = Images.Revive; fallback = "💖"; detail = "Your pet is safely restored"
+		image = Images.Revive; fallback = "💖"; detail = "Your pet is repaired • Full income restored"
 	end
 	return image, fallback, name, detail
 end
@@ -300,7 +300,7 @@ local function present(payload)
 	awesomeButton.Position = UDim2.fromOffset(156, if shards > 0 then 390 else 338)
 	awesomeButton.Size = UDim2.fromOffset(288, if shards > 0 then 50 else 72)
 	if shards > 0 then
-		shardText.Text = string.format("BONUS  +%d REVIVE SHARD%s", shards, shards == 1 and "" or "S")
+		shardText.Text = string.format("BONUS  +%d REPAIR SHARD%s", shards, shards == 1 and "" or "S")
 		shardImage.Visible = Icons.reviveShard ~= ""
 		shardFallback.Visible = Icons.reviveShard == ""
 	end

@@ -158,6 +158,7 @@ function PlacementService.Reconcile(player: Player): (boolean, string?)
 	end
 	for id in data.PlacedPetIds do
 		local pet = data.Inventory[id]
+		if state.Pets[id] then require(script.Parent.PetPresentation).Update(state.Pets[id],pet) end
 		if not state.Pets[id] then
 			local slot = PlacementService.GetPetCFrame(player, pet)
 			if not slot then return false, "InvalidSlot" end

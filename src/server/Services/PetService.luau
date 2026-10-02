@@ -39,6 +39,8 @@ local function clonePet(pet: PetData): PetData
 		PlotSlot = pet.PlotSlot,
 		PenPosition = if pet.PenPosition then table.clone(pet.PenPosition) else nil,
 		CreatedAt = pet.CreatedAt,
+		Broken = pet.Broken,
+		BreakId = pet.BreakId,
 	}
 end
 
@@ -247,7 +249,7 @@ end
 function PetService.RemovePet(player: Player, petId: string): (PetData?, string?)
 	if require(script.Parent.FeedLocks).IsLocked(player, petId) then return nil, "Busy" end
 	-- This is permanent inventory removal for ordinary flows such as selling.
-	-- Explosion must use its future pending-recovery transaction instead.
+	-- Breaking never removes the identity. Outstanding paid repairs must retain it.
 	if type(petId) ~= "string" or petId == "" then
 		return nil, "PetId must be a non-empty string"
 	end
@@ -263,6 +265,9 @@ function PetService.RemovePet(player: Player, petId: string): (PetData?, string?
 	end
 	if pet.Locked then
 		return nil, "Locked pets cannot be removed"
+	end
+	if pet.Broken and require(script.Parent.CommerceState).ReviveReserved(data,petId,pet.BreakId) then
+		return nil,"Pet repair purchase is pending"
 	end
 	if pet.Placed or data.PlacedPetIds[petId] then
 		return nil, "Placed pets must be picked up before removal"

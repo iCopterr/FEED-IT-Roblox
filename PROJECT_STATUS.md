@@ -6,7 +6,46 @@
 
 **Last Updated:** 2026-10-02
 
-### Latest session — visible broken pets, half income and $2K starter
+### Latest session — permanent broken pets and Pet Repair Station
+
+- Current feature / overall progress: repair redesign implemented. This owner's
+  newer design supersedes the timed-revive session below and historical GDD
+  recovery rules. Broken pets stay in normal inventory, can be carried, placed
+  and fed/upgraded, and keep their current level after failure. Repeated breaks
+  do not stack the penalty. Placed broken pets earn 50% of their current-level
+  income (including eligible x2); stored/held/plate pets do not bypass pen slots.
+- Repair clears damage in place at the latest level without moving the pet.
+  There is no 24-hour deadline, expiry reset or second recovery inventory.
+  The Pet Repair Station lists damaged inventory pets; previews, inventory,
+  Feed and pen labels explain the half-income status. One Repair Charm repairs
+  one pet; 100 Repair Shards exchange for a charm. Existing image assets and
+  Robux product IDs/prices are retained, with player-facing Repair wording.
+- Architecture: profile schema v13 migrates v12 PendingRecovery identities to
+  Inventory.Broken/BreakId; conflicting identities reject migration rather than
+  overwrite. Original damage IDs preserve existing paid repair intents. Paid
+  reservations prevent charm repair/removal until resolved, but permit upgrades;
+  fulfillment clears damage on current state and duplicate receipts do not
+  duplicate rewards. Internal Revive names remain for compatibility.
+- Verified: detached real-module lifecycle passes migration/conflict checks,
+  Feed/replay, level upgrades while broken, repeated failure, placed half-income
+  and x2, save/reload, no expiry, current-level repair, shard exchange and stale
+  damage rejection. Actual ReviveController passes list/preview/tabs and phone
+  geometry. All 24 commerce routes pass, including migrated legacy paid repair
+  and upgrades/placement during checkout. Both station tabs were visually
+  inspected in Studio using temporary previews, then previews removed.
+  Starter-pack and shard replay/distance/balance regressions pass; all changed
+  Luau sources compile, Rojo build and git diff checks pass.
+- Files: schema/config/income/recovery projection; Feed, Money, Revive, Commerce,
+  Pet, placement/carry/pedestal/presentation services; inventory/Feed/pen/station/
+  purchase/pack UI; station and UI assets; tests; GDD and docs/revive.md.
+- In progress: none. Next task: owner playtest in a fresh session, especially
+  breaking, upgrading and repairing a real owned pet. No live saves were edited,
+  no real Robux purchase was made, and no publishing/push was performed. Already
+  deleted historical pets cannot be reconstructed without a saved record.
+  $2K Basic Egg and new-player balance remain unchanged. Last working commit
+  before this session: bd073bf. Untracked owner artwork remains untouched.
+
+### Previous session — visible broken pets, half income and $2K starter
 
 - Completed: broken pets now appear as BROKEN inventory entries with recovery
   time, original Feed level and 50% income. The same RecoveryPets projection

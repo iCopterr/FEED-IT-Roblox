@@ -23,6 +23,8 @@ export type PetData = {
 	PlotSlot: number?,
 	PenPosition: {X: number, Z: number}?,
 	CreatedAt: number,
+	Broken: boolean?,
+	BreakId: string?,
 }
 
 export type RecoveryData = {Pet: PetData, AttemptId: string, ExplodedAt: number, FoodSpent: number}
@@ -63,6 +65,26 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+-- Keep the original identity and attempt ID, including any outstanding paid
+-- repair intent. Old recovery records become usable, permanently broken pets.
+migrations[12] = function(source)
+	if type(source.Inventory)~="table" or type(source.PendingRecovery)~="table" then return nil,"Invalid repair migration" end
+	local result=table.clone(source)
+	result.Inventory=table.clone(source.Inventory)
+	for id,record in source.PendingRecovery do
+		if type(record)~="table" or type(record.Pet)~="table" or source.Inventory[id]~=nil
+			or record.Pet.PetId~=id or type(record.AttemptId)~="string" or record.AttemptId=="" then
+			return nil,"Conflicting or invalid recovery pet"
+		end
+		local pet=table.clone(record.Pet)
+		pet.Traits=if type(pet.Traits)=="table" then table.clone(pet.Traits) else pet.Traits
+		pet.Broken=true;pet.BreakId=record.AttemptId
+		result.Inventory[id]=pet
+	end
+	result.PendingRecovery={}
+	return result,nil
+end
 
 migrations[11] = function(source)
 	local result = table.clone(source)
@@ -245,6 +267,10 @@ local function validatePetData(value: unknown, path: string): (boolean, string?)
 	end
 
 	local pet = value :: UnknownTable
+	if pet.Broken~=nil and type(pet.Broken)~="boolean" then return false,`{path}.Broken must be boolean` end
+	if pet.Broken==true then
+		if not isNonEmptyString(pet.BreakId) then return false,`{path}.BreakId required for broken pet` end
+	elseif pet.BreakId~=nil then return false,`{path}.BreakId requires broken pet` end
 
 	if pet.DataVersion ~= GameConfig.PetDataVersion then
 		return false, `{path}.DataVersion must be {GameConfig.PetDataVersion}`
@@ -378,6 +404,8 @@ local function clonePetData(pet: PetData): PetData
 		PlotSlot = pet.PlotSlot,
 		PenPosition = if pet.PenPosition then table.clone(pet.PenPosition) else nil,
 		CreatedAt = pet.CreatedAt,
+		Broken = pet.Broken,
+		BreakId = pet.BreakId,
 	}
 end
 
@@ -527,16 +555,7 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 	end
 
 	if type(data.PendingRecovery) ~= "table" then return false, "PendingRecovery must be a map" end
-	for id, record in data.PendingRecovery do
-		if not isNonEmptyString(id) or type(record) ~= "table" then return false, "Invalid recovery record" end
-		local valid, reason = validatePetData(record.Pet, `PendingRecovery.{id}.Pet`)
-		if not valid then return false, reason end
-		if record.Pet.PetId ~= id or inventory[id] ~= nil or record.Pet.Placed then
-			return false, "Recovery pets must be unique, inactive and outside Inventory"
-		end
-		if not isNonEmptyString(record.AttemptId) or not isNonNegativeInteger(record.ExplodedAt)
-			or not isNonNegativeNumber(record.FoodSpent) then return false, "Invalid recovery metadata" end
-	end
+	if next(data.PendingRecovery)~=nil then return false,"Legacy recovery records must migrate into repairable inventory pets" end
 	if type(data.IncubatingEggs) ~= "table" then return false, "IncubatingEggs must be a map" end
 	local reservedPets = {}
 	for id, egg in data.IncubatingEggs do

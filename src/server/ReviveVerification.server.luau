@@ -51,8 +51,8 @@ local ok, failure = xpcall(function()
 			AttemptId=game:GetService("HttpService"):GenerateGUID(false),
 			ExplodedAt=os.time(),FoodSpent=foodConfig.ServingsPerFeed}
 		profile.Food-=record.FoodSpent
-		profile.Inventory[pet.PetId]=nil
-		profile.PendingRecovery[pet.PetId]=record
+		profile.Inventory[pet.PetId].Broken=true
+		profile.Inventory[pet.PetId].BreakId=record.AttemptId
 		assert(schema.Validate(profile));assert(data.Save(a))
 		return record
 	end
@@ -71,9 +71,12 @@ local ok, failure = xpcall(function()
 	waitFor(function() return not locks.IsLocked(a) end)
 	task.wait(.3)
 	local attempt = outcome.AttemptId
-	check(profile.PendingRecovery[pet.PetId] ~= nil and profile.Inventory[pet.PetId] == nil, "Legacy broken recovery remains supported")
-	check(not carry.Equip(a,pet.PetId) and not placement.PlacePet(a,pet.PetId), "Broken pet cannot equip or place")
-	check(money.GetRate(a) == money.GetPetRate(original)*.5, "Broken pet earns half its pre-failure income")
+	check(profile.Inventory[pet.PetId].Broken and profile.PendingRecovery[pet.PetId] == nil, "Broken pet remains a usable identity")
+	check(carry.Equip(a,pet.PetId),"Broken pet can equip")
+	carry.Unequip(a)
+	check(placement.PlacePet(a,pet.PetId),"Broken pet can place")
+	check(money.GetRate(a) == money.GetPetRate(original)*.5, "Placed broken pet earns half income")
+	assert(placement.PickupPet(a,pet.PetId))
 	assert(locks.Begin(a,"test-busy"))
 	check(revive.HandleRequest(a,"Revive",pet.PetId,attempt).Code == "Busy", "Revive respects shared transaction lock")
 	locks.Finish(a)
@@ -84,13 +87,13 @@ local ok, failure = xpcall(function()
 	check(own.Ok and own.CanRevive and own.ReviveCharges==3 and own.ReviveShards==100 and own.ShardExchangeCost==100
 		and own.CanExchange and own.NextExchangeSequence==2 and #own.Records == 1 and own.Records[1].FeedLevel == 20,
 		"Owner sees recovery and shard exchange balances")
-	check(own.Records[1].ExpiresAt==outcome.ExplodedAt+86400 and own.NearMachine and not own.RobuxEnabled,"24-hour deadline and machine-only disabled Robux snapshot")
+	check(own.Records[1].ExpiresAt==nil and own.NearMachine,"Repair has no deadline")
 	check(own.Records[1].SpeciesId==original.SpeciesId,"Selected pet preview receives species")
 	report:FireClient(a,outcome.AttemptId)
 	waitFor(function() return clientReply~=nil end)
 	check(clientReply.Passed,"Revive Machine client: "..tostring(clientReply.Failure or ""))
 	own.Records[1].FeedLevel = 1
-	check(profile.PendingRecovery[pet.PetId].Pet.FeedLevel == 20, "Snapshot cannot mutate recovery")
+	check(profile.Inventory[pet.PetId].FeedLevel == 20, "Snapshot cannot mutate pet")
 	check(#revive.HandleRequest(b,"Snapshot").Records == 0, "Recovery is private to owner")
 	check(not revive.HandleRequest(b,"Revive",pet.PetId,attempt).Ok, "Foreign recovery rejected")
 	check(not revive.HandleRequest(a,"Revive",{},attempt).Ok, "Malformed pet ID rejected")
@@ -99,7 +102,7 @@ local ok, failure = xpcall(function()
 	task.wait(.3)
 	local result = revive.HandleRequest(a,"Revive",pet.PetId,attempt)
 	check(result.Ok and result.FeedLevel == 20 and profile.ReviveCharges==2, "One charm restores previous level, not level one")
-	check(profile.PendingRecovery[pet.PetId] == nil and profile.Inventory[pet.PetId].PetId == pet.PetId, "Recovery consumed and original identity restored")
+	check(not profile.Inventory[pet.PetId].Broken and profile.Inventory[pet.PetId].PetId == pet.PetId, "Repair clears damage on original identity")
 	local restored = profile.Inventory[pet.PetId]
 	check(restored.Locked and restored.CreatedAt == original.CreatedAt and restored.SpeciesId == original.SpeciesId
 		and restored.Rarity == original.Rarity and restored.Variant == original.Variant and restored.BaseIncome == original.BaseIncome,
@@ -120,12 +123,12 @@ local ok, failure = xpcall(function()
 	-- The fixture has no Feed animation delay; wait out the prior request's
 	-- cooldown so this assertion exercises the attempt-ID guard specifically.
 	task.wait(.3)
-	check(revive.HandleRequest(a,"Revive",pet.PetId,attempt).Code == "PetChanged" and profile.PendingRecovery[pet.PetId] ~= nil,
+	check(revive.HandleRequest(a,"Revive",pet.PetId,attempt).Code == "PetChanged" and profile.Inventory[pet.PetId].Broken,
 		"Delayed old request cannot revive a newer explosion")
 	task.wait(.3)
 	local replies = {}
 	task.spawn(function() replies[1] = revive.HandleRequest(a,"Revive",pet.PetId,newer.AttemptId) end)
-		task.spawn(function() replies[2] = revive.HandleRequest(a,"KeepBase",pet.PetId,newer.AttemptId) end)
+		task.spawn(function() replies[2] = revive.HandleRequest(a,"Repair",pet.PetId,newer.AttemptId) end)
 	waitFor(function() return replies[1] and replies[2] end)
 	check((if replies[1].Ok then 1 else 0)+(if replies[2].Ok then 1 else 0) == 1, "Concurrent duplicate requests restore exactly once")
 	waitFor(function() return not locks.IsLocked(a) end)

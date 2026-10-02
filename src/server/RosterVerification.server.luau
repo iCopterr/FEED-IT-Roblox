@@ -52,8 +52,8 @@ local ok,failure=xpcall(function()
  local p=migrated.Inventory.owned
  check(p.PetId=="owned" and p.FeedLevel==12 and p.Variant=="Shiny" and p.Locked and p.Placed and p.PlotSlot==1 and p.PenPosition.X==2 and p.Traits[1]=="MigrationSentinel" and p.CreatedAt==123,"Pet identity / growth / placement preserved")
  check(p.Rarity=="Mythic" and p.BaseIncome==100000 and p.EggId=="supreme_egg","Moved pet updated; acquisition provenance retained")
- local r=migrated.PendingRecovery.recovery
- check(r.Pet.Rarity=="Fabled" and r.Pet.BaseIncome==220000 and r.Pet.FeedLevel==8 and r.FoodSpent==4 and r.AttemptId=="attempt" and r.ExplodedAt==1000,"Pending revive preserves recovery state")
+ local r=migrated.Inventory.recovery
+ check(r.Rarity=="Fabled" and r.BaseIncome==220000 and r.FeedLevel==8 and r.Broken and r.BreakId=="attempt" and next(migrated.PendingRecovery)==nil,"Legacy recovery becomes usable broken inventory pet")
  local e=migrated.IncubatingEggs.egg
  check(e.EggId=="supreme_egg" and e.Pet.SpeciesId=="supreme_pet_3" and e.Pet.PetId=="reserved" and e.Pet.BaseIncome==320000 and e.Pet.Rarity=="Fabled" and e.ReadyAt==2800 and e.StartedAt==1000 and e.PricePaid==50000000000 and e.HatchSeconds==1800,"Paid egg retains original outcome / price / timer")
  check(migrated.Money==123456 and migrated.Foods.fresh==3 and migrated.ReviveShards==0 and migrated.PetIndex.supreme_pet_1,"Currencies / index preserved")

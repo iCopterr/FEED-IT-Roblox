@@ -39,7 +39,7 @@ local function noticePayload(p,productId)
   payload.Royal=Config.WelcomePack.Royal;payload.Revive=Config.WelcomePack.Revive
  elseif p.Kind=="Food" then
   payload.ItemId=p.ItemId
-  if p.ItemId=="revive" then payload.Reward="REVIVE CHARM"
+  if p.ItemId=="revive" then payload.Reward="REPAIR CHARM"
   else
    local definition=Food.Types[p.ItemId]
    payload.Reward=definition.Name;payload.Rarity=definition.Rarity
@@ -48,7 +48,7 @@ local function noticePayload(p,productId)
  elseif p.Kind=="Grow" then payload.Reward="EGG READY TO HATCH"
  elseif p.Kind=="GrowAll" then payload.Reward="ALL EGGS READY";payload.Amount=#p.Eggs
  elseif p.Kind=="Restock" then payload.Reward="MERCHANT STOCK REFILLED"
- elseif p.Kind=="Revive" then payload.Reward="PET REVIVED"
+ elseif p.Kind=="Revive" then payload.Reward="PET REPAIRED"
  else payload.Reward="PURCHASE RECEIVED" end
  return payload
 end
@@ -120,8 +120,8 @@ local function prepare(player,data,kind,arg,extra)
   if #eggs==0 then return end
   p={Kind="GrowAll",Eggs=eggs,ProductId=Config.GrowAllProductId}
  elseif kind=="Revive" and type(arg)=="string" and type(extra)=="string" then
-  local record=data.PendingRecovery[arg]
-  if not record or record.AttemptId~=extra or os.time()>=record.ExplodedAt+Revive.WindowSeconds
+  local pet=data.Inventory[arg]
+  if not pet or not pet.Broken or pet.BreakId~=extra
    or not near(player,"ReviveMachine",Revive.MachineDistance) then return end
   p={Kind="Revive",PetId=arg,AttemptId=extra,ProductId=Config.DirectReviveProductId}
  end

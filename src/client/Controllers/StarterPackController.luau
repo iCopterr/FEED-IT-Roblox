@@ -44,7 +44,7 @@ function Controller.Start()
 	local buy = card.Buy
 	panel.Visible = false
 	card.Artwork.Image = Images.WelcomePack
-	card.Description.Text = string.format("%d Hearty Food + %d Royal Food\n%d Revive Charm\nOnce per player", Pack.Hearty, Pack.Royal, Pack.Revive)
+	card.Description.Text = string.format("%d Hearty Food + %d Royal Food\n%d Repair Charm\nOnce per player", Pack.Hearty, Pack.Royal, Pack.Revive)
 	buy.ButtonText.Text = "BUY • " .. tostring(Pack.Robux) .. " ROBUX"
 	buy:SetAttribute("SuppressClickSound", true)
 	local function refreshPurchase()

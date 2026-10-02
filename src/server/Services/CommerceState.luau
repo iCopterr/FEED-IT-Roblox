@@ -84,10 +84,11 @@ function State.Grant(data,state,p,now)
   data.Settings.PersonalStockExpiresAt=now+Shop.RestockSeconds
   data.MerchantRestockId=data.Settings.PersonalStockId;data.MerchantPurchases={}
  elseif p.Kind=="Revive" then
-  local record=data.PendingRecovery[p.PetId]
-  if not record or record.AttemptId~=p.AttemptId or data.Inventory[p.PetId] then return false end
-  data.Inventory[p.PetId]=record.Pet
-  data.PendingRecovery[p.PetId]=nil
+  local pet=data.Inventory[p.PetId]
+  if not pet or not pet.Broken or pet.BreakId~=p.AttemptId then return false end
+  -- Repair current progress/placement in place; never restore an old snapshot
+  -- over the upgrades this pet earned while checkout was open.
+  pet.Broken=nil;pet.BreakId=nil
  else return false end
  return true
 end

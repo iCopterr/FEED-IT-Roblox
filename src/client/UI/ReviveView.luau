@@ -8,6 +8,7 @@ local function rounded(object,radius)
 	corner.CornerRadius=UDim.new(0,radius)
 end
 function View.Build(panel)
+	panel.Title.Text="PET REPAIR STATION"
 	rounded(panel,16);panel.ClipsDescendants=true
 	panel.Title.Size=UDim2.fromOffset(350,48)
 	panel.Pets.ScrollingDirection=Enum.ScrollingDirection.Y
@@ -39,7 +40,7 @@ function View.Build(panel)
 		object.TextYAlignment=Enum.TextYAlignment.Center;object.TextWrapped=true;object.ZIndex=5
 		object.Parent=exchange;return object
 	end
-	label(panel.PetName,"ShardTitle","REVIVE SHARDS",24,12,720,40,30)
+	label(panel.PetName,"ShardTitle","REPAIR SHARDS",24,12,720,40,30)
 	local shard=panel.Robux.ProductIcon:Clone()
 	shard.Name="ShardIcon";shard.Image="rbxassetid://82838242551952";rect(shard,202,66,132,132)
 	shard.BackgroundTransparency=1;shard.ScaleType=Enum.ScaleType.Fit;shard.ZIndex=5;shard.Parent=exchange
@@ -47,11 +48,11 @@ function View.Build(panel)
 	local icon=shard:Clone()
 	icon.Name="RewardIcon";icon.Image="rbxassetid://133373414506019";rect(icon,434,66,132,132);icon.Parent=exchange
 	label(panel.Details,"ShardBalance","YOUR SHARDS • 0",24,208,720,38,26)
-	label(panel.Notice,"Description","100 SHARDS = 1 REVIVE CHARM\nEarn shards with Robux food purchases",24,250,720,44,18)
+	label(panel.Notice,"Description","100 SHARDS = 1 REPAIR CHARM\nEarn shards with Robux food purchases",24,250,720,44,18)
 	local button=panel.Revive:Clone()
 	button.Name="Exchange";button.Text="EXCHANGE • 100 SHARDS";rect(button,163,304,442,48)
 	button.ZIndex=5;rounded(button,10);button.Parent=exchange
-	label(panel.Notice,"CharmCount","OWNED REVIVE CHARMS • 0",24,356,720,20,16)
+	label(panel.Notice,"CharmCount","OWNED REPAIR CHARMS • 0",24,356,720,20,16)
 	return brokenTab,exchangeTab,exchange
 end
 return View

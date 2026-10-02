@@ -5,7 +5,6 @@ local Locks = require(script.Parent.FeedLocks)
 local Recovery = require(game.ReplicatedStorage.Shared.RecoveryPets)
 local Config = require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
 local Commerce = require(script.Parent.CommerceState)
-local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
 local sessions = {}
 local Service = {}
 
@@ -30,10 +29,6 @@ local function saveWhileLocked(player, state, data)
 	end)
 end
 
-local function expiresAt(record)
-	return record.ExplodedAt + Config.WindowSeconds
-end
-
 local function nearMachine(player)
 	local machine=workspace:FindFirstChild("ReviveMachine")
 	local point=machine and machine:FindFirstChild("InteractionPoint")
@@ -46,7 +41,7 @@ end
 
 function Service.HandleRequest(player, action, petId, attemptId)
 	if player.Parent ~= Players then return {Ok=false, Code="Loading"} end
-	if action ~= "Snapshot" and action ~= "Revive" and action ~= "KeepBase" and action ~= "Exchange" then
+	if action ~= "Snapshot" and action ~= "Repair" and action ~= "Revive" and action ~= "Exchange" then
 		return {Ok=false, Code="InvalidRequest"}
 	end
 	local state = sessions[player]
@@ -72,13 +67,13 @@ function Service.HandleRequest(player, action, petId, attemptId)
 	local data = DataService.GetData(player)
 	if not data or not Schema.Validate(data) then return {Ok=false, Code="Loading"} end
 	if action == "Snapshot" then
-		local records = Recovery.List(data,os.time())
+		local records = Recovery.List(data)
 		return {Ok=true, Records=records, CanRevive=data.ReviveCharges>0, ReviveCharges=data.ReviveCharges,
 			ReviveShards=data.ReviveShards, ShardExchangeCost=Config.Shards.ExchangeCost,
 			CanExchange=data.ReviveShards>=Config.Shards.ExchangeCost,
 			NextExchangeSequence=(state.ExchangeSequence or 0)+1,
 			NearMachine=nearMachine(player), RobuxEnabled=false,
-			ServerNow=os.time(), ResetLevel=FeedConfig.ExplosionResetLevel, Busy=Locks.IsLocked(player)}
+			Busy=Locks.IsLocked(player)}
 	end
 	if action == "Exchange" then
 		if not nearMachine(player) then return exchangeResult(state,data,"TooFar",false) end
@@ -102,42 +97,30 @@ function Service.HandleRequest(player, action, petId, attemptId)
 		or type(attemptId) ~= "string" or #attemptId == 0 or #attemptId > 64 then
 		return {Ok=false, Code="InvalidRequest"}
 	end
-	local record = data.PendingRecovery[petId]
-	-- Bind to the explosion, not only PetId: an old click cannot revive a later
-	-- explosion of the same pet. Consuming the record is the durable replay guard.
-	if not record then return {Ok=false, Code="Unavailable"} end
-	if record.AttemptId ~= attemptId then return {Ok=false, Code="PetChanged"} end
+	local pet = data.Inventory[petId]
+	-- Each damage episode has an ID. Later failures while broken keep that ID;
+	-- a repair followed by a new break cannot be repaired with an old request.
+	if not pet or not pet.Broken then return {Ok=false, Code="Unavailable"} end
+	if pet.BreakId ~= attemptId then return {Ok=false, Code="PetChanged"} end
 	if Commerce.ReviveReserved(data,petId,attemptId) then return {Ok=false,Code="Busy"} end
-	local expired = os.time() >= expiresAt(record)
-	if expired then action = "KeepBase" end
-	-- Expired pets return to base without travel; restoring growth requires the machine.
-	if not expired and not nearMachine(player) then return {Ok=false,Code="TooFar"} end
+	if not nearMachine(player) then return {Ok=false,Code="TooFar"} end
 	if not Locks.Begin(player, petId) then return {Ok=false, Code="Busy"} end
-	if action=="Revive" and data.ReviveCharges<1 then
+	if data.ReviveCharges<1 then
 		Locks.Finish(player);return {Ok=false,Code="NoRevive"}
 	end
 	local oldCharges=data.ReviveCharges
-	if action=="Revive" then data.ReviveCharges-=1 end
-	local restored = table.clone(record.Pet)
-	restored.Traits = table.clone(record.Pet.Traits)
-	if record.Pet.PenPosition then restored.PenPosition = table.clone(record.Pet.PenPosition) end
-	if action == "KeepBase" then restored.FeedLevel = FeedConfig.ExplosionResetLevel end
-	data.PendingRecovery[petId] = nil
-	data.Inventory[petId] = restored
+	data.ReviveCharges-=1
+	pet.Broken=nil;pet.BreakId=nil
 	if not Schema.Validate(data) then
-		data.Inventory[petId] = nil
-		data.PendingRecovery[petId] = record
+		pet.Broken=true;pet.BreakId=attemptId
 		data.ReviveCharges = oldCharges
 		Locks.Finish(player)
 		return {Ok=false, Code="InvalidData"}
 	end
-	-- Both decisions consume this offer. No Food refund, new identity, placement
-	-- or automatic Feed. KeepBase is irreversible, including after a reconnect.
-	-- Save the inventory/recovery transition together; never roll it back after
-	-- an ambiguous write. Feed/placement/pickup remain locked until confirmation.
+	-- Repair current progress in place. Save both charm and damage state together;
+	-- retries never restore an older level or move a placed/held pet.
 	saveWhileLocked(player,state,data)
-	return {Ok=true, Expired=expired, Code=if action=="KeepBase" then "KeptBase" else "Revived",
-		PetId=petId, AttemptId=attemptId, FeedLevel=restored.FeedLevel}
+	return {Ok=true, Code="Repaired",PetId=petId, AttemptId=attemptId, FeedLevel=pet.FeedLevel}
 end
 
 function Service.Start()
@@ -145,30 +128,12 @@ function Service.Start()
 	local prompt=point:WaitForChild("OpenReviveMachine")
 	prompt.MaxActivationDistance=Config.PromptDistance
 	prompt.HoldDuration=Config.PromptHoldSeconds
+	prompt.ObjectText=Config.StationName
 	local remote = Instance.new("RemoteFunction")
 	remote.Name = "PrototypeRevive"
 	remote.OnServerInvoke = Service.HandleRequest
 	remote.Parent = game.ReplicatedStorage
 	Players.PlayerRemoving:Connect(function(player) sessions[player] = nil end)
-	-- Expiry is server-owned and keeps the same deadline across reconnects.
-	task.spawn(function()
-		while true do
-			for _, player in Players:GetPlayers() do
-				local data = DataService.GetData(player)
-				if data and not Locks.IsLocked(player) then
-					for id, record in data.PendingRecovery do
-						if os.time() >= expiresAt(record) and not Commerce.ReviveReserved(data,id,record.AttemptId) then
-							-- Client request spam cannot postpone automatic expiry.
-							if sessions[player] then sessions[player].LastRequest = nil end
-							Service.HandleRequest(player,"KeepBase",id,record.AttemptId)
-							break
-						end
-					end
-				end
-			end
-			task.wait(.25)
-		end
-	end)
 end
 
 return table.freeze(Service)

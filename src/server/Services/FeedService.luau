@@ -33,7 +33,7 @@ local function snapshot(player, state, foodId)
 	if not food then return {Ok=false, Code="InvalidFood"} end
 	local definition = pet and PetConfig.Species[pet.SpeciesId]
 	local count = 0
-	for _ in data.PendingRecovery do count += 1 end
+	for _,owned in data.Inventory do if owned.Broken then count += 1 end end
 	local risk = pet and Config.ExplosionChance[pet.FeedLevel+1]
 	if risk then risk *= 1-food.Reduction end
 	return {
@@ -42,6 +42,7 @@ local function snapshot(player, state, foodId)
 		Ok=pet ~= nil, Code=reason, PetId=pet and pet.PetId,
 		PetName=pet and Variants.Name(definition and definition.DisplayName or pet.SpeciesId,pet.Variant),
 		Rarity=pet and pet.Rarity, Variant=pet and pet.Variant, FeedLevel=pet and pet.FeedLevel,
+		Broken=pet and pet.Broken==true,
 		Food=FoodConfig.Count(data,foodId), FoodAt=os.clock(), Cost=pet and FoodConfig.ServingsPerFeed,
 		Risk=risk,
 		BaseRisk=pet and Config.ExplosionChance[pet.FeedLevel+1],
@@ -103,18 +104,17 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	local outcome = forced or Resolver.Roll(pet.FeedLevel, function() return rng:NextNumber() end, appliedRisk)
 	local attemptId = HttpService:GenerateGUID(false)
 	if outcome.Code == "Explosion" then
-		-- Preserve the pre-failure pet until the owner chooses Revive or level 0.
-		-- One identity remains in recovery; it earns the configured reduced rate
-		-- but cannot be equipped, placed or fed until recovery is resolved.
-		data.Inventory[petId] = nil
-		data.PendingRecovery[petId] = {Pet=before, AttemptId=attemptId, ExplodedAt=os.time(), FoodSpent=result.Cost}
-		outcome.FeedLevel = Config.ExplosionResetLevel
+		-- Breaking is a persistent income penalty, never a second inventory or
+		-- a level reset. Repeated failures retain the same repair checkout ID.
+		pet.Broken=true
+		pet.BreakId=before.BreakId or attemptId
+		outcome.FeedLevel=before.FeedLevel
 	end
 	pet.FeedLevel = outcome.FeedLevel
 	if not Schema.Validate(data) then
 		FoodConfig.Add(data,result.FoodId,result.Cost)
 		pet.FeedLevel = before.FeedLevel
-		data.Inventory[petId], data.PendingRecovery[petId] = pet, nil
+		pet.Broken,pet.BreakId=before.Broken,before.BreakId
 		Locks.Finish(player)
 		return {Ok=false, Code="InvalidData"}
 	end
@@ -139,7 +139,7 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	end
 	state.Saved, state.PresentationDone = false, false
 	task.delay(duration, function()
-		PedestalService.EndPresentation(player, petId, outcome.Code == "Explosion")
+		PedestalService.EndPresentation(player, petId, false)
 		state.PresentationDone = true
 		releaseIfReady()
 	end)

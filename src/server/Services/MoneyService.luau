@@ -1,7 +1,6 @@
 local Players = game:GetService("Players")
 local Config = require(game.ReplicatedStorage.Shared.Config.MoneyConfig)
 local PetIncome = require(game.ReplicatedStorage.Shared.PetIncome)
-local Recovery = require(game.ReplicatedStorage.Shared.RecoveryPets)
 local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
@@ -23,10 +22,6 @@ function MoneyService.GetRate(player)
 		local pet = data.Inventory[id]
 		if pet and pet.Placed then rate += MoneyService.GetPetRate(pet) end
 	end
-	-- Broken pets earn automatically during the existing recovery window. They
-	-- cannot be placed, so they can never also earn through PlacedPetIds.
-	local now=os.time()
-	for _,record in data.PendingRecovery do rate+=Recovery.Income(record,now) end
 	rate *= Monetization.Multiplier(player)
 	return if rate < math.huge then rate else 0
 end

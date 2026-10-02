@@ -219,18 +219,31 @@ reset()
 local pet={DataVersion=realRequire(game.ReplicatedStorage.Shared.Config.GameConfig).PetDataVersion,
  PetId="receipt-pet",SpeciesId="test_common",EggId="prototype_egg",Rarity="Common",Variant="Normal",
  Traits={},FeedLevel=12,BaseIncome=10,Locked=false,Placed=false,CreatedAt=1}
-data.PendingRecovery[pet.PetId]={Pet=pet,AttemptId="explosion",ExplodedAt=1,FoodSpent=1}
+pet.Broken=true;pet.BreakId="explosion";data.Inventory[pet.PetId]=pet
 local s=State.Read(data);s.Pending={Kind="Revive",PetId=pet.PetId,AttemptId="explosion",ProductId=Config.DirectReviveProductId}
 State.Write(data,s)
 assert(State.ReviveReserved(data,pet.PetId,"explosion"))
+-- Progress made while checkout is open must survive receipt delivery.
+pet.FeedLevel=15;pet.Placed=true;pet.PlotSlot=1;data.PlacedPetIds[pet.PetId]=true
 assert(receipt("revive",Config.DirectReviveProductId)==yes)
-assert(data.Inventory[pet.PetId].FeedLevel==12 and data.PendingRecovery[pet.PetId]==nil)
+assert(data.Inventory[pet.PetId].FeedLevel==15 and not data.Inventory[pet.PetId].Broken and data.Inventory[pet.PetId].Placed)
 assert(data.ReviveCharges==0 and data.Food==0)
 assert(data.ReviveShards==0)
 assert(receipt("revive",Config.DirectReviveProductId)==yes)
 assert(Schema.Validate(data))
+-- An already-paid legacy recovery intent survives the v12 -> v13 migration.
 reset()
-pet.FeedLevel=0
+local old=Schema.CreateDefault();old.DataVersion=12
+local legacyPet=table.clone(pet);legacyPet.Broken=nil;legacyPet.BreakId=nil;legacyPet.Placed=false;legacyPet.PlotSlot=nil
+old.PendingRecovery[legacyPet.PetId]={Pet=legacyPet,AttemptId="legacy-receipt",ExplodedAt=1,FoodSpent=1}
+local pending=State.Read(old);pending.Pending={Kind="Revive",PetId=legacyPet.PetId,AttemptId="legacy-receipt",ProductId=Config.DirectReviveProductId}
+State.Write(old,pending)
+data=assert(Schema.Migrate(old));profiles[player]=data
+assert(data.Inventory[legacyPet.PetId].Broken and State.ReviveReserved(data,legacyPet.PetId,"legacy-receipt"))
+assert(receipt("legacy-repair",Config.DirectReviveProductId)==yes and not data.Inventory[legacyPet.PetId].Broken)
+assert(receipt("legacy-repair",Config.DirectReviveProductId)==yes and data.Inventory[legacyPet.PetId].FeedLevel==legacyPet.FeedLevel)
+reset()
+pet.FeedLevel=0;pet.Placed=false;pet.PlotSlot=nil;pet.Broken=nil;pet.BreakId=nil
 data.IncubatingEggs.e={EggId="prototype_egg",Pet=pet,StartedAt=os.time()-1,ReadyAt=os.time()+500,
  HatchSeconds=501,PricePaid=4900,PenPosition={X=0,Z=0}}
 s=State.Read(data);s.Pending={Kind="GrowAll",Eggs={"e"},ProductId=Config.GrowAllProductId}
@@ -267,5 +280,5 @@ for id,product in Config.FoodProducts do
  assert((notice.Shards or 0)==(if id=="revive" then 0 else Revive.Shards.ByRarity[Foods.Types[id].Rarity]))
  assert(Schema.Validate(data))
 end
-print("PASS: all 24 products; restricted paid-random prompt blocking, queued structured thank-you notices, no duplicate notice, guaranteed paid-food shards, save retries, welcome once, cancellation, pass entitlement, food reservations/rotation, grow no-op/timers, expired reserved revive, personal restock, profile validation.")
+print("PASS: all 24 products; restricted paid-random prompt blocking, queued structured thank-you notices, no duplicate notice, guaranteed paid-food shards, save retries, welcome once, cancellation, pass entitlement, food reservations/rotation, grow no-op/timers, current-state repair and migrated receipts, personal restock, profile validation.")
 

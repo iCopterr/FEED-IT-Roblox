@@ -226,6 +226,8 @@ function CarryService.Start()
 			local pet = data and (if state.Egg then data.IncubatingEggs[state.Id] else data.Inventory[state.Id])
 			if character ~= state.Character or state.Model.Parent ~= character or not pet or pet.Placed or (state.Egg and pet.PenPosition) then
 				CarryService.Unequip(player)
+			elseif not state.Egg then
+				require(script.Parent.PetPresentation).Update(state.Model,pet)
 			end
 		end
 	end)

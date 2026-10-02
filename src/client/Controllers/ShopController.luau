@@ -13,6 +13,7 @@ function Controller.Start()
 	local pg=player:WaitForChild("PlayerGui")
 	local gui=assert(pg:WaitForChild("ShopUI",30),"ShopUI missing")
 	local panel=gui.Panel
+	panel.Offers.Welcome.Description.Text=string.format("%d Hearty • %d Royal • %d Repair Charm\nOnce per player",Config.WelcomePack.Hearty,Config.WelcomePack.Royal,Config.WelcomePack.Revive)
 	ShopShine.Bind(gui)
 	local others={}
 	local function price(card,value,kind,id,attribute,paidRandom,ongoingBenefit)

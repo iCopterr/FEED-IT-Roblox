@@ -8,11 +8,6 @@ local Controller={}
 local Purchases=require(script.Parent.Parent.UI.Purchases)
 local View=require(script.Parent.Parent.UI.ReviveView)
 
-local function clockText(seconds)
- seconds=math.max(0,math.floor(seconds))
- return string.format("%02d:%02d:%02d",math.floor(seconds/3600),math.floor(seconds/60)%60,seconds%60)
-end
-
 function Controller.Start()
  local player=Players.LocalPlayer
  local gui=player:WaitForChild("PlayerGui"):WaitForChild("ReviveUI",30)
@@ -20,15 +15,14 @@ function Controller.Start()
  local brokenTab,exchangeTab,exchangePanel=View.Build(panel)
  local brokenObjects={panel.Pets,panel.PetPreview,panel.PetName,panel.Details,panel.Notice,panel.Revive,panel.Robux,panel.Empty}
  local remote=Storage:WaitForChild("PrototypeRevive")
- local snapshot,selected,receivedAt=nil,nil,0
+ local snapshot,selected=nil,nil
  local requesting,acting=false,false
  local currentTab="Broken"
  local cards={}
- local messages={TooFar="Visit the Revive Machine near the merchant.",NoRevive="Buy a Revive Charm from the merchant.",
-  NotEnoughShards="You need 100 Revive Shards.",StaleRequest="Exchange refreshed. Please try again.",
-  Busy="",Unavailable="This pet is no longer awaiting revival.",
-  PetChanged="This recovery has changed. Refreshing…",Cooldown="",Loading="Loading your pets…"}
- local function remaining(r) return math.max(0,r.ExpiresAt-(snapshot.ServerNow+os.clock()-receivedAt)) end
+ local messages={TooFar="Visit the Pet Repair Station near the merchant.",NoRevive="Get a Repair Charm from the merchant or exchange shards.",
+  NotEnoughShards="You need 100 Repair Shards.",StaleRequest="Exchange refreshed. Please try again.",
+  Busy="",Unavailable="This pet no longer needs repair.",
+  PetChanged="This pet's damage has changed. Refreshing…",Cooldown="",Loading="Loading your pets…"}
  local function selectedRecord()
   if snapshot then for _,r in snapshot.Records do if r.AttemptId==selected then return r end end end
  end
@@ -54,7 +48,7 @@ function Controller.Start()
     card.Activated:Connect(function() if not acting then selected=key;render() end end)
    end
    card.Visible=broken;card.LayoutOrder=index
-   card.Text=r.PetName.."\nBROKEN • Lv. "..r.FeedLevel.."\n"..clockText(remaining(r))
+   card.Text=r.PetName.."\nBROKEN • Lv. "..r.FeedLevel.."\n50% INCOME"
    card.BackgroundColor3=if selected==key then Color3.fromRGB(45,145,115) else Color3.fromRGB(50,65,88)
   end
   for key,card in cards do if not seen[key] then card:Destroy();cards[key]=nil end end
@@ -64,20 +58,20 @@ function Controller.Start()
   local r=selectedRecord()
   Preview.Set(panel.PetPreview,if panel.Visible and broken and r then {Kind="Pet",SpeciesId=r.SpeciesId} else nil)
   panel.PetName.Text=if r then r.PetName else "SELECT A BROKEN PET"
-  panel.Details.Text=if r then string.format("%s • LEVEL %d • $%s/s (50%%) %s%s remaining",r.Rarity,r.FeedLevel,
-   Compact(r.Income),string.char(10),clockText(remaining(r))) else ""
-  panel.Notice.Text=if r then "Revive restores full income • Expiry → Level 0" else "Broken pets earn 50% income for up to 24 hours"
-  local enabled=r~=nil and remaining(r)>0 and snapshot.NearMachine and snapshot.CanRevive and not snapshot.Busy and not acting
+  panel.Details.Text=if r then string.format("%s • LEVEL %d\n$%s/s → $%s/s AFTER REPAIR",r.Rarity,r.FeedLevel,
+   Compact(r.Income),Compact(r.RestoredIncome)) else ""
+  panel.Notice.Text="Can still upgrade • 50% income until repaired"
+  local enabled=r~=nil and snapshot.NearMachine and snapshot.CanRevive and not snapshot.Busy and not acting
   panel.Revive.Active=enabled==true;panel.Revive.AutoButtonColor=enabled==true
   panel.Revive.BackgroundColor3=if enabled then Color3.fromRGB(70,190,110) else Color3.fromRGB(90,95,105)
-  panel.Revive.Text="USE 1 REVIVE • "..Compact(snapshot and snapshot.ReviveCharges or 0)
-  panel.Robux.Active=r~=nil and remaining(r)>0 and snapshot.NearMachine and not snapshot.Busy and not acting
+  panel.Revive.Text="REPAIR • 1 CHARM ("..Compact(snapshot and snapshot.ReviveCharges or 0)..")"
+  panel.Robux.Active=r~=nil and snapshot.NearMachine and not snapshot.Busy and not acting
   panel.Robux.Text="149 ROBUX"
 
   local shardCount=snapshot and snapshot.ReviveShards or 0
   local cost=snapshot and snapshot.ShardExchangeCost or Config.Shards.ExchangeCost
   exchangePanel.ShardBalance.Text="YOUR SHARDS • "..Compact(shardCount)
-  exchangePanel.CharmCount.Text="OWNED REVIVE CHARMS • "..Compact(snapshot and snapshot.ReviveCharges or 0)
+  exchangePanel.CharmCount.Text="OWNED REPAIR CHARMS • "..Compact(snapshot and snapshot.ReviveCharges or 0)
   exchangePanel.Exchange.Text="EXCHANGE • "..Compact(cost).." SHARDS"
   local canExchange=snapshot and snapshot.NearMachine and not snapshot.Busy and not acting and shardCount>=cost
   exchangePanel.Exchange.Active=canExchange==true;exchangePanel.Exchange.AutoButtonColor=canExchange==true
@@ -89,7 +83,7 @@ function Controller.Start()
   local ok,result=pcall(function() return remote:InvokeServer("Snapshot") end)
   requesting=false
   if ok and result.Ok then
-   snapshot=result;receivedAt=os.clock()
+   snapshot=result
    if not result.NearMachine then panel.Visible=false end
    if selected and not selectedRecord() then selected=nil end
    if not selected and result.Records[1] then selected=result.Records[1].AttemptId end
@@ -132,7 +126,7 @@ function Controller.Start()
   if ok and result.Ok then
    snapshot.ReviveCharges=result.ReviveCharges;snapshot.ReviveShards=result.ReviveShards
    snapshot.NextExchangeSequence=result.NextExchangeSequence;snapshot.CanExchange=snapshot.ReviveShards>=snapshot.ShardExchangeCost
-   panel.Status.Text="Revive Charm received!"
+   panel.Status.Text="Repair Charm received!"
   else
    panel.Status.Text=if ok then messages[result.Code] or "Unable to exchange shards." else "Reply lost. Checking your balance…"
   end
@@ -141,10 +135,10 @@ function Controller.Start()
  panel.Revive.Activated:Connect(function()
   local r=selectedRecord()
   if acting or not r or not panel.Revive.Active then return end
-  acting=true;render();panel.Status.Text="Restoring…"
-  local ok,result=pcall(function() return remote:InvokeServer("Revive",r.PetId,r.AttemptId) end)
+  acting=true;render();panel.Status.Text=""
+  local ok,result=pcall(function() return remote:InvokeServer("Repair",r.PetId,r.AttemptId) end)
   acting=false
-  panel.Status.Text=if ok and result.Ok then "Pet returned to your inventory." else if ok then messages[result.Code] or "Unable to restore." else "Reply lost. Checking recovery…"
+  panel.Status.Text=if ok and result.Ok then "Pet repaired! Full income restored." else if ok then messages[result.Code] or "Unable to repair." else "Reply lost. Checking repair…"
   selected=nil;snapshot=nil;render();task.spawn(refresh)
  end)
  panel.Robux:SetAttribute("SuppressClickSound",true)

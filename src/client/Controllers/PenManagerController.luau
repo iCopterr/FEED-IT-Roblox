@@ -45,7 +45,7 @@ function Controller.Start()
 			for id,pet in snapshot.Inventory do
 				if pet.Placed then local species=Pets.Species[pet.SpeciesId]
 					table.insert(list,{Id=id,Name=Variants.Name(species and species.DisplayName or pet.SpeciesId,pet.Variant),
-						Kind="Pet",SpeciesId=pet.SpeciesId,Details="$"..Number(Income(pet)).."/s",Ready=true})
+						Kind="Pet",SpeciesId=pet.SpeciesId,Details="$"..Number(Income(pet)).."/s"..(if pet.Broken then " • BROKEN (50%)" else ""),Ready=true})
 				end
 			end
 		end
