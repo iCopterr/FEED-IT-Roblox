@@ -31,7 +31,7 @@ local function banner(gui, result)
 	local color, text
 	if result.Code == "Explosion" then
 		color = Color3.fromRGB(255,108,73)
-		text = presentation.BannerText .. "\nVisit the Revive Machine within 24h • Food spent"
+		text = presentation.BannerText .. "\nBROKEN • Earning 50% • Revive within 24h"
 	elseif result.Code == "MiracleSave" then
 		color = Color3.fromRGB(101,239,255)
 		text = presentation.BannerText .. "\nPet survived at the same level • Food spent"

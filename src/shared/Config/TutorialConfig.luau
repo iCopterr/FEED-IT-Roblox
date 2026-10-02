@@ -1,5 +1,5 @@
 return table.freeze({
-	StartingMoney=5000,
+	StartingMoney=2000,
 	EggId="prototype_egg",
 	FoodId="basic",
 	MoneyTarget=100,

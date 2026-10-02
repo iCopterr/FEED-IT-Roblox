@@ -57,7 +57,7 @@ local ok,failure=xpcall(function()
 	end
 	local id,model=conveyor.SpawnOffer(0);assert(id,model)
 	check(model:GetAttribute("EggId")=="prototype_egg" and model:GetAttribute("SpeciesId")==nil,"Conveyor shows egg not preselected pet")
-	check(model:GetAttribute("Price")==5000 and model:FindFirstChild("BuyConveyorEgg",true)~=nil,"Egg price and purchase prompt authored")
+	check(model:GetAttribute("Price")==2000 and model:FindFirstChild("BuyConveyorEgg",true)~=nil,"Egg price and purchase prompt authored")
 	local start=model:GetPivot().Position;task.wait(.3);conveyor.Step()
 	check((model:GetPivot().Position-start).Magnitude>.1,"Egg moves along conveyor")
 	check(not conveyor.HandlePurchase(a,{}).Ok,"Malformed purchase rejected")
@@ -68,7 +68,7 @@ local ok,failure=xpcall(function()
 	task.wait(.3);near(rootA,model);profile.Money=20000
 	local inventoryCount=count(profile.Inventory)
 	local result=conveyor.HandlePurchase(a,id)
-	check(result.Ok and profile.Money==15000 and count(profile.Inventory)==inventoryCount and count(profile.IncubatingEggs)==1,"Purchase charges once and reserves egg, not usable pet")
+	check(result.Ok and profile.Money==18000 and count(profile.Inventory)==inventoryCount and count(profile.IncubatingEggs)==1,"Purchase charges once and reserves egg, not usable pet")
 	local uid=result.EggUid;local egg=profile.IncubatingEggs[uid];local petId=egg.Pet.PetId
 	check(variants.Types[egg.Pet.Variant]~=nil,"Purchase reserves a configured variant")
 	-- Memory-only fixture guarantees rare-result persistence coverage without grinding.
@@ -77,7 +77,7 @@ local ok,failure=xpcall(function()
 		and egg.Pet.FeedLevel==0 and egg.Pet.EggId=="prototype_egg","New egg stores duration but timer waits for placement")
 	check(result.PetId==nil and result.Rarity==nil and model.Parent==nil,"Purchase hides result and consumes world offer")
 	local replay=conveyor.HandlePurchase(a,id)
-	check(replay.EggUid==uid and profile.Money==15000 and count(profile.IncubatingEggs)==1,"Purchase retry cannot charge or create egg twice")
+	check(replay.EggUid==uid and profile.Money==18000 and count(profile.IncubatingEggs)==1,"Purchase retry cannot charge or create egg twice")
 	other.Money=20000
 	check(not conveyor.HandlePurchase(b,id).Ok and other.Money==20000,"Sold egg cannot be bought by second player")
 	waitFor(function() return not locks.IsLocked(a) end)
@@ -236,7 +236,7 @@ local ok,failure=xpcall(function()
 	task.spawn(function() results[2]=conveyor.HandlePurchase(b,raceId) end)
 	waitFor(function() return results[1] and results[2] end)
 	check((if results[1].Ok then 1 else 0)+(if results[2].Ok then 1 else 0)==1,"Two buyers get exactly one winner")
-	check(profile.Money+other.Money==35000 and count(profile.IncubatingEggs)+count(other.IncubatingEggs)==1,"Purchase race charges and reserves once")
+	check(profile.Money+other.Money==38000 and count(profile.IncubatingEggs)+count(other.IncubatingEggs)==1,"Purchase race charges and reserves once")
 	local folder=workspace.PetConveyor.Offers
 	while #folder:GetChildren()<beltConfig.MaxOffers do assert(conveyor.SpawnOffer(0)) end
 	check(conveyor.SpawnOffer(0)==nil,"World offer cap enforced")

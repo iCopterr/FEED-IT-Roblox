@@ -77,6 +77,7 @@ function Controller.Start(gui,onSnapshot)
 		task.spawn(refresh)
 	end
 	local function stateOf(entry)
+		if entry.State=="BROKEN" then return "BROKEN" end
 		if player:GetAttribute(if entry.Kind=="Egg" then "CarriedEggUid" else "CarriedPetId")==entry.Id then return "HELD" end
 		return if entry.State=="HELD" then "STORED" else entry.State
 	end
@@ -84,6 +85,7 @@ function Controller.Start(gui,onSnapshot)
 		if busy or not snapshot or snapshot.Busy or player:GetAttribute("FeedBusy") then notice(errors.Busy);return end
 		if not entry then return end
 		local state=stateOf(entry)
+		if state=="BROKEN" then notice("Visit the Revive Machine near the merchant to restore this pet.");return end
 		if not locking and state~="STORED" and state~="HELD" then
 			notice(if state=="FEED PLATE" then "Hold E at the plate; use Pick Up Pet in the Feed UI."
 				elseif entry.Kind=="Egg" then "Visit your egg in the Pen. Press E when it is ready."
@@ -120,7 +122,7 @@ function Controller.Start(gui,onSnapshot)
 	local function updateDetail()
 		local entry=entries[selected]
 		Preview.Set(detail.Preview,entry)
-		detail.Equip.Visible=entry~=nil and Model.CanSlot(entry);detail.Pin.Visible=false;detail.Lock.Visible=entry~=nil and entry.Kind=="Pet"
+		detail.Equip.Visible=entry~=nil and Model.CanSlot(entry);detail.Pin.Visible=false;detail.Lock.Visible=entry~=nil and entry.Kind=="Pet" and entry.State~="BROKEN"
 		if not entry then detail.ItemName.Text="SELECT AN ITEM";detail.Stats.Text="";return end
 		local state=stateOf(entry)
 		detail.ItemName.Text=entry.Name
@@ -130,6 +132,11 @@ function Controller.Start(gui,onSnapshot)
 			else "EGG • "..state.."\n"..(if state=="INCUBATING" then numberText(math.max(0,entry.ReadyAt-snapshot.ServerNow)).."s remaining"
 				elseif state=="READY" then "Press E beside your egg to hatch."
 				else "Hold, then click inside your Pen.")
+		if state=="BROKEN" then
+			local minutes=math.max(0,math.ceil((entry.ExpiresAt-snapshot.ServerNow)/60))
+			detail.Stats.Text=string.format("%s • LEVEL %s\n%s / sec • 50%% INCOME\nBROKEN • %dh %dm left\nVisit the Revive Machine",entry.Rarity,
+				numberText(entry.Level),moneyText(entry.Income),math.floor(minutes/60),minutes%60)
+		end
 		detail.Equip.ButtonText.Text=if Model.SlotOf(slots,entry.Key) then "REMOVE FROM HOTBAR" else "ADD TO HOTBAR"
 		detail.Lock.ButtonText.Text=if entry.Locked then "UNLOCK" else "LOCK"
 		detail.Pin.ButtonText.Text=if Model.SlotOf(slots,entry.Key) then "UNPIN" else "QUICK SLOT"

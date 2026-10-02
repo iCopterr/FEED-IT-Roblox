@@ -104,7 +104,8 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	local attemptId = HttpService:GenerateGUID(false)
 	if outcome.Code == "Explosion" then
 		-- Preserve the pre-failure pet until the owner chooses Revive or level 0.
-		-- Only one usable identity may exist; pending pets cannot earn or rebuild.
+		-- One identity remains in recovery; it earns the configured reduced rate
+		-- but cannot be equipped, placed or fed until recovery is resolved.
 		data.Inventory[petId] = nil
 		data.PendingRecovery[petId] = {Pet=before, AttemptId=attemptId, ExplodedAt=os.time(), FoodSpent=result.Cost}
 		outcome.FeedLevel = Config.ExplosionResetLevel

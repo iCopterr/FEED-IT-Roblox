@@ -2,12 +2,10 @@ local Players = game:GetService("Players")
 local DataService = require(script.Parent.DataService)
 local Schema = require(script.Parent.Parent.Data.PlayerDataSchema)
 local Locks = require(script.Parent.FeedLocks)
-local MoneyService = require(script.Parent.MoneyService)
-local PetConfig = require(game.ReplicatedStorage.Shared.Config.PetConfig)
+local Recovery = require(game.ReplicatedStorage.Shared.RecoveryPets)
 local Config = require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
 local Commerce = require(script.Parent.CommerceState)
 local FeedConfig = require(game.ReplicatedStorage.Shared.Config.FeedConfig)
-local Variants = require(game.ReplicatedStorage.Shared.Config.VariantConfig)
 local sessions = {}
 local Service = {}
 
@@ -74,19 +72,7 @@ function Service.HandleRequest(player, action, petId, attemptId)
 	local data = DataService.GetData(player)
 	if not data or not Schema.Validate(data) then return {Ok=false, Code="Loading"} end
 	if action == "Snapshot" then
-		local records = {}
-		for id, record in data.PendingRecovery do
-			local pet = record.Pet
-			local definition = PetConfig.Species[pet.SpeciesId]
-			table.insert(records, {PetId=id, AttemptId=record.AttemptId, SpeciesId=pet.SpeciesId, Variant=pet.Variant,
-				PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant),
-				Rarity=pet.Rarity, FeedLevel=pet.FeedLevel, Income=MoneyService.GetPetRate(pet),
-				ExplodedAt=record.ExplodedAt, ExpiresAt=expiresAt(record), FoodSpent=record.FoodSpent})
-		end
-		table.sort(records, function(a,b)
-			if a.ExplodedAt ~= b.ExplodedAt then return a.ExplodedAt > b.ExplodedAt end
-			return a.PetId < b.PetId
-		end)
+		local records = Recovery.List(data,os.time())
 		return {Ok=true, Records=records, CanRevive=data.ReviveCharges>0, ReviveCharges=data.ReviveCharges,
 			ReviveShards=data.ReviveShards, ShardExchangeCost=Config.Shards.ExchangeCost,
 			CanExchange=data.ReviveShards>=Config.Shards.ExchangeCost,

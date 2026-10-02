@@ -7,11 +7,17 @@ local shared=game.ReplicatedStorage.Shared.Config
 local Config=assert(loadstring(shared.MonetizationConfig.Source))()
 local Revive=assert(loadstring(shared.ReviveConfig.Source))()
 local Foods=assert(loadstring(shared.FoodConfig.Source))()
+local Tutorial=assert(loadstring(shared.TutorialConfig.Source))()
 local configModules={
  [shared.MonetizationConfig]=Config,[shared.ReviveConfig]=Revive,
  [shared.FoodConfig]=Foods,
+	[shared.TutorialConfig]=Tutorial,
 }
 local freshRequire=function(module)return configModules[module] or realRequire(module)end
+local gameFn=assert(loadstring(shared.GameConfig.Source))
+setfenv(gameFn,setmetatable({script=shared.GameConfig,require=freshRequire},{__index=getfenv()}))
+configModules[shared.GameConfig]=gameFn()
+local startingMoney=configModules[shared.GameConfig].StartingMoney
 local shopFn=assert(loadstring(shared.MerchantConfig.Source))
 setfenv(shopFn,setmetatable({script=shared.MerchantConfig,require=freshRequire},{__index=getfenv()}))
 local Shop=shopFn();configModules[shared.MerchantConfig]=Shop
@@ -119,10 +125,10 @@ assert(#clientNotices==0)
 events.NoticeReady(player,"Ready")
 assert(#clientNotices==1 and clientNotices[1].Kind=="Money" and clientNotices[1].Amount==cash.Money)
 events.ProductFinished(123,cash.ProductId,true)
-assert(data.Money==30000 and saves>=3 and not locked)
-assert(receipt("cash-one",cash.ProductId)==yes and data.Money==30000 and #clientNotices==1)
+assert(data.Money==startingMoney+cash.Money and saves>=3 and not locked)
+assert(receipt("cash-one",cash.ProductId)==yes and data.Money==startingMoney+cash.Money and #clientNotices==1)
 profiles[player]=assert(Schema.Migrate(persisted));data=profiles[player]
-assert(receipt("cash-one",cash.ProductId)==yes and data.Money==30000)
+assert(receipt("cash-one",cash.ProductId)==yes and data.Money==startingMoney+cash.Money)
 assert(receipt("unknown",999)==no)
 assert(service.Request(player,"Product",Config.WelcomePack.ProductId).Ok)
 assert(receipt("welcome",Config.WelcomePack.ProductId)==yes)
@@ -139,7 +145,7 @@ moneyPacksAllowed=false
 local promptsBeforePolicy=promptCount
 local restricted=service.Request(player,"Product",cash.ProductId)
 assert(not restricted.Ok and restricted.Code=="PolicyRestricted")
-assert(promptCount==promptsBeforePolicy and State.Read(data).Pending==nil and data.Money==5000)
+assert(promptCount==promptsBeforePolicy and State.Read(data).Pending==nil and data.Money==startingMoney)
 for _,request in {
  {"Product",Config.WelcomePack.ProductId},{"Pass"},{"Grow","egg"},{"GrowAll"},
 } do
@@ -151,7 +157,7 @@ moneyPacksAllowed=true
 reset()
 assert(service.Request(player,"Product",cash.ProductId).Ok)
 events.ProductFinished(123,cash.ProductId,false)
-assert(State.Read(data).Pending==nil and data.Money==5000)
+assert(State.Read(data).Pending==nil and data.Money==startingMoney)
 memory=true
 assert(not service.Request(player,"Product",cash.ProductId).Ok)
 assert(receipt("memory",cash.ProductId)==no)
@@ -160,7 +166,7 @@ memory=false
 memory=true;studio=true
 assert(service.Request(player,"Product",cash.ProductId).Ok)
 assert(receipt("studio-memory",cash.ProductId)==yes)
-assert(data.Money==30000)
+assert(data.Money==startingMoney+cash.Money)
 events.ProductFinished(123,cash.ProductId,true)
 assert(service.Request(player,"Pass").Ok)
 memory=false;studio=false
@@ -196,18 +202,18 @@ assert(data.Foods.royal==1 and data.ReviveShards==Revive.Shards.ByRarity.Fabled 
 reset()
 state=State.Read(data);state.Pending={Kind="Grow",EggUid="gone",ProductId=Config.GrowTiers[1].ProductId}
 State.Write(data,state)
-assert(receipt("grown",Config.GrowTiers[1].ProductId)==yes and data.Money==5000)
+assert(receipt("grown",Config.GrowTiers[1].ProductId)==yes and data.Money==startingMoney)
 assert(Schema.Validate(data))
 -- Verify every mapped product has a receipt path (targeted entries need a reservation).
 for _,pack in Config.MoneyPacks do
- reset();assert(receipt("pack-"..pack.Id,pack.ProductId)==yes);assert(data.Money==5000+pack.Money)
+ reset();assert(receipt("pack-"..pack.Id,pack.ProductId)==yes);assert(data.Money==startingMoney+pack.Money)
 end
 for _,tier in Config.GrowTiers do
  reset()
  local s=State.Read(data);s.Pending={Kind="Grow",EggUid="already-collected",ProductId=tier.ProductId}
  State.Write(data,s)
  assert(receipt("grow-"..tier.Robux,tier.ProductId)==yes)
- assert(receipt("grow-"..tier.Robux,tier.ProductId)==yes and data.Money==5000)
+ assert(receipt("grow-"..tier.Robux,tier.ProductId)==yes and data.Money==startingMoney)
 end
 reset()
 local pet={DataVersion=realRequire(game.ReplicatedStorage.Shared.Config.GameConfig).PetDataVersion,

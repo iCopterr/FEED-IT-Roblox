@@ -6,6 +6,41 @@
 
 **Last Updated:** 2026-10-02
 
+### Latest session — visible broken pets, half income and $2K starter
+
+- Completed: broken pets now appear as BROKEN inventory entries with recovery
+  time, original Feed level and 50% income. The same RecoveryPets projection
+  feeds the Revive Machine list, which auto-selects a pet and shows its preview.
+  Saved PendingRecovery remains the only identity; broken pets cannot equip,
+  place, feed or enter quick slots. No migration or duplicate pet is created.
+- Owner balance update: pending pets earn half their pre-failure income while
+  online with a plot, composed with the existing eligible x2 Money multiplier.
+  Income stops at the original 24-hour deadline, including records reserved by
+  an outstanding paid revive. Expiry still returns the pet at level 0. Revive
+  restores pre-failure growth once and does not refund food; restored stored
+  pets stop receiving recovery income until normally placed.
+- UI: fixed inherited artwork anchor causing the charm/title overlap; added
+  shard-to-charm artwork, balanced spacing, rounded controls, padded scrolling
+  cards, tab counts and portrait geometry. Retains game font/stroke/art. A
+  selected broken pet and exchange tab were visually inspected in Studio;
+  temporary QA screen removed afterwards.
+- Basic Egg costs $2,000; new profiles start with $2,000. Tutorial wording reads
+  configuration. Existing balances and paid egg records remain unchanged.
+- Verified: detached real Feed -> recovery -> save/reload -> MoneyService ->
+  UIService/InventoryModel -> ReviveService lifecycle passes, including replay,
+  foreign/wrong-attempt rejection, 50% and x2 rates, expiry and no double payout.
+  Actual ReviveController on cloned GUI passes cards, auto-selection, model
+  preview, tab switching and portrait/landscape geometry. Local economic runner
+  passes too. All 24 commerce routes and shard-exchange regressions pass. Luau
+  compilation, Rojo build and diff checks pass.
+- Files: RecoveryPets, ReviveView, Feed/Money/Revive/UI services, inventory/revive/
+  tutorial/feed-effects clients, DeviceLayout, egg/tutorial/revive configs,
+  recovery/commerce and existing verification fixtures, GDD and related docs.
+- Overall: implementation complete. Next: owner checks a fresh Play session;
+  live player saves were not modified and the reported historical missing pet
+  cannot be reconstructed without its saved recovery record. Prior commit:
+  eb92ed0. Untracked user artwork preserved; no publishing/push performed.
+
 ### Latest session — refined landscape-phone HUD spacing
 
 - Refined the owner's updated physical-phone layout without changing authored

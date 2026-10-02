@@ -64,7 +64,7 @@ local Config = {
 		prototype_egg = table.freeze({
 			DisplayName = "Basic Egg",
 			Theme = "Normal Creatures",
-			Price = 5000,
+			Price = 2000,
 			HatchSeconds = 10,
 			TemplateName = "prototype_egg",
 			-- Test-friendly odds, not final production rarity distribution.

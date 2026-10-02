@@ -1,6 +1,6 @@
 # First-time tutorial
 
-New profiles start with exactly 5,000 Money and `Settings.TutorialStep=BuyEgg`.
+New profiles start with exactly 2,000 Money and `Settings.TutorialStep=BuyEgg`.
 The initial DataStore record contains both values; no repeatable claim remote
 or balance top-up exists. Older saves keep their Money and Settings unchanged
 and are not automatically enrolled. This uses the existing Settings map
@@ -9,7 +9,7 @@ suppressed for tutorial profiles (its explicitly named verification still works)
 
 ## Guided flow
 
-1. Buy one Basic Egg from the normal conveyor for 5,000 Money.
+1. Buy one Basic Egg from the normal conveyor for 2,000 Money.
 2. Hold it and click inside the owner's pen to place it.
 3. Wait the normal hatch time and press E beside the ready egg.
 4. Hold the hatched pet and place it in the pen to earn Money.

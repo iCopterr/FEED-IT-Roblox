@@ -6,57 +6,18 @@ local Motion=require(script.Parent.Parent.UI.Motion)
 local Compact=require(Storage.Shared.NumberFormat).Compact
 local Controller={}
 local Purchases=require(script.Parent.Parent.UI.Purchases)
+local View=require(script.Parent.Parent.UI.ReviveView)
 
 local function clockText(seconds)
  seconds=math.max(0,math.floor(seconds))
  return string.format("%02d:%02d:%02d",math.floor(seconds/3600),math.floor(seconds/60)%60,seconds%60)
 end
 
-local function buildExchangeUI(panel)
- local brokenTab=panel.Revive:Clone()
- brokenTab.Name="BrokenTab";brokenTab.Text="BROKEN PETS";brokenTab.Position=UDim2.fromOffset(380,16)
- brokenTab.Size=UDim2.fromOffset(150,36);brokenTab.ZIndex=7;brokenTab.Parent=panel
- local exchangeTab=panel.Revive:Clone()
- exchangeTab.Name="ExchangeTab";exchangeTab.Text="SHARD EXCHANGE";exchangeTab.Position=UDim2.fromOffset(540,16)
- exchangeTab.Size=UDim2.fromOffset(160,36);exchangeTab.ZIndex=7;exchangeTab.Parent=panel
-
- local exchange=panel.Pets:Clone()
- exchange.Name="ExchangePanel";exchange.Position=UDim2.fromOffset(16,84);exchange.Size=UDim2.fromOffset(762,376)
- exchange.Visible=false;exchange.ScrollingEnabled=false;exchange.ScrollBarThickness=0
- exchange.AutomaticCanvasSize=Enum.AutomaticSize.None;exchange.CanvasSize=UDim2.fromOffset(0,0)
- for _,child in exchange:GetChildren() do
-  if child:IsA("GuiObject") or child:IsA("UIGridLayout") or child:IsA("UIListLayout") then child:Destroy() end
- end
- exchange.Parent=panel
-
- local title=panel.PetName:Clone()
- title.Name="ShardTitle";title.Text="REVIVE SHARDS";title.Position=UDim2.fromOffset(24,18)
- title.Size=UDim2.fromOffset(714,42);title.TextSize=30;title.Parent=exchange
- local icon=panel.Robux.ProductIcon:Clone()
- icon.Name="RewardIcon";icon.Image="rbxassetid://133373414506019";icon.Position=UDim2.fromOffset(296,64)
- icon.Size=UDim2.fromOffset(170,140);icon.ZIndex=5;icon.Parent=exchange
- local balance=panel.Details:Clone()
- balance.Name="ShardBalance";balance.Text="YOUR SHARDS • 0";balance.Position=UDim2.fromOffset(24,210)
- balance.Size=UDim2.fromOffset(714,44);balance.TextSize=26;balance.Parent=exchange
- local description=panel.Notice:Clone()
- description.Name="Description";description.Text=[=[Collect shards from Robux food purchases
-100 SHARDS = 1 REVIVE CHARM]=]
- description.Position=UDim2.fromOffset(24,252);description.Size=UDim2.fromOffset(714,48)
- description.TextWrapped=true;description.TextSize=18;description.Parent=exchange
- local button=panel.Revive:Clone()
- button.Name="Exchange";button.Text="EXCHANGE • 100 SHARDS";button.Position=UDim2.fromOffset(160,306)
- button.Size=UDim2.fromOffset(442,50);button.ZIndex=5;button.Parent=exchange
- local charms=panel.Notice:Clone()
- charms.Name="CharmCount";charms.Text="OWNED REVIVE CHARMS • 0";charms.Position=UDim2.fromOffset(24,352)
- charms.Size=UDim2.fromOffset(714,20);charms.TextSize=16;charms.Parent=exchange
- return brokenTab,exchangeTab,exchange
-end
-
 function Controller.Start()
  local player=Players.LocalPlayer
  local gui=player:WaitForChild("PlayerGui"):WaitForChild("ReviveUI",30)
  local panel=gui.Panel
- local brokenTab,exchangeTab,exchangePanel=buildExchangeUI(panel)
+ local brokenTab,exchangeTab,exchangePanel=View.Build(panel)
  local brokenObjects={panel.Pets,panel.PetPreview,panel.PetName,panel.Details,panel.Notice,panel.Revive,panel.Robux,panel.Empty}
  local remote=Storage:WaitForChild("PrototypeRevive")
  local snapshot,selected,receivedAt=nil,nil,0
@@ -93,17 +54,19 @@ function Controller.Start()
     card.Activated:Connect(function() if not acting then selected=key;render() end end)
    end
    card.Visible=broken;card.LayoutOrder=index
-   card.Text=r.PetName..string.char(10).."Lv. "..r.FeedLevel.." • "..clockText(remaining(r))
+   card.Text=r.PetName.."\nBROKEN • Lv. "..r.FeedLevel.."\n"..clockText(remaining(r))
    card.BackgroundColor3=if selected==key then Color3.fromRGB(45,145,115) else Color3.fromRGB(50,65,88)
   end
   for key,card in cards do if not seen[key] then card:Destroy();cards[key]=nil end end
   panel.Empty.Visible=broken and (not snapshot or #snapshot.Records==0)
+  panel.Empty.Text=if snapshot then "No broken pets\nYour pets are safe!" else "Loading broken pets…"
+  brokenTab.Text="BROKEN PETS • "..tostring(snapshot and #snapshot.Records or 0)
   local r=selectedRecord()
   Preview.Set(panel.PetPreview,if panel.Visible and broken and r then {Kind="Pet",SpeciesId=r.SpeciesId} else nil)
   panel.PetName.Text=if r then r.PetName else "SELECT A BROKEN PET"
-  panel.Details.Text=if r then string.format("%s • LEVEL %d • $%s/s%s%s remaining",r.Rarity,r.FeedLevel,
+  panel.Details.Text=if r then string.format("%s • LEVEL %d • $%s/s (50%%) %s%s remaining",r.Rarity,r.FeedLevel,
    Compact(r.Income),string.char(10),clockText(remaining(r))) else ""
-  panel.Notice.Text=if r then "Expiry → Level 0 • Failed food stays spent" else "Broken pets remain here for 24 hours"
+  panel.Notice.Text=if r then "Revive restores full income • Expiry → Level 0" else "Broken pets earn 50% income for up to 24 hours"
   local enabled=r~=nil and remaining(r)>0 and snapshot.NearMachine and snapshot.CanRevive and not snapshot.Busy and not acting
   panel.Revive.Active=enabled==true;panel.Revive.AutoButtonColor=enabled==true
   panel.Revive.BackgroundColor3=if enabled then Color3.fromRGB(70,190,110) else Color3.fromRGB(90,95,105)
@@ -129,6 +92,7 @@ function Controller.Start()
    snapshot=result;receivedAt=os.clock()
    if not result.NearMachine then panel.Visible=false end
    if selected and not selectedRecord() then selected=nil end
+   if not selected and result.Records[1] then selected=result.Records[1].AttemptId end
   elseif not ok or result.Code~="Cooldown" then
    snapshot=nil;panel.Status.Text=if ok then messages[result.Code] or "Unable to load pets." else "Connection interrupted. Retrying…"
   end

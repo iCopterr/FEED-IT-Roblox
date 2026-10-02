@@ -51,8 +51,9 @@ function Controller.Resolve(player,playerGui)
 				if d<distance then nearest,distance=offer,d end
 			end
 		end end
-		return if nearest then "You have $5K! Follow the arrows and hold E to buy a Basic Egg."
-			else "Your $5K is ready. Follow the arrows and wait for a Basic Egg.",position(nearest or (conveyor and conveyor:FindFirstChild("Start")))
+		local startingMoney="$"..Number(Config.StartingMoney)
+		return if nearest then "Start with "..startingMoney.."! Follow the arrows to buy a Basic Egg."
+			else "Your "..startingMoney.." starter money is ready. Follow the arrows and wait for a Basic Egg.",position(nearest or (conveyor and conveyor:FindFirstChild("Start")))
 	elseif step=="PlaceEgg" then
 		if player:GetAttribute("CarriedEggUid")~=eggId then return equip("egg:"..tostring(eggId),"egg") end
 		return "Carry your egg home, then click inside your fenced pen to place it.",plot and plot.Pen.Floor.Position

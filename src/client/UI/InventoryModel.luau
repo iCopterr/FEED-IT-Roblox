@@ -19,6 +19,12 @@ function Model.Entries(snapshot)
 			State=if snapshot.CarriedPetId==id then "HELD" elseif snapshot.FeedPlatePetId==id then "FEED PLATE"
 				elseif pet.Placed then "IN PEN" else "STORED"}
 	end
+	for _,pet in snapshot.BrokenPets or {} do
+		local id=pet.PetId
+		entries["pet:"..id]={Key="pet:"..id,Id=id,Kind="Pet",Variant=pet.Variant,Name=pet.PetName,
+			SpeciesId=pet.SpeciesId,Rarity=pet.Rarity,Level=pet.FeedLevel,Locked=pet.Locked,
+			Income=pet.Income,CreatedAt=pet.CreatedAt,State="BROKEN",ExpiresAt=pet.ExpiresAt}
+	end
 	for _,egg in snapshot.Eggs or {} do
 		if egg.Placed then continue end
 		entries["egg:"..egg.EggUid]={Key="egg:"..egg.EggUid,Id=egg.EggUid,Kind="Egg",Name=egg.Name,

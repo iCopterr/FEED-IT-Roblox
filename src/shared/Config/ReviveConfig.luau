@@ -3,6 +3,7 @@ return table.freeze({
 		Description="Restore a broken pet at the Revive Machine within 24 hours. Consumed once; food is not refunded.",
 		Price=5000000, Weight=.5, RewardType="Revive", Amount=1, StockLimit=1}),
 	WindowSeconds = 24*60*60,
+	BrokenIncomeMultiplier = 0.5,
 	MachineDistance = 16,
 	PromptDistance = 12,
 	PromptHoldSeconds = .125,

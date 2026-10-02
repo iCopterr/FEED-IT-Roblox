@@ -10,6 +10,7 @@ local PedestalService = require(script.Parent.PedestalService)
 local Config = require(ReplicatedStorage.Shared.Config.UIConfig)
 local EggConfig = require(ReplicatedStorage.Shared.Config.EggConfig)
 local Locks = require(script.Parent.FeedLocks)
+local Recovery = require(ReplicatedStorage.Shared.RecoveryPets)
 local UIService = {}
 local Settings=require(ReplicatedStorage.Shared.Config.SettingsConfig)
 local lastRequest = {}
@@ -99,6 +100,7 @@ function UIService.HandleRequest(player, action, petId, locked)
 		Ok = true, Money = data.Money, Food = require(game.ReplicatedStorage.Shared.Config.FoodConfig).Total(data),
 		MaxPetSlots = data.MaxPetSlots, PlacedCount = placedCount,
 		Inventory = PetService.GetInventory(player),
+		BrokenPets = Recovery.List(data,os.time()),
 		Eggs = eggs, ServerNow = os.time(), Busy = Locks.IsLocked(player),
 		CarriedEggUid = CarryService.GetEggId(player),
 		CarriedPetId = CarryService.GetPetId(player),

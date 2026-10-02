@@ -1081,6 +1081,15 @@ When a pet explodes **and the 5% Miracle Save fails**, the player may receive an
 
 ## 23.1 Revive Rule
 
+**Owner update (2026-10-02):** Exploded pets remain visible as BROKEN in the
+inventory and Revive Machine for the existing 24-hour recovery window. They
+automatically generate 50% of their pre-failure income while the owner is
+online with a plot. They cannot be equipped, placed or fed during recovery.
+Revive restores the original pet and full income; failed food stays consumed.
+At expiry, the existing rule returns the same pet to inventory at level 0.
+There is no offline recovery income. New players start with $2,000 and the
+Basic Egg costs $2,000; existing saved balances are preserved.
+
 Revive restores the pet to the state immediately **before the failed
 Feed**.
 
