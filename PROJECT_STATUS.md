@@ -6,6 +6,25 @@
 
 **Last Updated:** 2026-10-03
 
+### Latest session — approved merchant Money price increase
+
+- Completed/current feature: applied the owner's approved prices: Basic $100
+  unchanged; Fresh $1,500, Hearty $7,500, Fortified $30,000, Gourmet $150,000,
+  Enchanted $750,000, Royal $3M, Repair Charm $15M, Blessed $50M.
+- Only Money prices changed. Robux IDs/prices, stock, restock, weights, risk
+  reductions, shards, existing inventories and starter Money are unchanged.
+  MerchantService already uses these central configs for snapshots/debits.
+- Verified: Rojo sync prices inspected; two-client FoodShopVerification passed
+  87 checks including all nine prices, purchases, stock limits, insufficient
+  funds, duplicate requests, feed/repair and client startup. Memory-only data;
+  no real purchases/saves touched. Rojo build and git diff checks passed.
+- Files: FoodConfig, ReviveConfig, FoodShopVerification, docs/merchant.md and
+  this handoff. Architecture unchanged. Baseline commit 4f7d3a7.
+- Overall progress: implemented/verified; nothing in progress. Next: playtest
+  time-to-afford at early/mid-game income; transaction correctness is not proof
+  of enjoyable balance. Restart existing Play sessions to reload configs.
+  Unrelated artwork preserved; not published or pushed.
+
 ### Latest session — mobile size balance and menu HUD suppression
 
 - Current feature / completed: touch Shop/Index/Inventory now use up to .70

@@ -3,7 +3,7 @@ return table.freeze({
 	StationName = "Pet Repair Station",
 	Shop = table.freeze({Id="revive", Rarity="Divine", DisplayName="Repair Charm", Icon="💖", Effect="FULL REPAIR",
 		Description="Repair a broken pet at the Pet Repair Station. Restores full income at its current level. No expiry.",
-		Price=5000000, Weight=.5, RewardType="Revive", Amount=1, StockLimit=1}),
+		Price=15000000, Weight=.5, RewardType="Revive", Amount=1, StockLimit=1}),
 	BrokenIncomeMultiplier = brokenIncomeMultiplier,
 	BrokenIncomeLabel = string.format("%.0f%% INCOME", brokenIncomeMultiplier * 100),
 	MachineDistance = 16,

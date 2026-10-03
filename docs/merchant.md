@@ -6,6 +6,24 @@ each player can buy one serving at a time, at most five servings per restock. Tw
 distinct special offers can each be purchased once per player per restock.
 Every purchase grants exactly one food or one charm. Existing owned food is not reduced.
 
+## Money prices (owner-approved progression pass)
+
+| Item | Money price |
+| --- | ---: |
+| Basic Food | $100 |
+| Fresh Food | $1,500 |
+| Hearty Food | $7,500 |
+| Fortified Food | $30,000 |
+| Gourmet Food | $150,000 |
+| Enchanted Food | $750,000 |
+| Royal Food | $3,000,000 |
+| Repair Charm | $15,000,000 |
+| Blessed Food | $50,000,000 |
+
+Robux prices, stock limits, weights, effects and restock timing are unchanged.
+These prices still need player-progression testing; transaction tests do not
+establish how enjoyable the earning/saving pace is.
+
 Robux checkout reserves the selected offer without consuming displayed stock.
 Snapshots keep `Remaining`/`Purchased` based on fulfilled purchases and expose
 `Reserved` separately. While checkout is pending, the row retains its stock,
@@ -20,9 +38,9 @@ purchase intent and receipt remain server-authoritative and persisted.
 
 The standard risk-reduction lineup is Basic (0%), Fresh (8%), Hearty (15%),
 Fortified (22%), Gourmet (30%), Enchanted (38%) and Royal (45%). The rare exception
-is Blessed Food: $10M, zero explosion risk for one Feed, ordinary critical odds,
-and level-40 cap. Its stock weight is 0.25. Revive Charm costs $5M, weight 0.5,
-and restores pre-failure growth only within the existing timed Rescue offer.
+is Blessed Food: $50M, zero explosion risk for one Feed, ordinary critical odds,
+and level-40 cap. Its stock weight is 0.25. Repair Charm costs $15M, weight 0.5,
+and restores full income at the broken pet's current level, with no expiry.
 Both have one personal purchase per restock if offered. Their Money purchases do
 not grant Revive Shards; only fulfilled Robux food receipts do.
 Across 100,000 seeded restocks (IDs 1–100,000), Blessed appeared in 0.22% and
