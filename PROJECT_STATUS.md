@@ -4,7 +4,35 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-10-02
+**Last Updated:** 2026-10-03
+
+### Latest session — mobile launcher clipping and effective scale
+
+- Current feature / completed: touch launchers now use matching 24px padding
+  inside the existing CoreUISafeInsets canvas. Removed the positive right
+  offset that crossed ClipToDeviceSafeArea and clipped Settings/Egg/Pen.
+  Shop and Index share the left offset; Inventory still aligns to Index's
+  actual bounds. Desktop authored Index position and existing margins remain.
+- Found during real-instance preview: duplicate MotionScale/UIScale siblings
+  prevented intended mobile sizes from applying. Motion now detaches its tween
+  driver when a responsive UIScale exists and composes both factors into the
+  single attached scale. Reads back engine float precision to avoid feedback;
+  resize while hovering and cleanup are tested. Single-scale buttons unchanged.
+- Verification: Studio regression passes actual rendered launcher widths,
+  mobile sizes, desktop restoration, touch press and hover/resize composition;
+  multi-viewport safe-bound/gap tests pass. Travel hover and boost regressions,
+  Luau compile, Rojo build and diff checks pass. Synced source confirmed in
+  Studio. Temporary landscape preview visually inspected and removed; no
+  authored screens, player data, purchases or world instances were changed.
+- Overall progress: implemented and locally/Studio verified; no implementation
+  work in progress. Next task: fresh physical-phone Play check for actual device
+  insets/input. Edit preview is not a physical-phone test; decorative clipping
+  in edit-mode clones remains an existing preview limitation. Earlier x2 badge
+  ownership/visibility report is still unresolved, separate from this request.
+- Files: DeviceLayout, Motion, HUDController, IndexController; mobile geometry
+  regression, new launcher-scale regression, responsive UI docs and handoff.
+  Previous working commit 33a5afc. Unrelated owner artwork preserved. No push
+  or publishing. No Roblox UI Director used per owner preference.
 
 ### Latest session — active x2 Money HUD badge
 

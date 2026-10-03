@@ -65,7 +65,7 @@ function Controller.Start()
 		-- Match the Index stack's responsive spacing.
 		local launcherScale=DeviceLayout.LeftLauncherScale(size,Input.TouchEnabled)
 		hud.OpenInventory.UIScale.Scale=launcherScale
-		hud.OpenInventory.Position=UDim2.new(0,18+84*launcherScale,.5,0)
+		hud.OpenInventory.Position=UDim2.new(0,DeviceLayout.LeftLauncherOffset(size,Input.TouchEnabled)+84*launcherScale,.5,0)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()
 	task.spawn(function()

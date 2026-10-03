@@ -19,8 +19,10 @@ authored UI. No new screens, assets, fonts, colors or economy changes.
   Index and Inventory use 93% scale—exactly 50% larger than the secondary dock—
   with about 67px square primary targets. The two lower primary buttons have a
   roughly 19px visible gap, Shop has at least 20px clearance above them, and the
-  right-side controls enter only part of the safe-area margin so they sit closer
-  to the physical edge without touching it. Money uses 62%; the tutorial hint is
+  left and right launchers use matching 24px padding inside the ScreenGui safe
+  area on touch devices (including portrait/tablet). Right anchors must use a
+  negative offset; positive offsets are clipped by ClipToDeviceSafeArea.
+  Desktop retains its existing 18px margins. Money uses 62%; the tutorial hint is
   narrower with 17px text. Desktop windows with the same aspect ratio are
   unchanged because touch input is required.
 - Merchant/Debug share fitting; Pen remote gets a larger fitted panel on small
@@ -28,6 +30,10 @@ authored UI. No new screens, assets, fonts, colors or economy changes.
   notification/tutorial fitting and world-based hatch reveal remain unchanged.
 - Inventory hotbar column math includes cell padding, with 0–10 slots checked.
   Duplicate exported inventory UIScales are neutralized at runtime, not deleted.
+- Launcher buttons with both MotionScale and UIScale use one attached scale:
+  Motion detaches the animation driver, combines it with the responsive base,
+  and disposes it when the button is destroyed. Multiple sibling UIScales do
+  not compose in Roblox and previously prevented mobile sizes from taking effect.
 
 Verification: `docs/studio/verify-device-layout.luau` runs against temporary cloned
 Studio instances at 320x568, 390x844, 600x900, 844x390, 1024x768, 1920x1080 and
@@ -38,6 +44,10 @@ preservation of desktop edits; Starter Pack and shine regression tests also pass
 against the authored HUD sizes, including exact primary/secondary/Settings
 scales, launcher gaps and offsets, plus caps for the travel, right-side, Money
 and tutorial elements.
+`test-launcher-scale.luau` verifies real Instance pixel widths and TweenService
+hover/press behavior, including a responsive size change during hover and
+restoration to desktop size. Mobile margins are checked across six viewport
+sizes, keeping both right-anchored buttons and the left group inside safe bounds.
 
 Studio edit-mode portrait previews of the seven adapted menus were inspected
 using temporary 390x700 frames (shown at .72 scale). Preview overlays were removed.

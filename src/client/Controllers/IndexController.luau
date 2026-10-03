@@ -87,10 +87,12 @@ function Controller.Start()
 		if object:IsA("GuiButton") then Motion.BindButton(object,panel) end
 	end
 	Motion.BindButton(gui.Open,gui.Open)
+	local authoredPosition=gui.Open.Position
 	local function resize()
 		local size=gui.AbsoluteSize
 		DeviceLayout.Apply(panel,size,"Index")
 		gui.Open.UIScale.Scale=DeviceLayout.LeftLauncherScale(size,Input.TouchEnabled)
+		gui.Open.Position=if Input.TouchEnabled then UDim2.new(0,DeviceLayout.LeftLauncherOffset(size,true),authoredPosition.Y.Scale,authoredPosition.Y.Offset) else authoredPosition
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()
 	task.spawn(function()

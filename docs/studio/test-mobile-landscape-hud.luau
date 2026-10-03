@@ -12,9 +12,9 @@ assert(Layout.CompactLandscape(viewport, true) and not Layout.CompactLandscape(v
 assert(Layout.CompactLandscape(Vector2.new(2736, 1260), true), "High-density phone not detected")
 assert(not Layout.CompactLandscape(Vector2.new(2048, 1536), true), "Tablet incorrectly compacted")
 assert(scale == .62 and leftScale == .93 and settingsScale == .48 and travelScale == .62 and moneyScale == .62)
-assert(Layout.LeftLauncherGap(viewport,true)==20 and Layout.RightLauncherOffset(viewport,true)==20)
+assert(Layout.LeftLauncherGap(viewport,true)==20 and Layout.RightLauncherOffset(viewport,true)==-24)
 local shopX,shopY=Layout.ShopLauncherOffset(viewport,true)
-assert(shopX==22 and shopY==-90)
+assert(shopX==24 and shopY==-90)
 
 local starter = game.StarterGui
 local hud = starter.FeedYourPetUI.HUD
@@ -43,6 +43,27 @@ assert(dockSize.X <= 48 and dockSize.Y <= 107, "Egg/Pet dock remains oversized")
 local primaryGap=Layout.LeftLauncherGap(viewport,true)*leftScale
 local verticalGap=(-square.Y/2)-((shopY*leftScale)+(shopSize.Y/2))
 assert(primaryGap>=18 and verticalGap>=20,"Primary launcher gaps remain cramped")
+
+-- Positions are relative to the safe canvas, not the physical display. Test
+-- both logical/physical phone sizes, portrait, tablet, and desktop restoration.
+for _,size in {Vector2.new(568,320),Vector2.new(844,390),Vector2.new(1368,630),Vector2.new(2736,1260),Vector2.new(390,844),Vector2.new(2048,1536)} do
+	local left=Layout.LeftLauncherOffset(size,true)
+	local right=Layout.RightLauncherOffset(size,true)
+	local primary=Layout.LeftLauncherScale(size,true)
+	local gap=Layout.LeftLauncherGap(size,true)*primary
+	local sx=Layout.ShopLauncherOffset(size,true)
+	assert(left==24 and sx==left and right==-left,"Unbalanced mobile safe-area padding")
+	for _,entry in {{settings,Layout.SettingsLauncherScale(size,true)},{dock,Layout.LauncherScale(size,true)}} do
+		local object,factor=entry[1],entry[2]
+		assert(object.AnchorPoint.X==1,"Right controls must anchor their right edge")
+		local width=object.Size.X.Offset*factor
+		assert(size.X+right-width>=0 and size.X+right<=size.X-24,"Right launcher crosses safe bounds")
+	end
+	assert(left+2*index.Size.X.Offset*primary+gap<size.X+right-dock.Size.X.Offset*Layout.LauncherScale(size,true),"Left and right launchers overlap")
+	assert(Layout.LeftLauncherOffset(size,false)==18 and Layout.RightLauncherOffset(size,false)==-18,"Desktop margins changed")
+	local dx,dy=Layout.ShopLauncherOffset(size,false)
+	assert(dx==18 and dy==-76,"Desktop shop position changed")
+end
 
 local width, height, bottom, textSize = Layout.TutorialHint(viewport, true)
 assert(width == 460 and height == 58 and bottom == 74 and textSize == 17)

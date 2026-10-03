@@ -71,6 +71,29 @@ function Motion.BindButton(button,panel)
 	local scale=button:FindFirstChild("MotionScale")
 	if not scale then return end -- UI geometry is authored, never built here.
 	buttons[button]=true
+	local responsive=button:FindFirstChild("UIScale")
+	local responsiveChanged,motionChanged
+	if responsive and responsive:IsA("UIScale") and responsive~=scale then
+		-- Roblox does not compose two UIScales on the same GuiObject. Keep the
+		-- authored motion scale as a detached tween driver and apply its factor
+		-- to the one responsive scale that remains attached to the button.
+		scale.Parent=nil
+		local base=responsive.Scale
+		local lastApplied=base
+		local writing=false
+		local function apply()
+			writing=true
+			responsive.Scale=base*scale.Scale
+			-- Store the engine's float value, not the unrounded Lua product.
+			lastApplied=responsive.Scale
+			writing=false
+		end
+		responsiveChanged=responsive:GetPropertyChangedSignal("Scale"):Connect(function()
+			if not writing and responsive.Scale~=lastApplied then base=responsive.Scale;apply() end
+		end)
+		motionChanged=scale:GetPropertyChangedSignal("Scale"):Connect(apply)
+		apply()
+	end
 	local hovered,pressed=false,false
 	local tween
 	local function update()
@@ -101,6 +124,11 @@ function Motion.BindButton(button,panel)
 		if tween then tween:Cancel() end
 		scale.Scale=1
 	end)
-	button.Destroying:Connect(function() if tween then tween:Cancel() end;visible:Disconnect();buttons[button]=nil end)
+	button.Destroying:Connect(function()
+		if tween then tween:Cancel() end
+		visible:Disconnect()
+		if responsiveChanged then responsiveChanged:Disconnect();motionChanged:Disconnect();scale:Destroy() end
+		buttons[button]=nil
+	end)
 end
 return Motion

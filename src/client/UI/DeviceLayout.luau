@@ -39,14 +39,17 @@ end
 function Layout.LeftLauncherGap(viewport, touchEnabled)
 	return if Layout.CompactLandscape(viewport, touchEnabled) then 20 else 12
 end
+function Layout.LeftLauncherOffset(_viewport, touchEnabled)
+	return if touchEnabled then 24 else 18
+end
 function Layout.ShopLauncherOffset(viewport, touchEnabled)
-	return if Layout.CompactLandscape(viewport, touchEnabled) then 22 else 18,
+	return Layout.LeftLauncherOffset(viewport, touchEnabled),
 		if Layout.CompactLandscape(viewport, touchEnabled) then -90 else -76
 end
-function Layout.RightLauncherOffset(viewport, touchEnabled)
-	-- Enter only part of the device-safe margin; keeps controls clear of the
-	-- physical edge while avoiding the large double-margin seen on phones.
-	return if Layout.CompactLandscape(viewport, touchEnabled) then 20 else -18
+function Layout.RightLauncherOffset(_viewport, touchEnabled)
+	-- ScreenGui already excludes the device's unsafe area. A positive offset
+	-- crosses that boundary and ClipToDeviceSafeArea cuts off the buttons.
+	return if touchEnabled then -24 else -18
 end
 function Layout.TravelScale(viewport, touchEnabled)
 	local fit = math.min(1, (viewport.X-24)/540)
