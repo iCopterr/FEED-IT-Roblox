@@ -11,7 +11,7 @@ local moneyScale = Layout.MoneyScale(viewport, true)
 assert(Layout.CompactLandscape(viewport, true) and not Layout.CompactLandscape(viewport, false))
 assert(Layout.CompactLandscape(Vector2.new(2736, 1260), true), "High-density phone not detected")
 assert(not Layout.CompactLandscape(Vector2.new(2048, 1536), true), "Tablet incorrectly compacted")
-assert(scale == .62 and leftScale == .93 and settingsScale == .48 and travelScale == .62 and moneyScale == .62)
+assert(scale == .62 and leftScale == .70 and settingsScale == .72 and travelScale == .54 and moneyScale == .62)
 assert(Layout.LeftLauncherGap(viewport,true)==20 and Layout.RightLauncherOffset(viewport,true)==-24)
 local shopX,shopY=Layout.ShopLauncherOffset(viewport,true)
 assert(shopX==24 and shopY==-90)
@@ -33,16 +33,16 @@ local settingSize = scaled(settings.Size, settingsScale)
 local dockSize = scaled(dock.Size, scale)
 assert(travel.X <= 323 and travel.Y <= 54, "Travel controls remain oversized")
 assert(money.X <= 186 and money.Y <= 38, "Money display remains oversized")
-assert(square.X >= 66 and square.X <= 67 and square.Y >= 66 and square.Y <= 67, "Primary square launcher is not 50% larger")
-assert(shopSize.X >= 145 and shopSize.X <= 146 and shopSize.Y >= 59 and shopSize.Y <= 60, "Shop launcher is not 50% larger")
-assert(settingSize.X >= 34 and settingSize.X <= 35, "Settings launcher is not smaller")
+assert(square.X >= 50 and square.X <= 51, "Primary square launcher must be compact but tappable")
+assert(shopSize.X >= 109 and shopSize.X <= 110 and shopSize.Y >= 44 and shopSize.Y <= 45, "Shop launcher remains too large")
+assert(settingSize.X >= 51 and settingSize.X <= 52, "Settings launcher must be readable and tappable")
 assert(dockSize.X <= 48 and dockSize.Y <= 107, "Egg/Pet dock remains oversized")
 
 -- The two primary square buttons use a 20px scaled gap; Shop is lifted enough
 -- to leave a clearly visible vertical gap above their row.
 local primaryGap=Layout.LeftLauncherGap(viewport,true)*leftScale
 local verticalGap=(-square.Y/2)-((shopY*leftScale)+(shopSize.Y/2))
-assert(primaryGap>=18 and verticalGap>=20,"Primary launcher gaps remain cramped")
+assert(primaryGap>=14 and verticalGap>=15,"Primary launcher gaps remain cramped")
 
 -- Positions are relative to the safe canvas, not the physical display. Test
 -- both logical/physical phone sizes, portrait, tablet, and desktop restoration.

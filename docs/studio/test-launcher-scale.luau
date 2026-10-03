@@ -27,7 +27,10 @@ local ok,err=pcall(function()
 		for _,c in clone:GetChildren() do if c:IsA("UIScale") then count+=1 end end
 		assert(count==1,"Multiple active button scales")
 		local function check(base,factor)
-			task.wait(.16)
+			-- Edit-mode rendering can be throttled; wait for the tween's actual
+			-- target rather than assuming two render frames fit in 160ms.
+			local deadline=os.clock()+3
+			repeat task.wait(.05) until math.abs(clone.UIScale.Scale-base*factor)<.001 or os.clock()>=deadline
 			assert(math.abs(clone.UIScale.Scale-base*factor)<.001,string.format("%s: expected %.4f, got %.4f (pulse %.4f)",template:GetFullName(),base*factor,clone.UIScale.Scale,pulse.Scale))
 			assert(math.abs(clone.AbsoluteSize.X-clone.Size.X.Offset*base*factor)<1,"Rendered size ignores responsive scale")
 		end

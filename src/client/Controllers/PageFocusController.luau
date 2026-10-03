@@ -40,6 +40,7 @@ function Controller.Start()
 	if started then return end;started=true
 	local player=Players.LocalPlayer
 	local gui=player:WaitForChild("PlayerGui")
+	local restoreHUD=require(script.Parent.Parent.UI.MenuHUD).Bind(gui)
 	-- Local post effect, not UI geometry; leave the map's lighting effects intact.
 	local blur=Instance.new("BlurEffect");blur.Name="PageFocusBlur";blur.Size=0;blur.Parent=Lighting
 	local camera,baseFov,focused,fovTween,blurTween
@@ -91,6 +92,7 @@ function Controller.Start()
 	task.spawn(function()
 		while gui.Parent do update();task.wait(.1) end
 		cancelFov();if blurTween then blurTween:Cancel() end
+		restoreHUD()
 		if camera and baseFov then camera.FieldOfView=baseFov end
 		blur:Destroy()
 	end)

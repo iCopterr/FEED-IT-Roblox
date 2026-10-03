@@ -161,14 +161,15 @@ function Controller.Start()
 		-- Compact side card: approximately 22% wide / 34% tall on desktop.
 		local layout=require(script.Parent.Parent.UI.DeviceLayout)
 		local scale=if size.X<900 then math.min(layout.Fit(size,510,440),(size.X-32)/510) else math.min(.82,math.max(.45,math.min(size.X*.23/510,size.Y*.34/440)),(size.X-32)/510,(size.Y-40)/440)
+		local lift=layout.MenuLift(size,Input.TouchEnabled)
+		scale=math.min(scale,layout.Fit(Vector2.new(size.X,size.Y-2*lift),510,440))
 		panel.UIScale.Scale=scale
-		panel.Position=UDim2.new(1,-16,.5,-220*scale)
+		panel.Position=UDim2.new(1,-16,.5,-220*scale-lift)
 		local dockScale=layout.LauncherScale(size,Input.TouchEnabled)
 		local right=layout.RightLauncherOffset(size,Input.TouchEnabled)
 		gui.Dock.UIScale.Scale=dockScale
 		gui.Dock.Position=UDim2.new(1,right,.5,-86*dockScale)
 	end
-	panel:GetPropertyChangedSignal("Visible"):Connect(function() gui.Dock.Visible=not panel.Visible end)
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()
 	task.spawn(function() while gui.Parent do refresh();task.wait(1) end end)
 end

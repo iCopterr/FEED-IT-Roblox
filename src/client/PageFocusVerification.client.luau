@@ -27,10 +27,16 @@ local ok,failure=xpcall(function()
 		error("Camera/blur transition did not settle")
 	end
 	inventory.Visible=true;settle(true)
+	check(gui:GetAttribute("GameMenuOpen") and not main.HUD.Visible and not gui.ShopUI.Open.Visible
+		and not gui.IndexUI.Open.Visible and not gui.SettingsUI.Open.Visible and not gui.PenManagerUI.Dock.Visible,
+		"Inventory hides all gameplay navigation and teleport HUD")
+	check(not gui.BoostUI.Enabled and not gui.TutorialUI.Enabled and not main.Hotbar.Visible,"Menu hides boost, tutorial and hotbar")
 	check(math.abs(camera.FieldOfView-(baseline-10))<.1 and blur.Size>17,string.format("Open page zooms and blurs (FOV %.2f baseline %.2f blur %.2f visible %s enabled %s open %s health %.1f)",camera.FieldOfView,baseline,blur.Size,tostring(inventory.Visible),tostring(main.Enabled),tostring(blur:GetAttribute("PageOpen")),character.Humanoid.Health))
 	index.Visible=true;inventory.Visible=false;task.wait(.4)
 	check(blur.Size>17 and math.abs(camera.FieldOfView-(baseline-10))<.1,"Switching pages retains focus")
 	index.Visible=false;settle(false)
+	check(not gui:GetAttribute("GameMenuOpen") and main.HUD.Visible and gui.ShopUI.Open.Visible
+		and gui.IndexUI.Open.Visible and gui.SettingsUI.Open.Visible and gui.PenManagerUI.Dock.Visible,"Last close restores navigation")
 	check(math.abs(camera.FieldOfView-baseline)<.1 and blur.Size<.1,"Last close restores camera and background")
 	for _=1,3 do inventory.Visible=true;task.wait(.12);inventory.Visible=false;task.wait(.12)end
 	settle(false)
@@ -55,6 +61,8 @@ local ok,failure=xpcall(function()
 	check(blur.Size<.1 and math.abs(camera.FieldOfView-baseline)<.1,"Final focus cleanup")
 	local remotePanel=gui:WaitForChild("PenManagerUI").Panel
 	remotePanel.Visible=true;task.wait(.5)
+	check(gui:GetAttribute("GameMenuOpen") and not main.HUD.Visible and not gui.SettingsUI.Open.Visible
+		and not gui.PenManagerUI.Dock.Visible,"Remote panels also hide gameplay navigation")
 	check(remotePanel.Visible and blur.Size<.1 and math.abs(camera.FieldOfView-baseline)<.1,"Egg/pen remote panel does not zoom or blur")
 	index.Visible=true;settle(true)
 	check(blur.Size>17,"A regular page still activates focus alongside a remote panel")

@@ -6,6 +6,7 @@ local UIConfig = require(game.ReplicatedStorage.Shared.Config.UIConfig)
 local Config = require(game.ReplicatedStorage.Shared.Config.MonetizationConfig)
 local Images = require(game.ReplicatedStorage.Shared.Config.MonetizationImages)
 local Icons = require(script.Parent.IconImages)
+local Layout = require(script.Parent.DeviceLayout)
 local Sounds = require(script.Parent.Parent.Audio.GameSounds)
 
 local PurchaseThanks = {}
@@ -79,7 +80,9 @@ local function fit()
 	if not cardScale then return end
 	local camera = workspace.CurrentCamera
 	local viewport = if camera then camera.ViewportSize else Vector2.new(1280, 720)
-	cardScale.Scale = math.min(1, (viewport.X - 24) / 600, (viewport.Y - 24) / 460)
+	local lift=Layout.MenuLift(viewport,UserInputService.TouchEnabled)
+	cardScale.Scale = math.min(1, (viewport.X - 24) / 600, (viewport.Y - 24-2*lift) / 460)
+	group.Position=UDim2.new(.5,0,.5,-lift)
 end
 
 local function create()

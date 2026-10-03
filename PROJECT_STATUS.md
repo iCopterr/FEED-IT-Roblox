@@ -6,6 +6,40 @@
 
 **Last Updated:** 2026-10-03
 
+### Latest session — mobile size balance and menu HUD suppression
+
+- Current feature / completed: touch Shop/Index/Inventory now use up to .70
+  scale (previous landscape .93); Settings .72 (previous .48), travel .54
+  (previous .62) at the safe-canvas top. Existing matching 24px safe margins
+  remain. Touch menus lift up to 24px with fit height reduced to prevent top
+  clipping; includes feed/repair, pen remote and purchase-thanks popup. Desktop
+  launcher geometry is unchanged and desktop menu positions restore.
+- Architecture: new UI/MenuHUD, owned by PageFocusController, watches menus and
+  suppresses HUD/navigation/travel/remote dock plus tutorial and boost screens.
+  It never disables the ScreenGui containing the active menu. Multiple menus,
+  disabled/destroyed screens and late replication are supported. Hotbar reads
+  PlayerGui.GameMenuOpen. Closing the final menu restores previous visibility.
+  Notifications/feed feedback and Roblox system/touch controls stay available.
+- Verified: live two-client PageFocusVerification 18 checks and HUD smoke 76
+  checks pass. Detached MenuHUD lifecycle/overlap/rapid/late-instance tests pass;
+  36 raised mobile menu cases, 63 responsive cases, 15 inventory/hotbar cases,
+  mobile launcher safe bounds, real-instance launcher tween/scale and purchase
+  thank-you regressions pass. Studio syntax check 161 descendant scripts no
+  errors, Rojo build and git diff checks pass. Tween regression now waits for
+  target within 3s instead of assuming 160ms suffices under edit rendering.
+- Visual check: temporary 844x390 safe-canvas HUD and raised Shop previews
+  inspected, then removed. Existing edit-clone decorative clipping artifacts
+  limit preview fidelity. Not a real physical-phone or touch-input test.
+- Files: DeviceLayout, MenuHUD, PurchaseThanks, HUD/Inventory/PageFocus/
+  PenManager controllers; PageFocus live test, new menu-HUD/mobile-lift tests,
+  mobile/device/launcher/purchase-thanks test updates, responsive docs, handoff.
+- Overall progress: implemented and Studio verified. No implementation in
+  progress. Next: fresh phone Play to judge sizing/safe insets and real taps.
+  Earlier real-purchase/published-persistence release checks remain outstanding.
+- Session handoff: previous working commit 604dbf3. No purchases, real saves,
+  authored assets or world objects changed; temporary previews/result attributes
+  removed. Owner artwork preserved. No publish/push.
+
 ### Latest session — broad game QA
 
 - Current feature / overall progress: completed the available automated QA

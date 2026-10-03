@@ -8,6 +8,8 @@ local old=CoreGui:FindFirstChild("PurchaseThanksUI")
 if old then old:Destroy() end
 local iconToken,soundToken={},{}
 local played
+local layoutSource=realGame.StarterPlayer.StarterPlayerScripts.Client.UI.DeviceLayout:Clone()
+local layout=realRequire(layoutSource);layoutSource:Destroy()
 local icons={
  hearty="rbxassetid://91392940915097",revive="rbxassetid://133373414506019",reviveShard="rbxassetid://82838242551952",
 }
@@ -18,10 +20,11 @@ local fakeGame={ReplicatedStorage=realGame.ReplicatedStorage,GetService=function
  if name=="Players" then return fakePlayers end
  return realGame:GetService(name)
 end}
-local fakeScript={Parent={IconImages=iconToken,Parent={Audio={GameSounds=soundToken}}}}
+local fakeScript={Parent={IconImages=iconToken,DeviceLayout=realGame.StarterPlayer.StarterPlayerScripts.Client.UI.DeviceLayout,Parent={Audio={GameSounds=soundToken}}}}
 local fakeRequire=function(module)
  if module==iconToken then return icons end
  if module==soundToken then return sounds end
+ if module==fakeScript.Parent.DeviceLayout then return layout end
  return realRequire(module)
 end
 local module=(function(game,require,script)

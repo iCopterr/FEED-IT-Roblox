@@ -2,6 +2,7 @@
 local Layout = {}
 local originals = setmetatable({}, {__mode="k"})
 local overrides = setmetatable({}, {__mode="k"})
+local panelPositions = setmetatable({}, {__mode="k"})
 local function set(panel, object, property, value)
 	if not object then return end
 	local saved = overrides[panel]
@@ -27,13 +28,11 @@ function Layout.LauncherScale(viewport, touchEnabled)
 	return math.min(1, math.max(.68, math.min(viewport.X/760,viewport.Y/650)))
 end
 function Layout.LeftLauncherScale(viewport, touchEnabled)
-	-- Shop, Index and Inventory are the primary collection actions. Keep them
-	-- 50% larger than the secondary right-side buttons on landscape phones.
-	if Layout.CompactLandscape(viewport, touchEnabled) then return .93 end
+	if touchEnabled then return math.min(.70, Layout.LauncherScale(viewport, false)) end
 	return Layout.LauncherScale(viewport, touchEnabled)
 end
 function Layout.SettingsLauncherScale(viewport, touchEnabled)
-	if Layout.CompactLandscape(viewport, touchEnabled) then return .48 end
+	if touchEnabled then return .72 end
 	return Layout.LauncherScale(viewport, touchEnabled)
 end
 function Layout.LeftLauncherGap(viewport, touchEnabled)
@@ -53,7 +52,10 @@ function Layout.RightLauncherOffset(_viewport, touchEnabled)
 end
 function Layout.TravelScale(viewport, touchEnabled)
 	local fit = math.min(1, (viewport.X-24)/540)
-	return if Layout.CompactLandscape(viewport, touchEnabled) then math.min(.62, fit) else fit
+	return if touchEnabled then math.min(.54, fit) else fit
+end
+function Layout.MenuLift(viewport, touchEnabled)
+	return if touchEnabled then math.min(24, viewport.Y*.06) else 0
 end
 function Layout.MoneyScale(viewport, touchEnabled)
 	if Layout.CompactLandscape(viewport, touchEnabled) then return .62 end
@@ -102,8 +104,12 @@ local function offer(panel, card, width, y, pack)
 	rect(panel,card.Buy,16,if pack then 298 else 228,width-32,50)
 end
 
-function Layout.Apply(panel, viewport, kind, scaleName)
+function Layout.Apply(panel, viewport, kind, scaleName, touchEnabled)
 	if viewport.X<=0 or viewport.Y<=0 then return end
+	if touchEnabled==nil then touchEnabled=game:GetService("UserInputService").TouchEnabled end
+	local lift=Layout.MenuLift(viewport,touchEnabled)
+	local fitViewport=Vector2.new(viewport.X,viewport.Y-2*lift)
+	if not panelPositions[panel] then panelPositions[panel]=panel.Position end
 	if not originals[panel] then originals[panel]=panel.Size;overrides[panel]={} end
 	local portrait = Layout.Portrait(viewport)
 	if not portrait then
@@ -211,15 +217,17 @@ function Layout.Apply(panel, viewport, kind, scaleName)
 		rect(panel,exchange.CharmCount,20,520,468,32)
 	end
 	if portrait and kind~="Feed" then set(panel,panel,"Size",UDim2.fromOffset(width,height)) end
-	local scale=Layout.Fit(viewport,width,height)
+	local scale=Layout.Fit(fitViewport,width,height)
 	local scaleObject=panel:FindFirstChild(scaleName or "UIScale")
 	if scaleObject then
 		-- Some Studio exports contain duplicate UIScales; only one owns fitting.
 		for _,child in panel:GetChildren() do if child:IsA("UIScale") then child.Scale=if child==scaleObject then scale else 1 end end
 	end
 	if kind=="Feed" then
-		if not portrait then scale=Layout.Fit(viewport,884,620);scaleObject.Scale=scale end
-		panel.Position=UDim2.new(.5,if portrait then 0 else -162*scale,.5,if portrait then -180*scale else 0)
+		if not portrait then scale=Layout.Fit(fitViewport,884,620);scaleObject.Scale=scale end
+		panel.Position=UDim2.new(.5,if portrait then 0 else -162*scale,.5,(if portrait then -180*scale else 0)-lift)
+	else
+		panel.Position=panelPositions[panel]-UDim2.fromOffset(0,lift)
 	end
 	return scale
 end

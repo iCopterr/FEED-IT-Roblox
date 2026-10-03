@@ -14,6 +14,7 @@ function Controller.Start()
 	local gui=playerGui:WaitForChild("FeedYourPetUI",3)
 	if not gui then gui=GuiBootstrap.Ensure(playerGui,game.StarterGui:WaitForChild("FeedYourPetUI",3)) end
 	local hud=gui.HUD
+	local travelPosition=hud.Travel.Position
 	Motion.BindButton(hud.OpenInventory,hud)
 	local travelBusy=false
 	for _,destination in {"Base","Merchant"} do
@@ -62,6 +63,9 @@ function Controller.Start()
 		hud.Money.Position=UDim2.new(0,18,1,-bottom)
 		hud.Money.UIScale.Scale=scale
 		hud.Travel.UIScale.Scale=DeviceLayout.TravelScale(size,Input.TouchEnabled)
+		-- The HUD itself starts 10px below the safe canvas. Remove that extra
+		-- gap on touch; do not put buttons under the notch or Roblox controls.
+		hud.Travel.Position=if Input.TouchEnabled then UDim2.new(.5,0,0,-10) else travelPosition
 		-- Match the Index stack's responsive spacing.
 		local launcherScale=DeviceLayout.LeftLauncherScale(size,Input.TouchEnabled)
 		hud.OpenInventory.UIScale.Scale=launcherScale

@@ -64,9 +64,12 @@ function Controller.Start(gui,onSnapshot)
 		layout.Status.Text=text;noticeUntil=os.clock()+4
 	end
 	local function otherModal()
-		return player:GetAttribute("IndexPanelOpen") or gui.FeedPanel.Visible or player:GetAttribute("RevivePanelOpen")
+		return gui.Parent:GetAttribute("GameMenuOpen") or player:GetAttribute("IndexPanelOpen") or gui.FeedPanel.Visible or player:GetAttribute("RevivePanelOpen")
 			or player:GetAttribute("MerchantPanelOpen") or player:GetAttribute("DebugPanelOpen")
 	end
+	gui.Parent:GetAttributeChangedSignal("GameMenuOpen"):Connect(function()
+		bar.Visible=next(slots)~=nil and not modal.Visible and not otherModal()
+	end)
 	local function show()
 		gui.FeedPanel.Visible=false
 		for _,name in {"ReviveUI","MerchantUI","DebugUI","IndexUI"} do

@@ -15,10 +15,10 @@ authored UI. No new screens, assets, fonts, colors or economy changes.
   desktop panel-size edits are read, not replaced by hard-coded dimensions.
 - Touch devices in phone landscape mode (inset-aware height at or below 720, or
   a phone-wide aspect ratio of at least 1.8) use a dedicated compact HUD. Travel
-  and the Egg/Pet dock use 62% scale; Settings uses a smaller 48% scale. Shop,
-  Index and Inventory use 93% scale—exactly 50% larger than the secondary dock—
-  with about 67px square primary targets. The two lower primary buttons have a
-  roughly 19px visible gap, Shop has at least 20px clearance above them, and the
+  uses 54% scale and starts at the safe canvas top; the Egg/Pet dock stays 62%.
+  Touch Settings uses 72%; Shop, Index and Inventory use up to 70%, with about
+  50px primary square targets. The two lower primary buttons have a roughly
+  14px visible gap, Shop has at least 15px clearance above them, and the
   left and right launchers use matching 24px padding inside the ScreenGui safe
   area on touch devices (including portrait/tablet). Right anchors must use a
   negative offset; positive offsets are clipped by ClipToDeviceSafeArea.
@@ -29,6 +29,14 @@ authored UI. No new screens, assets, fonts, colors or economy changes.
   screens. Shop/Index/Inventory/Settings launchers share scale rules. Existing
   notification/tutorial fitting and world-based hatch reveal remain unchanged.
 - Inventory hotbar column math includes cell padding, with 0–10 slots checked.
+- Touch menus reserve extra bottom room and move upward by up to 24px, including
+  repair/feed, remote panels and purchase thanks. Fitting accounts for the lift,
+  so short phones retain a 12px top clearance. Desktop positions restore.
+- MenuHUD hides gameplay HUD, navigation, travel, remote launchers, boost and
+  tutorial while any supported menu/reward popup is open. It leaves the active
+  menu and close/purchase controls enabled. Hotbar consumes GameMenuOpen;
+  closing the final menu restores previous chrome visibility. Notifications
+  and feed-result feedback stay available; Roblox system/touch controls remain.
   Duplicate exported inventory UIScales are neutralized at runtime, not deleted.
 - Launcher buttons with both MotionScale and UIScale use one attached scale:
   Motion detaches the animation driver, combines it with the responsive base,
