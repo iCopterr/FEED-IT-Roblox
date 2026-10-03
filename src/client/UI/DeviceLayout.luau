@@ -57,6 +57,12 @@ end
 function Layout.MenuLift(viewport, touchEnabled)
 	return if touchEnabled then math.min(24, viewport.Y*.06) else 0
 end
+function Layout.RemotePanelScale(size, touchEnabled)
+	local base=if size.X<900 then math.min(Layout.Fit(size,510,440),(size.X-32)/510)
+		else math.min(.82,math.max(.45,math.min(size.X*.23/510,size.Y*.34/440)),(size.X-32)/510,(size.Y-40)/440)
+	local lift=Layout.MenuLift(size,touchEnabled)
+	return math.min(base*.8,Layout.Fit(Vector2.new(size.X,size.Y-2*lift),510,440))
+end
 function Layout.MoneyScale(viewport, touchEnabled)
 	if Layout.CompactLandscape(viewport, touchEnabled) then return .62 end
 	return if viewport.X < 760 then .68 else math.min(1, viewport.Y/650)

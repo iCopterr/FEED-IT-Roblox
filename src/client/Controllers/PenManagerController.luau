@@ -10,6 +10,7 @@ local Monetization=require(Shared.Config.MonetizationConfig)
 local Motion=require(script.Parent.Parent.UI.Motion)
 local Purchases=require(script.Parent.Parent.UI.Purchases)
 local Preview=require(script.Parent.Parent.UI.ItemPreview)
+local HatchingEggs=require(script.Parent.Parent.UI.HatchingEggs)
 local Controller={}
 function Controller.Start()
 	local player=Players.LocalPlayer
@@ -20,6 +21,8 @@ function Controller.Start()
 	local eggs=game.ReplicatedStorage:WaitForChild("PrototypeEgg")
 	local mode="Pets"
 	local rows={}
+	local hatching=HatchingEggs.new()
+	local lastSnapshot
 	local busy=false
 	local refreshing=false
 	local revision=0
@@ -33,10 +36,12 @@ function Controller.Start()
 	Motion.BindButton(panel.EquipBest,panel)
 	for _,button in {gui.Dock.Eggs,gui.Dock.Pets} do Motion.BindButton(button,gui.Dock) end
 	local function render(snapshot)
+		lastSnapshot=snapshot
+		local now=workspace:GetServerTimeNow()
 		local list={}
 		if mode=="Eggs" then
 			for _,egg in snapshot.Eggs do
-				if egg.Placed then
+				if egg.Placed and not hatching:Hidden(egg.EggUid,now) then
 					local remaining=math.max(0,egg.ReadyAt-snapshot.ServerNow)
 					table.insert(list,{Id=egg.EggUid,Name=egg.Name,Kind="Egg",EggId=egg.EggId,
 						Details=if remaining==0 then "READY" else string.format("%d:%02d",math.floor(remaining/60),remaining%60),Ready=remaining==0})
@@ -80,6 +85,7 @@ function Controller.Start()
 						return request:InvokeServer("PickupRemote",entry.Id)
 					end)
 					busy=false
+					if actionMode=="Eggs" and (not ok or not result.Ok) then hatching:Failed(entry.Id) end
 					panel.Status.Text=if ok and result.Ok then (if actionMode=="Eggs" then result.PetName.." hatched!" else "Returned to inventory") else (if ok then messages[result.Code] or "Unable to collect." else "Connection interrupted.")
 					if ok and result.Ok and rows[key] then rows[key]:Destroy();rows[key]=nil end
 					task.delay(.3,refresh)
@@ -94,13 +100,24 @@ function Controller.Start()
 		for key,row in rows do if not shown[key] then row:Destroy();rows[key]=nil end end
 		if #list==0 then panel.Status.Text=if mode=="Pets" then "No pets in your pen" else "No placed eggs" end
 	end
+	game.ReplicatedStorage:WaitForChild("HatchStarted").OnClientEvent:Connect(function(payload)
+		local id=hatching:Started(payload,workspace:GetServerTimeNow())
+		if not id then return end
+		-- The hatch InvokeServer returns only after collection. Remove the row
+		-- on the same server event that starts the animation, not that late reply.
+		revision+=1
+		local key="Eggs:"..id
+		if rows[key] then rows[key]:Destroy();rows[key]=nil end
+		if lastSnapshot then render(lastSnapshot) end
+	end)
 	refresh=function()
 		if not panel.Visible or refreshing or busy then return end
 		refreshing=true;local version=revision
 		local ok,result=pcall(function() return request:InvokeServer("Snapshot") end)
 		refreshing=false
 		if version~=revision or not panel.Visible then return end
-		if ok and result.Ok then render(result)
+		if ok and result.Ok then
+			hatching:Reconcile(result.Eggs,workspace:GetServerTimeNow());render(result)
 		elseif not ok then panel.Status.Text="Connection interrupted."
 		elseif result.Code~="Cooldown" then panel.Status.Text=messages[result.Code] or "Loading…" end
 	end
@@ -158,11 +175,10 @@ function Controller.Start()
 	end
 	local function resize()
 		local size=gui.AbsoluteSize
-		-- Compact side card: approximately 22% wide / 34% tall on desktop.
+		-- Keep the remote card subordinate to the full menus on every device.
 		local layout=require(script.Parent.Parent.UI.DeviceLayout)
-		local scale=if size.X<900 then math.min(layout.Fit(size,510,440),(size.X-32)/510) else math.min(.82,math.max(.45,math.min(size.X*.23/510,size.Y*.34/440)),(size.X-32)/510,(size.Y-40)/440)
+		local scale=layout.RemotePanelScale(size,Input.TouchEnabled)
 		local lift=layout.MenuLift(size,Input.TouchEnabled)
-		scale=math.min(scale,layout.Fit(Vector2.new(size.X,size.Y-2*lift),510,440))
 		panel.UIScale.Scale=scale
 		panel.Position=UDim2.new(1,-16,.5,-220*scale-lift)
 		local dockScale=layout.LauncherScale(size,Input.TouchEnabled)

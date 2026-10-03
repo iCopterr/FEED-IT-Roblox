@@ -6,6 +6,30 @@
 
 **Last Updated:** 2026-10-03
 
+### Latest session — compact non-modal remote panel and immediate hatch rows
+
+- Completed: egg/pet remote card uses 20% less scale across device sizes.
+  Remote panel is exempt from full-menu HUD suppression: only its own dock
+  hides; navigation/teleport, currency, tutorial, boost and hotbar remain.
+  Full menus still hide gameplay chrome normally. No blur for remote panels.
+- Hatch rows now disappear on the authoritative HatchStarted event, together
+  with the animation, rather than waiting for InvokeServer's collection reply.
+  HatchingEggs tracks presentation-only suppression by EggUid; revision guards
+  reject pre-start snapshot responses and polling cannot resurrect the row.
+  Failed requests clear suppression; timeout permits retry after a lost reply.
+  Pet inventory grant timing, server transactions and saved eggs are unchanged.
+- Verified: detached menu lifecycle/remote exception test and hatch-row state
+  test pass, including rejected hatch, polling, failure, timeout and five panel
+  sizes. Live two-client PageFocusVerification passes 18 checks with no client
+  errors. Changed Studio sources parse; Rojo build and git diff checks pass.
+  Temporary 844x390 remote preview inspected and removed. No physical-phone
+  tap test or full live hatch-row interaction was performed in this session.
+- Files: PenManagerController, MenuHUD, DeviceLayout, new HatchingEggs;
+  PageFocus verification, menu test, new test-remote-egg-rows, responsive docs
+  and handoff. Baseline 2a2aca8. No implementation remains in progress.
+- Next: fresh Play/phone check of remote hatch tap and subjective size. No
+  real saves/purchases changed, no publish/push; unrelated artwork preserved.
+
 ### Latest session — approved merchant Money price increase
 
 - Completed/current feature: applied the owner's approved prices: Basic $100

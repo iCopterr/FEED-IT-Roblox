@@ -61,8 +61,9 @@ local ok,failure=xpcall(function()
 	check(blur.Size<.1 and math.abs(camera.FieldOfView-baseline)<.1,"Final focus cleanup")
 	local remotePanel=gui:WaitForChild("PenManagerUI").Panel
 	remotePanel.Visible=true;task.wait(.5)
-	check(gui:GetAttribute("GameMenuOpen") and not main.HUD.Visible and not gui.SettingsUI.Open.Visible
-		and not gui.PenManagerUI.Dock.Visible,"Remote panels also hide gameplay navigation")
+	check(not gui:GetAttribute("GameMenuOpen") and main.HUD.Visible and gui.SettingsUI.Open.Visible
+		and gui.ShopUI.Open.Visible and gui.IndexUI.Open.Visible
+		and not gui.PenManagerUI.Dock.Visible,"Remote panel hides only its dock, not gameplay navigation")
 	check(remotePanel.Visible and blur.Size<.1 and math.abs(camera.FieldOfView-baseline)<.1,"Egg/pen remote panel does not zoom or blur")
 	index.Visible=true;settle(true)
 	check(blur.Size>17,"A regular page still activates focus alongside a remote panel")

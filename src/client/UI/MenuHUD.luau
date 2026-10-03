@@ -29,13 +29,15 @@ function MenuHUD.Bind(gui)
 	local function update()
 		if not active or updating then return end
 		updating=true
-		local open=false
+		local open,remoteOpen=false,false
 		for screenName,names in pages do
 			local screen=gui:FindFirstChild(screenName)
 			if screen and screen:IsA("ScreenGui") and screen.Enabled then
 				for _,name in names do
 					local panel=screen:FindFirstChild(name)
-					if panel and panel:IsA("GuiObject") and panel.Visible then open=true end
+					if panel and panel:IsA("GuiObject") and panel.Visible then
+						if screenName=="PenManagerUI" then remoteOpen=true else open=true end
+					end
 				end
 			end
 		end
@@ -44,7 +46,7 @@ function MenuHUD.Bind(gui)
 			local screen=gui:FindFirstChild(screenName)
 			for _,name in names do
 				local object=screen and screen:FindFirstChild(name)
-				if object then suppress(object,"Visible",open) end
+				if object then suppress(object,"Visible",open or (screenName=="PenManagerUI" and remoteOpen)) end
 			end
 		end
 		for name in hudScreens do

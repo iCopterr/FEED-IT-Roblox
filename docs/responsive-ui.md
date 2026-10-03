@@ -33,7 +33,10 @@ authored UI. No new screens, assets, fonts, colors or economy changes.
   repair/feed, remote panels and purchase thanks. Fitting accounts for the lift,
   so short phones retain a 12px top clearance. Desktop positions restore.
 - MenuHUD hides gameplay HUD, navigation, travel, remote launchers, boost and
-  tutorial while any supported menu/reward popup is open. It leaves the active
+  tutorial while a full menu/reward popup is open. The remote egg/pet panel is
+  an exception: only its own dock hides, with gameplay navigation/HUD retained.
+  Remote panels use 20% less scale than the previous fitted side card.
+  It leaves the active
   menu and close/purchase controls enabled. Hotbar consumes GameMenuOpen;
   closing the final menu restores previous chrome visibility. Notifications
   and feed-result feedback stay available; Roblox system/touch controls remain.

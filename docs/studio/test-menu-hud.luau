@@ -30,7 +30,13 @@ local ok,err=xpcall(function()
 	panel.Visible=false;task.wait()
 	assert(hud.Visible and launcher.Visible and dock.Visible and boost.Enabled and badge.Visible)
 	assert(not debugOpen.Visible,"Originally hidden debug launcher was revealed")
-	for _=1,10 do pen.Visible=true;task.wait();assert(not dock.Visible and not hud.Visible);pen.Visible=false;task.wait();assert(dock.Visible and hud.Visible)end
+	for _=1,10 do
+		pen.Visible=true;task.wait()
+		assert(not dock.Visible and hud.Visible and launcher.Visible and tutorial.Enabled and boost.Enabled and not root:GetAttribute("GameMenuOpen"))
+		panel.Visible=true;task.wait();assert(not hud.Visible,"Full menu must still suppress HUD alongside remote")
+		panel.Visible=false;task.wait();assert(hud.Visible and not dock.Visible)
+		pen.Visible=false;task.wait();assert(dock.Visible and hud.Visible)
+	end
 	feed.Visible=true;main.Enabled=false;task.wait()
 	assert(hud.Visible and not root:GetAttribute("GameMenuOpen"),"Disabled menu screen remains modal")
 	main.Enabled=true;task.wait();assert(not hud.Visible);feed.Visible=false;task.wait()
