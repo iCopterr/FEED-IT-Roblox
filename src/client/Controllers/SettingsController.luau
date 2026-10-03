@@ -13,6 +13,11 @@ function Controller.Start()
 	local gui=GuiBootstrap.Wait(pg,game:GetService("StarterGui"),"SettingsUI")
 	if not gui then return end
 	local p=gui.Panel
+	-- Cross-ScreenGui ordering uses DisplayOrder, not the button's ZIndex.
+	-- Keep the launcher behind every game menu; raise the actual Settings page.
+	local pageOrder=gui.DisplayOrder
+	local function layer() gui.DisplayOrder=if p.Visible then pageOrder else -1 end
+	p:GetPropertyChangedSignal("Visible"):Connect(layer);layer()
 	local remote=game.ReplicatedStorage:WaitForChild("PrototypeUI"):WaitForChild("Request")
 	local values=table.clone(Config.Defaults);local loaded=false
 	player:SetAttribute("SettingsPanelOpen",false)

@@ -16,6 +16,7 @@ local ok,failure=xpcall(function()
 	task.wait(1)
 	local camera=workspace.CurrentCamera;local baseline=camera.FieldOfView
 	local blur=game.Lighting:WaitForChild("PageFocusBlur")
+	check(gui.SettingsUI.DisplayOrder<gui.PenManagerUI.DisplayOrder,"Settings launcher renders behind remote menu")
 	local function settle(open)
 		local deadline=os.clock()+20
 		repeat

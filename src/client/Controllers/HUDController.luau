@@ -69,23 +69,15 @@ function Controller.Start()
 		-- Match the Index stack's responsive spacing.
 		local launcherScale=DeviceLayout.LeftLauncherScale(size,Input.TouchEnabled)
 		hud.OpenInventory.UIScale.Scale=launcherScale
-		hud.OpenInventory.Position=UDim2.new(0,DeviceLayout.LeftLauncherOffset(size,Input.TouchEnabled)+84*launcherScale,.5,0)
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()
 	task.spawn(function()
 		local indexGui=playerGui:WaitForChild("IndexUI",30)
 		if not indexGui then return end
-		local index=indexGui.Open
-		local function align()
-			local size=index.AbsoluteSize
-			local top=index.AbsolutePosition-hud.AbsolutePosition
-			local gap=DeviceLayout.LeftLauncherGap(gui.AbsoluteSize,Input.TouchEnabled)
-			hud.OpenInventory.Position=UDim2.fromOffset(top.X+size.X+gap*index.UIScale.Scale,top.Y+size.Y*hud.OpenInventory.AnchorPoint.Y)
-		end
-		index:GetPropertyChangedSignal("AbsolutePosition"):Connect(align)
-		index:GetPropertyChangedSignal("AbsoluteSize"):Connect(align)
-		gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()task.defer(align)end)
-		align()
+		local shopGui=playerGui:WaitForChild("ShopUI",30)
+		if not shopGui then return end
+		local cleanup=require(script.Parent.Parent.UI.CollectionLaunchers).Bind(indexGui.Open,hud.OpenInventory,shopGui.Open,gui)
+		gui.Destroying:Once(cleanup)
 	end)
 	require(script.Parent.InventoryController).Start(gui,money)
 	return gui

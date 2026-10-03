@@ -81,9 +81,8 @@ function Controller.Start()
 		local size=gui.AbsoluteSize
 		DeviceLayout.Apply(panel,size,"Shop")
 		local scale=DeviceLayout.LeftLauncherScale(size,Input.TouchEnabled)
-		local x,y=DeviceLayout.ShopLauncherOffset(size,Input.TouchEnabled)
 		gui.Open.UIScale.Scale=scale
-		gui.Open.Position=UDim2.new(0,x,.5,y*scale)
+		-- CollectionLaunchers owns placement relative to Index + Inventory.
 	end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize()
 end

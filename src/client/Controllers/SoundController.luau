@@ -7,11 +7,14 @@ function Controller.Start()
 	started = true
 	local gui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 	local bound = setmetatable({}, {__mode = "k"})
+	local function isTouchControl(button)
+		return button.Name=="JumpButton" or button:FindFirstAncestor("TouchGui")~=nil
+	end
 	local function bind(button)
-		if not button:IsA("GuiButton") or bound[button] then return end
+		if not button:IsA("GuiButton") or bound[button] or isTouchControl(button) then return end
 		bound[button] = true
 		button.Activated:Connect(function()
-			if button:GetAttribute("SuppressClickSound") ~= true then
+			if not isTouchControl(button) and button:GetAttribute("SuppressClickSound") ~= true then
 				Sounds.Play("Click", 2)
 			end
 		end)

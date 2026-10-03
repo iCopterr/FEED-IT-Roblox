@@ -45,6 +45,13 @@ authored UI. No new screens, assets, fonts, colors or economy changes.
   Motion detaches the animation driver, combines it with the responsive base,
   and disposes it when the button is destroyed. Multiple sibling UIScales do
   not compose in Roblox and previously prevented mobile sizes from taking effect.
+- CollectionLaunchers owns Shop/Inventory placement from the rendered Index
+  bounds. Index and Inventory share a vertical center; Shop's horizontal center
+  matches the combined row, accounting for HUD offsets, resizing and hover scale.
+- Settings ScreenGui uses DisplayOrder -1 while closed so its launcher stays
+  behind remote panels. Opening Settings restores the authored page order.
+- UI click sounds ignore JumpButton and all descendants of Roblox TouchGui,
+  including controls added after startup or moved into TouchGui later.
 
 Verification: `docs/studio/verify-device-layout.luau` runs against temporary cloned
 Studio instances at 320x568, 390x844, 600x900, 844x390, 1024x768, 1920x1080 and

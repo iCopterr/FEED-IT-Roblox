@@ -7,7 +7,8 @@ local function signal()
  return {Connect=function(_,fn) table.insert(list,fn) end,Fire=function(...) for _,fn in list do fn(...) end end}
 end
 local function button(suppress)
- return {Suppress=suppress,Activated=signal(),IsA=function(_,c)return c=='GuiButton'end,GetAttribute=function(self,n)assert(n=='SuppressClickSound');return self.Suppress end}
+ return {Name='TestButton',Suppress=suppress,Activated=signal(),IsA=function(_,c)return c=='GuiButton'end,GetAttribute=function(self,n)assert(n=='SuppressClickSound');return self.Suppress end,
+ FindFirstAncestor=function(self,n)assert(n=='TouchGui');return self.TouchGui end}
 end
 local normal,buy=button(false),button(true)
 local gui={DescendantAdded=signal(),GetDescendants=function()return {normal,buy}end}
@@ -24,7 +25,10 @@ buy.Activated.Fire();assert(clicks==1,'Purchase click suppressed')
 local added=button(false);gui.DescendantAdded.Fire(added);gui.DescendantAdded.Fire(added)
 added.Suppress=true;added.Activated.Fire();assert(clicks==1,'Late tagging respected')
 added.Suppress=false;added.Activated.Fire();assert(clicks==2,'Other dynamic buttons retain click')
-return 'PASS: purchase click suppressed, dynamic/late tagging, normal clicks and idempotent binding'
+local jump=button(false);jump.Name='JumpButton';gui.DescendantAdded.Fire(jump);jump.Activated.Fire();assert(clicks==2,'Jump button stays silent')
+local touch=button(false);touch.TouchGui={};gui.DescendantAdded.Fire(touch);touch.Activated.Fire();assert(clicks==2,'Other Roblox touch controls stay silent')
+added.TouchGui={};added.Activated.Fire();assert(clicks==2,'Reparented touch control stays silent')
+return 'PASS: purchase and jump/touch clicks suppressed, dynamic/late tagging, normal clicks and idempotent binding'
 '@
 $code=$prefix+"`n"+$source+"`n"+$suffix
 $body=@{jsonrpc='2.0';id=1002;method='tools/call';params=@{name='execute_luau';arguments=@{code=$code;target='edit'}}}|ConvertTo-Json -Depth 8

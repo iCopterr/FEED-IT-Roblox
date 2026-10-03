@@ -4,7 +4,34 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-10-03
+**Last Updated:** 2026-10-04
+
+### Latest session — collection launcher alignment, Settings layering, silent jump
+
+- Implemented: new CollectionLaunchers binds Inventory/Shop placement to Index
+  rendered bounds. Index and Inventory vertical centers align across the HUD's
+  10px parent offset; Shop centers over the combined row rather than sharing
+  Index's left edge. Watches sizes/positions/viewport for resize and hover scale.
+  Removed competing position writes from HUD and Shop resize callbacks.
+- Settings launcher now uses ScreenGui DisplayOrder -1 while its panel is
+  closed, behind the remote menu (8) and other game screens. Opening Settings
+  restores its authored page order (65). This fixes cross-ScreenGui layering,
+  which changing a button's ZIndex alone would not affect.
+- SoundController excludes JumpButton and TouchGui descendants at binding and
+  activation time. Other UI clicks and purchase-click suppression are retained.
+- Verification: Rojo build and diff checks pass. Authored HUD.Active=false and
+  relevant display orders inspected locally. Added real-instance alignment
+  regression, jump/touch sound cases and Settings order assertion in PageFocus.
+  These new runtime tests have NOT run: Studio plugin/direct localhost:58741
+  calls repeatedly timed out. Reconnection requested. No visual/audio verification
+  claimed, and no existing gameplay-test pass counts apply to these new changes.
+- Files: CollectionLaunchers; HUD/Shop/Settings/Sound controllers; collection
+  alignment test, purchase-click test, PageFocus test, responsive docs, handoff.
+- Overall progress: implementation complete, live verification pending. Next:
+  reconnect Studio, run test-collection-launchers.luau, test-purchase-click-sound.ps1
+  and PageFocusVerification; inspect desktop/phone alignment and settings/remote
+  overlap. Baseline 38db9a1. No real saves/purchases, assets or world edited.
+  Owner artwork preserved; no publish/push.
 
 ### Latest session — compact non-modal remote panel and immediate hatch rows
 
