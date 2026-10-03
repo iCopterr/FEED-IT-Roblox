@@ -90,8 +90,9 @@ local ok,failure=xpcall(function()
 	assert(command("ForceFeed","Explosion",id).Ok)
 	result=feed.HandleRequest(a,"Feed",id,4)
 	check(result.Accepted and result.Code=="Explosion" and result.FeedLevel==0
-		and profile.PendingRecovery[id]~=nil and profile.Inventory[id]==nil,
-		"Force Explosion offers recovery or level zero even at zero natural risk")
+		and profile.PendingRecovery[id]==nil and profile.Inventory[id].Broken
+		and profile.Inventory[id].BreakId==result.AttemptId,
+		"Force Explosion preserves the pet with permanent repairable damage even at zero natural risk")
 	waitFor(function() return not locks.IsLocked(a) end)
 	assert(command("ForceFeed","Critical",ids[2]).Ok)
 	check(command("ForceFeed","Clear",ids[2]).Ok and overrides.Get(a)==nil,"Clear restores normal odds")

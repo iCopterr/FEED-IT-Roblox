@@ -59,7 +59,7 @@ local ok,failure=xpcall(function()
 	index.Visible=true;settle(true)
 	check(blur.Size>17,"A regular page still activates focus alongside a remote panel")
 	index.Visible=false;settle(false)
-	check(remotePanel.Visible and blur.Size<.1,"Remaining remote panel does not retain background effects")
+	check(not remotePanel.Visible and blur.Size<.1,"Opening Index closes the remote panel and closing Index releases background effects")
 	remotePanel.Visible=false
 end,debug.traceback)
 local errors={}

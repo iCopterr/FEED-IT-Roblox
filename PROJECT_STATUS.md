@@ -6,6 +6,41 @@
 
 **Last Updated:** 2026-10-03
 
+### Latest session — broad game QA
+
+- Current feature / overall progress: completed the available automated QA
+  pass requested by the owner. All 26 executed live Studio suites passed on
+  final runs (4,740 returned assertions; many are repeated pet-size checks).
+  Detailed scope and limitations: `docs/qa-2026-10-03.md`.
+- Completed: gameplay/tutorial/inventory/placement/feed/repair/conveyor/hatch,
+  labels/prompts/plots/income/index/wandering/VFX tests; two-client HUD startup
+  smoke; targeted commerce/policy/shards/receipt-idempotence, animation, sound
+  routing, layout and boost regressions. All 162 Luau sources compile, 25 XML
+  assets parse and Rojo build succeeds. No production gameplay source changed.
+- Test maintenance: replaced stale assertions for old $5K egg cost, deleted
+  recovery pets, unconfigured shop products/art, old UI hierarchy, stock copy,
+  legacy hatch UI, modal behavior and pre-fix mobile margins. Added required
+  variant and dynamic repair-view fixtures. All affected suites rerun.
+- Files modified: docs/studio test-purchase-thanks-ui, test-shop,
+  verify-device-layout; client FoodShop/Hatch/PageFocus verifications; server
+  Conveyor/Debug/Index/Label/Prompt/Travel verifications; new client/server
+  HUDSmokeVerification, QA report and this handoff.
+- In progress: none in this automated pass. Next task: real-device and
+  published-server acceptance checks listed in the report. Physical-phone
+  screenshot clipping and the owner's actual pass-owned x2 badge report are
+  NOT closed by simulated geometry/eligibility tests. HUD smoke uses panel
+  visibility toggles, not physical launcher taps; audio was not auditioned.
+- Known limitations: Studio uses memory-only profiles. Live DataStore rejoin/
+  cross-server persistence, actual marketplace purchases/permissions, regional
+  pricing, full-server soak/performance and all-device input are unverified.
+  Prompt/Plot initially returned no result; subsequent explicit results passed.
+- Architecture unchanged. Tests did not spend Robux, grant real entitlements,
+  edit real saves, alter authored screens or publish. Temporary QA result
+  attributes are removed after recording results. Unrelated artwork preserved.
+- Last working baseline: 8d6395c. Session handoff: use the QA report to avoid
+  mistaking mocked/Studio coverage for production acceptance; test-only changes
+  committed with this handoff. No push and no Roblox UI Director used.
+
 ### Latest session — mobile launcher clipping and effective scale
 
 - Current feature / completed: touch launchers now use matching 24px padding

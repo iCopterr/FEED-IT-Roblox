@@ -43,7 +43,7 @@ assert(rewardName and shardText and shardFallback and shardIcon,"missing popup l
 assert(gui.Enabled and card.Header.Title.Text=="THANK YOU!","header")
 assert(card.Header.Subtitle.Text=="FOR YOUR PURCHASE","subtitle")
 assert(rewardName.Text=="1× Hearty Food","food name: "..rewardName.Text)
-assert(shardBonus.Visible and shardText.Text=="BONUS  +5 REVIVE SHARDS","shard banner: "..shardText.Text)
+assert(shardBonus.Visible and shardText.Text=="BONUS  +5 REPAIR SHARDS","shard banner: "..shardText.Text)
 assert(not shardFallback.Visible and shardIcon.Visible,"shard art")
 assert(played=="Buy","sound")
 if __KEEP_PREVIEW__ then return "PREVIEW: PurchaseThanksUI left in CoreGui" end

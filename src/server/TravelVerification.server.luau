@@ -37,7 +37,7 @@ local ok,failure=xpcall(function()
 	local count=0;for _,c in h:GetChildren() do if c.Name=="Travel" then count+=1 end end
 	check(count==1,"Single authored travel row")
 	for _,name in {"Base","Merchant"} do
-		check(h.Travel[name]:IsA("ImageButton") and h.Travel[name].Image==h.OpenInventory.Image,"Matching stud button "..name)
+		check(h.Travel[name]:IsA("ImageButton") and h.Travel[name].Image==h.OpenInventory.Texture.Image,"Matching stud button "..name)
 		check(h.Travel[name].Size.X.Offset>h.OpenInventory.Size.X.Offset and h.Travel[name].Size.Y.Offset>h.OpenInventory.Size.Y.Offset,"Larger travel button "..name)
 	end
 end,debug.traceback)

@@ -49,7 +49,7 @@ local ok,failure=xpcall(function()
 	egg.PenPosition={X=0,Z=0};egg.StartedAt=os.time()-egg.HatchSeconds-1;egg.ReadyAt=egg.StartedAt+egg.HatchSeconds
 	check(Schema.Validate(profile),"Ready test egg remains schema-valid")
 	local hatched=Eggs.HandleRequest(a,"HatchRemote",bought.EggUid)
-	check(hatched.Ok and profile.PetIndex[species],"Actual hatch unlocks its species")
+	check(hatched.Ok and profile.PetIndex[species],"Completed hatch unlocks its species after reward collection")
 	waitFor(function() return not Locks.IsLocked(a) end)
 	task.wait(.3)
 	local afterHatch

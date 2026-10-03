@@ -24,8 +24,8 @@ local ok,err=xpcall(function()
 	assert(Layout.SettingsLauncherScale(phoneLandscape,true)==.48,"Phone Settings launcher is not compact")
 	assert(Layout.LeftLauncherGap(phoneLandscape,true)==20,"Primary launchers need more separation")
 	local shopX,shopY=Layout.ShopLauncherOffset(phoneLandscape,true)
-	assert(shopX==22 and shopY==-90,"Shop launcher offset is not aligned")
-	assert(Layout.RightLauncherOffset(phoneLandscape,true)==20,"Right launchers are not near the edge")
+	assert(shopX==24 and shopY==-90,"Shop launcher offset is not aligned")
+	assert(Layout.RightLauncherOffset(phoneLandscape,true)==-24,"Right launchers must stay inside the safe edge")
 	assert(Layout.TravelScale(phoneLandscape,true)==.62,"Phone travel bar is not compact")
 	assert(Layout.MoneyScale(phoneLandscape,true)==.62,"Phone money display is not compact")
 	local hintWidth,hintHeight,hintBottom,hintText=Layout.TutorialHint(phoneLandscape,true)
@@ -36,6 +36,10 @@ local ok,err=xpcall(function()
 	for _,case in cases do
 		local gui=assert(game.StarterGui:FindFirstChild(case[1]),case[1]):Clone();gui.Parent=folder
 		local panel=gui[case[2]]
+		if case[3]=="Revive" then
+			local viewSource=game.StarterPlayer.StarterPlayerScripts.Client.UI.ReviveView:Clone()
+			require(viewSource).Build(panel);viewSource:Destroy()
+		end
 		local initial={}
 		for _,o in panel:GetDescendants() do
 			if o:IsA("GuiObject") then initial[o]={Size=o.Size,Position=o.Position} end

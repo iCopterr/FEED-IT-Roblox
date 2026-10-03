@@ -40,7 +40,9 @@ local ok,failure=xpcall(function()
 		previousFoodOrder=foodOrder[matchedId]
 	end
 	assert(merchant.Panel.Offers.Slot1.ItemName.Text=="Basic Food","Basic Food rendered first in shop")
-	assert(merchant.Panel.Offers.Slot1.Stock.Text:find("/5 STOCK",1,true) or merchant.Panel.Offers.Slot1.Stock.Text=="SOLD OUT","Basic stock limit is visible")
+	local basicStock=merchant.Panel.Offers.Slot1.Stock.Text
+	local basicRemaining=tonumber(basicStock:match("^[Xx](%d+)"))
+	assert(basicRemaining and basicRemaining>=0 and basicRemaining<=5,"Basic stock count is visible: "..basicStock)
 	assert(main.FeedPanel:FindFirstChild("FoodCards") and not main.FeedPanel:FindFirstChild("FoodType"),"Food cards replace cycling selector")
 	local feedLayout=main.FeedPanel
 	for _,panel in {main.Inventory.Panel,feedLayout,feedLayout.FoodCards,merchant.Panel,rescue.Panel} do

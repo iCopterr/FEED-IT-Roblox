@@ -34,7 +34,7 @@ local ok,failure=xpcall(function()
  check(offer:FindFirstChild("BuyConveyorEgg",true).HoldDuration==.25,"Egg purchase uses 0.25 second hold")
  local visual=require(s.EggVisuals)
  local floor=plot.Pen.Floor
- local egg=assert(visual.Prepare(player,{EggId="prototype_egg"},floor.Position+Vector3.new(0,floor.Size.Y/2,0)))
+ local egg=assert(visual.Prepare(player,{EggId="prototype_egg",Pet={Variant="Normal"}},floor.Position+Vector3.new(0,floor.Size.Y/2,0)))
  assert(visual.Install(player,"prompt-test",egg))
  check(egg:FindFirstChild("HatchEgg",true).HoldDuration==0,"Hatching remains instant")
  visual.Clear(player)

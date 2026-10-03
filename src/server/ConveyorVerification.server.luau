@@ -63,8 +63,9 @@ local ok,failure=xpcall(function()
 	check(not conveyor.HandlePurchase(a,{}).Ok,"Malformed purchase rejected")
 	rootA.CFrame=CFrame.new(1000,5,1000)
 	check(conveyor.HandlePurchase(a,id).Code=="TooFar","Distant purchase rejected")
-	task.wait(.3);near(rootA,model);profile.Money=4999
-	check(conveyor.HandlePurchase(a,id).Code=="NotEnoughMoney" and profile.Money==4999,"Unaffordable egg does not charge")
+	local basicPrice=config.Definitions.prototype_egg.Price
+	task.wait(.3);near(rootA,model);profile.Money=basicPrice-1
+	check(conveyor.HandlePurchase(a,id).Code=="NotEnoughMoney" and profile.Money==basicPrice-1,"Unaffordable egg does not charge")
 	task.wait(.3);near(rootA,model);profile.Money=20000
 	local inventoryCount=count(profile.Inventory)
 	local result=conveyor.HandlePurchase(a,id)
@@ -124,7 +125,7 @@ local ok,failure=xpcall(function()
 	local extraId,extraModel=conveyor.SpawnOffer(0);assert(extraId,extraModel)
 	task.wait(.3);near(rootA,extraModel)
 	local extraPurchase=conveyor.HandlePurchase(a,extraId)
-	check(extraPurchase.Ok and profile.Money==10000 and count(profile.IncubatingEggs)==2 and extraModel.Parent==nil,
+	check(extraPurchase.Ok and profile.Money==20000-2*basicPrice and count(profile.IncubatingEggs)==2 and extraModel.Parent==nil,
 		"Player can buy another egg while the first egg is still incubating")
 	waitFor(function() return not locks.IsLocked(a) end)
 	carry.Unequip(a)

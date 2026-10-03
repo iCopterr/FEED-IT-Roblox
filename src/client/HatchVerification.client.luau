@@ -17,7 +17,8 @@ report.OnClientEvent:Connect(function()
 				if model.Name:sub(1,12)=="HatchReveal_" then return model end
 			end
 		end)
-		assert(not game.Players.LocalPlayer.PlayerGui:FindFirstChild("HatchUI"),"No popup UI")
+		local legacyGui=game.Players.LocalPlayer.PlayerGui:FindFirstChild("HatchUI")
+		assert(not legacyGui or not legacyGui.Enabled or not legacyGui.Panel.Visible,"Legacy popup stays hidden during world hatch")
 		waitFor(function() return effect:GetAttribute("Stage")=="Shake" end)
 		assert(lastResult and not Controller.Enqueue(lastResult),"Replay deduplicated")
 		waitFor(function() return effect:GetAttribute("Stage")=="Light" end)
