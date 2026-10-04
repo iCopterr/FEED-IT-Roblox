@@ -12,7 +12,7 @@ function Service.State(player)
 	if not data then return {Ok = false, Error = "Loading your earnings…"} end
 	return {Ok = true, PendingMoney = data.OfflineEarnings.PendingMoney,
 		PendingSeconds = data.OfflineEarnings.PendingSeconds, Rate = Earnings.Rate(data),
-		MaxSeconds = Config.MaxSeconds}
+		MinimumSeconds = Config.MinimumSeconds, MaxSeconds = Config.MaxSeconds}
 end
 
 function Service.Collect(player)

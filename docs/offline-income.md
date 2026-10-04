@@ -8,11 +8,14 @@ income. No farm, offline feeding, growth, hatch result or purchase is simulated.
 - Only pets placed in the saved pen earn offline Money.
 - Rate uses the shared PetIncome calculation: feed level, variant and the
   broken-pet 10% income penalty. Paid x2 does **not** apply to offline earnings.
+- A single offline session must last at least **10 minutes**. Shorter relogs earn
+  nothing and do not accumulate toward the threshold. Eligible sessions receive
+  their complete duration, including the first ten minutes.
 - Maximum **24 hours of uncollected offline time**, shared across visits. Leaving
   without collecting preserves the reward; it does not reset or extend its cap.
 - Rate is evaluated from the last saved pets, not from a client estimate.
 - New profiles and migrated v13 profiles receive no retroactive launch reward.
-- Claiming transfers the bank into Money. No minimum away duration or fee.
+- Claiming transfers the bank into Money. There is no collection fee.
 
 ## Persistence
 
@@ -58,7 +61,7 @@ selection have automated coverage.
 - Opt-in multiplayer test: `OfflineIncomeVerification` (memory-only fixture).
 - Regressions: `DataPersistenceVerification`, `PageFocusVerification`.
 
-Verified 2026-10-04: 40 detached checks + 15 live UI/remote checks + 19 persistence
+Verified 2026-10-04: 42 detached checks + 15 live UI/remote checks + 19 persistence
 checks + 19 PageFocus checks. Rojo build and Luau compile checks pass. The live
 fixture verifies the first Collect returns 36000 and a duplicate returns zero.
 Seven identical extra copies of this task's Studio scripts were removed before

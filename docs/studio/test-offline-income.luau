@@ -9,7 +9,12 @@ local function load(module, overrides)
 	return factory()
 end
 local schema = load(server.Data.PlayerDataSchema)
-local earnings = load(server.Data.OfflineEarnings)
+local offlineConfigModule = game.ReplicatedStorage.Shared.Config.OfflineIncomeConfig
+local offlineConfig = load(offlineConfigModule)
+local earnings = load(server.Data.OfflineEarnings,{require=function(module)
+	if module==offlineConfigModule then return offlineConfig end
+	return require(module)
+end})
 local checks = {}
 local function check(ok, name) assert(ok, name); table.insert(checks, name) end
 local function copy(t)
@@ -28,13 +33,15 @@ local p = profile()
 check(schema.Validate(p), "New v14 profile validates")
 earnings.Accrue(p,100000)
 check(p.OfflineEarnings.PendingMoney==0, "No first-join retroactive award")
-earnings.Accrue(p,100060)
-check(p.OfflineEarnings.PendingMoney==600, "Exact 60-second base income")
-earnings.Accrue(p,100060)
-check(p.OfflineEarnings.PendingMoney==600, "Same timestamp never duplicates")
-earnings.Accrue(p,100050)
-check(p.OfflineEarnings.PendingMoney==600, "Negative elapsed grants nothing")
-check(p.OfflineEarnings.CheckpointAt==100060, "Clock rollback does not reopen credited interval")
+earnings.Accrue(p,100599)
+check(p.OfflineEarnings.PendingMoney==0 and p.OfflineEarnings.PendingSeconds==0, "Nine minutes fifty-nine seconds earns nothing")
+earnings.Accrue(p,101199)
+check(p.OfflineEarnings.PendingMoney==6000 and p.OfflineEarnings.PendingSeconds==600, "Ten-minute session earns its complete duration")
+earnings.Accrue(p,101199)
+check(p.OfflineEarnings.PendingMoney==6000, "Same timestamp never duplicates")
+earnings.Accrue(p,101100)
+check(p.OfflineEarnings.PendingMoney==6000, "Negative elapsed grants nothing")
+check(p.OfflineEarnings.CheckpointAt==101199, "Clock rollback does not reopen credited interval")
 earnings.Accrue(p,500000)
 check(p.OfflineEarnings.PendingMoney==864000 and p.OfflineEarnings.PendingSeconds==86400, "24h cap includes uncollected visits")
 local before=p.Money
@@ -125,11 +132,14 @@ check(service.Collect(player).Amount==0, "Repeated server collect is idempotent"
 check(store[key].Data.Money==loaded.Money and store[key].Data.OfflineEarnings.PendingMoney==0, "Balance and cleared ledger persist together")
 -- Online time cannot become offline reward: save/leave checkpoints advance.
 now+=7200;players.PlayerRemoving:Fire(player)
-now+=10;loaded=join()
-check(loaded.OfflineEarnings.PendingMoney==100, "Online session duration excluded")
+now+=599;loaded=join()
+check(loaded.OfflineEarnings.PendingMoney==0, "Short relog earns nothing")
+players.PlayerRemoving:Fire(player)
+now+=600;loaded=join()
+check(loaded.OfflineEarnings.PendingMoney==6000, "Eligible relog earns full ten minutes")
 before=loaded.Money;failMode="after"
 check(not service.Collect(player).Ok, "Ambiguous committed claim asks for retry")
-check(service.Collect(player).Ok and loaded.Money==before+100, "Ambiguous-save retry cannot duplicate currency")
+check(service.Collect(player).Ok and loaded.Money==before+6000, "Ambiguous-save retry cannot duplicate currency")
 now+=5;assert(data.Save(player))
 check(store[key].Data.OfflineEarnings.CheckpointAt==now, "Autosave refreshes durable crash checkpoint")
 players.PlayerRemoving:Fire(player)
@@ -145,7 +155,7 @@ players.PlayerRemoving:Fire(player)
 -- replies and sound spy. No real player UI, audio or persistence is modified.
 local client=game.StarterPlayer.StarterPlayerScripts.Client
 local queue,sounds,requests={},{},{}
-local reply={Ok=true,PendingMoney=36000,PendingSeconds=3600,Rate=10,MaxSeconds=86400}
+local reply={Ok=true,PendingMoney=36000,PendingSeconds=3600,Rate=10,MinimumSeconds=600,MaxSeconds=86400}
 local collectSignal=signal()
 local view={Gui={Parent=true},Popup={Visible=false,Duration={}},Collect={Activated=collectSignal}}
 function view.Show(state)view.Popup.Visible=true;view.shown=state end

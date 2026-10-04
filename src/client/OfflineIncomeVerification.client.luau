@@ -34,9 +34,10 @@ local ok, failure = xpcall(function()
 		check(view.Popup.AbsoluteSize.X <= size.X-25 and view.Popup.AbsoluteSize.Y <= size.Y-25,
 			"Popup fits "..tostring(size))
 	end
-	view.Menu(true,{Rate=10,PendingMoney=0,PendingSeconds=0,MaxSeconds=86400})
+	view.Menu(true,{Rate=10,PendingMoney=0,PendingSeconds=0,MinimumSeconds=600,MaxSeconds=86400})
 	check(view.Gui.MenuTop.Visible and view.Gui.MenuBottom.Visible, "Both menu reminders appear")
-	check(view.Gui.MenuTop.Text:find("$10.00/SEC",1,true) and view.Gui.MenuBottom.Text:find("$864.00K",1,true), "Reminders show rate and cap estimate")
+	check(view.Gui.MenuTop.Text:find("$10.00/SEC",1,true) and view.Gui.MenuBottom.Text:find("10+ minutes",1,true)
+		and view.Gui.MenuBottom.Text:find("$864.00K",1,true), "Reminders show minimum, rate and cap estimate")
 	view.Menu(false)
 	check(not view.Gui.MenuTop.Visible and not view.Gui.MenuBottom.Visible, "Reminders hide on menu close")
 	view.Gui:Destroy()

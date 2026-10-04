@@ -15,8 +15,11 @@ end
 -- Timestamp and pending reward are persisted together with the acquired lock.
 function Earnings.Accrue(data, now)
 	local state = data.OfflineEarnings
-	local seconds = if state.CheckpointAt > 0 then math.clamp(now - state.CheckpointAt, 0,
-		math.max(0, Config.MaxSeconds - state.PendingSeconds)) else 0
+	local elapsed = if state.CheckpointAt > 0 then math.max(0, now - state.CheckpointAt) else 0
+	-- Short reconnects do not bank time toward the threshold. Once one offline
+	-- session reaches ten minutes, its complete duration qualifies.
+	local seconds = if elapsed >= Config.MinimumSeconds then
+		math.min(elapsed, math.max(0, Config.MaxSeconds - state.PendingSeconds)) else 0
 	local amount = seconds * Earnings.Rate(data)
 	if amount > 0 and amount + state.PendingMoney < math.huge then
 		state.PendingMoney += amount

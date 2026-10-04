@@ -118,13 +118,13 @@ function UI.Create(playerGui)
 	function view.Menu(open, state)
 		top.Visible, bottom.Visible = open, open
 		if not state then
-			top.Text, bottom.Text = "YOUR PETS CAN EARN WHILE YOU'RE AWAY", "Offline earnings last up to 24 hours • Collect when you return"
+			top.Text, bottom.Text = "YOUR PETS CAN EARN WHILE YOU'RE AWAY", "Stay offline 10+ minutes • Earn for up to 24 hours"
 		elseif state.Rate <= 0 then
-			top.Text, bottom.Text = "PLACE PETS IN YOUR PEN TO EARN OFFLINE", "Up to 24 hours of offline income • Collect when you return"
+			top.Text, bottom.Text = "PLACE PETS IN YOUR PEN TO EARN OFFLINE", "Stay offline 10+ minutes • Earn for up to 24 hours"
 		else
 			local capacity = state.PendingMoney + state.Rate * math.max(0, state.MaxSeconds-state.PendingSeconds)
 			top.Text = "YOUR PETS EARN $" .. Format.Money(state.Rate) .. "/SEC OFFLINE!"
-			bottom.Text = "Bank up to $" .. Format.Money(capacity) .. " • 24-hour cap • Collect when you return"
+			bottom.Text = "10+ minutes away • Bank up to $" .. Format.Money(capacity) .. " • 24-hour cap"
 		end
 	end
 	return view

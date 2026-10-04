@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-10-04
 
+### Latest session — offline earnings 10-minute minimum
+
+- Offline earnings now require one continuous offline session of at least ten
+  minutes. A qualifying session earns its full duration; shorter relogs earn
+  nothing and do not accumulate. The existing 24-hour uncollected cap remains.
+- Eligible uncollected earnings continue to show the welcome popup on every
+  login until collected. ESC reminders now explain the 10-minute minimum.
+- Updated config, server accrual, state payload, UI copy, documentation and both
+  offline verification suites. Verified: detached save/relogin/controller harness
+  passes 42 checks; live UI/remote suite passes 15; persistence regression passes
+  19; Rojo build and diff checks pass. Implementation complete.
+- Files: OfflineIncomeConfig, OfflineEarnings, OfflineIncomeService/UI, detached
+  and live verification, docs and this handoff. Baseline 2e9d9b8. No publish/push,
+  production saves or owner artwork changes.
+
 ### Latest session — non-basic food prices +30%
 
 - Raised every non-basic FoodConfig Money price by exactly 30%; Basic Food stays
