@@ -7,6 +7,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataConfig = require(ReplicatedStorage.Shared.Config.DataConfig)
 local DataStoreAdapter = require(script.Parent.Parent.Data.DataStoreAdapter)
 local PlayerDataSchema = require(script.Parent.Parent.Data.PlayerDataSchema)
+local OfflineEarnings = require(script.Parent.Parent.Data.OfflineEarnings)
 
 type PlayerData = PlayerDataSchema.PlayerData
 type UnknownTable = { [any]: any }
@@ -196,6 +197,9 @@ local function saveSession(session: ActiveSession, release: boolean): (boolean, 
 	local outcome = "request_failed"
 	local outcomeError: string? = nil
 	local now = os.time()
+	-- Refresh only the detached snapshot: a failed save cannot advance the stored
+	-- checkpoint. Crash recovery starts at the last durable online snapshot.
+	validSnapshot.OfflineEarnings.CheckpointAt = math.max(now, validSnapshot.OfflineEarnings.CheckpointAt)
 	local success, _, requestError = DataStoreAdapter.UpdateAsync(playerKey(session.Player.UserId), function(currentValue)
 		local record, decodeError = decodeRecord(currentValue)
 		if record == nil then
@@ -294,6 +298,9 @@ local function loadPlayer(player: Player)
 				return nil
 			end
 
+			-- A retry after a committed-but-unacknowledged acquisition already owns
+			-- this lock. Never accrue the same absence a second time.
+			if not ownsLock then OfflineEarnings.Accrue(record.Data, now) end
 			record.Session = {
 				ServerId = serverId,
 				SessionId = sessionId,

@@ -33,6 +33,7 @@ export type EggData = {EggId: string, Pet: PetData, StartedAt: number, ReadyAt: 
 export type PlayerData = {
 	DataVersion: number,
 	Money: number,
+	OfflineEarnings: {CheckpointAt: number, PendingMoney: number, PendingSeconds: number},
 	Food: number,
 	Foods: { [string]: number },
 	ReviveCharges: number,
@@ -65,6 +66,13 @@ local PlayerDataSchema = {
 -- Add a migration at the version being migrated from before incrementing
 -- PlayerDataVersion. For example, migrations[1] upgrades v1 data to v2.
 local migrations: { [number]: Migration } = {}
+
+migrations[13] = function(source)
+	local result = table.clone(source)
+	-- No retroactive reward for time before this feature existed.
+	result.OfflineEarnings = {CheckpointAt = 0, PendingMoney = 0, PendingSeconds = 0}
+	return result, nil
+end
 
 -- Keep the original identity and attempt ID, including any outstanding paid
 -- repair intent. Old recovery records become usable, permanently broken pets.
@@ -429,6 +437,7 @@ local function clonePlayerData(data: PlayerData): PlayerData
 	return {
 		DataVersion = data.DataVersion,
 		Money = data.Money,
+		OfflineEarnings = table.clone(data.OfflineEarnings),
 		Food = data.Food,
 		Foods = table.clone(data.Foods),
 		ReviveCharges = data.ReviveCharges,
@@ -455,6 +464,7 @@ function PlayerDataSchema.CreateDefault(): PlayerData
 	return {
 		DataVersion = GameConfig.PlayerDataVersion,
 		Money = GameConfig.StartingMoney,
+		OfflineEarnings = {CheckpointAt = 0, PendingMoney = 0, PendingSeconds = 0},
 		Food = GameConfig.StartingFood,
 		Foods = {},
 		ReviveCharges = 0,
@@ -496,6 +506,13 @@ function PlayerDataSchema.Validate(value: unknown): (boolean, string?)
 
 	if not isNonNegativeNumber(data.Money) then
 		return false, "Money must be a non-negative finite number"
+	end
+	local offline = data.OfflineEarnings
+	if type(offline) ~= "table" or not isNonNegativeInteger(offline.CheckpointAt)
+		or not isNonNegativeNumber(offline.PendingMoney) or not isNonNegativeInteger(offline.PendingSeconds)
+		or offline.PendingSeconds > require(ReplicatedStorage.Shared.Config.OfflineIncomeConfig).MaxSeconds
+		or (offline.PendingMoney == 0) ~= (offline.PendingSeconds == 0) then
+		return false, "Invalid offline earnings ledger"
 	end
 
 	if not isNonNegativeNumber(data.Food) then

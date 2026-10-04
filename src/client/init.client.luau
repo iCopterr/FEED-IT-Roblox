@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ProjectInfo = require(ReplicatedStorage.Shared.ProjectInfo)
+task.spawn(function() require(script.Controllers.OfflineIncomeController).Start() end)
 task.spawn(function() require(script.Controllers.SettingsController).Start() end)
 task.spawn(function() require(script.Controllers.BoostController).Start() end)
 task.spawn(function() require(script.Controllers.PetAnimationController).Start() end)

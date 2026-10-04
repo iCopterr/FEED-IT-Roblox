@@ -8,6 +8,7 @@ local pages={
 	MerchantUI={"Panel"}, ReviveUI={"Panel"}, DebugUI={"Panel"},
 	PenManagerUI={"Panel","GrowNow"}, HatchUI={"Panel"},
 	PurchaseThanksUI={"Popup"},
+	OfflineIncomeUI={"Popup"},
 }
 local chrome={FeedYourPetUI={"HUD"},ShopUI={"Open"},IndexUI={"Open"},
 	SettingsUI={"Open"},DebugUI={"Open"},ReviveUI={"Open"},PenManagerUI={"Dock"}}
@@ -59,9 +60,10 @@ function MenuHUD.Bind(gui)
 		if watched[object] then return end
 		local screen=if object:IsA("ScreenGui") then object else object.Parent
 		if not screen or screen.Parent~=gui then return end
-		local names=pages[screen.Name]
-		if not names then return end
-		local property=if object==screen then "Enabled" elseif table.find(names,object.Name) then "Visible" else nil
+		local names=pages[screen.Name] or {}
+		local controls=chrome[screen.Name] or {}
+		local property=if object==screen and (pages[screen.Name] or hudScreens[screen.Name]) then "Enabled"
+			elseif object~=screen and (table.find(names,object.Name) or table.find(controls,object.Name)) then "Visible" else nil
 		if property then
 			watched[object]=true
 			table.insert(connections,object:GetPropertyChangedSignal(property):Connect(update))

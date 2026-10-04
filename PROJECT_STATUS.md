@@ -6,6 +6,40 @@
 
 **Last Updated:** 2026-10-04
 
+### Latest session — 24-hour offline earnings
+
+- Implemented owner-requested offline income, overriding the old GDD exclusion.
+  Placed pets use base income including variants/feed/broken 10% penalty, no paid
+  x2. Uncollected rewards survive reconnects; total banked time caps at 24 hours.
+- Schema v14 migration adds a ledger without retroactive rewards. DataService
+  accrues within session acquisition and checkpoints every saved snapshot.
+  Collect is server-authoritative, transaction-locked and retry-safe without
+  ambiguous-save rollback. Client sends only State/Collect, never an amount.
+- Added responsive welcome popup, amount/duration, Collect -> Buy sound,
+  retry state, top/bottom GuiService menu reminders. MenuHUD also watches late
+  chrome visibility writes so startup controllers cannot uncover HUD over it.
+- Verified: 40 detached persistence/controller checks, 15 live offline UI checks,
+  19 persistence and 19 PageFocus regressions (93 total), Rojo build and diff checks.
+  Popup visually reviewed in Studio edit viewport; five responsive sizes checked
+  in runtime. Strict live trace confirms first claim +36000, duplicate +0.
+- Diagnosed intermittent test failures: Studio contained two identical copies of
+  each of the seven newly introduced modules/scripts, including both verification
+  scripts. Removed only the seven extra identical copies after Source comparison;
+  canonical filesystem sources remain recoverable. Clean-instance reruns all pass.
+- Limitations: real CoreGui ESC layering and audible/physical button input are
+  not verified. Computer-use screenshot returned another foreground app, so it
+  was not used for input. Studio test clients do not expose MCP input targets.
+  GUI event/sound callbacks are tested using deterministic signals/spies.
+  Confirmed existing Buy SoundId 80445263326300; no sound assets modified.
+- Files: offline config, ledger/service/controller/view, schema/GameConfig,
+  DataService, server/client init, MenuHUD, detached/live tests, docs/offline-income.md,
+  and this handoff. No owner artwork or world changes. Baseline bf4d4f0.
+- Overall progress: implementation and automated verification complete. No code
+  work in progress. Next: owner interactive desktop/phone ESC visibility/audio
+  check before publishing. Session handoff: resume from these files, do not add
+  a second offline reward path or reinitialize existing ledgers.
+  No publish/push or production saves. Studio remains memory-only.
+
 ### Latest session — three promotional images
 
 - Completed: generated square feeding game icon plus widescreen critical-growth
