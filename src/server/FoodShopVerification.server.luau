@@ -55,7 +55,7 @@ local ok,failure=xpcall(function()
 	end
 	for _,id in MerchantConfig.ItemOrder do if id~="basic" then check(seen[id],id.." appears in deterministic restocks") end end
 	check(seen.revive<100 and seen.blessed<100 and seen.blessed<seen.royal,"Rare items appear in under 1% of sampled five-minute restocks")
-	for id,price in {basic=100,fresh=1500,hearty=7500,fortified=30000,gourmet=150000,enchanted=750000,royal=3000000,revive=15000000,blessed=50000000} do
+	for id,price in {basic=100,fresh=1950,hearty=9750,fortified=39000,gourmet=195000,enchanted=975000,royal=3900000,revive=15000000,blessed=65000000} do
 		check(MerchantConfig.Items[id].Price==price,"Approved merchant Money price: "..id)
 	end
 	local legacy=Schema.CreateDefault();legacy.DataVersion=9;legacy.ReviveCharges=nil

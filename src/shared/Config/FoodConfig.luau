@@ -4,13 +4,13 @@ local Config = {
 	Order = table.freeze({"basic", "fresh", "hearty", "fortified", "gourmet", "enchanted", "royal", "blessed"}),
 	Types = table.freeze({
 		basic = table.freeze({Rarity="Common", Name="Basic Food", Icon="🍗", Reduction=0, Price=100, Amount=1, Weight=0, StockLimit=5}),
-		fresh = table.freeze({Rarity="Uncommon", Name="Fresh Food", Icon="🍎", Reduction=.08, Price=1500, Amount=1, Weight=80, StockLimit=1}),
-		hearty = table.freeze({Rarity="Rare", Name="Hearty Food", Icon="🥩", Reduction=.15, Price=7500, Amount=1, Weight=60, StockLimit=1}),
-		fortified = table.freeze({Rarity="Epic", Name="Fortified Food", Icon="🥘", Reduction=.22, Price=30000, Amount=1, Weight=45, StockLimit=1}),
-		gourmet = table.freeze({Rarity="Legendary", Name="Gourmet Food", Icon="🍱", Reduction=.30, Price=150000, Amount=1, Weight=30, StockLimit=1}),
-		enchanted = table.freeze({Rarity="Mythic", Name="Enchanted Food", Icon="🔮", Reduction=.38, Price=750000, Amount=1, Weight=18, StockLimit=1}),
-		royal = table.freeze({Rarity="Fabled", Name="Royal Food", Icon="🍰", Reduction=.45, Price=3000000, Amount=1, Weight=10, StockLimit=1}),
-		blessed = table.freeze({Rarity="Celestial", Name="Blessed Food", Icon="✨", Reduction=1, GuaranteedSuccess=true, Price=50000000, Amount=1, Weight=.25, StockLimit=1}),
+		fresh = table.freeze({Rarity="Uncommon", Name="Fresh Food", Icon="🍎", Reduction=.08, Price=1950, Amount=1, Weight=80, StockLimit=1}),
+		hearty = table.freeze({Rarity="Rare", Name="Hearty Food", Icon="🥩", Reduction=.15, Price=9750, Amount=1, Weight=60, StockLimit=1}),
+		fortified = table.freeze({Rarity="Epic", Name="Fortified Food", Icon="🥘", Reduction=.22, Price=39000, Amount=1, Weight=45, StockLimit=1}),
+		gourmet = table.freeze({Rarity="Legendary", Name="Gourmet Food", Icon="🍱", Reduction=.30, Price=195000, Amount=1, Weight=30, StockLimit=1}),
+		enchanted = table.freeze({Rarity="Mythic", Name="Enchanted Food", Icon="🔮", Reduction=.38, Price=975000, Amount=1, Weight=18, StockLimit=1}),
+		royal = table.freeze({Rarity="Fabled", Name="Royal Food", Icon="🍰", Reduction=.45, Price=3900000, Amount=1, Weight=10, StockLimit=1}),
+		blessed = table.freeze({Rarity="Celestial", Name="Blessed Food", Icon="✨", Reduction=1, GuaranteedSuccess=true, Price=65000000, Amount=1, Weight=.25, StockLimit=1}),
 	}),
 }
 

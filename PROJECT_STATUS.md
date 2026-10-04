@@ -6,6 +6,20 @@
 
 **Last Updated:** 2026-10-04
 
+### Latest session — non-basic food prices +30%
+
+- Raised every non-basic FoodConfig Money price by exactly 30%; Basic Food stays
+  $100. New prices: Fresh $1,950; Hearty $9,750; Fortified $39,000; Gourmet
+  $195,000; Enchanted $975,000; Royal $3,900,000; Blessed $65,000,000.
+- Repair Charm remains $15,000,000 because it is not food. Stock limits, Robux
+  prices, food effects, risk reduction and rarity weights are unchanged.
+- Updated the authoritative merchant verification expectations. Full two-client
+  FoodShopVerification passes 87 checks, including exact prices, purchases,
+  stock limits, feed consumption, repair and save round trips. Rojo build and
+  diff checks pass. Implementation complete; no work in progress.
+- Files: FoodConfig, FoodShopVerification and this handoff. Baseline 7dc45bb.
+  Owner artwork remains untouched; no publish/push or production saves.
+
 ### Latest session — 24-hour offline earnings
 
 - Implemented owner-requested offline income, overriding the old GDD exclusion.
