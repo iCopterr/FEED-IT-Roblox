@@ -6,6 +6,21 @@
 
 **Last Updated:** 2026-10-04
 
+### Latest session — three promotional images
+
+- Completed: generated square feeding game icon plus widescreen critical-growth
+  and legendary Ice Dragon hatch thumbnails, using the owner's bright outlined
+  Roblox references as style direction. Three independent scenes, not a collage.
+- Used built-in image generation per imagegen skill. Visually reviewed the
+  outputs for composition, readable text and distinct actions; saved every PNG
+  and the complete prompt set under assets/promo/2026-10-04-v1/. Generator originals
+  preserved. Art is illustrative, not an exact screenshot/model match.
+- No gameplay, UI or balance changes. Not uploaded or published. No work in
+  progress for this art request; next: owner selection/upload. Previous UI
+  runtime verification remains pending Studio connection, unchanged by this task.
+- Files: three new promotional PNGs, PROMPTS.md and this handoff. Baseline
+  d7f03bf; unrelated owner assets preserved. No push.
+
 ### Latest session — collection launcher alignment, Settings layering, silent jump
 
 - Implemented: new CollectionLaunchers binds Inventory/Shop placement to Index
