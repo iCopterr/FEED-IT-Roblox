@@ -8,6 +8,7 @@ local DataConfig = require(ReplicatedStorage.Shared.Config.DataConfig)
 local DataStoreAdapter = require(script.Parent.Parent.Data.DataStoreAdapter)
 local PlayerDataSchema = require(script.Parent.Parent.Data.PlayerDataSchema)
 local OfflineEarnings = require(script.Parent.Parent.Data.OfflineEarnings)
+local AccountGift = require(script.Parent.Parent.Data.AccountGift)
 
 type PlayerData = PlayerDataSchema.PlayerData
 type UnknownTable = { [any]: any }
@@ -297,6 +298,7 @@ local function loadPlayer(player: Player)
 				outcome = "session_locked"
 				return nil
 			end
+			record.Data = AccountGift.Apply(record.Data, player.UserId)
 
 			-- A retry after a committed-but-unacknowledged acquisition already owns
 			-- this lock. Never accrue the same absence a second time.

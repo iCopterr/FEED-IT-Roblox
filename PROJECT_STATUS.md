@@ -6,6 +6,33 @@
 
 **Last Updated:** 2026-10-06
 
+### Latest session — one-time account inventory gifts
+
+- Current Feature: owner-requested gift for UserIds 4750343708, 123985255 and
+  5250447342. Overall Progress: implemented and verified; no work in progress.
+  Each account receives an additive 15 Repair Charms and 5 each of Basic, Fresh,
+  Hearty, Fortified, Gourmet, Enchanted, Royal and Blessed Food on next join.
+- Architecture: server-only allowlist/config and AccountGift helper run during
+  DataService session acquisition, after rejecting foreign active sessions.
+  Rewards and a stable boolean claim marker in Settings commit together with the
+  session lease. Rejoins and committed-but-unacknowledged acquisition retries
+  cannot duplicate or replenish spent rewards. No schema bump or new remote.
+  Money, shards, merchant stock and existing inventory are otherwise unchanged.
+- Tests: detached account-gift suite passes 112 checks, including all three IDs,
+  additive quantities, saved claim migration, real DataService acquisition,
+  lost acknowledgements, spending/rejoin, foreign session lock and overflow.
+  Live memory-only DataPersistenceVerification passes 19 checks. All 178 synced
+  sources compile; Rojo build and git diff checks pass. No production saves.
+- Files Modified: new server/Config/AccountGiftConfig, server/Data/AccountGift,
+  Services/DataService, docs/studio/test-account-gift and this handoff.
+- Next Task / Known limitation: publish the updated game when authorized, then
+  the recipients must join a server running this code. Production delivery has
+  not been performed or verified. Do not change ClaimKey unless explicitly
+  requesting another gift; changing it would grant another batch.
+- Last Working Commit before session: 3f0f79b. Session Handoff: this is a one-time
+  gift, not every-login replenishment. Owner artwork preserved; no publish/push,
+  real purchases, account API edits or production DataStore writes.
+
 ### Latest session — explosion cleanup, broken appearance and repair station
 
 - Current Feature: owner-requested broken-pet feeding restriction and repair bug
