@@ -13,7 +13,7 @@ function Recovery.List(data)
 		table.insert(records,{PetId=id,AttemptId=pet.BreakId,SpeciesId=pet.SpeciesId,
 			PetName=Variants.Name(if definition then definition.DisplayName else pet.SpeciesId,pet.Variant),
 			Variant=pet.Variant,Rarity=pet.Rarity,FeedLevel=pet.FeedLevel,Locked=pet.Locked,CreatedAt=pet.CreatedAt,
-			Income=PetIncome(pet),RestoredIncome=PetIncome(repaired),Placed=pet.Placed})
+			Income=PetIncome(pet),RestoredIncome=PetIncome(repaired),Placed=pet.Placed,Broken=true})
 	end
 	table.sort(records,function(a,b)
 		if a.CreatedAt~=b.CreatedAt then return a.CreatedAt>b.CreatedAt end

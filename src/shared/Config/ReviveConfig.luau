@@ -6,6 +6,12 @@ return table.freeze({
 		Price=15000000, Weight=.5, RewardType="Revive", Amount=1, StockLimit=1}),
 	BrokenIncomeMultiplier = brokenIncomeMultiplier,
 	BrokenIncomeLabel = string.format("%.0f%% INCOME", brokenIncomeMultiplier * 100),
+	BrokenVisual = table.freeze({
+		SootColor = Color3.fromRGB(65,61,70),
+		SootBlend = 0.6,
+		WarningColor = Color3.fromRGB(255,145,70),
+		SmokeRate = 2,
+	}),
 	MachineDistance = 16,
 	PromptDistance = 12,
 	PromptHoldSeconds = .125,

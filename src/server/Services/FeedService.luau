@@ -82,6 +82,10 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	if Locks.IsLocked(player) then return {Ok=false, Code="Busy"} end
 	if now-state.LastAttempt < Config.CooldownSeconds then return {Ok=false, Code="Cooldown"} end
 	state.LastAttempt = now
+	local ownedData = DataService.GetData(player)
+	local ownedPet = ownedData and ownedData.Inventory[petId]
+	-- Also reject forged/stale Feed requests, independently of plate visuals.
+	if ownedPet and ownedPet.Broken then return {Ok=false, Code="Broken"} end
 	local result = snapshot(player, state, foodId)
 	if not result.Ok then return result end
 	if result.PetId ~= petId then return {Ok=false, Code="PetChanged"} end
@@ -121,6 +125,12 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	if forced or guaranteed then DebugOverrides.Consume(player, petId) end
 	require(script.Parent.TutorialProgress).Record(data,"Fed",petId)
 	result.Origin = PedestalService.BeginPresentation(player)
+	if outcome.Code == "Explosion" then
+		-- The client animates its own clone from Origin. Remove staging now so a
+		-- broken pet cannot reappear on the plate or remain a feed/hotbar exclusion.
+		PedestalService.Clear(player)
+	end
+	result.Broken = pet.Broken == true
 	result.SpeciesId, result.OwnerUserId = pet.SpeciesId, player.UserId
 	result.AttemptId, result.OldLevel = attemptId, before.FeedLevel
 	result.StartedAt = workspace:GetServerTimeNow()
@@ -139,7 +149,7 @@ function FeedService.HandleRequest(player, action, petId, sequence, foodId)
 	end
 	state.Saved, state.PresentationDone = false, false
 	task.delay(duration, function()
-		PedestalService.EndPresentation(player, petId, false)
+		PedestalService.EndPresentation(player, petId, outcome.Code == "Explosion")
 		state.PresentationDone = true
 		releaseIfReady()
 	end)

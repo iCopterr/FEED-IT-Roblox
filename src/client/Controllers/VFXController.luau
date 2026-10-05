@@ -6,6 +6,8 @@ local auras, bursts = {}, {}
 local started = false
 
 function Controller.PremiumProfile(model)
+	-- Damage has its own soot/smoke warning; premium glow resumes after repair.
+	if model:GetAttribute("Broken") then return nil end
 	local rarity = Config.AuraProfiles[model:GetAttribute("Rarity")]
 	local variant = Config.AuraProfiles[Config.VariantAura[model:GetAttribute("Variant")]]
 	if variant and (not rarity or variant.Rank > rarity.Rank) then return variant end

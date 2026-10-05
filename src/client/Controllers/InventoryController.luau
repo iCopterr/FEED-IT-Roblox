@@ -135,7 +135,7 @@ function Controller.Start(gui,onSnapshot)
 				elseif state=="READY" then "Press E beside your egg to hatch."
 				else "Hold, then click inside your Pen.")
 		if entry.Broken then
-			detail.Stats.Text=string.format("%s • LEVEL %s\n%s / sec • %s\nBROKEN • Can still upgrade\nRepair at the Pet Repair Station",entry.Rarity,
+			detail.Stats.Text=string.format("%s • LEVEL %s\n%s / sec • %s\nBROKEN • Repair before feeding\nRepair at the Pet Repair Station",entry.Rarity,
 				numberText(entry.Level),moneyText(entry.Income),Repair.BrokenIncomeLabel)
 		end
 		detail.Equip.ButtonText.Text=if Model.SlotOf(slots,entry.Key) then "REMOVE FROM HOTBAR" else "ADD TO HOTBAR"
@@ -189,11 +189,13 @@ function Controller.Start(gui,onSnapshot)
 			button:SetAttribute("Held",held==true)
 			button.Key.Visible=true
 			button.ItemName.Visible=true
-			button.Stroke.Color=if held then Color3.fromRGB(255,211,112) else Color3.fromRGB(150,150,164)
+			button.Stroke.Color=if held then Color3.fromRGB(255,211,112) elseif entry and entry.Broken then Repair.BrokenVisual.WarningColor else Color3.fromRGB(150,150,164)
 			button.Stroke.Thickness=if held then 3 else 1
 			button.BackgroundTransparency=.38
 			button.ItemName.Text=entry and entry.Name or "Empty"
-			button.State.Text=""
+			button.State.Text=if entry and entry.Broken then "BROKEN" else ""
+			button.State.Visible=entry~=nil and entry.Broken==true
+			button.State.TextColor3=Repair.BrokenVisual.WarningColor
 			button.Active=not busy;Preview.Set(button.Preview,entry)
 		end
 		updateDetail()
@@ -260,7 +262,7 @@ function Controller.Start(gui,onSnapshot)
 		elseif input.KeyCode==Enum.KeyCode.Escape then modal.Visible=false
 		else local index=table.find(keys,input.KeyCode);if index then activateSlot(index) end end
 	end)
-	for _,attribute in {"CarriedPetId","CarriedEggUid"} do player:GetAttributeChangedSignal(attribute):Connect(function() render();task.defer(refresh) end) end
+	for _,attribute in {"CarriedPetId","CarriedEggUid","FeedPlatePetId"} do player:GetAttributeChangedSignal(attribute):Connect(function() render();task.defer(refresh) end) end
 	gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() Responsive.Apply(gui,cards,buttons) end)
 	render()
 	task.spawn(function()

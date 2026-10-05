@@ -7,6 +7,7 @@ local Config = require(game.ReplicatedStorage.Shared.Config.ReviveConfig)
 local Commerce = require(script.Parent.CommerceState)
 local sessions = {}
 local Service = {}
+local started=false
 
 local function exchangeResult(state, data, code, ok)
 	return {
@@ -124,15 +125,29 @@ function Service.HandleRequest(player, action, petId, attemptId)
 end
 
 function Service.Start()
+	if started then return end
+	started=true
 	local point=workspace:WaitForChild("ReviveMachine"):WaitForChild("InteractionPoint")
 	local prompt=point:WaitForChild("OpenReviveMachine")
 	prompt.MaxActivationDistance=Config.PromptDistance
 	prompt.HoldDuration=Config.PromptHoldSeconds
 	prompt.ObjectText=Config.StationName
-	local remote = Instance.new("RemoteFunction")
-	remote.Name = "PrototypeRevive"
-	remote.OnServerInvoke = Service.HandleRequest
-	remote.Parent = game.ReplicatedStorage
+	-- Older Studio setup left an authored remote in ReplicatedStorage. Creating
+	-- a second one makes WaitForChild bind an unhandled copy and hang forever.
+	-- Bind existing copies (if any) and never introduce another duplicate.
+	local found=false
+	for _,remote in game.ReplicatedStorage:GetChildren() do
+		if remote.Name~="PrototypeRevive" then continue end
+		assert(remote:IsA("RemoteFunction"),"PrototypeRevive must be a RemoteFunction")
+		remote.OnServerInvoke=Service.HandleRequest
+		found=true
+	end
+	if not found then
+		local remote = Instance.new("RemoteFunction")
+		remote.Name = "PrototypeRevive"
+		remote.OnServerInvoke = Service.HandleRequest
+		remote.Parent = game.ReplicatedStorage
+	end
 	Players.PlayerRemoving:Connect(function(player) sessions[player] = nil end)
 end
 

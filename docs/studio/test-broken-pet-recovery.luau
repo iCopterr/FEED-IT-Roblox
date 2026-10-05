@@ -54,7 +54,7 @@ deps[root.Services.MonetizationService]={Multiplier=function()return multiplier 
 deps[root.Services.CarryService]={GetPetId=function()return nil end,GetEggId=function()return nil end}
 deps[root.Services.PlacementService]={}
 deps[root.Services.PedestalService]={GetFeedPet=function()return profile.Inventory[pet.PetId] end,
-	GetPetId=function()return nil end,BeginPresentation=function()return CFrame.new() end,EndPresentation=function()end}
+	GetPetId=function()return nil end,BeginPresentation=function()return CFrame.new() end,Clear=function()end,EndPresentation=function()end}
 local forced="Explosion"
 deps[root.Services.DebugFeedOverrides]={Resolve=function(_,_,level)return {Code=forced,FeedLevel=if forced=="Success" then level+1 else level,Gain=if forced=="Success" then 1 else 0} end,Consume=function()end}
 deps[root.Services.PetService]={GetInventory=function()return assert(Schema.Migrate(profile)).Inventory end}
@@ -107,11 +107,14 @@ now+=86400*365;place()
 assert(Money.GetRate(player)==expected,"Break expired or lost its reduced income rate")
 pickup()
 forced="Success"
-assert(Feed.HandleRequest(player,"Feed",pet.PetId,2,"basic").Accepted);finish()
-assert(profile.Inventory[pet.PetId].FeedLevel==21 and profile.Inventory[pet.PetId].Broken,"Broken pet could not upgrade")
+assert(Feed.HandleRequest(player,"Feed",pet.PetId,2,"basic").Code=="Broken")
+assert(profile.Inventory[pet.PetId].FeedLevel==20 and profile.Food==3,"Broken feed consumed Food or changed progress")
 forced="Explosion"
-assert(Feed.HandleRequest(player,"Feed",pet.PetId,3,"basic").Accepted);finish()
-assert(profile.Inventory[pet.PetId].FeedLevel==21 and profile.Inventory[pet.PetId].BreakId==result.AttemptId,"Repeated break reset progress/episode")
+assert(Feed.HandleRequest(player,"Feed",pet.PetId,2,"basic").Code=="Broken")
+assert(profile.Inventory[pet.PetId].BreakId==result.AttemptId,"Rejected feed changed damage episode")
+-- Compatibility fixture: preserve progress earned under the older feedable-
+-- broken rule rather than resetting existing saves when this restriction ships.
+profile.Inventory[pet.PetId].FeedLevel=21
 expected=PetIncome(profile.Inventory[pet.PetId])
 assert(expected==fresh(shared.Config.PetConfig).Species.test_rare.BaseIncome*fresh(shared.Config.FeedConfig).Multiplier[21]*5*Config.BrokenIncomeMultiplier,"Damage penalty stacked")
 local foreign={Parent=players}
@@ -127,6 +130,7 @@ player.PlayerGui=pg;player.WaitForChild=function(_,name)assert(name=="PlayerGui"
 players.LocalPlayer=player
 local queue={}
 local responseMode,previewFails=nil,false
+local feedListener
 local realPreview=fresh(client.UI.ItemPreview)
 local env=setmetatable({script=client.Controllers.ReviveController,
 	require=function(module)
@@ -139,7 +143,8 @@ local env=setmetatable({script=client.Controllers.ReviveController,
 	end,
 	game={GetService=function(_,name)
 		if name=="Players" then return players end
-		if name=="ReplicatedStorage" then return {Shared=shared,WaitForChild=function()
+		if name=="ReplicatedStorage" then return {Shared=shared,WaitForChild=function(_,remoteName)
+			if remoteName=="FeedOutcome" then return {OnClientEvent={Connect=function(_,callback)feedListener=callback end}} end
 			return {InvokeServer=function(_,...)
 				if responseMode=="nil" then return nil end
 				if responseMode=="error" then error("Simulated dropped reply") end
@@ -148,7 +153,7 @@ local env=setmetatable({script=client.Controllers.ReviveController,
 		if name=="ProximityPromptService" then return {PromptTriggered={Connect=function()end}} end
 		return game:GetService(name)
 	end},
-	task={spawn=function(f)table.insert(queue,f)end,delay=function()end},
+	task={spawn=function(f)table.insert(queue,f)end,defer=function(f)table.insert(queue,f)end,delay=function()end},
 },{__index=getfenv()})
 local fn=assert(loadstring(client.Controllers.ReviveController.Source));setfenv(fn,env)
 local controller=fn()
@@ -172,7 +177,11 @@ local ok,err=xpcall(function()
 	local damaged=profile.Inventory[pet.PetId];local breakId=damaged.BreakId
 	damaged.Broken=nil;damaged.BreakId=nil;reopen()
 	assert(panel.Empty.Visible and not panel.Pets:FindFirstChild(breakId))
-	damaged.Broken=true;damaged.BreakId=breakId;reopen()
+	damaged.Broken=true;damaged.BreakId=breakId
+	feedListener({OwnerUserId=player.UserId,Code="Explosion"})
+	while #queue>0 do table.remove(queue,1)() end
+	assert(panel.Pets[breakId].Visible and not panel.Empty.Visible,"Open station did not refresh after actual damage event")
+	reopen()
 	assert(panel.Pets[breakId].Visible and not panel.Empty.Visible)
 	for _,mode in {"nil","error"} do
 		responseMode=mode;reopen()
@@ -197,19 +206,19 @@ end
 place()
 local restored=Revive.HandleRequest(player,"Repair",pet.PetId,result.AttemptId)
 assert(restored.Ok and profile.ReviveCharges==0 and profile.Inventory[pet.PetId].FeedLevel==21)
-assert(profile.Inventory[pet.PetId].Variant=="Rainbow" and profile.Inventory[pet.PetId].Locked and profile.Food==1)
+assert(profile.Inventory[pet.PetId].Variant=="Rainbow" and profile.Inventory[pet.PetId].Locked and profile.Food==3)
 assert(profile.Inventory[pet.PetId].Placed and profile.PlacedPetIds[pet.PetId] and not profile.Inventory[pet.PetId].Broken)
 assert(Money.GetRate(player)==expected/Config.BrokenIncomeMultiplier,"Repair must immediately restore full placed income")
 assert(not Revive.HandleRequest(player,"Repair",pet.PetId,result.AttemptId).Ok and profile.ReviveCharges==0)
 pickup();assert(Money.GetRate(player)==0)
-assert(Feed.HandleRequest(player,"Feed",pet.PetId,4,"basic").Accepted);finish()
+assert(Feed.HandleRequest(player,"Feed",pet.PetId,2,"basic").Accepted);finish()
 assert(profile.Inventory[pet.PetId].BreakId~=result.AttemptId,"New damage reused an old repair ID")
 assert(Revive.HandleRequest(player,"Repair",pet.PetId,result.AttemptId).Code=="PetChanged")
 profile.ReviveShards=100
 assert(Revive.HandleRequest(player,"Exchange",1).Ok and profile.ReviveCharges==1 and profile.ReviveShards==0)
 assert(Revive.HandleRequest(player,"Repair",pet.PetId,profile.Inventory[pet.PetId].BreakId).Ok)
-assert(not profile.Inventory[pet.PetId].Broken and profile.Food==0 and profile.ReviveCharges==0)
+assert(not profile.Inventory[pet.PetId].Broken and profile.Food==2 and profile.ReviveCharges==0)
 assert(Revive.HandleRequest(player,"KeepBase",pet.PetId,result.AttemptId).Code=="InvalidRequest")
 assert(Schema.Validate(profile) and not assert(Schema.Migrate(persisted)).Inventory[pet.PetId].Broken)
-print("PASS: v12 migration/conflict safety, usable broken pets, upgrade/repeated failure, permanent 10% placed income, x2, repair current level/placement, shards, replay and new damage ID")
+print("PASS: v12 migration/conflict safety, retained broken pets, blocked feeding, permanent 10% placed income, x2, repair current level/placement, shards, replay and new damage ID")
 if not RECOVERY_HEADLESS then print("PASS: real ReviveController machine cards, preview, tabs and responsive exchange geometry") end

@@ -4,6 +4,7 @@ local Preview={}
 local Foods=require(game.ReplicatedStorage.Shared.Config.FoodConfig)
 local Images=require(script.Parent.IconImages)
 local Art=require(script.Parent.ImageArt)
+local BrokenVisual=require(game.ReplicatedStorage.Shared.BrokenPetVisual)
 function Preview.Set(view,entry)
 	local art=view:FindFirstChild("FoodArt")
 	if art then
@@ -28,7 +29,7 @@ function Preview.Set(view,entry)
 	local camera=view:FindFirstChild("PreviewCamera")
 	if not camera then camera=Instance.new("Camera");camera.Name="PreviewCamera";camera.Parent=view end
 	view.CurrentCamera=camera
-	local signature=entry.Kind..":"..(entry.SpeciesId or entry.EggId)
+	local signature=entry.Kind..":"..(entry.SpeciesId or entry.EggId)..":"..tostring(entry.Broken==true)
 	if view:GetAttribute("PreviewKey")==signature then return end
 	view:SetAttribute("PreviewKey",signature)
 	local world=view.World
@@ -50,6 +51,7 @@ function Preview.Set(view,entry)
 		end
 	end
 	model.Parent=world
+	if entry.Kind=="Pet" then BrokenVisual.Apply(model,entry.Broken==true,false) end
 	model:PivotTo(CFrame.new())
 	local bounds,size=model:GetBoundingBox()
 	local radius=math.max(size.X,size.Y,size.Z)

@@ -4,7 +4,50 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-10-04
+**Last Updated:** 2026-10-06
+
+### Latest session — explosion cleanup, broken appearance and repair station
+
+- Current Feature: owner-requested broken-pet feeding restriction and repair bug
+  fix. Overall Progress: implementation and functional verification complete;
+  no implementation work in progress. New instruction supersedes the earlier
+  feedable-broken design; GDD and repair docs updated accordingly.
+- Explosion immediately clears the feed plate/model/prompt and keeps the same
+  PetId, level, variant and lock in stored inventory. Hotbar refresh observes
+  FeedPlatePetId changes. Animation completion cannot restore a broken plate pet.
+  Both server plate placement and forged Feed requests reject broken pets;
+  rejection preserves held pets, food and levels. Repair enables feeding again.
+- Added shared reversible soot tint/orange rim, low-rate world smoke, orange
+  broken labels/hotbar state and damaged inventory/station previews. Premium
+  auras pause until repaired. No added BaseParts or rig/geometry changes. Broken
+  income remains 10% of normal in the pen; no expiry or automatic repair.
+- Root repair-shop cause found in Studio: one authored PrototypeRevive remote
+  already existed in Edit mode. Startup created a second, so client selection
+  sometimes hit an unhandled copy and hung. ReviveService now binds existing
+  same-name RemoteFunctions and starts idempotently. The authored remote is
+  preserved, not deleted. Station invalidates stale empty lists on explosion,
+  promptly retries opening cooldowns and explicitly restores list visibility.
+- Tests: real two-client ReviveVerification passes 44 checks on repeated runs,
+  including actual explosion -> hotbar/repair UI -> charm repair, duplicate/stale
+  requests, privacy, save/reload and existing-remote startup. FoodShopVerification
+  passes 90 checks; PedestalVerification 28; VFXVerification 63. Detached recovery
+  controller, shard exchange and all-24-product commerce harnesses pass. Damage
+  visual invariants pass 496 checks on Chicken, Horned Bunny and Black Wolf;
+  exact restoration/rig preservation tested (tint comparison allows engine RGB
+  quantization). All 171 synced sources compile; Rojo build/diff checks pass.
+- Known limitation / Next Task: owner desktop/phone visual check of soot/rim/smoke.
+  Studio capture rendered HUD only, with both viewport and world QA clones blank;
+  do not claim the new appearance was visually reviewed. Temporary comparison
+  GUI/world clones removed and original camera restored. Actual live preview
+  geometry and damage effects are verified structurally, not by screenshot.
+- Files Modified: FeedService, PedestalService, ReviveService, PetPresentation;
+  Carry/Feed/FeedEffects/Inventory/Revive/VFX controllers, ItemPreview; new shared
+  BrokenPetVisual, ReviveConfig, RecoveryPets; live repair/merchant/VFX tests,
+  detached recovery/visual tests, GDD, docs/revive and this handoff.
+- Last Working Commit before session: 90b5896. Session Handoff: resume this state,
+  do not reintroduce a second repair remote or feedable-broken behavior. Existing
+  commerce IDs, shards/charms, receipt safety and saves are unchanged. No publish,
+  push, production data writes, real purchases or owner artwork changes.
 
 ### Latest session — offline earnings 10-minute minimum
 

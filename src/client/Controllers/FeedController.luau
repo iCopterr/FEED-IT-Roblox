@@ -35,6 +35,7 @@ function FeedController.Start()
 		Loading="Loading player data…", Unavailable="Feeding is unavailable right now.",
 		Busy="", MaxLevel="Maximum Feed level reached (40).",
 		InvalidFood="Choose a food type from the selector.",
+		Broken="Repair this broken pet at the Pet Repair Station before feeding.",
 	}
 	local function render(state)
 		latest = state
@@ -47,7 +48,7 @@ function FeedController.Start()
 		panel.Notice.Text = if state.MaxLevel then "MAX LEVEL"
 			elseif state.FoodId and Foods.Types[state.FoodId].GuaranteedSuccess then "GUARANTEED SUCCESS"
 			else string.format("EXPLOSION RISK: %s%%",numberText((state.Risk or 0)*100))
-		local canFeed = state.Ok and state.Cost and not state.MaxLevel and not state.Busy
+		local canFeed = state.Ok and state.Cost and not state.Broken and not state.MaxLevel and not state.Busy
 			and state.PetId == player:GetAttribute("FeedPlatePetId") and state.Food >= state.Cost and not busy
 		panel.Feed.Active = canFeed == true
 		panel.Feed.AutoButtonColor = canFeed == true
@@ -113,7 +114,7 @@ function FeedController.Start()
 	end)
 	local function feed(action)
 		local state = latest
-		if busy or player:GetAttribute("FeedBusy") or not state or not state.Ok or not state.Cost or state.MaxLevel or state.Food < state.Cost
+		if busy or player:GetAttribute("FeedBusy") or not state or not state.Ok or state.Broken or not state.Cost or state.MaxLevel or state.Food < state.Cost
 			or state.PetId ~= player:GetAttribute("FeedPlatePetId") then return end
 		busy = true; render(state); panel.Status.Text = "Feeding…"
 		if Config.Presentation.CloseUIOnAcceptedFeed then panel.Visible=false end

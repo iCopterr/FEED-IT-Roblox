@@ -59,6 +59,7 @@ function PedestalService.Place(player, id)
 	if not data or not Schema.Validate(data) or not plate or not dish or not dish:IsA("BasePart") then return false, "Unavailable" end
 	local pet = data.Inventory[id]
 	if not pet or pet.Placed then return false, "NotOwned" end
+	if pet.Broken then return false, "Broken" end
 	if player.Parent ~= Players or not root or not humanoid or humanoid.Health <= 0 then return false, "Unavailable" end
 	if (root.Position - dish.Position).Magnitude > Config.PlateDistance then return false, "TooFar" end
 	local template = PetModels.GetTemplate(pet.SpeciesId)
@@ -123,7 +124,7 @@ function PedestalService.EndPresentation(player, id, returnToInventory)
 	state.Model:SetAttribute("Presenting",false)
 	local data = DataService.GetData(player)
 	local pet = data and data.Inventory[id]
-	if returnToInventory or not pet then PedestalService.Clear(player); return end
+	if returnToInventory or not pet or pet.Broken then PedestalService.Clear(player); return end
 	state.Model:ScaleTo(PetModels.GetScale(pet.SpeciesId,pet.FeedLevel))
 	local bounds, size = state.Model:GetBoundingBox()
 	local dish = state.Plate.Dish
@@ -146,7 +147,7 @@ function PedestalService.Reconcile(player)
 	local data = DataService.GetData(player)
 	local pet = data and data.Inventory[state.Id]
 	local plot = PlotService.GetPlot(player)
-	if player.Character ~= state.Character or (not pet and not state.Animating) or (pet and pet.Placed) or not plot or state.Plate.Parent ~= plot or state.Model.Parent ~= state.Plate then
+	if player.Character ~= state.Character or (not pet and not state.Animating) or (pet and (pet.Placed or (pet.Broken and not state.Animating))) or not plot or state.Plate.Parent ~= plot or state.Model.Parent ~= state.Plate then
 		PedestalService.Clear(player)
 	elseif pet and not state.Animating then
 		require(script.Parent.PetPresentation).Update(state.Model,pet)

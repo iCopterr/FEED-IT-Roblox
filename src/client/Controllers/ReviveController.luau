@@ -17,6 +17,7 @@ function Controller.Start()
  local remote=Storage:WaitForChild("PrototypeRevive")
  local snapshot,selected=nil,nil
  local requesting,acting=false,false
+ local refreshQueued=false
  local refreshFailed=false
  local currentTab="Broken"
  local cards={}
@@ -62,11 +63,12 @@ function Controller.Start()
   panel.Empty.Text=if snapshot then "No broken pets\nYour pets are safe!" else "Loading broken pets…"
   brokenTab.Text="BROKEN PETS • "..tostring(snapshot and #snapshot.Records or 0)
   local r=selectedRecord()
-  setPreview(if panel.Visible and broken and r then {Kind="Pet",SpeciesId=r.SpeciesId} else nil)
+  panel.Pets.Visible=broken
+  setPreview(if panel.Visible and broken and r then {Kind="Pet",SpeciesId=r.SpeciesId,Broken=true,Level=r.FeedLevel} else nil)
   panel.PetName.Text=if r then r.PetName else "SELECT A BROKEN PET"
   panel.Details.Text=if r then string.format("%s • LEVEL %d\n$%s/s → $%s/s AFTER REPAIR",r.Rarity,r.FeedLevel,
    Compact(r.Income),Compact(r.RestoredIncome)) else ""
-  panel.Notice.Text="Can still upgrade • "..Config.BrokenIncomeLabel.." until repaired"
+  panel.Notice.Text="Repair before feeding • "..Config.BrokenIncomeLabel.." until repaired"
   local enabled=r~=nil and snapshot.NearMachine and snapshot.CanRevive and not snapshot.Busy and not acting
   panel.Revive.Active=enabled==true;panel.Revive.AutoButtonColor=enabled==true
   panel.Revive.BackgroundColor3=if enabled then Color3.fromRGB(70,190,110) else Color3.fromRGB(90,95,105)
@@ -94,7 +96,14 @@ function Controller.Start()
    if not result.NearMachine then panel.Visible=false end
    if selected and not selectedRecord() then selected=nil end
    if not selected and result.Records[1] then selected=result.Records[1].AttemptId end
-  elseif not (ok and type(result)=="table" and result.Code=="Cooldown") then
+  elseif ok and type(result)=="table" and result.Code=="Cooldown" then
+   -- Open() and Visible may request together. Do not leave a stale/empty list
+   -- waiting on the background poll after the first request is throttled.
+   if not refreshQueued then
+    refreshQueued=true
+    task.delay(Config.SnapshotCooldown+.05,function() refreshQueued=false;refresh() end)
+   end
+  else
    -- Retain the last good list while retrying; a dropped reply is not an empty
    -- inventory. Never let a nil reply terminate the polling coroutine.
    panel.Status.Text="Unable to refresh pets. Retrying…"
@@ -165,6 +174,12 @@ function Controller.Start()
  local DeviceLayout=require(script.Parent.Parent.UI.DeviceLayout)
  local function resize() DeviceLayout.Apply(panel,gui.AbsoluteSize,"Revive") end
  gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize);resize();setTab("Broken");render()
+ Storage:WaitForChild("FeedOutcome").OnClientEvent:Connect(function(result)
+  if result.OwnerUserId~=player.UserId or result.Code~="Explosion" then return end
+  -- The empty list from an earlier visit is no longer authoritative.
+  snapshot=nil;selected=nil
+  render();task.defer(refresh)
+ end)
  task.spawn(function()
   while gui.Parent do
    local ok,err=pcall(refresh)

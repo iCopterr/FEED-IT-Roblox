@@ -1081,10 +1081,13 @@ When a pet explodes **and the 5% Miracle Save fails**, the player may receive an
 
 ## 23.1 Revive Rule
 
-**Latest owner update (2026-10-02), superseding historical revive rules:**
+**Latest owner update (2026-10-06), superseding historical revive rules:**
 The **Pet Repair Station** replaces the Revive Machine. Failed Feed marks the
 same inventory pet BROKEN without resetting Feed level. Broken pets remain
-equippable, placeable and feedable, and successful Feed still upgrades them.
+equippable and placeable in the pen. Explosion immediately removes the pet
+from the feed plate and returns it to inventory/hotbar. Broken pets cannot
+return to the feed plate or be fed until repaired. Damage is visibly distinct
+(soot, orange outline, light smoke), including inventory and repair previews.
 Their income is always 10% of their current level's normal rate until repaired
 (90% less, latest owner balance update);
 repeat failures do not stack the penalty. As with healthy pets, income requires

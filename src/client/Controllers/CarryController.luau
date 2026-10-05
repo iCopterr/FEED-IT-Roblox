@@ -74,6 +74,7 @@ function CarryController.Start()
 				elseif action=="Place" then "Move closer and click inside your own fenced Pen."
 				elseif ok and response.Code == "PenFull" then "Your pen is full."
 				elseif ok and response.Code == "PlateOccupied" then "Your feed plate already has a pet. Open the feed UI to pick it up."
+				elseif ok and response.Code == "Broken" then "This pet is broken! Repair it at the Pet Repair Station before feeding."
 				else "Move closer to your own Pen or feed plate and try again.",Color3.fromRGB(255,108,73))
 		end
 		task.wait(.3)
