@@ -6,6 +6,23 @@
 
 **Last Updated:** 2026-10-06
 
+### Latest session — standalone Wall Runner agent instructions
+
+- Current Feature: owner-requested AGENTS.md tailored to the supplied Wall Runner
+  Simulator GDD v0.1. Overall Progress: document complete; no game code changed.
+- Deliverable: deliverables/wall-runner/AGENTS.md. Intended for the separate
+  Wall Runner repository root alongside its GDD, not as a replacement for this
+  game's AGENTS.md. Covers nonconsuming Power, per-player pickups/runs, payout
+  safety, eggs/pets, full-balance Rebirth reset, world gates, MVP exclusions,
+  mobile/performance tests and implementation/handoff workflow.
+- Verification: read the entire supplied GDD. Found and explicitly flagged a
+  design conflict: wall rewards sum to 575, while prose says 675; requires owner
+  decision before finalizing payouts. Pickup gain, egg odds and Rebirth examples
+  checked; git diff checks pass. No runtime tests for this documentation change.
+- Files Modified: new standalone document and this handoff. Baseline 9ba5538.
+  Next Task: owner can place the deliverable in the new project's root. No
+  Feed Your Pet rules, runtime, artwork, production saves, publish or push changed.
+
 ### Latest session — owner implementation rules and workflow document
 
 - Current Feature: requested Markdown consolidation of owner rules and the
