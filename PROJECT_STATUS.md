@@ -6,6 +6,24 @@
 
 **Last Updated:** 2026-10-06
 
+### Latest session — owner implementation rules and workflow document
+
+- Current Feature: requested Markdown consolidation of owner rules and the
+  practical implementation workflow. Overall Progress: documentation complete;
+  no gameplay changes or implementation work in progress.
+- Added docs/IMPLEMENTATION_RULES_AND_WORKFLOW.md, covering sources of truth,
+  scope, server authority, transaction/save safety, Feed rules, Rojo/MCP, owner
+  UI/model preferences, verification, commits and handoff. Separates newer
+  gameplay overrides from the standing rules; preserves the no-UI-Director
+  preference and does not replace AGENTS/GDD or authorize broader changes.
+- Verification: cross-checked AGENTS, recent handoff, relevant GDD and current
+  FeedConfig; local documentation links and diff checked. No runtime tests
+  needed for this documentation-only change. Existing artwork untouched.
+- Files Modified: new workflow document and this handoff. Baseline 20c39b1.
+  Next Task: owner can use the document as a portable project workflow reference;
+  account gifts still require authorized publishing and recipient next join.
+  Known limitations from prior sessions remain. No publish/push or live saves.
+
 ### Latest session — one-time account inventory gifts
 
 - Current Feature: owner-requested gift for UserIds 4750343708, 123985255 and
