@@ -4,7 +4,17 @@
 
 **Design Reference:** `Feed_Your_Pet_GDD_v0.5.md`
 
-**Last Updated:** 2026-10-06
+**Last Updated:** 2026-10-12
+
+### Latest session — pet modeling method guide
+
+- Added `docs/PET_MODEL_BUILD_METHOD.md` at owner request. It records the
+  silhouette-first build sequence, Roblox part/union/mesh choices, rig layout,
+  part and triangle budgets, face construction, saved-geometry checks, and
+  visual review loop, using the refined Ember Drake as a concrete example.
+- Documentation only; no model, script, or installed template changed.
+  Verified against the Ember Drake builder and asset README; link and diff
+  checks pass. Next Task: use the guide for future requested model builds.
 
 ### Latest session — standalone Wall Runner agent instructions
 
